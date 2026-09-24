@@ -5,8 +5,8 @@ issue: 22
 phase: implement
 status: active
 milestone: design
-active_agent: main (manual, since no orchestrator exists yet)
-next_step: "User approves tasks.md order; then start task 1 (artifact templates)"
+active_agent: "compass-labs:implement (stand-in: Sonnet general-purpose subagent)"
+next_step: "Implement batch 2: tasks 4 (guard hook), 5 (GitHub scripts), 6 (orchestrator skill)"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -122,3 +122,25 @@ next_step: "User approves tasks.md order; then start task 1 (artifact templates)
 - Checked the Claude Code docs: the equivalent of Cursor rules is `.claude/rules/*.md` (with optional `paths:`), but it only guides Claude. Hooks enforce. `Stop` exit 2 blocks the end of a turn; there's no documented loop guard. Plugins can't ship rules.
 - Added: global `~/.claude/rules/atomic-commits.md` (user level, outside the repo), project `.claude/rules/compass-sessions.md` (`c529906`), **REQ-016**, **D8**, task 14.
 - This entry changes frozen artifacts (`requirements.md`, `design.md`) under this logged decision.
+
+---
+
+## Phase: Implement
+
+### 2026-09-24 — main — handoff: orchestrator → implement agent (batch 1: tasks 1–3)
+- **From → To:** main (orchestrator) → Sonnet subagent acting as `compass-labs:implement` (the plugin agent doesn't exist yet)
+- **Input:** session path, tasks 1–3, D4 rules (write only `tasks.md` + code, no log/frozen docs, one commit per task, no push)
+- **Output:** `23978ac`, `03749b3`, `0d97354`; `bash tests/run.sh` 1/1 pass
+
+### 2026-09-24 — implement — attempt: artifact templates built (`23978ac`)
+- `skills/session/templates/{requirements,design,tasks,verification,release,log}.md` per the D1 table. REQ/DES/VER ID conventions. The log template follows D2.
+
+### 2026-09-24 — implement — attempt: Feature workflow defined as data (`03749b3`)
+- `skills/session/workflows/feature.json`: flat `phases[]` (phase, order, owner_agent, artifact, milestone, gh_label, conversational) + `session_level` (file allowlist, log owner). It's JSON because hooks are bash + `jq` (no `yq`). The agent logged this as a deviation. **Orchestrator review: not a real deviation**, since D3 says "`feature.yaml`-style" and the build table says `feature.*`.
+
+### 2026-09-24 — implement — attempt: test harness built (`0d97354`)
+- `tests/run.sh` (runs `tests/**/*_test.sh`), `tests/lib.sh` (hook stdin/exit/stderr assertions, temp git repo + session fixtures), `tests/session/workflow_test.sh`.
+
+### 2026-09-24 — main — note: batch 1 review
+- Verified: one task per commit, correct file scope, tests pass when rerun by the orchestrator.
+- **Found for task 4:** the frontmatter `milestone` isn't consistent (`define` in the real log, `none` in the template, `"Define complete"` in `feature.json`). The guard needs a phase key to work out frozen artifacts. Decision for batch 2: `milestone` holds the **phase key** of the last completed milestone (`none` | `define` | … | `close`), and `feature.json` `milestone` stays a display label.
