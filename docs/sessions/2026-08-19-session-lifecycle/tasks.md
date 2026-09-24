@@ -21,7 +21,7 @@ budget:
 - [x] SessionStart hook `hooks/session-start.sh`: when `agent_type` is the orchestrator, list sessions with `status: active|paused` from `log.md` frontmatter. Includes tests [D3 · REQ-008, REQ-015] (depends on: 1, 3)
 - [x] Entry points `agents/orchestrator.md` (thin: `skills: [session]`) + `commands/session.md`. Verify `claude --agent compass-labs:orchestrator` resolves; if not, log a deviation [D3 · REQ-015] (depends on: 6)
 - [x] Thin phase agents `agents/{define,design,implement,test,deploy,close}.md`: D4 contract, restricted tools, preloaded skill [D4 · REQ-002, REQ-003] (depends on: 6)
-- [ ] Thin `requirements` skill (EARS + Given/When/Then + ISO 29148 checks) and thin `verification` skill (VER table format) [D1c, D1 · REQ-014] (depends on: 1)
+- [x] Thin `requirements` skill (EARS + Given/When/Then + ISO 29148 checks) and thin `verification` skill (VER table format) [D1c, D1 · REQ-014] (depends on: 1)
 - [ ] Close agent fold-back: `doc-maintainer` pass, "Origin: #N" line, `git mv` to `docs/sessions/archive/`, `status: archived` [D6 · REQ-012] (depends on: 9)
 - [ ] Retire the session-folder check in `hooks/validate-spec.sh` (replaced by the guard). Leave `plan` itself alone (#26/#27) [D7] (depends on: 4)
 - [ ] Docs: `CLAUDE.md` directory rules (add `agents/`), README "Using sessions in a repo" (three entry points + default-agent snippet) [D3 · REQ-015] (depends on: 8)
