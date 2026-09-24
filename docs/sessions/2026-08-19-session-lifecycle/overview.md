@@ -1,6 +1,6 @@
 # Problem Statement: Session Lifecycle
 
-> Date: 2026-08-19 | Revised: 2026-09-24 | Status: Draft — problem definition + first decisions, no design yet
+> Date: 2026-08-19 | Revised: 2026-09-24 | Status: **Approved** — Define milestone reached 2026-09-24. Design continues in [`design.md`](design.md); history is in [`log.md`](log.md).
 > Relates to: Issue #22 — Design and implement full session lifecycle (GitHub-tracked, Diataxis-linked)
 
 ## Why this is a problem statement, not a spec
@@ -70,7 +70,7 @@ So a session can be planned, but every step after that is manual.
 4. **State lives in the session folder.** GitHub only mirrors key milestones, not every phase change.
 5. **Flat as-built docs.** Folded-back docs contain no session narrative. The "why" stays in the archived session.
 6. **Works as a distributable plugin.** Everything ships through the plugin structure (`skills/`, `commands/`, `hooks/`, and possibly `agents/`). No per-user setup beyond installing.
-7. **Platform limits.** Subagents can't start other subagents, so the orchestrator runs in the main session and starts the phase subagents from there. **Still to verify against current Claude Code docs.**
+7. **Platform limits.** ~~Subagents can't start other subagents.~~ **Corrected 2026-09-24:** subagents *can* nest up to 3 levels deep. The real limit is that **subagents can't ask the user questions** (`AskUserQuestion` is removed from them), so anything conversational has to go through the main session. See `design.md` → Platform facts.
 8. **Single responsibility (SOLID).** Each agent and skill does one job. If an agent or skill file keeps growing, that's a sign it's doing more than one job and should be split.
 
 ## Non-goals (for this issue)
