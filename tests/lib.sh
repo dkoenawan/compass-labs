@@ -136,3 +136,74 @@ git_commit_all() {
   git -C "$repo_dir" add -A
   git -C "$repo_dir" commit -q -m "$msg"
 }
+
+# install_stub_gh <bin_dir>
+# Writes a fake `gh` executable into bin_dir that never touches the real
+# GitHub. Every call is appended (one per line, space-joined argv) to
+# $GH_STUB_LOG. Callers control its behavior with env vars, read fresh on
+# every invocation (not baked in at install time):
+#   GH_STUB_LOG            - required: file every call is logged to
+#   GH_STUB_LABELS_FILE    - `gh issue view --json labels ...` prints this
+#                             file's lines (one label name per line)
+#   GH_STUB_COMMENTS_FILE  - `gh issue view --json comments ...` prints
+#                             this file's contents (one comment body per
+#                             line is enough for marker-substring checks)
+#   GH_STUB_FAIL           - if set to a subcommand keyword (label|view|
+#                             edit|comment), calls matching that keyword
+#                             exit 1 with a message on stderr instead of
+#                             succeeding
+# Prints bin_dir's `gh` path is on PATH is the caller's job (prepend
+# bin_dir to PATH after calling this).
+install_stub_gh() {
+  local bin_dir="$1"
+  mkdir -p "$bin_dir"
+  cat >"$bin_dir/gh" <<'STUB'
+#!/usr/bin/env bash
+set -uo pipefail
+: "${GH_STUB_LOG:?GH_STUB_LOG not set}"
+echo "$*" >> "$GH_STUB_LOG"
+
+fail_if_matches() {
+  local keyword="$1"
+  if [[ "${GH_STUB_FAIL:-}" == "$keyword" ]]; then
+    echo "stub gh: forced failure ($keyword)" >&2
+    exit 1
+  fi
+}
+
+case "${1:-}" in
+  label)
+    fail_if_matches "label"
+    exit 0
+    ;;
+  issue)
+    case "${2:-}" in
+      view)
+        fail_if_matches "view"
+        if [[ "$*" == *labels* ]]; then
+          [[ -n "${GH_STUB_LABELS_FILE:-}" && -f "$GH_STUB_LABELS_FILE" ]] && cat "$GH_STUB_LABELS_FILE"
+        elif [[ "$*" == *comments* ]]; then
+          [[ -n "${GH_STUB_COMMENTS_FILE:-}" && -f "$GH_STUB_COMMENTS_FILE" ]] && cat "$GH_STUB_COMMENTS_FILE"
+        fi
+        exit 0
+        ;;
+      edit)
+        fail_if_matches "edit"
+        exit 0
+        ;;
+      comment)
+        fail_if_matches "comment"
+        exit 0
+        ;;
+      *)
+        exit 0
+        ;;
+    esac
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+STUB
+  chmod +x "$bin_dir/gh"
+}
