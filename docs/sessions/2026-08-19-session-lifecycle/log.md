@@ -20,6 +20,7 @@ next_step: "User approves tasks.md order; then start task 1 (artifact templates)
 
 ## Key decisions
 
+- **2026-09-24**: Atomic commits are a rule: one commit per decision/milestone entry and per ticked task. Enforced by a rule file plus a `Stop` commit guard (D8, REQ-016). A global rule was added to `~/.claude/rules/atomic-commits.md`.
 - **2026-09-24**: ✅ Design milestone reached. D1a (one artifact per phase; an artifact can grow into a folder of native artifacts), D1b (ID links), D1c (EARS as the default; research in #32), D3 (three entry points, documented in the README), D5 accepted. No separate implementation guide: `tasks.md` is the Implement artifact.
 - **2026-09-24**: D2 (log format), D4 (phase agent contract, including the Q6 amendment: only the orchestrator writes the log), D6 (fold-back + archive), D7 (enforcement hook) accepted.
 - **2026-09-24**: ✅ Define milestone reached. C7 corrected: subagents can nest; the real limit is that they can't ask the user questions.
@@ -115,3 +116,9 @@ next_step: "User approves tasks.md order; then start task 1 (artifact templates)
 ### 2026-09-24 — main — milestone: ✅ Design complete
 - `design.md` frozen. `tasks.md` created (13 tasks, task-executor format, each tagged with D-ids and REQ-ids).
 - **Handoff:** Design → Implement (main session, manual).
+
+### 2026-09-24 — user — decision: atomic commits as an enforced rule
+- User: every artifact agreed in discussion, and every complete set of requirements, gets its own commit, not one commit per session. Every task ticked off gets its own commit.
+- Checked the Claude Code docs: the equivalent of Cursor rules is `.claude/rules/*.md` (with optional `paths:`), but it only guides Claude. Hooks enforce. `Stop` exit 2 blocks the end of a turn; there's no documented loop guard. Plugins can't ship rules.
+- Added: global `~/.claude/rules/atomic-commits.md` (user level, outside the repo), project `.claude/rules/compass-sessions.md` (`c529906`), **REQ-016**, **D8**, task 14.
+- This entry changes frozen artifacts (`requirements.md`, `design.md`) under this logged decision.

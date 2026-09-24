@@ -25,6 +25,7 @@ budget:
 - [ ] Close agent fold-back: `doc-maintainer` pass, "Origin: #N" line, `git mv` to `docs/sessions/archive/`, `status: archived` [D6 · REQ-012] (depends on: 9)
 - [ ] Retire the session-folder check in `hooks/validate-spec.sh` (replaced by the guard). Leave `plan` itself alone (#26/#27) [D7] (depends on: 4)
 - [ ] Docs: `CLAUDE.md` directory rules (add `agents/`), README "Using sessions in a repo" (three entry points + default-agent snippet) [D3 · REQ-015] (depends on: 8)
+- [ ] Commit guard `hooks/session-commit-guard.sh` + `hooks.json` Stop entry (uncommitted decision/milestone entry → exit 2; allow after 2 blocks in a row). Includes tests. Rule template `skills/session/templates/rules/compass-sessions.md`, which the setup step copies to `.claude/rules/` [D8 · REQ-016] (depends on: 3, 6)
 
 ## Deviations from design
 

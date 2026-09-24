@@ -14,6 +14,7 @@
 | D5 GitHub integration | REQ-009, REQ-010, REQ-013 |
 | D6 Fold-back and archive | REQ-012 |
 | D7 Enforcement | REQ-004, REQ-005, REQ-006 |
+| D8 Atomic commit points | REQ-016 |
 
 Scope for this issue is the **Feature** session type only (Q4). This design fixes the *shape* of every artifact and component. How each phase's content gets filled in, beyond a thin first version, is built out in #26–#30.
 
@@ -204,6 +205,14 @@ Close agent + `doc-maintainer`: read the artifacts and the Key decisions in `log
 
 A plugin `PreToolUse` hook on `Write|Edit`. Under `docs/sessions/{id}/` it allows only the D1 file set. It blocks Markdown in `assets/`, blocks writes by an agent that doesn't own the file (using `agent_type`), blocks writes to frozen artifacts (per `log.md` frontmatter `milestone`), and blocks everything under `archive/`. It exits with code 2 and gives a reason. It replaces the session check in `validate-spec.sh`.
 
+## D8 — Atomic commit points (added after the Design milestone, 2026-09-24)
+
+**Rule:** each `decision` or `milestone` entry in `log.md` gets exactly one commit, containing that entry plus the artifact changes it describes. A complete set of requirements is recorded as its own `decision` entry. Each ticked task in `tasks.md` gets one commit (code + tick). Drafts still under discussion aren't committed.
+
+**Two layers** (Claude Code rules only guide Claude; hooks enforce):
+1. **Guidance:** `.claude/rules/compass-sessions.md` scoped to `paths: docs/sessions/**`. Plugins can't ship `.claude/rules/`, so the orchestrator's one-time setup writes it into the repo from `skills/session/templates/rules/`. The same rule is in the `session` skill.
+2. **Enforcement:** `hooks/session-commit-guard.sh` on the **`Stop`** event. If a session's `log.md` has an uncommitted `decision` or `milestone` heading (from `git diff`), it exits with code 2 and a reason, so Claude continues and commits. Loop guard: after 2 blocks in a row it allows the stop (the docs don't mention a built-in guard).
+
 ---
 
 ## What gets built (plugin components)
@@ -243,3 +252,4 @@ A plugin `PreToolUse` hook on `Write|Edit`. Under `docs/sessions/{id}/` it allow
 | D5 | Milestone table, push before `gh`, idempotent script that can catch up later | |
 | D6 | Fold-back + `git mv` archive + "Origin" line in as-built docs | |
 | D7 | Guard hook: file set, ownership, frozen artifacts, archive | Freeze check added in revision 2. No objection raised |
+| D8 | Atomic commit points: rule file + `Stop` commit guard | Added after the milestone by user decision, 2026-09-24 |
