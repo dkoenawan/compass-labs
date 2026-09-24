@@ -13,10 +13,12 @@ This is a **Claude Code plugin repository** that provides systematic development
 This repository follows the standard Claude Code plugin structure:
 
 - `.claude-plugin/plugin.json` - Plugin manifest (required, contains metadata only)
-- `skills/` - Agent-based skills organized by domain (infrastructure, database, backend, frontend)
+- `skills/` - Agent-based skills organized by domain (infrastructure, database, backend, frontend), plus cross-cutting skills like `session` (session lifecycle orchestration)
+- `agents/` - Subagents (e.g. the session orchestrator and its Feature phase agents). A subagent's `name` frontmatter field never contains `:` — plugin-scoped invocation (`compass-labs:<name>`) is derived automatically, not part of the file itself
 - `commands/` - Direct command skills that don't require AI model invocation
 - `hooks/` - Event handlers for development workflow automation
-- Root-level directories only (never nest `skills/`, `commands/`, `hooks/` inside `.claude-plugin/`)
+- `tests/` - Bash + jq test harness (`tests/run.sh`) for hooks and scripts; not part of the plugin's runtime surface, but tracked in the repo like everything else
+- Root-level directories only (never nest `skills/`, `commands/`, `hooks/`, `agents/` inside `.claude-plugin/`)
 
 ### Skill Organization
 
