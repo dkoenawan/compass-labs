@@ -12,7 +12,7 @@ budget:
   stop_on_first_failure: true
 ---
 
-- [ ] Artifact templates: thin `requirements`, `design`, `tasks`, `verification`, `release`, `log` in `skills/session/templates/` [D1, D2 · REQ-014, REQ-007]
+- [x] Artifact templates: thin `requirements`, `design`, `tasks`, `verification`, `release`, `log` in `skills/session/templates/` [D1, D2 · REQ-014, REQ-007]
 - [ ] Feature workflow definition as data (`skills/session/workflows/feature.yaml`: phases, owner agent, artifact, milestone) [D3 · REQ-002]
 - [ ] Test harness `tests/run.sh` (plain bash, no dependencies) that feeds sample hook JSON to hook scripts and checks exit codes (depends on: 1)
 - [ ] Guard hook `hooks/session-guard.sh` + `hooks.json` PreToolUse `Write|Edit` entry: file set, ownership via `agent_type`, frozen artifacts via `log.md` frontmatter, archive. Includes tests [D7 · REQ-004, REQ-005, REQ-006] (depends on: 2, 3)
