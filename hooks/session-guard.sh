@@ -35,19 +35,63 @@ esac
 [[ -n "$file_path" ]] || exit 0
 [[ -n "$cwd" ]] || cwd="$(pwd)"
 
+# normalize_path <path>
+# Lexically collapses '.' and '..' segments in an absolute path — pure
+# string manipulation, no filesystem access. A `cd`-based normalization
+# (the previous approach) silently fails whenever a directory in the path
+# doesn't exist yet, which is the common case for a Write to a brand-new
+# file: `..` segments then survive uncollapsed and can walk the check
+# right out of docs/sessions/{id}/ (e.g. `assets/../notes.txt` looking
+# like it's under assets/). This must not depend on the file/dir existing.
+normalize_path() {
+  local input="$1"
+  local IFS='/'
+  local -a segments
+  read -r -a segments <<<"$input"
+  local -a parts=()
+  local seg
+  for seg in "${segments[@]}"; do
+    case "$seg" in
+      ""|".") continue ;;
+      "..")
+        [[ ${#parts[@]} -gt 0 ]] && unset 'parts[${#parts[@]}-1]'
+        ;;
+      *)
+        parts+=("$seg")
+        ;;
+    esac
+  done
+  if [[ ${#parts[@]} -eq 0 ]]; then
+    printf '/\n'
+  else
+    printf '/%s\n' "${parts[*]}"
+  fi
+}
+
 # --- Resolve the repo root. --------------------------------------------
 repo_root="$(git -C "$cwd" rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -n "$repo_root" ]] || repo_root="$cwd"
+
+# cwd must exist as a directory (it's where the tool is running from), so
+# resolving it physically (symlinks included) is safe and keeps it
+# consistent with repo_root, which `git rev-parse --show-toplevel` also
+# returns as a physically-resolved path. The FILE itself usually doesn't
+# exist yet, so its path is normalized lexically only (normalize_path
+# above), not resolved against the filesystem. This is a deliberate
+# simplification: a symlink *inside* the session-relative tail of the
+# path (rather than in cwd) is not resolved — session folders aren't
+# expected to contain symlinks, so this is not treated as a gap.
+cwd_physical="$(cd "$cwd" 2>/dev/null && pwd -P)"
+[[ -n "$cwd_physical" ]] || cwd_physical="$cwd"
 
 # --- Resolve file_path to an absolute path, then make it repo-relative. -
 if [[ "$file_path" == /* ]]; then
   abs_path="$file_path"
 else
-  abs_path="$cwd/$file_path"
+  abs_path="$cwd_physical/$file_path"
 fi
 
-# Normalize (collapse ./ and ../) without requiring the file to exist yet.
-abs_path="$(cd "$(dirname "$abs_path")" 2>/dev/null && pwd)/$(basename "$abs_path")" || abs_path="$abs_path"
+abs_path="$(normalize_path "$abs_path")"
 
 case "$abs_path" in
   "$repo_root"/*) rel="${abs_path#"$repo_root"/}" ;;

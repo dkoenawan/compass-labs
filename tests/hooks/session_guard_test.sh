@@ -123,5 +123,37 @@ git_commit_all "$repo" "initial fixture"
 CLAUDE_PLUGIN_ROOT="$repo" assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/tasks.md" "$repo")" 0 \
   "missing workflow file should fail open"
 
+# --- Path-traversal regressions (defect found in batch 2 review) --------
+# `docs/sessions/{id}/assets/../notes.txt` must be treated as the
+# top-level file it lexically is, NOT as something under assets/ — even
+# though assets/ doesn't exist on disk yet, so a `cd`-based normalization
+# can't see it. Same rule family for stray `./` segments and a traversal
+# that walks into archive/.
+
+# 12. assets/../notes.txt is a disallowed top-level file, not an assets/ write.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active none)"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/assets/../notes.txt" "$repo")" 2 \
+  "assets/../notes.txt should be blocked like any other disallowed top-level file"
+assert_hook_stderr_contains "not in this workflow's session file set" \
+  "assets/../notes.txt should hit the allowlist check, not be waved through as an asset"
+
+# 13. A leading ./ in the middle of the path is harmless once normalized.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/./requirements.md" "$repo" agent-1 compass-labs:define)" 0 \
+  "./ segments should be collapsed and not change the ownership/allowlist outcome"
+
+# 14. docs/sessions/s1/../s1/notes.txt: traversal that lands back in the
+#     same session folder is still a disallowed top-level file.
+assert_hook_exit "$HOOK" "$(build_input Write "$repo/docs/sessions/2026-01-01-sess/../2026-01-01-sess/notes.txt" "$repo")" 2 \
+  "traversal that resolves back into the same session should still be blocked as an out-of-set file"
+
+# 15. docs/sessions/../sessions/archive/x/log.md: traversal into archive/
+#     must still be blocked, not misread as a non-archive path.
+mkdir -p "$repo/docs/sessions/archive/x"
+assert_hook_exit "$HOOK" "$(build_input Write "$repo/docs/sessions/../sessions/archive/x/log.md" "$repo")" 2 \
+  "traversal into archive/ should still be blocked"
+assert_hook_stderr_contains "archive"
+
 echo "ok: session-guard.sh validated against all D7 rules"
 exit 0
