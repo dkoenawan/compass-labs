@@ -75,7 +75,11 @@ So a session can be planned, but every step after that is manual.
 
 ## Non-goals (for this issue)
 
-- Building every phase skill (backend, frontend, test domains). This issue defines the lifecycle they plug into, not their contents.
+Each non-goal that's real future work has a follow-up issue (see below).
+
+- Building each phase's skill and documents (Define, Design, Implement, Test). This issue defines the lifecycle they plug into, not their contents.
+- Session types other than Feature (Bugfix, Research).
+- Configuring Deploy per repo.
 - Automating stage transitions with hooks. Deferred until agent handoffs work manually.
 - Migrating existing session folders to a new structure.
 
@@ -93,21 +97,33 @@ So a session can be planned, but every step after that is manual.
 | Q7 | When does fold-back happen, and what happens to the session folder? | **At session close.** The log and phase documents are summarized into as-built docs, then the session folder is **archived**: kept for reference but no longer active. |
 | Q8 | Where does session state live? | **In the session folder.** GitHub only records key milestones. |
 | Q9 | What does "Deploy" mean? | **It depends on the repo.** Here it means releasing the plugin, run as its own session in a separate conversation. In a full-stack project it's a real deployment specific to that repo. The Deploy phase has to be configurable per repo, not hard-coded. |
+| Q4 | Which session types do we support first? | **Feature only.** Bugfix and Research are separate follow-up issues, to keep this issue's scope small. |
+| Q10 | What goes in the hierarchical log? | **Every handoff**: orchestrator → agent, agent → skill, skill → follow-up skill, and agent → agent. Also every decision. **Test for it:** after stopping for two days, someone can read the log and pick the session back up cleanly. The top of the log must show where things stand: current phase, active agent, next step, and open items. Exact format to be settled during design. |
+| Q11 | What are the standard documents for each phase? | **Start from what already exists**: the `plan` spec (`overview.md` + `template.md`) and `adr` records. Each phase's skill and documents are built one by one in its own follow-up issue. |
+| Q12 | Where do archived sessions go? | **`docs/sessions/archive/`.** |
+| Q13 | Which milestones get mirrored to GitHub? | **One per SDLC phase**: Define, Design, Implement, Test, Deploy, Close. This replaces the 11-label `stage:*` taxonomy. Go more granular only if this turns out too coarse. The mechanism (labels vs. project status field) is decided during design. |
+| Q14 | How does a repo tell the Deploy phase what "deploy" means? | **Deferred.** Options are a config file, a skill specific to the repo, a Taskfile target, or `CLAUDE.md`. Tracked as a follow-up issue. |
 
-## Open questions
+## Rule: future problems become tracked issues
 
-| # | Question | Notes |
+Anything we call "a future problem" becomes a GitHub issue (or a task in a GitHub project) before the session moves on. The issue links back to this session so that, when priorities change later, anyone can see where it came from. The follow-up table below records each one.
+
+## Follow-up issues
+
+| Issue | From | Scope |
 |---|---|---|
-| Q4 | Which session types (workflows) do we support first? | Leaning Feature + Bugfix, with Research second. |
-| Q10 | What does the hierarchical log look like? | For example: session → phase → entry, with a running summary at the top of the most important decisions and changes (Problem 2.6). Still needs a precise structure and clear rules for what goes into the summary and what goes into entries. |
-| Q11 | What are the standard documents for each phase? | Define → requirements. Design → design doc (plus ADRs?). Implement / Test / Deploy → to be decided. This list becomes the first version of the file set (Q5). |
-| Q12 | Where do archived sessions go, and how are they marked? | For example, `docs/sessions/archive/` or a status flag. Archived sessions must not get mixed up with active ones. |
-| Q13 | Which milestones get mirrored to GitHub? | For example: session opened, design approved, implementation merged, session closed. This replaces the earlier 11-label `stage:*` taxonomy. |
-| Q14 | How does a repo tell the Deploy phase what "deploy" means? | Config file, a skill specific to the repo, or a Taskfile target? |
+| #24 | Q4 | Bugfix session workflow (Reproduce → Fix → Verify → Close) |
+| #25 | Q4 | Research/spike session workflow |
+| #26 | Q3, Q11 | Define phase: requirements skill + standard doc (related: #23) |
+| #27 | Q3, Q11 | Design phase: design skill + standard doc, and removing `validate-spec.sh`'s hard-coded layer sections |
+| #28 | Q11 | Implement phase: backend/frontend/database/infra/ai-agent skills |
+| #29 | Q11 | Test phase: domain test skills + a result format the Close gate can check |
+| #30 | Q9, Q14 | Configure Deploy per repo (config vs. skill vs. Taskfile vs. `CLAUDE.md`) |
+| #31 | Non-goal | Hook-based stage transition automation |
 
 ## Success criteria (how we'll know a solution works)
 
-- A Feature session and a Bugfix session each run from intake to close without manual steps between phases.
+- A Feature session runs from intake to close without manual steps between phases.
 - Every session folder has the defined file set. Trying to create any other file is blocked.
 - Each phase's documents reflect current understanding at every point in the session, not just at the end.
 - The log's summary shows the key decisions at a glance, and its entries show what was tried and why things changed.
