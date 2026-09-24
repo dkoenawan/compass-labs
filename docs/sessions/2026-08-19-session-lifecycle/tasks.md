@@ -13,7 +13,7 @@ budget:
 ---
 
 - [x] Artifact templates: thin `requirements`, `design`, `tasks`, `verification`, `release`, `log` in `skills/session/templates/` [D1, D2 · REQ-014, REQ-007]
-- [ ] Feature workflow definition as data (`skills/session/workflows/feature.yaml`: phases, owner agent, artifact, milestone) [D3 · REQ-002]
+- [x] Feature workflow definition as data (`skills/session/workflows/feature.json`: phases, owner agent, artifact, milestone) [D3 · REQ-002]
 - [ ] Test harness `tests/run.sh` (plain bash, no dependencies) that feeds sample hook JSON to hook scripts and checks exit codes (depends on: 1)
 - [ ] Guard hook `hooks/session-guard.sh` + `hooks.json` PreToolUse `Write|Edit` entry: file set, ownership via `agent_type`, frozen artifacts via `log.md` frontmatter, archive. Includes tests [D7 · REQ-004, REQ-005, REQ-006] (depends on: 2, 3)
 - [ ] GitHub scripts `skills/session/scripts/gh-setup.sh` (labels, idempotent) and `gh-milestone.sh` (label swap + comment, idempotent, logs a pending sync and exits 0 on failure) [D5 · REQ-009, REQ-010]
@@ -29,4 +29,4 @@ budget:
 
 ## Deviations from design
 
-_None yet._
+- **Task 2**: workflow definition is `skills/session/workflows/feature.json`, not `feature.yaml` as task 2's own text and design.md's D3 mention it. Per the implement-agent brief: hooks are bash and `jq` is available in this repo, `yq` is not, so JSON keeps later hook tasks (4+) dependency-free. Schema is flat (`phases[]` with `phase`, `order`, `owner_agent`, `artifact`, `milestone`, `gh_label`, `conversational`, plus a `session_level` block for the D1 file allowlist and log ownership) so `jq '.phases[] | select(.phase=="…")'` is enough for later hooks. No separate README — the schema is documented via a `"$comment"` field inside the JSON.
