@@ -1,0 +1,31 @@
+---
+issue: 22
+branch: feat/session-lifecycle
+status: in-progress
+test_command: bash tests/run.sh
+last_skill_commit: null
+retry_counts:
+schedule: null
+budget:
+  max_tasks_per_run: 3
+  max_wall_clock_minutes: 90
+  stop_on_first_failure: true
+---
+
+- [ ] Artifact templates: thin `requirements`, `design`, `tasks`, `verification`, `release`, `log` in `skills/session/templates/` [D1, D2 · REQ-014, REQ-007]
+- [ ] Feature workflow definition as data (`skills/session/workflows/feature.yaml`: phases, owner agent, artifact, milestone) [D3 · REQ-002]
+- [ ] Test harness `tests/run.sh` (plain bash, no dependencies) that feeds sample hook JSON to hook scripts and checks exit codes (depends on: 1)
+- [ ] Guard hook `hooks/session-guard.sh` + `hooks.json` PreToolUse `Write|Edit` entry: file set, ownership via `agent_type`, frozen artifacts via `log.md` frontmatter, archive. Includes tests [D7 · REQ-004, REQ-005, REQ-006] (depends on: 2, 3)
+- [ ] GitHub scripts `skills/session/scripts/gh-setup.sh` (labels, idempotent) and `gh-milestone.sh` (label swap + comment, idempotent, logs a pending sync and exits 0 on failure) [D5 · REQ-009, REQ-010]
+- [ ] Orchestrator skill `skills/session/SKILL.md`: new / resume / status, main loop, question relay, milestone gate (commit → push → gh), follow-up issue creation, REQ↔VER check at the Test milestone [D3, D4, D5 · REQ-001, REQ-002, REQ-003, REQ-008, REQ-011, REQ-013] (depends on: 1, 2, 5)
+- [ ] SessionStart hook `hooks/session-start.sh`: when `agent_type` is the orchestrator, list sessions with `status: active|paused` from `log.md` frontmatter. Includes tests [D3 · REQ-008, REQ-015] (depends on: 1, 3)
+- [ ] Entry points `agents/orchestrator.md` (thin: `skills: [session]`) + `commands/session.md`. Verify `claude --agent compass-labs:orchestrator` resolves; if not, log a deviation [D3 · REQ-015] (depends on: 6)
+- [ ] Thin phase agents `agents/{define,design,implement,test,deploy,close}.md`: D4 contract, restricted tools, preloaded skill [D4 · REQ-002, REQ-003] (depends on: 6)
+- [ ] Thin `requirements` skill (EARS + Given/When/Then + ISO 29148 checks) and thin `verification` skill (VER table format) [D1c, D1 · REQ-014] (depends on: 1)
+- [ ] Close agent fold-back: `doc-maintainer` pass, "Origin: #N" line, `git mv` to `docs/sessions/archive/`, `status: archived` [D6 · REQ-012] (depends on: 9)
+- [ ] Retire the session-folder check in `hooks/validate-spec.sh` (replaced by the guard). Leave `plan` itself alone (#26/#27) [D7] (depends on: 4)
+- [ ] Docs: `CLAUDE.md` directory rules (add `agents/`), README "Using sessions in a repo" (three entry points + default-agent snippet) [D3 · REQ-015] (depends on: 8)
+
+## Deviations from design
+
+_None yet._

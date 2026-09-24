@@ -2,26 +2,25 @@
 session: 2026-08-19-session-lifecycle
 type: feature
 issue: 22
-phase: design
+phase: implement
 status: active
-milestone: define
+milestone: design
 active_agent: main (manual, since no orchestrator exists yet)
-next_step: "User decides D1a–c, D3, D5 in design.md (revision 2)"
+next_step: "User approves tasks.md order; then start task 1 (artifact templates)"
 ---
 # Session Log: Session Lifecycle (#22)
 
 > Format: D2 (accepted 2026-09-24). Only the orchestrator writes this file; for now that's the main session. Entries are append-only.
-> Artifacts: [`overview.md`](overview.md) (problem statement, becomes `requirements.md` per D1) · [`design.md`](design.md) · Follow-ups: #24–#31
+> Artifacts: [`requirements.md`](requirements.md) (frozen) · [`design.md`](design.md) (frozen) · [`tasks.md`](tasks.md) · Follow-ups: #24–#32
 
 ## Open items
 
-- D1a–c: one artifact per phase, linked by ID, and the requirements standard
-- D3: verify `claude --agent` works with a plugin-namespaced agent
-- D5: GitHub milestone table and script
-- Once D1c is decided: rename `overview.md` → `requirements.md` and rewrite the success criteria as `REQ-*`
+- Task 8: verify `claude --agent` works with a plugin-namespaced agent
+- Deploy for this repo is a plugin release in a separate session (Q9). The version bump isn't part of Implement
 
 ## Key decisions
 
+- **2026-09-24**: ✅ Design milestone reached. D1a (one artifact per phase; an artifact can grow into a folder of native artifacts), D1b (ID links), D1c (EARS as the default; research in #32), D3 (three entry points, documented in the README), D5 accepted. No separate implementation guide: `tasks.md` is the Implement artifact.
 - **2026-09-24**: D2 (log format), D4 (phase agent contract, including the Q6 amendment: only the orchestrator writes the log), D6 (fold-back + archive), D7 (enforcement hook) accepted.
 - **2026-09-24**: ✅ Define milestone reached. C7 corrected: subagents can nest; the real limit is that they can't ask the user questions.
 - **2026-09-24**: Deferred work goes into tracked issues (#24–#31), each linked back to this session.
@@ -101,3 +100,18 @@ next_step: "User decides D1a–c, D3, D5 in design.md (revision 2)"
 - D7 extended: also blocks writes to frozen artifacts (**needs user confirmation**, since D7 was already accepted).
 - Added a "What gets built" section that separates what's in scope for #22 from what's in #26–#30.
 - Converted this log to the D2 format.
+
+### 2026-09-24 — user — decision: design review round 2
+- **D1a accepted**, with a refinement: as phases mature, an artifact may become a folder of native artifacts (e.g. a Playwright report) that the MD file links to. Recorded on #29.
+- **D1b, D1c accepted.** EARS is the default. Deeper research is deferred to **#32**.
+- **D3 accepted.** All three entry points go in the README.
+- **D5 accepted.** No objection to the D7 freeze extension or the Q6 amendment.
+- User asked: "Do you need a separate implementation guide, or can we proceed?" Answer: no separate guide. By D1, `tasks.md` is the Implement artifact.
+
+### 2026-09-24 — main — note: Define artifact brought in line with D1
+- Renamed `overview.md` → `requirements.md`, and rewrote the success criteria as REQ-001 to REQ-015 (EARS + Given/When/Then). The problem statement and decisions are unchanged. This was done under this entry's decision; the guard doesn't exist yet.
+- Added a traceability table to `design.md` (D1–D7 → REQ).
+
+### 2026-09-24 — main — milestone: ✅ Design complete
+- `design.md` frozen. `tasks.md` created (13 tasks, task-executor format, each tagged with D-ids and REQ-ids).
+- **Handoff:** Design → Implement (main session, manual).

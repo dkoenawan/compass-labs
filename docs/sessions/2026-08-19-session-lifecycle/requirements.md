@@ -1,6 +1,6 @@
-# Problem Statement: Session Lifecycle
+# Requirements: Session Lifecycle
 
-> Date: 2026-08-19 | Revised: 2026-09-24 | Status: **Approved** — Define milestone reached 2026-09-24. Design continues in [`design.md`](design.md); history is in [`log.md`](log.md).
+> Date: 2026-08-19 | Revised: 2026-09-24 | Status: **Approved and frozen** (Define milestone, 2026-09-24). Renamed from `overview.md` per D1, and the success criteria were converted into `REQ-*` items (see [Requirements](#requirements)). Design: [`design.md`](design.md) · History: [`log.md`](log.md)
 > Relates to: Issue #22 — Design and implement full session lifecycle (GitHub-tracked, Diataxis-linked)
 
 ## Why this is a problem statement, not a spec
@@ -121,12 +121,24 @@ Anything we call "a future problem" becomes a GitHub issue (or a task in a GitHu
 | #30 | Q9, Q14 | Configure Deploy per repo (config vs. skill vs. Taskfile vs. `CLAUDE.md`) |
 | #31 | Non-goal | Hook-based stage transition automation |
 
-## Success criteria (how we'll know a solution works)
+## Requirements
 
-- A Feature session runs from intake to close without manual steps between phases.
-- Every session folder has the defined file set. Trying to create any other file is blocked.
-- Each phase's documents reflect current understanding at every point in the session, not just at the end.
-- The log's summary shows the key decisions at a glance, and its entries show what was tried and why things changed.
-- After close, as-built docs are updated with no session narrative, and the session folder is archived.
-- A session paused mid-phase resumes correctly in a new conversation using only what's in the session folder.
-- No agent or skill file does more than one job. Anything that grew past that has been split.
+EARS syntax (the default standard per D1c). Each requirement has one acceptance criterion in Given/When/Then form. These replace the earlier "Success criteria" list. C8 (single responsibility) stays a constraint because it can't be tested as a requirement.
+
+| ID | Requirement | Acceptance criterion |
+|---|---|---|
+| REQ-001 | When a user starts a Feature session, the orchestrator shall create exactly one session folder and link it to exactly one GitHub issue. | Given no session, when `/compass:session new` runs, then one folder exists with `log.md` + a thin `requirements.md`, and `log.md` frontmatter has an `issue`. |
+| REQ-002 | The orchestrator shall run the Feature workflow (Define → Design → Implement → Test → Deploy → Close) by handing off to one phase agent per phase, with no manual steps between phases other than milestone approval. | Given an active session, when each milestone is approved, then the next phase agent is started without further user instructions. |
+| REQ-003 | When a phase agent returns `needs_input`, the orchestrator shall ask the user its questions and pass the answers back to the same agent. | Given the Define agent returns questions, when the user answers, then the same agent continues with those answers. |
+| REQ-004 | If a write targets a file outside the phase artifact set of a session folder, the guard hook shall block it. | Given an active session, when an agent writes `docs/sessions/{id}/notes.md`, then the write is blocked with a reason. |
+| REQ-005 | If an agent writes a session artifact it doesn't own, the guard hook shall block it. | Given the Define agent, when it writes `design.md`, then the write is blocked. |
+| REQ-006 | If a write targets a frozen artifact or anything under `docs/sessions/archive/`, the guard hook shall block it. | Given `requirements.md` frozen at the Define milestone, when any agent edits it, then the edit is blocked. |
+| REQ-007 | The orchestrator shall record every handoff, decision, attempt and milestone in `log.md` in the D2 format. | Given a completed phase, when `log.md` is read, then every agent invocation has a `handoff` entry and every decision appears under Key decisions. |
+| REQ-008 | When a session is resumed in a new conversation, the orchestrator shall restore phase, next step, open items and key decisions using only the session folder. | Given a paused session and a fresh conversation, when the user resumes it, then the orchestrator's recap matches `log.md` and work continues in the right phase. |
+| REQ-009 | When a milestone is approved, the orchestrator shall commit and push the session folder, then update the issue's `phase:*` label and post a milestone comment. | Given the Design milestone is approved, then the push happens before the `gh` calls, the issue has `phase:implement` only, and the comment links resolve. |
+| REQ-010 | While GitHub is unreachable, the orchestrator shall continue the session locally and sync at the next milestone. | Given `gh` fails at a milestone, then the session continues, `log.md` records a pending sync, and the next milestone applies it. |
+| REQ-011 | When the Test milestone is requested, the orchestrator shall refuse it unless every `REQ-*` has a passing `VER-*`. | Given one REQ with no passing VER, when Test completion is requested, then it's refused and the REQ is named. |
+| REQ-012 | When a session closes, the Close agent shall update as-built docs without session narrative and move the session folder to `docs/sessions/archive/`. | Given a closed session, then `docs/reference/` or the registry changed, contains no session narrative, and the folder is under `archive/`. |
+| REQ-013 | When work is deferred, the orchestrator shall create a GitHub issue that links back to the session. | Given a deferral decision, then an issue exists with parent issue, session path and decision, and it's listed in the session's follow-ups. |
+| REQ-014 | Each phase artifact shall refer to earlier artifacts by ID (REQ → DES → task → VER) instead of repeating their content. | Given `tasks.md`, then every task names the design item it implements, and every design item names the REQ it covers. |
+| REQ-015 | The plugin shall provide three orchestrator entry points (repo default agent, `claude --agent`, `/compass:session`), documented in the README. | Given a fresh install, when each entry point is used, then the orchestrator starts and lists active sessions. |

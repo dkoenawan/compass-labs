@@ -1,8 +1,19 @@
 # Design: Session Lifecycle
 
-> Phase: Design | Started: 2026-09-24 | Status: Draft, revision 2
-> Accepted: D2, D4 (including the Q6 amendment), D6, D7. Revised after review: D1, D3, D5.
-> Problem statement: [`overview.md`](overview.md) · Session history: [`log.md`](log.md)
+> Phase: Design | Started: 2026-09-24 | Status: **Approved and frozen** (Design milestone, 2026-09-24). D1–D7 accepted.
+> Requirements: [`requirements.md`](requirements.md) · Tasks: [`tasks.md`](tasks.md) · Session history: [`log.md`](log.md)
+
+## Traceability (design item → requirements)
+
+| Design item | Covers |
+|---|---|
+| D1 Session folder / artifacts | REQ-004, REQ-014 |
+| D2 Log format | REQ-007, REQ-008 |
+| D3 Orchestrator | REQ-001, REQ-002, REQ-008, REQ-011 (milestone gate), REQ-015 |
+| D4 Phase agent contract | REQ-002, REQ-003 |
+| D5 GitHub integration | REQ-009, REQ-010, REQ-013 |
+| D6 Fold-back and archive | REQ-012 |
+| D7 Enforcement | REQ-004, REQ-005, REQ-006 |
 
 Scope for this issue is the **Feature** session type only (Q4). This design fixes the *shape* of every artifact and component. How each phase's content gets filled in, beyond a thin first version, is built out in #26–#30.
 
@@ -42,6 +53,8 @@ docs/sessions/{date}-{slug}/
 
 Close produces no session file. Its output is the as-built docs plus the archive move (D6).
 
+**An artifact can grow into a folder** (accepted with D1a). As each phase is built out (#26–#30), its single Markdown file may become a folder in the session holding several artifacts in their native formats. The Markdown file stays as the entry point and **links to** those artifacts rather than copying them in. Example: with Playwright, the Test phase becomes `verification.md` + `verification/` holding the Playwright HTML/JSON report, and each `VER-*` row links to its results in the report. The D7 allowlist grows one phase folder at a time as each is introduced. The pattern stays the same: one owner, one entry-point file, and native artifacts beside it.
+
 ### How the artifacts link to each other
 
 ```
@@ -65,7 +78,7 @@ Every requirement has to be traceable to at least one test. This gives the Close
 | `release.md` | Deploy / `deploy` agent | **per-repo deploy config** (#30) | Version / target · What changed (links to `REQ-*`) · Deploy steps run · How it was confirmed working · Rollback | Created at Deploy start → frozen at the Deploy milestone | New. In this repo: `task release` | #30 |
 | `log.md` | All phases / orchestrator | D2 | Frontmatter state · Open items · Key decisions · Entries | Created at session start → appended throughout → frozen at archive | — | this issue |
 
-### Requirements standard (proposal)
+### Requirements standard (accepted as the **default**; deeper research tracked in a follow-up issue)
 
 - **IDs:** `REQ-001`, `REQ-002`, … They're never reused, and dropped requirements are struck through rather than deleted.
 - **Syntax: EARS** (Easy Approach to Requirements Syntax). It's lightweight, and each requirement is one testable sentence. Examples: *"When a session is resumed, the orchestrator shall display the current phase and next step."* · *"The hook shall block writes to files outside the session file set."*
@@ -74,7 +87,7 @@ Every requirement has to be traceable to at least one test. This gives the Close
 
 ### This session
 
-`overview.md` becomes `requirements.md` once the standard is agreed. Its problem statement and constraints move across as they are, and the success criteria get rewritten as `REQ-*` items with acceptance criteria.
+Done 2026-09-24: `overview.md` renamed to `requirements.md`, and the success criteria rewritten as REQ-001 to REQ-015.
 
 ## D2 — Log format ✅ accepted
 
@@ -89,6 +102,8 @@ State lives in frontmatter (`session`, `type`, `issue`, `phase`, `status`, `mile
 | **Default for the repo** | Set `"agent": "compass-labs:orchestrator"` in the project's `.claude/settings.json`. Plain `claude` then starts as the orchestrator. | Repos that run everything through sessions. |
 | **Explicit** | `claude --agent compass-labs:orchestrator` | Start a session-driven conversation on demand. |
 | **From any conversation** | `/compass:session` (also `/compass:session new …`, `resume [slug]`, `status`) | You're already in a normal Claude conversation. |
+
+All three entry points are documented in the **README** ("Using sessions in a repo"), including the snippet for setting the repo default agent (REQ-015).
 
 `agents/orchestrator.md` is a thin wrapper: `skills: [session]`, plus tools that include `Agent`, `Bash(gh *)`, `Read`, `Edit`, `Write`. The command `commands/session.md` loads the same skill. No logic is duplicated.
 
@@ -215,12 +230,16 @@ A plugin `PreToolUse` hook on `Write|Edit`. Under `docs/sessions/{id}/` it allow
 
 ---
 
-## Decisions needed
+## Decisions (all accepted 2026-09-24)
 
-| # | Decision | Recommendation |
+| # | Decision | Notes |
 |---|---|---|
-| D1a | One artifact per phase: `requirements` / `design` / `tasks` / `verification` / `release` + `log` | Yes |
-| D1b | Artifacts link by ID (`REQ` → `DES` → task → `VER`); Close gate checks every REQ has a passing VER | Yes |
-| D1c | Requirements standard: EARS + Given/When/Then + ISO 29148 quality checks | Yes, or name the standard you want |
-| D3 | One `session` skill, entered through the repo default agent, `--agent`, or `/compass:session`; session list provided by a `SessionStart` hook | Yes (verify `--agent` works with plugin-namespaced agents) |
-| D5 | Milestone table + push-before-`gh` order + idempotent script that can catch up later | Yes |
+| D1a | One artifact per phase: `requirements` / `design` / `tasks` / `verification` / `release` + `log` | An artifact can grow into a folder of native artifacts, with the MD file linking to them |
+| D1b | Artifacts link by ID (REQ → DES → task → VER); the Test milestone checks every REQ has a passing VER | |
+| D1c | Requirements: EARS + Given/When/Then + ISO 29148 checks, as the **default** | Deeper research is a follow-up issue |
+| D2 | Log format | |
+| D3 | One `session` skill with three entry points and a `SessionStart` session list | Document in the README. Verify `--agent` with a plugin-namespaced agent during implementation |
+| D4 | Phase agent contract; only the orchestrator writes the log | |
+| D5 | Milestone table, push before `gh`, idempotent script that can catch up later | |
+| D6 | Fold-back + `git mv` archive + "Origin" line in as-built docs | |
+| D7 | Guard hook: file set, ownership, frozen artifacts, archive | Freeze check added in revision 2. No objection raised |
