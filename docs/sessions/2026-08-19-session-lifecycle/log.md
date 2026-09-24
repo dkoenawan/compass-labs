@@ -6,7 +6,7 @@ phase: implement
 status: active
 milestone: design
 active_agent: "compass-labs:implement (stand-in: Sonnet general-purpose subagent)"
-next_step: "Implement batch 3: fix guard path traversal + skill plugin-root paths, then tasks 7-9"
+next_step: "Implement batch 4: tasks 10-14 (phase skills, close fold-back, validate-spec retire, docs, commit guard)"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -15,6 +15,7 @@ next_step: "Implement batch 3: fix guard path traversal + skill plugin-root path
 
 ## Open items
 
+- Unconfirmed: `skills:` preload may not inject skill content when an agent runs as the main session (`--agent`). Evidence so far is only the model's own report. Agents have an explicit read-the-file fallback. Confirm before filing anything
 - Testing must use `claude --plugin-dir .`: this Claude session loads compass-labs v1.0.0 from the plugin cache, so the repo's new hooks aren't active here
 - Task 8: verify `claude --agent` works with a plugin-namespaced agent
 - Deploy for this repo is a plugin release in a separate session (Q9). The version bump isn't part of Implement
@@ -164,3 +165,26 @@ next_step: "Implement batch 3: fix guard path traversal + skill plugin-root path
 - **Defect 2, repo-relative paths in `SKILL.md`:** script and template paths (`bash skills/session/scripts/…`) only work inside compass-labs. In a repo that installs the plugin they must resolve from the plugin root (as `task-executor` does). Breaks REQ-001 outside this repo.
 - Otherwise accepted. Noted for later: the subagent flagged that `session-commit-guard` (task 14) should share the "uncommitted decision entry" check with `session-guard`, and that `check-traceability.sh` depends on column order (#29).
 - The session loads plugin v1.0.0 from the cache, so the new hooks aren't active here. Test phase: `claude --plugin-dir .`.
+
+### 2026-09-24 — main — handoff: orchestrator → implement agent (batch 3: 2 fixes + tasks 7–9)
+- **Output:** `520ba57`, `b847ac2`, `59eafd3`, `f4b547a`, `691b713`; `bash tests/run.sh` 8/8 pass.
+
+### 2026-09-24 — implement — attempt: guard path-traversal fix (`520ba57`)
+- Path cleanup is now done as text in pure bash (no filesystem dependency); `cwd` is resolved physically to match git's toplevel. 4 regression tests.
+
+### 2026-09-24 — implement — attempt: plugin-root paths in SKILL.md (`b847ac2`)
+- Every plugin path is now `${CLAUDE_PLUGIN_ROOT}/skills/session/…`. `docs/sessions/…` paths stay repo-relative.
+
+### 2026-09-24 — implement — attempt: SessionStart hook (`59eafd3`)
+- `hooks/session-start.sh` lists active/paused sessions (never `archive/`) for the orchestrator only. Always exits 0. 7 tests.
+
+### 2026-09-24 — implement — attempt: entry points (`f4b547a`)
+- `agents/orchestrator.md` + `commands/session.md`. `claude --plugin-dir . --agent compass-labs:orchestrator -p …` → `ORCHESTRATOR_OK session`. **P8 confirmed.** The agent said the `skills:` preload content wasn't in its context, so an explicit read-the-file fallback was added and re-checked.
+
+### 2026-09-24 — implement — attempt: thin phase agents (`691b713`)
+- `agents/{define,design,implement,test,deploy,close}.md`. Shared D4 contract in `skills/session/reference/phase-agent-contract.md`, read explicitly. Tools scoped per phase; Close preloads `doc-maintainer`.
+
+### 2026-09-24 — main — note: batch 3 review
+- Checked: commits scoped correctly, 8/8 tests pass on rerun, and the traversal probe is now blocked (exit 2).
+- **Measured the `agent_type` of a plugin subagent**, because the docs summary claimed `plugin:compass-labs:<name>`. Headless run with a temporary SubagentStart/PreToolUse logging hook: `{"agent_type":"compass-labs:implement"}` for both events. It matches `feature.json` `owner_agent`, so guard ownership works for real phase agents.
+- The preload finding is recorded as **unconfirmed** (model self-report, `--agent` main-session mode only). Not filed as an issue yet.
