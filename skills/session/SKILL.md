@@ -9,6 +9,8 @@ You are the orchestrator (D3). You run in the **main session** — never as a su
 
 Everything below is the Feature workflow. Other session types (Bugfix, Research) get their own workflow files later (#24/#25) and reuse this same skill.
 
+**Path note:** every script and template this skill references lives inside the plugin, not the consuming repo. Always resolve them as `${CLAUDE_PLUGIN_ROOT}/skills/session/…` — Claude Code substitutes `${CLAUDE_PLUGIN_ROOT}` with the plugin's actual install directory wherever it appears in a skill's own markdown, so this works whether you're developing the plugin itself or running it installed in some other repo. Never write a bare `skills/session/…` path — that only happens to resolve while developing inside compass-labs itself, and silently breaks everywhere else. `docs/sessions/…` paths, by contrast, are always repo-relative (they're the *consuming* repo's own session folders, not plugin files) and stay as-is.
+
 ## Mode dispatch (Phase 0)
 
 | Invocation | Mode |
@@ -18,23 +20,23 @@ Everything below is the Feature workflow. Other session types (Bugfix, Research)
 | `/compass:session resume [slug]` | **Resume** flow. No slug → show the list and ask |
 | `/compass:session status [--all]` | **Status**: list sessions (`--all` includes archived) |
 
-To list sessions: scan `docs/sessions/*/log.md` frontmatter for `status: active` or `status: paused` (`--all` also includes `archived`). A `SessionStart` hook (`hooks/session-start.sh`, task 6's sibling) injects this list as context when you start as the orchestrator agent — if that context isn't present, scan the folders yourself.
+To list sessions: scan `docs/sessions/*/log.md` frontmatter for `status: active` or `status: paused` (`--all` also includes `archived`). A `SessionStart` hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh`, task 7) injects this list as context when you start as the orchestrator agent — if that context isn't present, scan the folders yourself.
 
 ## One-time setup
 
 Run once per repo, the first time `/compass:session` is used in it:
 
-1. `bash skills/session/scripts/gh-setup.sh` — creates every `phase:*` and `type:*` label (idempotent; safe to re-run).
-2. Copy the commit-point rule into the repo: **TODO (task 14)** — `skills/session/templates/rules/compass-sessions.md` → `.claude/rules/compass-sessions.md`. Until task 14 lands, skip this step; it's not yet blocking.
+1. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-setup.sh` — creates every `phase:*` and `type:*` label (idempotent; safe to re-run).
+2. Copy the commit-point rule into the repo: **TODO (task 14)** — `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` → `.claude/rules/compass-sessions.md` (a repo-relative destination — rules live in the consuming repo). Until task 14 lands, skip this step; it's not yet blocking.
 
 ## New session flow
 
 1. **Issue**: ask for an existing issue number, or create one (`gh issue create --title … --label type:feature`). Store the number.
 2. **Slug**: derive `{today}-{kebab-title}`. Create `docs/sessions/{slug}/`.
 3. **Folder, in order** (the guard hook requires log.md to exist before anything else — D7):
-   - `log.md` from `skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`).
-   - `requirements.md` from `skills/session/templates/requirements.md` (thin — Define fills it in).
-4. Commit + push (`docs(sessions): open session #{issue}`), **then** `bash skills/session/scripts/gh-milestone.sh {issue} none define {comment-file}` where the comment file says "Session opened." — this applies `phase:define` + `type:feature` and posts the opening comment (D5, order: commit → push → gh).
+   - `log.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`).
+   - `requirements.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/requirements.md` (thin — Define fills it in).
+4. Commit + push (`docs(sessions): open session #{issue}`), **then** `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} none define {comment-file}` where the comment file says "Session opened." — this applies `phase:define` + `type:feature` and posts the opening comment (D5, order: commit → push → gh).
 5. Enter the **main loop** at `define`.
 
 ## Resume flow
@@ -52,15 +54,15 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
    - Show the artifact (or a summary of it) to the user. `AskUserQuestion`: approve / adjust / rethink.
    - **Adjust/rethink** → relay back to the agent (still the same phase; not a new handoff phase).
    - **Approve**:
-     a. **Test milestone only** (REQ-011): before anything else, run `bash skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
-     b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
+     a. **Test milestone only** (REQ-011): before anything else, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
+     b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `${CLAUDE_PLUGIN_ROOT}/skills/session/workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
      c. Append a `milestone` entry (D2).
      d. `git commit` + `git push` (D5 order — commit and push *before* any `gh` call, so links resolve).
-     e. `bash skills/session/scripts/gh-milestone.sh {issue} {from-phase} {to-phase} {comment-file}`.
+     e. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} {from-phase} {to-phase} {comment-file}`.
      f. If its output contains a `SYNC_PENDING:` line, log a `note` entry quoting it ("GitHub sync pending") — do **not** retry inline; the next milestone gate re-runs `gh-milestone.sh` first, per D5's "next milestone runs any pending sync first."
-   - Move to the next phase in `workflows/feature.json`. If the completed phase was `close`, the session is done — nothing to hand off.
+   - Move to the next phase in `feature.json`. If the completed phase was `close`, the session is done — nothing to hand off.
 
-**Milestone-key note:** `log.md` frontmatter `milestone` holds the **phase key** of the last completed milestone (`none | define | design | implement | test | deploy | close`), not a display label. `workflows/feature.json`'s own `phases[].milestone` field *is* the display label ("Define complete", …) — use it only for user-facing text and `gh-milestone.sh` comment bodies. The guard hook (`hooks/session-guard.sh`) depends on this key to compute which artifacts are frozen — see `skills/session/templates/log.md`'s frontmatter comment.
+**Milestone-key note:** `log.md` frontmatter `milestone` holds the **phase key** of the last completed milestone (`none | define | design | implement | test | deploy | close`), not a display label. `feature.json`'s own `phases[].milestone` field *is* the display label ("Define complete", …) — use it only for user-facing text and `gh-milestone.sh` comment bodies. The guard hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-guard.sh`) depends on this key to compute which artifacts are frozen — see `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`'s frontmatter comment.
 
 ## Follow-up issue creation (REQ-013)
 
@@ -75,16 +77,18 @@ Log a `decision` entry noting the new issue number, and list it under `log.md`'s
 
 ## Atomic commits (D8)
 
-One commit per `decision`/`milestone` log entry, and one per ticked `tasks.md` task — see `.claude/rules/compass-sessions.md` (or the template copy, until task 14 wires it in) and `hooks/session-commit-guard.sh` (task 14). You are the one writing `log.md`, so you are the one this rule binds most: never let a turn end with a logged decision/milestone whose artifact changes aren't committed yet.
+One commit per `decision`/`milestone` log entry, and one per ticked `tasks.md` task — see `.claude/rules/compass-sessions.md` (repo-relative; the template copy is at `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` until task 14 wires the copy step in) and `${CLAUDE_PLUGIN_ROOT}/hooks/session-commit-guard.sh` (task 14). You are the one writing `log.md`, so you are the one this rule binds most: never let a turn end with a logged decision/milestone whose artifact changes aren't committed yet.
 
 ## Scripts this skill uses
 
+All under `${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/`:
+
 | Script | Purpose |
 |---|---|
-| `skills/session/scripts/gh-setup.sh` | One-time label creation (D5) |
-| `skills/session/scripts/gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
-| `skills/session/scripts/check-traceability.sh` | REQ-011 gate: every `REQ-*` has a passing `VER-*` |
+| `gh-setup.sh` | One-time label creation (D5) |
+| `gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
+| `check-traceability.sh` | REQ-011 gate: every `REQ-*` has a passing `VER-*` |
 
 ## C8 note
 
-If this file grows past ~250 lines as later issues (#26–#30) deepen each phase, move the detail into `skills/session/reference/*.md` and link it from here — don't let this file take on more than one job (orchestration) at a time.
+If this file grows past ~250 lines as later issues (#26–#30) deepen each phase, move the detail into `${CLAUDE_PLUGIN_ROOT}/skills/session/reference/*.md` and link it from here — don't let this file take on more than one job (orchestration) at a time.
