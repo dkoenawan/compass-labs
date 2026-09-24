@@ -2,11 +2,11 @@
 session: 2026-08-19-session-lifecycle
 type: feature
 issue: 22
-phase: implement
+phase: test
 status: active
-milestone: design
+milestone: implement
 active_agent: main (orchestrator)
-next_step: "User approves the Implement milestone (opens the PR, phase:implement → phase:test); then Test phase with claude --plugin-dir ."
+next_step: "Test phase: live smoke tests with claude --plugin-dir . and verification.md (VER-* for REQ-001..016)"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -22,6 +22,7 @@ next_step: "User approves the Implement milestone (opens the PR, phase:implement
 
 ## Key decisions
 
+- **2026-09-24**: ✅ Implement milestone approved by the user ("Approve, open PR"). `tasks.md` frozen with 14/14 done. PR opened, `phase:test`.
 - **2026-09-24**: Atomic commits are a rule: one commit per decision/milestone entry and per ticked task. Enforced by a rule file plus a `Stop` commit guard (D8, REQ-016). A global rule was added to `~/.claude/rules/atomic-commits.md`.
 - **2026-09-24**: ✅ Design milestone reached. D1a (one artifact per phase; an artifact can grow into a folder of native artifacts), D1b (ID links), D1c (EARS as the default; research in #32), D3 (three entry points, documented in the README), D5 accepted. No separate implementation guide: `tasks.md` is the Implement artifact.
 - **2026-09-24**: D2 (log format), D4 (phase agent contract, including the Q6 amendment: only the orchestrator writes the log), D6 (fold-back + archive), D7 (enforcement hook) accepted.
@@ -211,3 +212,12 @@ next_step: "User approves the Implement milestone (opens the PR, phase:implement
 - Checked: commit scope, 13/13 tests pass on rerun, 14/14 tasks ticked, `hooks.json` = SessionStart + PreToolUse + Stop, README/CLAUDE.md changes only add content.
 - **Not logged as a milestone:** the agent proposed "Implement complete", but a milestone needs user approval at the gate, and D5 requires an open PR.
 - Carried to Test (from the agent's notes): a live `claude --plugin-dir .` smoke test of all three hooks through Claude Code itself; `--agent` resolution for every phase agent; a clean re-test of the `skills:` preload question; a full Close sequence in a throwaway session; no cleanup yet for the commit guard's counter files in `$TMPDIR`.
+
+### 2026-09-24 — main — milestone: ✅ Implement complete
+- User approved at the gate: "Approve, open PR".
+- `tasks.md` frozen (14/14). Tests 13/13 pass. The PR is opened after this commit is pushed (D5 order).
+- **Handoff:** Implement → Test. Test runs with `claude --plugin-dir .` (the installed plugin is still v1.0.0).
+
+---
+
+## Phase: Test
