@@ -207,3 +207,20 @@ esac
 STUB
   chmod +x "$bin_dir/gh"
 }
+
+# make_path_without_jq <bin_dir>
+# Populates bin_dir with symlinks to every common shell utility a hook
+# script needs EXCEPT jq, so `PATH="$(make_path_without_jq /tmp/x)"`-style
+# usage (via `PATH="$bin_dir"`) exercises a hook's fail-open-without-jq
+# behavior without actually uninstalling jq from the machine. Prints
+# nothing; the caller does `bin_dir="$(mktemp -d)"; make_path_without_jq
+# "$bin_dir"; PATH="$bin_dir" <command>`.
+make_path_without_jq() {
+  local bin_dir="$1"
+  mkdir -p "$bin_dir"
+  local cmd path
+  for cmd in bash git awk sed grep cat basename dirname mktemp rm mkdir cp mv chmod head tr printf; do
+    path="$(command -v "$cmd" 2>/dev/null || true)"
+    [[ -n "$path" ]] && ln -sf "$path" "$bin_dir/$cmd"
+  done
+}

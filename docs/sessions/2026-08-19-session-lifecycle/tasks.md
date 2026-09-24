@@ -18,7 +18,7 @@ budget:
 - [x] Guard hook `hooks/session-guard.sh` + `hooks.json` PreToolUse `Write|Edit` entry: file set, ownership via `agent_type`, frozen artifacts via `log.md` frontmatter, archive. Includes tests [D7 · REQ-004, REQ-005, REQ-006] (depends on: 2, 3)
 - [x] GitHub scripts `skills/session/scripts/gh-setup.sh` (labels, idempotent) and `gh-milestone.sh` (label swap + comment, idempotent, logs a pending sync and exits 0 on failure) [D5 · REQ-009, REQ-010]
 - [x] Orchestrator skill `skills/session/SKILL.md`: new / resume / status, main loop, question relay, milestone gate (commit → push → gh), follow-up issue creation, REQ↔VER check at the Test milestone [D3, D4, D5 · REQ-001, REQ-002, REQ-003, REQ-008, REQ-011, REQ-013] (depends on: 1, 2, 5)
-- [ ] SessionStart hook `hooks/session-start.sh`: when `agent_type` is the orchestrator, list sessions with `status: active|paused` from `log.md` frontmatter. Includes tests [D3 · REQ-008, REQ-015] (depends on: 1, 3)
+- [x] SessionStart hook `hooks/session-start.sh`: when `agent_type` is the orchestrator, list sessions with `status: active|paused` from `log.md` frontmatter. Includes tests [D3 · REQ-008, REQ-015] (depends on: 1, 3)
 - [ ] Entry points `agents/orchestrator.md` (thin: `skills: [session]`) + `commands/session.md`. Verify `claude --agent compass-labs:orchestrator` resolves; if not, log a deviation [D3 · REQ-015] (depends on: 6)
 - [ ] Thin phase agents `agents/{define,design,implement,test,deploy,close}.md`: D4 contract, restricted tools, preloaded skill [D4 · REQ-002, REQ-003] (depends on: 6)
 - [ ] Thin `requirements` skill (EARS + Given/When/Then + ISO 29148 checks) and thin `verification` skill (VER table format) [D1c, D1 · REQ-014] (depends on: 1)
