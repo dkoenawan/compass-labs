@@ -5,8 +5,8 @@ issue: 22
 phase: implement
 status: active
 milestone: design
-active_agent: "compass-labs:implement (stand-in: Sonnet general-purpose subagent)"
-next_step: "Implement batch 4: tasks 10-14 (phase skills, close fold-back, validate-spec retire, docs, commit guard)"
+active_agent: main (orchestrator)
+next_step: "User approves the Implement milestone (opens the PR, phase:implement → phase:test); then Test phase with claude --plugin-dir ."
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -188,3 +188,26 @@ next_step: "Implement batch 4: tasks 10-14 (phase skills, close fold-back, valid
 - Checked: commits scoped correctly, 8/8 tests pass on rerun, and the traversal probe is now blocked (exit 2).
 - **Measured the `agent_type` of a plugin subagent**, because the docs summary claimed `plugin:compass-labs:<name>`. Headless run with a temporary SubagentStart/PreToolUse logging hook: `{"agent_type":"compass-labs:implement"}` for both events. It matches `feature.json` `owner_agent`, so guard ownership works for real phase agents.
 - The preload finding is recorded as **unconfirmed** (model self-report, `--agent` main-session mode only). Not filed as an issue yet.
+
+### 2026-09-24 — main — handoff: orchestrator → implement agent (batch 4: tasks 10–14)
+- **Output:** `a541727`, `997ce1d`, `3c216c1`, `74cf0dc`, `57678f4`; `bash tests/run.sh` 13/13 pass; `tasks.md` 14/14 ticked.
+
+### 2026-09-24 — implement — attempt: requirements/verification skills (`a541727`)
+- `skills/requirements/` (EARS, REQ-nnn, 29148 checklist) and `skills/verification/` (VER table; warns that its column order is relied on by `check-traceability.sh`). Preloaded by the Define and Test agents.
+
+### 2026-09-24 — implement — attempt: Close fold-back + archive ordering (`997ce1d`)
+- `reference/close-foldback.md`, `scripts/archive-session.sh`. The Close milestone order in SKILL.md: log entry + `status: archived` → commit → `git mv` → commit → push → gh. Also fixed task 9's `close.md`, which had the Close agent doing the `git mv` itself (it can't, because the orchestrator must commit `status: archived` first).
+
+### 2026-09-24 — implement — attempt: `validate-spec.sh` retired (`3c216c1`)
+- The whole script and its PostToolUse entry are removed. The session-folder check was all the script did.
+
+### 2026-09-24 — implement — attempt: docs (`74cf0dc`)
+- README "Using Sessions in a Repo" (three entry points, settings snippet, hook table). `CLAUDE.md` directory rules now include `agents/` and `tests/`.
+
+### 2026-09-24 — implement — attempt: Stop commit guard + rule template (`57678f4`)
+- `hooks/session-commit-guard.sh` (Stop) blocks on an uncommitted `decision`/`milestone` heading. Loop guard: a counter per `session_id`; the 3rd attempt in a row is allowed. `stop_hook_active` isn't documented for Stop, so the counter is the real guard. Shared helper `hooks/lib/session-log.sh`, now also used by `session-guard.sh`. Generalized rule template; SKILL.md setup copies it if missing.
+
+### 2026-09-24 — main — note: batch 4 review; Implement ready for milestone gate
+- Checked: commit scope, 13/13 tests pass on rerun, 14/14 tasks ticked, `hooks.json` = SessionStart + PreToolUse + Stop, README/CLAUDE.md changes only add content.
+- **Not logged as a milestone:** the agent proposed "Implement complete", but a milestone needs user approval at the gate, and D5 requires an open PR.
+- Carried to Test (from the agent's notes): a live `claude --plugin-dir .` smoke test of all three hooks through Claude Code itself; `--agent` resolution for every phase agent; a clean re-test of the `skills:` preload question; a full Close sequence in a throwaway session; no cleanup yet for the commit guard's counter files in `$TMPDIR`.
