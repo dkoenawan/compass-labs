@@ -6,7 +6,7 @@ phase: implement
 status: active
 milestone: design
 active_agent: "compass-labs:implement (stand-in: Sonnet general-purpose subagent)"
-next_step: "Implement batch 2: tasks 4 (guard hook), 5 (GitHub scripts), 6 (orchestrator skill)"
+next_step: "Implement batch 3: fix guard path traversal + skill plugin-root paths, then tasks 7-9"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -15,6 +15,7 @@ next_step: "Implement batch 2: tasks 4 (guard hook), 5 (GitHub scripts), 6 (orch
 
 ## Open items
 
+- Testing must use `claude --plugin-dir .`: this Claude session loads compass-labs v1.0.0 from the plugin cache, so the repo's new hooks aren't active here
 - Task 8: verify `claude --agent` works with a plugin-namespaced agent
 - Deploy for this repo is a plugin release in a separate session (Q9). The version bump isn't part of Implement
 
@@ -144,3 +145,22 @@ next_step: "Implement batch 2: tasks 4 (guard hook), 5 (GitHub scripts), 6 (orch
 ### 2026-09-24 — main — note: batch 1 review
 - Verified: one task per commit, correct file scope, tests pass when rerun by the orchestrator.
 - **Found for task 4:** the frontmatter `milestone` isn't consistent (`define` in the real log, `none` in the template, `"Define complete"` in `feature.json`). The guard needs a phase key to work out frozen artifacts. Decision for batch 2: `milestone` holds the **phase key** of the last completed milestone (`none` | `define` | … | `close`), and `feature.json` `milestone` stays a display label.
+
+### 2026-09-24 — main — handoff: orchestrator → implement agent (batch 2: tasks 4–6)
+- **Input:** tasks 4–6 + the orchestrator's decision that frontmatter `milestone` holds the phase key.
+- **Output:** `5585114`, `79641d3`, `9da8d97`; `bash tests/run.sh` 5/5 pass.
+
+### 2026-09-24 — implement — attempt: guard hook built (`5585114`)
+- `hooks/session-guard.sh` (PreToolUse `Write|Edit|MultiEdit`): archive read-only, only `log.md` allowed before a session's log exists, file allowlist from the workflow JSON, `assets/` non-Markdown only, ownership via `agent_type`, `log.md` orchestrator-only, frozen artifacts (subagents always blocked; main session only with an uncommitted `decision` entry). Allows the write with a warning if `jq` or the workflow file is missing. The log template now documents `milestone` as a phase key.
+
+### 2026-09-24 — implement — attempt: GitHub milestone scripts built (`79641d3`)
+- `gh-setup.sh`, `gh-milestone.sh`: safe to re-run (hidden comment marker); print `SYNC_PENDING` and exit 0 on failure. `feature.json` gained `github` + per-phase `gh_color` (recorded as a deviation). Tests use a stub `gh`.
+
+### 2026-09-24 — implement — attempt: orchestrator skill + traceability gate built (`9da8d97`)
+- `skills/session/SKILL.md` (90 lines), `check-traceability.sh` (REQ-011).
+
+### 2026-09-24 — main — note: batch 2 review, 2 defects
+- **Defect 1, guard path traversal:** `docs/sessions/s1/assets/../notes.txt` → exit 0 (allowed), while `…/s1/notes.txt` → exit 2. The `cd`-based path cleanup fails when a folder doesn't exist yet, so `..` survives. Fix: resolve `.`/`..` as text.
+- **Defect 2, repo-relative paths in `SKILL.md`:** script and template paths (`bash skills/session/scripts/…`) only work inside compass-labs. In a repo that installs the plugin they must resolve from the plugin root (as `task-executor` does). Breaks REQ-001 outside this repo.
+- Otherwise accepted. Noted for later: the subagent flagged that `session-commit-guard` (task 14) should share the "uncommitted decision entry" check with `session-guard`, and that `check-traceability.sh` depends on column order (#29).
+- The session loads plugin v1.0.0 from the cache, so the new hooks aren't active here. Test phase: `claude --plugin-dir .`.
