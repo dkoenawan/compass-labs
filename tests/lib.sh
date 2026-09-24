@@ -88,12 +88,14 @@ make_temp_git_repo() {
   echo "$dir"
 }
 
-# make_session_fixture <repo_dir> <slug> [phase] [status]
+# make_session_fixture <repo_dir> <slug> [phase] [status] [milestone]
 # Creates docs/sessions/<slug>/ in the given fixture repo with a minimal
 # log.md (D2 frontmatter) so hook tests don't touch the real repo's
-# docs/sessions/. Prints the session folder's absolute path.
+# docs/sessions/. `milestone` is the phase KEY of the last completed
+# milestone (none | define | design | implement | test | deploy | close),
+# not a display label. Prints the session folder's absolute path.
 make_session_fixture() {
-  local repo_dir="$1" slug="$2" phase="${3:-implement}" status="${4:-active}"
+  local repo_dir="$1" slug="$2" phase="${3:-implement}" status="${4:-active}" milestone="${5:-none}"
   local session_dir="$repo_dir/docs/sessions/$slug"
   mkdir -p "$session_dir/assets"
 
@@ -104,7 +106,7 @@ type: feature
 issue: 1
 phase: $phase
 status: $status
-milestone: none
+milestone: $milestone
 active_agent: main
 next_step: "test fixture"
 ---
@@ -123,4 +125,14 @@ next_step: "test fixture"
 EOF
 
   echo "$session_dir"
+}
+
+# git_commit_all <repo_dir> [message]
+# Stages and commits everything in the fixture repo, so later `git diff
+# HEAD` / `git status` checks (e.g. the guard hook's frozen-artifact rule)
+# have a real HEAD to compare against.
+git_commit_all() {
+  local repo_dir="$1" msg="${2:-fixture commit}"
+  git -C "$repo_dir" add -A
+  git -C "$repo_dir" commit -q -m "$msg"
 }
