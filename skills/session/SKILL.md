@@ -60,9 +60,22 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
      d. `git commit` + `git push` (D5 order — commit and push *before* any `gh` call, so links resolve).
      e. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} {from-phase} {to-phase} {comment-file}`.
      f. If its output contains a `SYNC_PENDING:` line, log a `note` entry quoting it ("GitHub sync pending") — do **not** retry inline; the next milestone gate re-runs `gh-milestone.sh` first, per D5's "next milestone runs any pending sync first."
-   - Move to the next phase in `feature.json`. If the completed phase was `close`, the session is done — nothing to hand off.
+   - Move to the next phase in `feature.json`. **The `close` phase is special — see below** instead of following steps b–f as written.
 
 **Milestone-key note:** `log.md` frontmatter `milestone` holds the **phase key** of the last completed milestone (`none | define | design | implement | test | deploy | close`), not a display label. `feature.json`'s own `phases[].milestone` field *is* the display label ("Define complete", …) — use it only for user-facing text and `gh-milestone.sh` comment bodies. The guard hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-guard.sh`) depends on this key to compute which artifacts are frozen — see `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`'s frontmatter comment.
+
+## Close milestone (special ordering — D6, D8)
+
+Close has no artifact and ends the session, so its milestone gate replaces steps b–f above with this **exact order** — getting this wrong either archives a folder the guard will then block further legitimate writes to, or leaves `log.md` claiming `archived` while the folder is still live:
+
+1. Append the final `milestone` entry to `log.md` (e.g. `✅ Session closed — …`), **and in the same edit** set frontmatter `milestone: close`, `status: archived`. (`log.md` is the one file always writable — see below — so this is safe to do before the move.)
+2. `git add`+`git commit` (this is its own atomic commit — D8: the log entry and the frontmatter flip that make it true belong together).
+3. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/archive-session.sh {session-dir}` — it refuses unless step 2 is already committed and the tree is clean, then does the `git mv` into `docs/sessions/archive/{slug}/`.
+4. `git add`+`git commit` (the move itself, separate from step 2's commit).
+5. `git push`.
+6. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} deploy close {comment-file}`, then `gh issue close {issue} --comment "…"` (D5's milestone table: Closed = PR merged, follow-ups confirmed, final comment, issue closed).
+
+Why `log.md` first, archive second: the guard hook always allows the orchestrator to write `log.md` (never a subagent), but once the folder is under `docs/sessions/archive/`, the guard blocks **every** write there, orchestrator included. Setting `status: archived` has to happen while the folder is still at its live path, not after.
 
 ## Follow-up issue creation (REQ-013)
 
@@ -88,6 +101,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/`:
 | `gh-setup.sh` | One-time label creation (D5) |
 | `gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
 | `check-traceability.sh` | REQ-011 gate: every `REQ-*` has a passing `VER-*` |
+| `archive-session.sh` | Close milestone only: `git mv` a session into `docs/sessions/archive/`, refusing unless `status: archived` is already committed and the tree is clean (D6) |
 
 ## C8 note
 
