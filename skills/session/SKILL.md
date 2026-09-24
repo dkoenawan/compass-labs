@@ -27,7 +27,7 @@ To list sessions: scan `docs/sessions/*/log.md` frontmatter for `status: active`
 Run once per repo, the first time `/compass:session` is used in it:
 
 1. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-setup.sh` — creates every `phase:*` and `type:*` label (idempotent; safe to re-run).
-2. Copy the commit-point rule into the repo: **TODO (task 14)** — `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` → `.claude/rules/compass-sessions.md` (a repo-relative destination — rules live in the consuming repo). Until task 14 lands, skip this step; it's not yet blocking.
+2. Copy the commit-point rule into the repo, **only if it isn't already there**: if `.claude/rules/compass-sessions.md` doesn't exist, copy `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` to it (a repo-relative destination — rules live in the consuming repo, not the plugin). Never overwrite an existing `.claude/rules/compass-sessions.md` — the repo may have customized it.
 
 ## New session flow
 
@@ -90,7 +90,7 @@ Log a `decision` entry noting the new issue number, and list it under `log.md`'s
 
 ## Atomic commits (D8)
 
-One commit per `decision`/`milestone` log entry, and one per ticked `tasks.md` task — see `.claude/rules/compass-sessions.md` (repo-relative; the template copy is at `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` until task 14 wires the copy step in) and `${CLAUDE_PLUGIN_ROOT}/hooks/session-commit-guard.sh` (task 14). You are the one writing `log.md`, so you are the one this rule binds most: never let a turn end with a logged decision/milestone whose artifact changes aren't committed yet.
+One commit per `decision`/`milestone` log entry, and one per ticked `tasks.md` task — see `.claude/rules/compass-sessions.md` (repo-relative; copied from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` by the one-time setup step above) and `${CLAUDE_PLUGIN_ROOT}/hooks/session-commit-guard.sh`, which enforces it on `Stop`. You are the one writing `log.md`, so you are the one this rule binds most: never let a turn end with a logged decision/milestone whose artifact changes aren't committed yet — the hook will block the stop (with a 2-consecutive-block loop guard) if you try.
 
 ## Scripts this skill uses
 

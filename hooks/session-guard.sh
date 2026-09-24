@@ -13,6 +13,10 @@
 
 set -uo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/session-log.sh
+source "$SCRIPT_DIR/lib/session-log.sh"
+
 input="$(cat)"
 
 # --- jq must be available; fail open otherwise. ------------------------
@@ -220,19 +224,9 @@ if [[ "$is_frozen" == true ]]; then
 
   # Main session may amend a frozen artifact only with an uncommitted,
   # newly-added `decision` entry in log.md (a `git diff` add-line with a
-  # "— decision:" heading), or if log.md itself is untracked.
-  has_decision=false
-  log_status="$(git -C "$repo_root" status --porcelain -- "$log_path" 2>/dev/null || true)"
-  if [[ "$log_status" == \?\?* ]]; then
-    has_decision=true
-  else
-    diff_added="$(git -C "$repo_root" diff HEAD -- "$log_path" 2>/dev/null | grep '^+' | grep -v '^+++' || true)"
-    if grep -q -- '— decision:' <<<"$diff_added"; then
-      has_decision=true
-    fi
-  fi
-
-  if [[ "$has_decision" != true ]]; then
+  # "— decision:" heading), or if log.md itself is untracked. Shared with
+  # session-commit-guard.sh's Stop check — see hooks/lib/session-log.sh.
+  if ! session_log_has_uncommitted_heading "$repo_root" "$log_path" '— decision:'; then
     echo "[session-guard] BLOCKED: '$path_in_session' is frozen (milestone: $milestone_key). Log a decision entry in log.md first, then amend the artifact in the same commit (D7/D8)." >&2
     exit 2
   fi
