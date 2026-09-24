@@ -1,23 +1,28 @@
+---
+session: 2026-08-19-session-lifecycle
+type: feature
+issue: 22
+phase: design
+status: active
+milestone: define
+active_agent: main (manual, since no orchestrator exists yet)
+next_step: "User decides D1a–c, D3, D5 in design.md (revision 2)"
+---
 # Session Log: Session Lifecycle (#22)
 
-> This log is append-only and every agent writes to it. The format is provisional (Q10) and will be finalized in the Design phase.
+> Format: D2 (accepted 2026-09-24). Only the orchestrator writes this file; for now that's the main session. Entries are append-only.
+> Artifacts: [`overview.md`](overview.md) (problem statement, becomes `requirements.md` per D1) · [`design.md`](design.md) · Follow-ups: #24–#31
 
-## Current state
+## Open items
 
-| | |
-|---|---|
-| **Phase** | Design (started 2026-09-24) |
-| **Active agent** | Main session (no orchestrator exists yet; this session runs by hand) |
-| **Last milestone** | ✅ Define complete (2026-09-24): problem statement and decisions agreed |
-| **Next step** | User reviews `design.md` D1–D7 and decides |
-| **Open items** | D1–D7 decisions; Q6 amendment (only the orchestrator writes the log) |
-| **Session docs** | [`overview.md`](overview.md) (problem statement, Define) · [`design.md`](design.md) (Design) |
-| **Follow-ups** | #24–#31 |
+- D1a–c: one artifact per phase, linked by ID, and the requirements standard
+- D3: verify `claude --agent` works with a plugin-namespaced agent
+- D5: GitHub milestone table and script
+- Once D1c is decided: rename `overview.md` → `requirements.md` and rewrite the success criteria as `REQ-*`
 
-## Key decisions (summary)
+## Key decisions
 
-The most important changes, newest first. Full reasoning is in the entries below.
-
+- **2026-09-24**: D2 (log format), D4 (phase agent contract, including the Q6 amendment: only the orchestrator writes the log), D6 (fold-back + archive), D7 (enforcement hook) accepted.
 - **2026-09-24**: ✅ Define milestone reached. C7 corrected: subagents can nest; the real limit is that they can't ask the user questions.
 - **2026-09-24**: Deferred work goes into tracked issues (#24–#31), each linked back to this session.
 - **2026-09-24**: Feature is the only session type for now. GitHub shows one milestone per SDLC phase. Archived sessions go to `docs/sessions/archive/`.
@@ -80,3 +85,19 @@ The most important changes, newest first. Full reasoning is in the entries below
 - D4: phase agents return questions for the orchestrator to ask the user. **Proposed amendment to Q6:** only the orchestrator writes `log.md`, to avoid clashes from agents writing in parallel.
 - D5: `phase:*` labels. D6: `git mv` to `archive/`. D7: `PreToolUse` hook enforcing the file set and file ownership.
 - **Waiting on:** user decisions on D1–D7.
+
+### 2026-09-24 — user — decision: design review round 1
+- **Accepted:** D2 log format, D4 phase agent contract (including the Q6 amendment), D6 fold-back + archive, D7 enforcement.
+- **Sent back:**
+  - D1 is too thin: every SDLC phase should produce an artifact, even a thin one, and Define should produce requirements that follow a standard (via a requirements skill).
+  - D3: can the user just start Claude as the orchestrator and pick new/previous sessions?
+  - D5 is too thin: it isn't clear what actually gets implemented on GitHub.
+
+### 2026-09-24 — main — attempt: design revision 2 (`design.md`)
+- Checked: there's no `requirements` skill in the repo. `plan/template.md` is almost all design. `task-executor/template-tasks.md` works as the Implement artifact.
+- D1 → one artifact per phase: `requirements.md` / `design.md` / `tasks.md` / `verification.md` / `release.md` + `log.md`. Linked by ID (REQ → DES → task → VER). Proposed standard: EARS + Given/When/Then + ISO 29148 quality checks. Each artifact is frozen at its milestone.
+- D3 → one `session` skill with three ways in: repo default `agent` setting, `claude --agent compass-labs:orchestrator`, `/compass:session`. The list of sessions comes from a `SessionStart` hook, because plugin agents can't set `initialPrompt`.
+- D5 → a table of GitHub actions per milestone, commit+push before each `gh` call, and an idempotent `gh-milestone.sh` that can catch up later. One issue + one branch/PR per session.
+- D7 extended: also blocks writes to frozen artifacts (**needs user confirmation**, since D7 was already accepted).
+- Added a "What gets built" section that separates what's in scope for #22 from what's in #26–#30.
+- Converted this log to the D2 format.
