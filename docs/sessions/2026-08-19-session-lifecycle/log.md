@@ -22,6 +22,7 @@ next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. 
 
 ## Key decisions
 
+- **2026-09-25**: Deploy + Close run in this session (overrides Q9's separate session). v1.1.0; Deploy and Close on the branch, then squash-merge #33, tag on `main`, refresh the local install.
 - **2026-09-25**: ✅ Test complete — user approved at the gate; 16/16 REQ have a passing VER; VER-006/VER-015 pending (non-blocking).
 - **2026-09-25**: No incomplete product ships: the Deploy phase gets a release-completeness check (agent + Deploy gate + `release.md` section). Now: unlist and delete the 4 empty domain skills (#28 builds them); list `adr` and `post-hook-validator`.
 - **2026-09-25**: Before the Test gate: add `session`/`requirements`/`verification` to `marketplace.json`, and pin session lookup to the project's git root in SKILL.md. Plugin rename to `compass` (`/compass:` prefix) deferred to a follow-up issue.
@@ -340,3 +341,8 @@ next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. 
 ---
 
 ## Phase: Deploy
+
+### 2026-09-25 — main — decision: deploy, close, merge and update the local install in this session
+- User: "Let's deploy this. close the session. merge the PR. and then update the local system to get the latest." Overrides Q9 (release as its own session).
+- Version **1.1.0** (minor: new skills/agents/hooks; no skill interface broken; the `compass-labs:` → `compass:` break is #34's).
+- Order, fitted to squash-only merges: Deploy agent on the branch (completeness check, bump, `release.md`) → Deploy gate → Close agent fold-back + archive on the branch → squash-merge #33 → `claude plugin tag --push` on `main` (a branch tag would be orphaned by the squash) → `claude plugin update compass-labs@compass-labs` from the local-directory marketplace → verify 1.1.0 installed → close #22. Post-merge results go in #22's closing comment, since the archived `release.md` is written before the tag exists.
