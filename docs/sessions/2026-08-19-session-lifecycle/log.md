@@ -2,16 +2,16 @@
 session: 2026-08-19-session-lifecycle
 type: feature
 issue: 22
-phase: deploy
+phase: close
 status: active
-milestone: test
+milestone: deploy
 active_agent: main (orchestrator)
-next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. Completeness check"
+next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag on main, refresh local install, close #22"
 ---
 # Session Log: Session Lifecycle (#22)
 
 > Format: D2 (accepted 2026-09-24). Only the orchestrator writes this file; for now that's the main session. Entries are append-only.
-> Artifacts: [`requirements.md`](requirements.md) (frozen) · [`design.md`](design.md) (frozen) · [`tasks.md`](tasks.md) · Follow-ups: #24–#32, #34
+> Artifacts: [`requirements.md`](requirements.md) (frozen) · [`design.md`](design.md) (frozen) · [`tasks.md`](tasks.md) · Follow-ups: #24–#32, #34, #35
 
 ## Open items
 
@@ -22,6 +22,7 @@ next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. 
 
 ## Key decisions
 
+- **2026-09-25**: ✅ Deploy complete: v1.1.0 prepared on the branch (`9905bb9`), completeness check passed; tag + cache refresh after merge. Unquoted `$CLAUDE_PLUGIN_ROOT` in hooks.json deferred to #35.
 - **2026-09-25**: Deploy + Close run in this session (overrides Q9's separate session). v1.1.0; Deploy and Close on the branch, then squash-merge #33, tag on `main`, refresh the local install.
 - **2026-09-25**: ✅ Test complete — user approved at the gate; 16/16 REQ have a passing VER; VER-006/VER-015 pending (non-blocking).
 - **2026-09-25**: No incomplete product ships: the Deploy phase gets a release-completeness check (agent + Deploy gate + `release.md` section). Now: unlist and delete the 4 empty domain skills (#28 builds them); list `adr` and `post-hook-validator`.
@@ -349,3 +350,20 @@ next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. 
 
 ### 2026-09-25 — main — handoff: orchestrator → deploy agent (v1.1.0 on the branch)
 - **Input:** release-completeness check against `marketplace.json` as shipped; bump `plugin.json` to 1.1.0 (commit); `claude plugin tag --dry-run`; fill `release.md` incl. Completeness, with tag/merge/cache steps marked as run by the orchestrator after the merge. No merge, tag, push or cache update.
+- **Output:** `9905bb9` (bump to 1.1.0), `release.md`; status `done`.
+
+### 2026-09-25 — deploy — note: Release completeness check passed for v1.1.0
+- Checked `.claude-plugin/marketplace.json` as it ships: all 12 listed skills have a complete SKILL.md, every skill directory is listed, all 7 agents exist, the 3 hooks.json scripts exist, `commands/hello.md` exists; the session skill's file references all resolve. No gaps. Details in `release.md` Completeness.
+
+### 2026-09-25 — deploy — attempt: Prepared compass-labs v1.1.0 release on the branch
+- Bumped `plugin.json` 1.0.0 → 1.1.0 in `9905bb9` (not pushed). `claude plugin tag --dry-run` → `compass-labs--v1.1.0`, 4 non-blocking warnings (root CLAUDE.md not loaded as plugin context; 3 unquoted `$CLAUDE_PLUGIN_ROOT` in hooks.json). `tests/run.sh` 15/15. Post-merge steps listed in `release.md` as to be run by the orchestrator.
+
+### 2026-09-25 — main — milestone: ✅ Deploy complete
+- Approved in advance by the user ("Let's deploy this"). Reviewed: bump commit touches only the version line; Completeness section present with no gaps.
+- Unquoted `$CLAUDE_PLUGIN_ROOT` deferred → **#35** (linked to #22).
+- Post-merge steps (squash-merge #33, tag on `main`, cache refresh, verify) still to run; results go in #22's closing comment.
+- **Handoff:** Deploy → Close.
+
+---
+
+## Phase: Close
