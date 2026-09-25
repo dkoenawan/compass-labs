@@ -30,6 +30,7 @@ next_step: "Define milestone re-review: REQ-001..046; two gate questions (tracea
 
 ## Key decisions
 
+- **2026-09-25**: REQ-014 amended: Bugfix verdict may be "deferred to #40"; REQ-041 stays outcome → REQ (no new REQ)
 - **2026-09-25**: Traceability diagram at Define stays outcome → REQ (DES links via #39, VER links via #29); REQ-014 allows "deferred to #40" as a Bugfix verdict
 - **2026-09-25**: Feature-depth outcomes: problem statement = SCQ context, job-story need, observed/assumed evidence, impact + why now, measurable outcome, appetite + no-gos (templates offered, not mandated); requirements add ISO 25010:2023 coverage, NFR response measures, MoSCoW, upward trace, assumptions/dependencies, example-based criteria, worked example; tiered Mermaid visuals; Bugfix depth deferred to #40
 - **2026-09-25**: Define reopened (milestone rolled back to none): REQs don't demand concrete Feature-depth outcomes for the problem statement and requirements standards; design.md parked as draft until Define is re-approved
@@ -263,3 +264,12 @@ next_step: "Define milestone re-review: REQ-001..046; two gate questions (tracea
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (fold in gate answers, mark approved)
 - **Input:** the two answers above, and Define approved. Task: amend REQ-014, resolve the open questions, set the status to Approved.
+- **Output:** done; files_changed: requirements.md
+
+### 2026-09-25 — compass-labs:define — decision: gate answers on traceability diagram scope and Bugfix verdicts
+- REQ-041 stays at outcome → REQ. Design adds the DES links (#39) and Test adds the VER links (#29). No new REQ.
+- REQ-014 accepts "deferred to #40" as a Bugfix verdict. Feature verdicts are still required for every candidate, and a deferral needs no rationale or applicability condition.
+
+### 2026-09-25 — compass-labs:define — note: requirements.md marked re-approved, ready to freeze
+- Status line set to "Approved (Define complete 2026-09-25, re-approved after reopen)" on the user's approval, relayed by the orchestrator. Open questions: all resolved.
+- Final set: REQ-001 to REQ-046, with REQ-012 struck through (replaced by REQ-020 and REQ-021).
