@@ -81,5 +81,45 @@ unset GH_STUB_FAIL
 assert_eq "0" "$status" "gh-milestone.sh should exit 0 even when gh fails"
 assert_contains "$out" "SYNC_PENDING" "a gh edit failure should be reported as SYNC_PENDING"
 
+# 6. VER-014: partial outage (remove fails, add succeeds) leaves a stale
+#    phase label; a re-run must remove it even though the target label is
+#    already present, and a third run is a no-op.
+printf 'phase:test\ntype:feature\n' > "$labels_file"
+: > "$comments_file"
+: > "$log_file"
+export GH_STUB_STATEFUL=1
+export GH_STUB_FAIL=remove-label
+out="$(bash "$SCRIPT" 22 test deploy "$comment_body" 2>&1)"
+unset GH_STUB_FAIL
+assert_contains "$out" "SYNC_PENDING: could not remove label 'phase:test'" \
+  "a failed remove should be reported as SYNC_PENDING"
+assert_eq $'phase:test\ntype:feature\nphase:deploy' "$(cat "$labels_file")" \
+  "partial outage fixture: both phase labels present"
+
+: > "$log_file"
+out="$(bash "$SCRIPT" 22 test deploy "$comment_body" 2>&1)"
+assert_not_contains "$out" "label swap skipped" \
+  "a stale phase label must not be skipped just because the target label is present"
+assert_not_contains "$out" "SYNC_PENDING" "re-run after the outage should succeed"
+assert_eq "1" "$(grep -c -- '--remove-label phase:test' "$log_file" || true)" \
+  "re-run should remove the stale phase:test label"
+assert_eq "0" "$(grep -c -- '--add-label' "$log_file" || true)" \
+  "re-run should not re-add a target label that is already present"
+assert_eq $'type:feature\nphase:deploy' "$(cat "$labels_file")" \
+  "end state: only the target phase label, non-phase labels untouched"
+
+: > "$log_file"
+out="$(bash "$SCRIPT" 22 test deploy "$comment_body" 2>&1)"
+assert_contains "$out" "label swap skipped" "third run should be a no-op for labels"
+assert_eq "0" "$(grep -c '^issue edit' "$log_file" || true)" "third run should make no edit calls"
+
+# 7. Any stale phase:* label is removed, not only phase:<from-phase>.
+printf 'phase:design\nphase:test\n' > "$labels_file"
+: > "$log_file"
+out="$(bash "$SCRIPT" 22 test deploy "$comment_body" 2>&1)"
+assert_eq "phase:deploy" "$(cat "$labels_file")" \
+  "every non-target phase label should be removed"
+unset GH_STUB_STATEFUL
+
 echo "ok: gh-milestone.sh validated"
 exit 0

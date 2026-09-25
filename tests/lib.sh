@@ -151,7 +151,13 @@ git_commit_all() {
 #   GH_STUB_FAIL           - if set to a subcommand keyword (label|view|
 #                             edit|comment), calls matching that keyword
 #                             exit 1 with a message on stderr instead of
-#                             succeeding
+#                             succeeding. `remove-label` / `add-label`
+#                             fail only that kind of `issue edit` call
+#                             (partial outage).
+#   GH_STUB_STATEFUL       - if set to 1, successful `issue edit
+#                             --add-label X` / `--remove-label X` calls
+#                             update GH_STUB_LABELS_FILE, so a re-run sees
+#                             the labels the previous run left behind
 # Prints bin_dir's `gh` path is on PATH is the caller's job (prepend
 # bin_dir to PATH after calling this).
 install_stub_gh() {
@@ -189,6 +195,26 @@ case "${1:-}" in
         ;;
       edit)
         fail_if_matches "edit"
+        shift 3  # issue edit <number>
+        while [[ $# -gt 0 ]]; do
+          flag="$1" label="${2:-}"
+          shift 2 || shift $#
+          case "$flag" in
+            --add-label)
+              fail_if_matches "add-label"
+              if [[ "${GH_STUB_STATEFUL:-}" == 1 && -n "${GH_STUB_LABELS_FILE:-}" ]]; then
+                grep -qxF "$label" "$GH_STUB_LABELS_FILE" 2>/dev/null || echo "$label" >> "$GH_STUB_LABELS_FILE"
+              fi
+              ;;
+            --remove-label)
+              fail_if_matches "remove-label"
+              if [[ "${GH_STUB_STATEFUL:-}" == 1 && -n "${GH_STUB_LABELS_FILE:-}" ]]; then
+                { grep -vxF "$label" "$GH_STUB_LABELS_FILE" || true; } > "$GH_STUB_LABELS_FILE.tmp"
+                mv "$GH_STUB_LABELS_FILE.tmp" "$GH_STUB_LABELS_FILE"
+              fi
+              ;;
+          esac
+        done
         exit 0
         ;;
       comment)
