@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: design
+phase: define
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: none
 active_agent: main
-next_step: "Design milestone gate: user reviews design.md (DES-001..016, D6, visual overview)"
+next_step: "Define agent proposes Feature-depth outcome REQs for problem statement + requirements standards; user agrees; re-approve Define"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -22,12 +22,14 @@ next_step: "Design milestone gate: user reviews design.md (DES-001..016, D6, vis
 
 ## Open items
 
+- design.md (DES-001..016 plus the visual overview) is a parked draft. After Define is re-approved, the Design agent revises it against the new requirements.
 - #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 
 ## Key decisions
 
+- **2026-09-25**: Define reopened (milestone rolled back to none): REQs don't demand concrete Feature-depth outcomes for the problem statement and requirements standards; design.md parked as draft until Define is re-approved
 - **2026-09-25**: Design-phase refinement (visual, type-specific artifacts — BPMN 2.0 for process designs — with explicit new/changed/deprecated delta) deferred to #39; this session gets a BPMN 2.0 visual of its own design before the gate
 - **2026-09-25**: design.md drafted to the four leans (DES-001..016); D6 proposed: pre-change sessions grandfathered (gate check a3 only when a Framing section exists) — pending user confirmation at gate
 - **2026-09-25**: Design choices: orchestrator applies anchor writes + Define-gate check; anchor = marked `## Project anchor` section in root README; new `framing` skill + per-type `framing` block in workflow JSON; `problem-statement` + `requirements` skills with `types/*.md` and per-section `reference/methods.md`, ADR-003 for the whole
@@ -188,3 +190,13 @@ next_step: "Design milestone gate: user reviews design.md (DES-001..016, D6, vis
 
 ### 2026-09-25 — compass-labs:design — attempt: visual overview added to design.md for the Design gate
 - The user found the text-only design hard to review. Added a `## Visual overview` section after Approach, copied verbatim from the orchestrator's draft: a colour legend, three Mermaid diagrams (lifecycle, Define phase expanded, project map) and a table of what's new, changed, superseded and unchanged, mapped to DES IDs. The diagrams are BPMN-style, not strict BPMN 2.0; which notation to use is tracked in #39. No other part of design.md changed.
+
+### 2026-09-25 — main — decision: Define reopened for Feature-depth requirements
+- At the Design gate, the user asked whether the Define phase's depth for Feature work had actually improved: which frameworks, and what better problem statements and requirements. The design was thorough on framing mechanics but thin on the standards' content. For DES-011, the problem statement had only an expected shape, with methods deferred to research in Implement. For DES-012, Feature requirements were "the current EARS standard", a file move with no added depth.
+- I recommended moving the #32 research into Design. The user chose to go back to Define instead: the requirements themselves don't ask for enough depth, so requirements for specific Feature-depth outcomes come first.
+- Frontmatter rolled back: `milestone: none`, `phase: define`, so requirements.md can be edited again. design.md stays as a draft, to be revised after Define is re-approved. #23 moves back to `phase:define`.
+
+## Phase: Define (reopened)
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (Feature-depth outcome requirements)
+- **Input:** Define reopened. Task: find out with the user what "deeper Define for Feature work" must achieve for the problem-statement and requirements standards, and add outcome-level REQs for it. Options with leans, not solutions. Existing REQ-001..022 stay unless the user changes them.
