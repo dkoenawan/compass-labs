@@ -22,6 +22,7 @@ next_step: "User: where to put a ship-complete check (empty skills listed in mar
 
 ## Key decisions
 
+- **2026-09-25**: No incomplete product ships: the Deploy phase gets a release-completeness check (agent + Deploy gate + `release.md` section). Now: unlist and delete the 4 empty domain skills (#28 builds them); list `adr` and `post-hook-validator`.
 - **2026-09-25**: Before the Test gate: add `session`/`requirements`/`verification` to `marketplace.json`, and pin session lookup to the project's git root in SKILL.md. Plugin rename to `compass` (`/compass:` prefix) deferred to a follow-up issue.
 - **2026-09-25**: Defect 8 (VER-019): task 3 (test harness) tagged `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]` post-freeze. Support tasks trace to the design item they enable; REQ-014 stays strict, no `[support]` exemption.
 - **2026-09-25**: Test gate refused. Defects 1–7 (VER-010/013/014/020/021/022/023) fixed now in an Implement fix pass (code only, `tasks.md` stays frozen); defect 8 (VER-019) handled after that.
@@ -317,3 +318,9 @@ next_step: "User: where to put a ship-complete check (empty skills listed in mar
 - `4cfaf35`: SKILL.md path note: `docs/sessions/…` resolve against the project git root, never `${CLAUDE_PLUGIN_ROOT}`.
 - Follow-up **#34** filed: rename plugin to `compass` (`/compass:<skill>`), linked to #22 and this session. (`requirements.md` is frozen, so its follow-up table isn't updated; the log header lists it.)
 - Found: `marketplace.json` also lists `backend`, `database`, `frontend`, `infrastructure`, which are empty local directories (no SKILL.md, untracked by git). `adr` and `post-hook-validator` aren't listed. Raised with the user.
+
+### 2026-09-25 — main — decision: release-completeness check in the Deploy phase; fix current gaps now
+- User: "We can't ship an incomplete product yea, let's add this in a skill.md somewhere". Chose: Deploy phase (not a repo-only rule) and fix now.
+- Correction to the previous entry: the 4 empty domain skills (`backend`, `database`, `frontend`, `infrastructure`) **are** tracked via `.gitkeep`, so they ship as empty skills.
+- Deploy: `agents/deploy.md` + the Deploy milestone gate in `skills/session/SKILL.md` + a `release.md` template section: everything the release manifest lists exists and is complete, nothing complete is left out, no placeholders. Refuse the Deploy milestone otherwise.
+- This repo now: remove the 4 from `marketplace.json` and delete their `.gitkeep` (built later under #28); list `adr` and `post-hook-validator` (complete skills that weren't shipping). `marketplace_test.sh` checks listed ⇔ `skills/*/SKILL.md`.
