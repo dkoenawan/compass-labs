@@ -12,7 +12,7 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
-active_agent: main
+active_agent: compass-labs:design
 next_step: "Design revises parked design.md against REQ-001..046"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
@@ -278,3 +278,8 @@ next_step: "Design revises parked design.md against REQ-001..046"
 ### 2026-09-25 — main — milestone: ✅ Define complete (re-approved after reopen)
 - The user re-approved requirements.md: REQ-001 to REQ-046, with REQ-012 struck through. Open questions: all resolved.
 - New since the first approval: tier-aware Feature-depth outcomes for the problem statement (REQ-023–029), requirements (REQ-030–038) and Mermaid visuals (REQ-039–045), plus verdicts that name the outcome they serve (REQ-046).
+
+## Phase: Design (resumed)
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:design (revise design.md for REQ-023..046)
+- **Input:** Define re-approved. Task: revise the parked design.md so DES items cover REQ-023..046 with concrete standard content (the problem-statement and requirements type files, the methods record with research verdicts, the Mermaid visual requirements), extend the visual overview, and keep all four earlier design choices. The research verdicts are in the Define (reopened) decision entry.
