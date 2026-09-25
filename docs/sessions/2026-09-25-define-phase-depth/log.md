@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: compass-labs:define
-next_step: "Define folds in open-question answers and drafts REQ rows; user reviews for Define milestone"
+active_agent: main
+next_step: "Define milestone gate: user reviews REQ-001..017"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -28,6 +28,7 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 
 ## Key decisions
 
+- **2026-09-25**: Framing answers folded into requirements.md: "extends" verdict applied before the framing milestone; Close fold-back unchanged (non-goal); user confirms each session's depth tier
 - **2026-09-25**: Session skill should branch before its first commit/push; deferred to #37
 - **2026-09-25**: Framing open questions settled: full refresh of compass-labs README + solution-design in this session; owed anchor update made at framing time; no-anchor fallback = ask user for 1–2 sentence purpose, recorded in session; framing effort scales with size of work (in scope)
 - **2026-09-25**: Framing standards are one skill per artifact section (problem statement, requirements), with standards picked by session type
@@ -82,6 +83,7 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (fold in open-question answers, draft REQ rows)
 - **Input:** the four answers above. Task: update Scope, Non-goals and Open questions to match, then draft REQ rows in EARS form with Given/When/Then criteria.
+- **Output:** done (REQ-001 to REQ-017, ready for Define milestone review); files_changed: requirements.md
 
 ### 2026-09-25 — main — note: reverted session-open commit on main
 - The user asked for the revert to follow best practice. I added `912634c` to `origin/main` with `git revert` (no history rewrite, no force-push), working in a temporary worktree so this branch's working tree wasn't touched.
@@ -89,3 +91,13 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 
 ### 2026-09-25 — main — decision: defer session-skill branching fix to #37
 - The session skill's New session flow commits and pushes the opening commit without creating a branch, which is how `d38c99c` reached `main`. Fixing the skill is outside this session's scope, so I opened #37 to track it.
+
+### 2026-09-25 — compass-labs:define — decision: framing answers folded into requirements.md
+- A full refresh of README.md and solution-design.md is in scope (Scope item 8), done in Implement.
+- An "extends" verdict is settled during framing: the anchor update is agreed with the user and applied before the framing milestone is approved. Close's fold-back is unchanged, which is now a non-goal.
+- No-anchor fallback: ask for a 1–2 sentence purpose, record it in the session artifact, and never create project docs.
+- Depth tiers (full, short, skip) are in scope. The user confirms each session's tier.
+
+### 2026-09-25 — compass-labs:define — attempt: REQ-001 to REQ-017 drafted for Define milestone review
+- 17 EARS requirements, each with one Given/When/Then, covering Scope items 1–8, including the #32 research (REQ-014, REQ-015) and the anchor refresh (REQ-016, REQ-017). Each was checked against the ISO 29148 quality checklist.
+- For the user to confirm at the gate: checks don't run at skip tier; REQ-011 leaves who applies the anchor update to Design; the refresh needs the user to approve a new purpose statement.
