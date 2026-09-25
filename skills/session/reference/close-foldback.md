@@ -12,7 +12,7 @@ Close produces **no session artifact** of its own (`artifact: null` in `feature.
    - `docs/registry/index.md` and `docs/reference/constructs/*.md` — flip any construct this session built from `planned` to `built` (or add new ones the session introduced), the same way `task-executor` does per-task.
    - **No session narrative anywhere in as-built docs.** No "we discussed," no "first we tried X, then...". That story stays in the archived session folder, not in the flat docs.
    - Add exactly **one `Origin: #{issue}` line** to each doc file you touch — a stable pointer back to the session's GitHub issue (which persists after archive; the session path inside the archived folder is the fuller "why," reachable from the issue if anyone needs it).
-3. **Return `done`** with `log_entries` including one `milestone` entry (e.g. `✅ Session closed — folded requirements/design into <list of doc files>`) summarizing what was folded back and where. The orchestrator appends it, then does the archive move itself (see below) — that's what actually finishes the session.
+3. **Return `done`** with `log_entries` including one `note` entry (e.g. `Fold-back ready — folded requirements/design into <list of doc files>`) summarizing what was folded back and where. Phase agents never emit `milestone` entries (contract rule 6): the orchestrator writes the `✅ Session closed` milestone itself at the gate, then does the archive move (see below) — that's what actually finishes the session.
 
 ## What you don't do
 
