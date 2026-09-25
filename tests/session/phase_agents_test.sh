@@ -65,5 +65,14 @@ while IFS=$'\t' read -r phase owner_agent; do
   fi
 done < <(jq -r '.phases[] | [.phase, .owner_agent] | @tsv' "$WORKFLOW")
 
+# Deploy must refuse to ship an incomplete product (release-completeness check),
+# and the Deploy gate + release.md template must carry it through.
+assert_contains "$(cat "$REPO_ROOT/agents/deploy.md")" "Never ship an incomplete product" \
+  "agents/deploy.md should carry the release-completeness check"
+assert_contains "$(cat "$REPO_ROOT/skills/session/templates/release.md")" "## Completeness" \
+  "release.md template should have a Completeness section"
+assert_contains "$(cat "$REPO_ROOT/skills/session/SKILL.md")" "Deploy milestone only" \
+  "SKILL.md's milestone gate should check Completeness before the Deploy milestone"
+
 echo "ok: phase agents validated against feature.json"
 exit 0

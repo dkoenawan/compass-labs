@@ -11,6 +11,10 @@
 
 {Summary of the change, linking to the `REQ-*` items it addresses.}
 
+## Completeness
+
+{Release manifest checked (e.g. `marketplace.json`): every listed component exists and is complete (no placeholders/stubs), and every complete component is listed. Note how it was checked.}
+
 ## Deploy steps run
 
 1. {step}

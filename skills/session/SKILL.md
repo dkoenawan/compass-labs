@@ -69,6 +69,7 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
    - **Adjust/rethink** → relay back to the agent (still the same phase; not a new handoff phase).
    - **Approve**:
      a. **Test milestone only** (REQ-011): before anything else, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
+     a2. **Deploy milestone only** (never ship an incomplete product): before anything else, check `release.md`'s *Completeness* section says the release manifest lists only complete components and leaves none out. Missing, or any gap named → refuse the milestone, show the gaps, stay in Deploy.
      b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `${CLAUDE_PLUGIN_ROOT}/skills/session/workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
      c. Append a `milestone` entry (D2), actor `main`, and its ✅ bullet under Key decisions in the same edit (see the mirror rule in step 3).
      d. **Stage explicitly, then commit + push** (D5 order — commit and push *before* any `gh` call, so the milestone comment's links resolve):
