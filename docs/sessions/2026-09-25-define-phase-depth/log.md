@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
-active_agent: compass-labs:design
-next_step: "Design drafts design.md from the four choices; then Design milestone gate"
+active_agent: main
+next_step: "Design milestone gate: user reviews DES-001..016 + D6"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -27,6 +27,7 @@ next_step: "Design drafts design.md from the four choices; then Design milestone
 
 ## Key decisions
 
+- **2026-09-25**: design.md drafted to the four leans (DES-001..016); D6 proposed: pre-change sessions grandfathered (gate check a3 only when a Framing section exists) — pending user confirmation at gate
 - **2026-09-25**: Design choices: orchestrator applies anchor writes + Define-gate check; anchor = marked `## Project anchor` section in root README; new `framing` skill + per-type `framing` block in workflow JSON; `problem-statement` + `requirements` skills with `types/*.md` and per-section `reference/methods.md`, ADR-003 for the whole
 - **2026-09-25**: ✅ Define complete — REQ-001..022 approved (REQ-012 dropped); framing, per-type standards, anchor contract, #32 research bounded
 - **2026-09-25**: Skip tier skips every framing check, including anchor verdict and anchor creation (REQs unchanged)
@@ -164,3 +165,12 @@ next_step: "Design drafts design.md from the four choices; then Design milestone
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:design (relay answers; draft design.md)
 - **Input:** all four leans accepted. Draft design.md with DES-* components covering every REQ.
+- **Output:** done (DES-001..016 for Design milestone review); files_changed: design.md
+
+### 2026-09-25 — compass-labs:design — decision: design leans adopted (anchor writes, anchor location, framing skill, skill layout)
+- The user accepted all four leans. Q1: the orchestrator applies anchor writes, and the Define gate gets check a3, like Deploy's a2. Q2: the anchor is a `## Project anchor` section in the root README, between `<!-- compass:anchor -->` markers. Q3: a new `framing` skill, a per-type `framing` block in the workflow JSON, and a Framing section in the requirements template. Q4: `problem-statement` and `requirements` skills, each with `types/feature.md`, `types/bugfix.md` and `reference/methods.md`. ADR-003 covers the design as a whole.
+
+### 2026-09-25 — compass-labs:design — attempt: design.md drafted for Design milestone review
+- DES-001 to DES-016 cover REQ-001 to REQ-022; REQ-012 is struck and needs none. The #32 methods research is carried out in Implement (DES-013), before the per-type standards are finalised. ADR-003 is written in Implement (DES-016).
+- Decisions D1 to D6. D6 (the agent's addition) grandfathers sessions created before this change: the Framing section and the gate check apply only when the Framing section is present.
+- Risks cover breaking the anchor markers, preload load and gaps, research scope creep, traceability after the restructure, the new `feature.json` key, and the anchor write overwriting the user's wording.
