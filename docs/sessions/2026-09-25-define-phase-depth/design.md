@@ -17,6 +17,178 @@ Alternatives were put to the user and rejected, recorded in `log.md`:
 - Per-type sections inside each SKILL.md.
 - One combined research doc.
 
+## Visual overview
+
+Colours show each element's status compared with today:
+
+- **Green:** new
+- **Amber:** changed
+- **Grey:** unchanged
+- **Red:** superseded
+- **Dashed blue:** planned in another issue
+
+These are BPMN-style flowcharts drawn in Mermaid: circles are events, diamonds are gateways, parallelograms are user tasks and cylinders are data. They aren't strict BPMN 2.0; which formal notation the Design phase should use is tracked in #39.
+
+### 1. Where it fits in the session lifecycle (SDLC)
+
+The Feature workflow is unchanged apart from Define. Framing is one shared skill, and Bugfix, Research and `init` plug into it or into the anchor it reads.
+
+```mermaid
+flowchart LR
+  classDef new fill:#DCFCE7,stroke:#166534,color:#14532D
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#78350F
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#1E293B
+  classDef planned fill:#E0E7FF,stroke:#3730A3,color:#1E1B4B,stroke-dasharray:4 3
+
+  subgraph FEAT["Feature session (current workflow)"]
+    FS((Issue)) --> FD[["Define<br/>framing + problem statement<br/>+ requirements"]] --> FDe[[Design]] --> FI[[Implement]] --> FT[[Test]] --> FDp[[Deploy]] --> FC[[Close]] --> FE(((Archived)))
+  end
+  subgraph BUG["Bugfix session (#24)"]
+    BS((Bug)) --> BF[["Framing<br/>bugfix type file"]] --> BR[[Reproduce]] --> BX[[Fix]] --> BV[[Verify]] --> BC[[Close]]
+  end
+  subgraph RES["Research session (#25)"]
+    RS((Question)) --> RF[["Framing<br/>extension point"]] --> RW[[Research phases]]
+  end
+  subgraph INIT["init (#38)"]
+    IS((New or migrated<br/>project)) --> IA[Establish anchor]
+  end
+
+  FRAME{{"framing skill<br/>shared, names no phase"}}
+  ANCHOR[("README.md<br/>Project anchor")]
+
+  FD -. runs .-> FRAME
+  BF -. runs .-> FRAME
+  RF -. runs .-> FRAME
+  FRAME -. reads, creates once .-> ANCHOR
+  IA -. writes .-> ANCHOR
+
+  class FD changed
+  class FRAME,ANCHOR new
+  class FS,FDe,FI,FT,FDp,FC,FE unchanged
+  class BS,BF,BR,BX,BV,BC,RS,RF,RW,IS,IA planned
+```
+
+### 2. Define phase, expanded
+
+Each step's actor is in its label: steps starting "You:" are yours, steps starting "Orchestrator:" are the orchestrator's, and the rest are the Define agent's. Your answers are relayed by the orchestrator (`needs_input`, then `AskUserQuestion`).
+
+```mermaid
+flowchart TD
+  classDef new fill:#DCFCE7,stroke:#166534,color:#14532D
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#78350F
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#1E293B
+
+  S((Handoff to Define)) --> T1[Read framing block<br/>from workflow JSON]
+  T1 --> T2[Propose depth tier<br/>with a one-line reason]
+  T2 --> T3[/You: confirm tier/]
+  T3 --> G1{Tier?}
+  G1 -- skip --> PS
+  G1 -- full / short --> T4[XY check:<br/>the need vs a pre-chosen fix]
+  T4 --> T5[Symptom vs cause check]
+  T5 --> T6[Locate and assess anchor<br/>README markers]
+  T6 --> G2{Anchor state?}
+  G2 -- complete --> T8
+  G2 -- incomplete / missing --> T7[Draft missing or<br/>failing elements]
+  T7 --> T7u[/You: approve anchor text/] --> T8
+  T8[Record verdict:<br/>aligns or extends] --> G3{Extends?}
+  G3 -- aligns --> T10
+  G3 -- extends --> T9[Draft anchor update] --> T9u[/You: approve update/] --> T10
+  T10[Registry / ADR<br/>overlap check] --> PS
+  PS[Write problem statement<br/>problem-statement skill] --> RQ[Write REQ-* rows<br/>requirements skill, per type]
+  RQ --> O1[Orchestrator: apply agreed<br/>anchor update to README]
+  O1 --> U2[/You: approve Define milestone/]
+  U2 --> A3{Orchestrator:<br/>gate check a3}
+  A3 -- agreed text missing --> O1
+  A3 -- pass --> C[Orchestrator: commit,<br/>push, gh] --> E(((On to Design)))
+
+  RD[("README.md<br/>Project anchor")]
+  RM[("requirements.md<br/>+ Framing section")]
+  T6 -. reads .-> RD
+  O1 -. writes .-> RD
+  PS -. writes .-> RM
+  RQ -. writes .-> RM
+
+  class T1,T2,T3,G1,T4,T5,T6,G2,T7,T7u,T8,G3,T9,T9u,T10,PS,O1,A3,RD new
+  class RQ,RM changed
+  class S,U2,C,E unchanged
+```
+
+Skip tier jumps straight to the problem statement: it runs no checks, anchor checks included. At a3, a session with no Framing section (from before this change) isn't checked (D6).
+
+### 3. Where it fits in the project
+
+```mermaid
+flowchart LR
+  classDef new fill:#DCFCE7,stroke:#166534,color:#14532D
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#78350F
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#1E293B
+  classDef planned fill:#E0E7FF,stroke:#3730A3,color:#1E1B4B,stroke-dasharray:4 3
+  classDef superseded fill:#FEE2E2,stroke:#991B1B,color:#7F1D1D
+
+  subgraph ORCH["Session orchestration"]
+    OA[orchestrator agent]:::unchanged
+    SS[session skill<br/>+ anchor write, gate a3]:::changed
+    FJ[feature.json<br/>+ framing block]:::changed
+    RT[requirements template<br/>+ Framing section]:::changed
+    HK[guard and commit hooks]:::unchanged
+    TR[check-traceability.sh]:::unchanged
+  end
+  subgraph AG["Phase agents"]
+    DA[define agent<br/>preloads 3 skills]:::changed
+    LA[design · implement · test<br/>deploy · close]:::unchanged
+  end
+  subgraph STD["Standards skills"]
+    FR[framing<br/>tiers, checks, anchor contract]:::new
+    PSK[problem-statement<br/>types/ + methods.md]:::new
+    RQK[requirements<br/>split into types/ + methods.md]:::changed
+    VR[verification]:::unchanged
+  end
+  subgraph DOCS["Project docs"]
+    AN[("README<br/>Project anchor")]:::new
+    SD[solution-design.md<br/>refreshed, links to anchor]:::changed
+    ADR[ADR-003]:::new
+    REG[("registry + ADR index")]:::unchanged
+  end
+  subgraph LATER["Other skills and follow-ups"]
+    PL[plan: discovery half<br/>superseded by framing, #27]:::superseded
+    IN[init sets anchor<br/>#38]:::planned
+    BRS[Bugfix #24<br/>Research #25]:::planned
+    DV[Design-phase visuals<br/>#39]:::planned
+  end
+
+  OA --> SS
+  SS -- hands off --> DA
+  FJ -- framing block --> DA
+  DA -- preloads --> FR & PSK & RQK
+  DA -- fills --> RT
+  FR -- reads --> AN
+  FR -- overlap check --> REG
+  SS -- writes, checks a3 --> AN
+  RQK -- IDs unchanged --> TR
+  SD -- links --> AN
+  IN -.-> AN
+  BRS -.-> FR
+  PL -.-> FR
+```
+
+### What's new, changed, superseded and unchanged
+
+| Status | Item | DES |
+|---|---|---|
+| New | `framing` skill: tiers, XY and symptom checks, anchor checks, overlap check | DES-001–005 |
+| New | Anchor contract (`framing/reference/anchor-contract.md`) and the README `## Project anchor` section | DES-006, DES-014 |
+| New | `problem-statement` skill with `types/feature.md`, `types/bugfix.md` and `reference/methods.md` | DES-011, DES-013 |
+| New | Orchestrator anchor write and Define-gate check a3 | DES-009 |
+| New | ADR-003 | DES-016 |
+| Changed | `feature.json` gets a `framing` block | DES-007 |
+| Changed | requirements template gets a `## Framing` section | DES-008 |
+| Changed | `agents/define.md`: preloads three skills and reads the per-type files | DES-010 |
+| Changed | `requirements` skill split into per-type files plus methods; ID and table rules unchanged | DES-012, DES-013 |
+| Changed | compass-labs README and `solution-design.md`: full refresh, linked to the anchor | DES-014, DES-015 |
+| Superseded | `plan` skill's discovery half (Phase 0, Q1, Q2) for session work. It isn't removed here; retirement is tracked in #27 | — |
+| Superseded | REQ-012, asking for a project purpose every session (never built) | — |
+| Unchanged | Orchestrator agent, hooks, `check-traceability.sh`, verification skill, the other phase agents and Close fold-back | — |
+
 ## Components / layers
 
 Each design item names the `REQ-*` it covers. Paths are plugin paths unless marked as consuming-repo paths.
