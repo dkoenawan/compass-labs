@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # entry_points_test.sh
-# Sanity-checks the two static entry points (D3, REQ-015): the
-# orchestrator agent and the /compass:session command exist with the
-# expected frontmatter shape. Does not invoke the CLI (that verification
-# is manual/one-off — see tasks.md).
+# Sanity-checks the static entry points (D3, REQ-015): the orchestrator
+# agent exists with the expected frontmatter shape, and the session skill
+# is the /compass-labs:session slash command itself — no commands/*.md
+# may share a name with a skills/*/ directory, because a command shadows
+# the same-named skill for the Skill tool and `skills:` preload (VER-021).
+# Does not invoke the CLI (that verification is live — see verification.md).
 
 set -uo pipefail
 
@@ -13,10 +15,10 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$REPO_ROOT/tests/lib.sh"
 
 AGENT_FILE="$REPO_ROOT/agents/orchestrator.md"
-COMMAND_FILE="$REPO_ROOT/commands/session.md"
+SKILL_FILE="$REPO_ROOT/skills/session/SKILL.md"
 
 [[ -f "$AGENT_FILE" ]] || fail "agents/orchestrator.md not found"
-[[ -f "$COMMAND_FILE" ]] || fail "commands/session.md not found"
+[[ -f "$SKILL_FILE" ]] || fail "skills/session/SKILL.md not found"
 
 agent_content="$(cat "$AGENT_FILE")"
 
@@ -33,9 +35,19 @@ assert_contains "$agent_content" "session" \
 assert_contains "$agent_content" "Agent" \
   "agents/orchestrator.md should grant the Agent tool (it hands off to phase agents)"
 
-command_content="$(cat "$COMMAND_FILE")"
-assert_contains "$command_content" "session" \
-  "commands/session.md should reference the session skill"
+# No command may collide with a skill name (both resolve to compass-labs:<name>).
+for cmd in "$REPO_ROOT"/commands/*.md; do
+  [[ -f "$cmd" ]] || continue
+  name="$(basename "$cmd" .md)"
+  [[ ! -d "$REPO_ROOT/skills/$name" ]] || \
+    fail "commands/$name.md collides with skills/$name/ (both resolve to compass-labs:$name; the command shadows the skill)"
+done
+
+skill_content="$(cat "$SKILL_FILE")"
+assert_contains "$skill_content" '$ARGUMENTS' \
+  "skills/session/SKILL.md should read its slash-command arguments via \$ARGUMENTS"
+assert_not_contains "$skill_content" "user-invocable: false" \
+  "skills/session/SKILL.md must stay user-invocable (it is the /compass-labs:session command)"
 
 echo "ok: entry points validated"
 exit 0

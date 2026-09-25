@@ -99,7 +99,7 @@ compass-labs/
 │   │   └── SKILL.md
 │   └── bootstrap-new-project/         # Full-stack project bootstrap (deprecated)
 │       └── SKILL.md
-├── commands/                          # Slash commands (e.g. /compass:session)
+├── commands/                          # Slash commands (e.g. /compass-labs:hello); skills are slash commands too
 ├── hooks/                             # PreToolUse/SessionStart/Stop hooks (session guard, commit guard, etc.)
 ├── tests/                             # bash + jq test harness for hooks/scripts (tests/run.sh)
 ├── README.md                          # This file

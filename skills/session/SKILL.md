@@ -1,6 +1,7 @@
 ---
 name: session
 description: Orchestrates a Feature session end-to-end (Define → Design → Implement → Test → Deploy → Close) — starts or resumes a session, hands off to one phase agent per phase, relays questions to the user, gates each milestone (commit → push → gh), and checks REQ↔VER traceability before Test completes.
+argument-hint: "[new | resume [slug] | status [--all]]"
 ---
 
 # Session Skill
@@ -12,6 +13,8 @@ Everything below is the Feature workflow. Other session types (Bugfix, Research)
 **Path note:** every script and template this skill references lives inside the plugin, not the consuming repo. Always resolve them as `${CLAUDE_PLUGIN_ROOT}/skills/session/…` — Claude Code substitutes `${CLAUDE_PLUGIN_ROOT}` with the plugin's actual install directory wherever it appears in a skill's own markdown, so this works whether you're developing the plugin itself or running it installed in some other repo. Never write a bare `skills/session/…` path — that only happens to resolve while developing inside compass-labs itself, and silently breaks everywhere else. `docs/sessions/…` paths, by contrast, are always repo-relative (they're the *consuming* repo's own session folders, not plugin files) and stay as-is.
 
 ## Mode dispatch (Phase 0)
+
+Arguments passed to this skill: `$ARGUMENTS` (empty when there are none, or when this skill was preloaded or read from disk rather than invoked as a slash command — treat that as the default mode). This skill **is** the slash command: plugin skills are user-invocable as `/compass-labs:session …`, so there is deliberately no `commands/session.md` (a command of the same name would shadow this skill for the Skill tool and for the orchestrator's `skills:` preload — VER-021).
 
 | Invocation | Mode |
 |---|---|
