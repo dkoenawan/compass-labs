@@ -22,11 +22,13 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 
 ## Open items
 
+- #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 - `origin/main` now has `912634c`, which reverts the session-open commit `d38c99c`. Before this branch's first push, merge `origin/main` into it and keep the branch's session files, so the PR doesn't delete them.
 - Issue #23's title and body still describe the original, narrower proposal (a Q0 problem-framing step in `skills/plan/SKILL.md`). Rewrite both once Define's problem statement is agreed.
 
 ## Key decisions
 
+- **2026-09-25**: Session skill should branch before its first commit/push; deferred to #37
 - **2026-09-25**: Framing open questions settled: full refresh of compass-labs README + solution-design in this session; owed anchor update made at framing time; no-anchor fallback = ask user for 1–2 sentence purpose, recorded in session; framing effort scales with size of work (in scope)
 - **2026-09-25**: Framing standards are one skill per artifact section (problem statement, requirements), with standards picked by session type
 - **2026-09-25**: Project anchor = README + docs/explanation/solution-design.md; registry/ADRs are overlap/conflict context only; "extends" owes an anchor update
@@ -84,3 +86,6 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 ### 2026-09-25 — main — note: reverted session-open commit on main
 - The user asked for the revert to follow best practice. I added `912634c` to `origin/main` with `git revert` (no history rewrite, no force-push), working in a temporary worktree so this branch's working tree wasn't touched.
 - Still to do: the branch contains `d38c99c`, and `main` now reverts it. Before the first push, merge `origin/main` into the branch and resolve the modify/delete conflict by keeping the branch's files.
+
+### 2026-09-25 — main — decision: defer session-skill branching fix to #37
+- The session skill's New session flow commits and pushes the opening commit without creating a branch, which is how `d38c99c` reached `main`. Fixing the skill is outside this session's scope, so I opened #37 to track it.
