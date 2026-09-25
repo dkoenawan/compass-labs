@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
+milestone: define
 active_agent: main
-next_step: "Define milestone re-review: REQ-001..046; two gate questions (traceability chain owner, Bugfix verdicts in REQ-014)"
+next_step: "Design revises parked design.md against REQ-001..046"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -23,13 +23,14 @@ next_step: "Define milestone re-review: REQ-001..046; two gate questions (tracea
 ## Open items
 
 - #40: Bugfix framing depth, deferred until the Bugfix workflow (#24) exists.
-- design.md (DES-001..016 plus the visual overview) is a parked draft. After Define is re-approved, the Design agent revises it against the new requirements.
+- design.md (DES-001..016 plus the visual overview) is being revised against REQ-023..046.
 - #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 
 ## Key decisions
 
+- **2026-09-25**: ✅ Define complete (re-approved) — REQ-001..046 (REQ-012 dropped): framing, anchor contract, Feature-depth problem statement + requirements + visuals, bounded methods research
 - **2026-09-25**: REQ-014 amended: Bugfix verdict may be "deferred to #40"; REQ-041 stays outcome → REQ (no new REQ)
 - **2026-09-25**: Traceability diagram at Define stays outcome → REQ (DES links via #39, VER links via #29); REQ-014 allows "deferred to #40" as a Bugfix verdict
 - **2026-09-25**: Feature-depth outcomes: problem statement = SCQ context, job-story need, observed/assumed evidence, impact + why now, measurable outcome, appetite + no-gos (templates offered, not mandated); requirements add ISO 25010:2023 coverage, NFR response measures, MoSCoW, upward trace, assumptions/dependencies, example-based criteria, worked example; tiered Mermaid visuals; Bugfix depth deferred to #40
@@ -273,3 +274,7 @@ next_step: "Define milestone re-review: REQ-001..046; two gate questions (tracea
 ### 2026-09-25 — compass-labs:define — note: requirements.md marked re-approved, ready to freeze
 - Status line set to "Approved (Define complete 2026-09-25, re-approved after reopen)" on the user's approval, relayed by the orchestrator. Open questions: all resolved.
 - Final set: REQ-001 to REQ-046, with REQ-012 struck through (replaced by REQ-020 and REQ-021).
+
+### 2026-09-25 — main — milestone: ✅ Define complete (re-approved after reopen)
+- The user re-approved requirements.md: REQ-001 to REQ-046, with REQ-012 struck through. Open questions: all resolved.
+- New since the first approval: tier-aware Feature-depth outcomes for the problem statement (REQ-023–029), requirements (REQ-030–038) and Mermaid visuals (REQ-039–045), plus verdicts that name the outcome they serve (REQ-046).
