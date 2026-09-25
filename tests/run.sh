@@ -24,8 +24,13 @@ fi
 
 for test_file in "${test_files[@]}"; do
   rel_path="${test_file#"$SCRIPT_DIR"/}"
-  output="$(bash "$test_file" 2>&1)"
+  # Each test gets a private TMPDIR, removed afterwards, so fixture repos
+  # and hook state (e.g. the commit guard's counter files) never leak into
+  # the real /tmp, even when a test's own cleanup misses something.
+  test_tmp="$(mktemp -d)"
+  output="$(TMPDIR="$test_tmp" bash "$test_file" 2>&1)"
   status=$?
+  rm -rf "$test_tmp"
   if [[ $status -eq 0 ]]; then
     echo "PASS  $rel_path"
     pass_count=$((pass_count + 1))

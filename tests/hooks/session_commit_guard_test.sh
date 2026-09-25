@@ -14,13 +14,20 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$REPO_ROOT/tests/lib.sh"
 
 HOOK="$REPO_ROOT/hooks/session-commit-guard.sh"
-STATE_DIR="${TMPDIR:-/tmp}/compass-session-commit-guard"
+
+# Isolate the hook's counter files: it keeps them under
+# ${TMPDIR:-/tmp}/compass-session-commit-guard/, so point TMPDIR at a
+# private dir removed on exit. (Tracking individual files didn't work:
+# fresh_session_id runs in a $(...) subshell, so its additions to a
+# cleanup array were lost and every run leaked files into /tmp — VER-023.)
+TEST_TMPDIR="$(mktemp -d)"
+export TMPDIR="$TEST_TMPDIR"
+STATE_DIR="$TMPDIR/compass-session-commit-guard"
 
 cleanup_dirs=()
-cleanup_state_files=()
 trap '
   for d in "${cleanup_dirs[@]:-}"; do rm -rf "$d"; done
-  for f in "${cleanup_state_files[@]:-}"; do rm -f "$f"; done
+  rm -rf "$TEST_TMPDIR"
 ' EXIT
 
 new_fixture_repo() {
@@ -43,10 +50,7 @@ build_input() {
 }
 
 fresh_session_id() {
-  local sid
-  sid="test-$$-$RANDOM-$RANDOM"
-  cleanup_state_files+=("$STATE_DIR/$sid.count")
-  echo "$sid"
+  echo "test-$$-$RANDOM-$RANDOM"
 }
 
 # 1. Uncommitted decision entry -> blocked.
@@ -142,6 +146,17 @@ assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo")" 2 "older-CLI block 1 (n
 assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo")" 2 "older-CLI block 2 (no field)"
 assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo" false)" 2 \
   "a fresh Stop (stop_hook_active=false) should reset the counter and block, not allow"
+
+# 5d. Counter files from sessions that ended mid-sequence are pruned
+#     after a day; a recent one (another live session) is kept.
+mkdir -p "$STATE_DIR"
+echo 1 > "$STATE_DIR/stale-session.count"
+touch -d '2 days ago' "$STATE_DIR/stale-session.count"
+echo 1 > "$STATE_DIR/recent-session.count"
+assert_hook_exit "$HOOK" "$(build_input "$(fresh_session_id)" "$repo" false)" 2 "prune run (still blocks)"
+[[ ! -f "$STATE_DIR/stale-session.count" ]] || fail "a counter file untouched for >1 day should be pruned"
+[[ -f "$STATE_DIR/recent-session.count" ]] || fail "a recent counter file of another session must be kept"
+rm -f "$STATE_DIR"/*.count
 
 # 6. archive/ is never scanned, even with an UNCOMMITTED decision heading
 #    (appended after the initial commit, so the archive-skip is the only

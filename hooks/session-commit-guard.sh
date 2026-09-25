@@ -21,7 +21,9 @@
 # "allow" short-circuit: it's a boolean, so honouring it would allow the
 # stop after 1 block, not the 2 the acceptance criterion requires. If the
 # field is missing (older CLI), the counter alone still caps the loop.
-# The counter file is removed on every "allow" path.
+# The counter file is removed on every "allow" path, and counter files
+# untouched for over a day (a session that ended mid-sequence) are pruned
+# on every run.
 #
 # Fails OPEN (exit 0) if this isn't a git repository, or if jq is
 # missing — this hook must never be the reason a public install of this
@@ -56,6 +58,12 @@ fi
 state_dir="${TMPDIR:-/tmp}/compass-session-commit-guard"
 mkdir -p "$state_dir" 2>/dev/null || true
 state_file="$state_dir/${session_id:-unknown}.count"
+
+# Every "allow" path below removes this session's counter file, so a file
+# only outlives its turn if the session ended right after a block (no
+# further Stop ever came). Prune those: a counter untouched for a day
+# can't belong to a block sequence that's still running (VER-023).
+find "$state_dir" -maxdepth 1 -type f -name '*.count' -mmin +1440 -delete 2>/dev/null || true
 
 read_count() {
   [[ -f "$state_file" ]] && cat "$state_file" 2>/dev/null || echo 0
