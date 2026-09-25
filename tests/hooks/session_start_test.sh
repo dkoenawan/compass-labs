@@ -65,6 +65,8 @@ empty_repo="$(new_fixture_repo)"
 run_hook "$HOOK" "$(build_input compass-labs:orchestrator "$empty_repo")"
 assert_eq "0" "$HOOK_EXIT" "hook should always exit 0"
 assert_contains "$HOOK_STDOUT" "Active sessions: none" "empty session list should say so explicitly"
+assert_contains "$HOOK_STDOUT" "/compass-labs:session new" \
+  "the none message should name the real slash command (VER-020)"
 
 # 6. docs/sessions/archive/<slug>/log.md is never scanned even if malformed.
 archive_repo="$(new_fixture_repo)"

@@ -350,7 +350,7 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 ### Using Sessions in a Repo
 
-#### `/compass:session`
+#### `/compass-labs:session`
 
 Runs a **Feature session** end-to-end — Define → Design → Implement → Test → Deploy → Close — as one tracked unit: one session folder, one GitHub issue, one artifact per phase, and a milestone gate the user approves before each phase transition. See [`docs/sessions/2026-08-19-session-lifecycle/design.md`](docs/sessions/2026-08-19-session-lifecycle/design.md) for the full design.
 
@@ -370,7 +370,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
    ```
    Plain `claude` then starts as the orchestrator every time — the recommended setup for a repo that runs everything through sessions.
 2. **Explicit agent**: `claude --agent compass-labs:orchestrator`
-3. **From any conversation**: `/compass:session` (also `/compass:session new`, `resume [slug]`, `status [--all]`)
+3. **From any conversation**: `/compass-labs:session` (also `/compass-labs:session new`, `resume [slug]`, `status [--all]`)
 
 **Requirements:** `gh` authenticated (`gh auth status`) for GitHub sync — if it isn't, the session keeps going locally and syncs at the next milestone; `jq` on PATH for every session hook/script (each fails open, never blocking, if `jq` is missing).
 
@@ -384,10 +384,10 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 
 **Usage:**
 ```bash
-/compass:session               # list active/paused sessions, then ask new vs. resume
-/compass:session new            # start a new Feature session
-/compass:session resume [slug]  # pick up where a session left off
-/compass:session status [--all] # --all also lists archived sessions
+/compass-labs:session                 # list active/paused sessions, then ask new vs. resume
+/compass-labs:session new             # start a new Feature session
+/compass-labs:session resume [slug]   # pick up where a session left off
+/compass-labs:session status [--all]  # --all also lists archived sessions
 ```
 
 **When a session closes:** the Close phase folds the session's requirements/design/decisions into the repo's as-built docs (`docs/reference/`, `docs/explanation/`, `docs/registry/`) with no session narrative — just the current truth, plus one `Origin: #<issue>` line per doc it touched — then the orchestrator moves the folder to `docs/sessions/archive/` and closes the issue.

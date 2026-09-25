@@ -14,7 +14,14 @@ source "$REPO_ROOT/tests/lib.sh"
 readme="$(cat "$REPO_ROOT/README.md")"
 claude_md="$(cat "$REPO_ROOT/CLAUDE.md")"
 
-assert_contains "$readme" "/compass:session" "README should document /compass:session"
+assert_contains "$readme" "/compass-labs:session" "README should document /compass-labs:session"
+
+# The plugin is named compass-labs, so /compass:session does not exist
+# (VER-020). No session-facing file may document it.
+for f in README.md skills/session/SKILL.md hooks/session-start.sh agents/orchestrator.md; do
+  assert_not_contains "$(cat "$REPO_ROOT/$f")" "/compass:session" \
+    "$f documents /compass:session, which does not exist (use /compass-labs:session)"
+done
 assert_contains "$readme" "compass-labs:orchestrator" "README should document the --agent entry point"
 assert_contains "$readme" '"agent": "compass-labs:orchestrator"' \
   "README should show the repo-default settings.json snippet"

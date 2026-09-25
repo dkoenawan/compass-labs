@@ -18,16 +18,16 @@ Arguments passed to this skill: `$ARGUMENTS` (empty when there are none, or when
 
 | Invocation | Mode |
 |---|---|
-| `/compass:session` (no args), or starting as `compass-labs:orchestrator` | **Default**: list active/paused sessions, then ask new vs. resume |
-| `/compass:session new` | **New** session flow |
-| `/compass:session resume [slug]` | **Resume** flow. No slug → show the list and ask |
-| `/compass:session status [--all]` | **Status**: list sessions (`--all` includes archived) |
+| `/compass-labs:session` (no args), or starting as `compass-labs:orchestrator` | **Default**: list active/paused sessions, then ask new vs. resume |
+| `/compass-labs:session new` | **New** session flow |
+| `/compass-labs:session resume [slug]` | **Resume** flow. No slug → show the list and ask |
+| `/compass-labs:session status [--all]` | **Status**: list sessions (`--all` includes archived) |
 
 To list sessions: scan `docs/sessions/*/log.md` frontmatter for `status: active` or `status: paused` (`--all` also includes `archived`). A `SessionStart` hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh`, task 7) injects this list as context when you start as the orchestrator agent — if that context isn't present, scan the folders yourself.
 
 ## One-time setup
 
-Run once per repo, the first time `/compass:session` is used in it:
+Run once per repo, the first time `/compass-labs:session` is used in it:
 
 1. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-setup.sh` — creates every `phase:*` and `type:*` label (idempotent; safe to re-run).
 2. Copy the commit-point rule into the repo, **only if it isn't already there**: if `.claude/rules/compass-sessions.md` doesn't exist, copy `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` to it (a repo-relative destination — rules live in the consuming repo, not the plugin). Never overwrite an existing `.claude/rules/compass-sessions.md` — the repo may have customized it.

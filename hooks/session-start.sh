@@ -71,7 +71,7 @@ done
 fi
 
 if [[ ${#active_lines[@]} -eq 0 ]]; then
-  echo "Active sessions: none. Ask the user whether to start a new one (/compass:session new)."
+  echo "Active sessions: none. Ask the user whether to start a new one (/compass-labs:session new)."
   exit 0
 fi
 
