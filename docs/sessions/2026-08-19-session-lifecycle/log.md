@@ -22,6 +22,7 @@ next_step: "Test agent re-verifying VER-010/013/014/020/021/022/023 after fix pa
 
 ## Key decisions
 
+- **2026-09-25**: Defect 8 (VER-019): task 3 (test harness) tagged `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]` post-freeze. Support tasks trace to the design item they enable; REQ-014 stays strict, no `[support]` exemption.
 - **2026-09-25**: Test gate refused. Defects 1–7 (VER-010/013/014/020/021/022/023) fixed now in an Implement fix pass (code only, `tasks.md` stays frozen); defect 8 (VER-019) handled after that.
 - **2026-09-24**: ✅ Implement milestone approved by the user ("Approve, open PR"). `tasks.md` frozen with 14/14 done. PR opened, `phase:test`.
 - **2026-09-24**: Atomic commits are a rule: one commit per decision/milestone entry and per ticked task. Enforced by a rule file plus a `Stop` commit guard (D8, REQ-016). A global rule was added to `~/.claude/rules/atomic-commits.md`.
@@ -279,3 +280,8 @@ next_step: "Test agent re-verifying VER-010/013/014/020/021/022/023 after fix pa
 
 ### 2026-09-25 — main — handoff: orchestrator → test agent (re-verify after fix pass)
 - **Input:** re-run VER-010/013/014/020/021/022/023 live against `22e2667`, update their rows in `verification.md`, re-run `check-traceability.sh`. Defect 8 (VER-019) and pending VER-006/015 out of scope.
+
+### 2026-09-25 — main — decision: tag task 3 with the design items it enables (defect 8, VER-019)
+- User: "defect 8 let's fix it" (option 1 of 3; rejected: a `[support]` exemption amending REQ-014, leaving it failing).
+- Frozen `tasks.md` amended by the orchestrator (contract rule 3): task 3 → `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]`. The harness exists so the D7 guard and D8 Stop guard could be tested; both list tests as part of their work.
+- Future sessions: a support task names the design item it enables; REQ-014 gets no exception. VER-019 to be re-checked by the test agent.

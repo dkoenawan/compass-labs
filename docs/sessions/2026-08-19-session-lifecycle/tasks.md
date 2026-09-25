@@ -14,7 +14,7 @@ budget:
 
 - [x] Artifact templates: thin `requirements`, `design`, `tasks`, `verification`, `release`, `log` in `skills/session/templates/` [D1, D2 · REQ-014, REQ-007]
 - [x] Feature workflow definition as data (`skills/session/workflows/feature.json`: phases, owner agent, artifact, milestone) [D3 · REQ-002]
-- [x] Test harness `tests/run.sh` (plain bash, no dependencies) that feeds sample hook JSON to hook scripts and checks exit codes (depends on: 1)
+- [x] Test harness `tests/run.sh` (plain bash, no dependencies) that feeds sample hook JSON to hook scripts and checks exit codes [D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016] (depends on: 1)
 - [x] Guard hook `hooks/session-guard.sh` + `hooks.json` PreToolUse `Write|Edit` entry: file set, ownership via `agent_type`, frozen artifacts via `log.md` frontmatter, archive. Includes tests [D7 · REQ-004, REQ-005, REQ-006] (depends on: 2, 3)
 - [x] GitHub scripts `skills/session/scripts/gh-setup.sh` (labels, idempotent) and `gh-milestone.sh` (label swap + comment, idempotent, logs a pending sync and exits 0 on failure) [D5 · REQ-009, REQ-010]
 - [x] Orchestrator skill `skills/session/SKILL.md`: new / resume / status, main loop, question relay, milestone gate (commit → push → gh), follow-up issue creation, REQ↔VER check at the Test milestone [D3, D4, D5 · REQ-001, REQ-002, REQ-003, REQ-008, REQ-011, REQ-013] (depends on: 1, 2, 5)
