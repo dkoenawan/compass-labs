@@ -367,3 +367,6 @@ next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag
 ---
 
 ## Phase: Close
+
+### 2026-09-25 — main — handoff: orchestrator → close agent (fold-back)
+- **Input:** fold requirements/design/Key decisions into as-built `docs/` (reference, explanation, registry) per `close-foldback.md`; one `Origin: #22` line per touched doc; no session narrative; no archive move, no `log.md`. Return the summary as a `note` (contract rule 6 supersedes `close-foldback.md`'s "milestone" entry wording).
