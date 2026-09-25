@@ -23,7 +23,10 @@
         "./skills/infrastructure",
         "./skills/init",
         "./skills/plan",
-        "./skills/task-executor"
+        "./skills/requirements",
+        "./skills/session",
+        "./skills/task-executor",
+        "./skills/verification"
       ]
     }
   ]
