@@ -6,7 +6,7 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "User: where to put a ship-complete check (empty skills listed in marketplace.json); then Test milestone gate"
+next_step: "Test milestone gate (traceability exit 0); user approval, then push + gh-milestone test→deploy"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -324,3 +324,8 @@ next_step: "User: where to put a ship-complete check (empty skills listed in mar
 - Correction to the previous entry: the 4 empty domain skills (`backend`, `database`, `frontend`, `infrastructure`) **are** tracked via `.gitkeep`, so they ship as empty skills.
 - Deploy: `agents/deploy.md` + the Deploy milestone gate in `skills/session/SKILL.md` + a `release.md` template section: everything the release manifest lists exists and is complete, nothing complete is left out, no placeholders. Refuse the Deploy milestone otherwise.
 - This repo now: remove the 4 from `marketplace.json` and delete their `.gitkeep` (built later under #28); list `adr` and `post-hook-validator` (complete skills that weren't shipping). `marketplace_test.sh` checks listed ⇔ `skills/*/SKILL.md`.
+
+### 2026-09-25 — main — attempt: release-completeness check + skill list gaps
+- `ac5d54d`: `agents/deploy.md` checks release completeness before any deploy step (manifest lists only complete components, leaves none out, checked as shipped) and returns `blocked` on gaps; `release.md` template gains *Completeness*; SKILL.md gate step a2 refuses the Deploy milestone without it. Assertions in `phase_agents_test.sh`.
+- `6bf81e6`: removed `backend`/`database`/`frontend`/`infrastructure` (`.gitkeep` only) from `marketplace.json` and the repo; listed `adr` and `post-hook-validator`; `marketplace_test.sh` requires the list to match `skills/*/SKILL.md`; CONTRIBUTING's skill steps updated (flat folders, list in marketplace.json once complete).
+- `tests/run.sh` 15/15. `check-traceability.sh` still exit 0. These changes post-date the live re-verification; covered by unit tests only.
