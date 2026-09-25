@@ -6,7 +6,7 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "Implement fix pass for defects 1-7 (VER-010/013/014/020/021/022/023), then re-verify, then defect 8"
+next_step: "Test agent re-verifying VER-010/013/014/020/021/022/023 after fix pass; then defect 8 (VER-019)"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -255,3 +255,27 @@ next_step: "Implement fix pass for defects 1-7 (VER-010/013/014/020/021/022/023)
 - User: "Let's do 1-7 first then continue on 8".
 - Fix pass by the implement agent, code/docs only; `tasks.md` stays frozen (fixes are traced to VER ids, not new tasks). Phase stays `test`.
 - After the fix pass: re-run the failed VER rows (test agent), then handle defect 8 (task 3 has no D-item).
+
+### 2026-09-25 — main — handoff: orchestrator → implement agent (fix pass, defects 1–7)
+- **Input:** fix VER-010/013/014/020/021/022/023, one commit each, no push; `tasks.md` stays frozen.
+- **Output:** `aa36fda`, `cc1042c`, `05fa267`, `c158ca6`, `d385a5e`, `8ffc93f`, `22e2667`; `bash tests/run.sh` 14/14 pass (rerun by main).
+
+### 2026-09-25 — implement — attempt: fix pass for Test defects 1–7
+- VER-021 `aa36fda`: `commands/session.md` removed; the skill itself is `/compass-labs:session` and receives `$ARGUMENTS` (probed on CLI 2.1.282). Orchestrator's read-the-file fallback kept (preload doesn't work in `--agent` mode). `entry_points_test.sh` fails on a command/skill name clash.
+- VER-020 `cc1042c`: `/compass:session` → `/compass-labs:session` in README, SKILL.md, `session-start.sh`; tests reject the old name.
+- VER-013 `05fa267`: milestone gate stages the artifact + `log.md` (+ `assets/`) by path and checks the staged list before commit + push; Close step 2 also stages fold-back docs.
+- VER-010 `c158ca6`: `handoff` entry required before every Agent start; decisions/milestones mirrored to Key decisions in the same edit; phase-agent `milestone` entries downgraded to `note` (contract rule 6).
+- VER-014 `d385a5e`: `gh-milestone.sh` done only when `phase:<to>` is present and no other `phase:*` remains; removes all stale phase labels. Stateful fake `gh` tests for partial outage + recovery.
+- VER-022 `8ffc93f`: Stop guard blocks twice then allows (REQ-016); `stop_hook_active=false` resets the counter, `true` no longer allows on its own. jq `false`-as-missing bug fixed.
+- VER-023 `22e2667`: allow paths delete the counter file; >1-day-old counters pruned; `tests/run.sh` gives each test a private TMPDIR.
+
+### 2026-09-25 — implement — note: Stop guard kept at "2 blocks in a row"
+- `stop_hook_active` is boolean and can't count to 2; relying on it alone would break frozen REQ-016/D8. Counter stays, scoped to one turn by `stop_hook_active`.
+
+### 2026-09-25 — main — note: fix pass review
+- 7 commits, each scoped to one VER id; tree clean; 14/14 tests pass on rerun.
+- New finding, not yet decided: every other `/compass:<skill>` reference (README, CLAUDE.md, CONTRIBUTING.md, other SKILL.md files, `docs/explanation/`, task-executor scripts) likely has the same wrong prefix. Frozen `requirements.md` (REQ-001, REQ-015) and `design.md` still say `/compass:session`. Needs a user decision (fix here vs. follow-up issue).
+- ~36 leaked `/tmp/tmp.*` fixture dirs from pre-fix runs left in place (not reliably attributable).
+
+### 2026-09-25 — main — handoff: orchestrator → test agent (re-verify after fix pass)
+- **Input:** re-run VER-010/013/014/020/021/022/023 live against `22e2667`, update their rows in `verification.md`, re-run `check-traceability.sh`. Defect 8 (VER-019) and pending VER-006/015 out of scope.
