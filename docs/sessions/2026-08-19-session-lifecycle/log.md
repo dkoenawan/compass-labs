@@ -6,7 +6,7 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "Test agent re-verifying VER-010/013/014/020/021/022/023 after fix pass; then defect 8 (VER-019)"
+next_step: "Re-check VER-019 (test agent); user to decide plugin rename (compass) and marketplace skill list, then Test gate"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -285,3 +285,19 @@ next_step: "Test agent re-verifying VER-010/013/014/020/021/022/023 after fix pa
 - User: "defect 8 let's fix it" (option 1 of 3; rejected: a `[support]` exemption amending REQ-014, leaving it failing).
 - Frozen `tasks.md` amended by the orchestrator (contract rule 3): task 3 → `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]`. The harness exists so the D7 guard and D8 Stop guard could be tested; both list tests as part of their work.
 - Future sessions: a support task names the design item it enables; REQ-014 gets no exception. VER-019 to be re-checked by the test agent.
+- **Output (re-verify):** `verification.md` VER-010/013/014/020/021/022/023 now pass; `check-traceability.sh` missing REQ-014 only (VER-019, fixed in `af23bf5` after this run started).
+
+### 2026-09-25 — test — attempt: re-verified fix pass (VER-010, -013, -014, -020, -021, -022, -023)
+- Live headless runs at `46f332c` (throwaway repos, fake gh, scratch plugin copy with SKILL.md marker + labelled Design/Implement test doubles); all 7 rows now pass, citing fix commits `aa36fda`, `cc1042c`, `05fa267`, `c158ca6`, `d385a5e`, `8ffc93f`, `22e2667`.
+- `tests/run.sh` 14/14; no new `.count` or `tmp.*` leftovers after the suite or the live runs.
+- `check-traceability.sh`: exit 1, missing REQ-014 only (VER-019).
+
+### 2026-09-25 — test — note: REQ-015 text still names /compass:session
+- The frozen requirement names a command that doesn't exist today; shipped entry point is `/compass-labs:session` (VER-020). Pending the user's plugin-rename decision.
+
+### 2026-09-25 — test — note: --agent orchestrator can resolve docs/sessions against the plugin root
+- With `--add-dir <plugin>`, haiku and sonnet both looked in `${CLAUDE_PLUGIN_ROOT}/docs/sessions` (which the plugin ships); haiku reported the plugin's own session. 2/2 correct without `--add-dir`. Candidate: SKILL.md states sessions live under the project's git root. Also minor: status mode lists `status: closed` sessions.
+
+### 2026-09-25 — main — note: pending user decisions
+- User wants `/compass:` not `/compass-labs:`. That requires renaming the plugin (`plugin.json` `name`) → all `compass-labs:<agent>` ids (~59 refs incl. `feature.json` owner_agent), reverts part of `cc1042c`, breaks existing installs (2.0.0), contradicts repo CLAUDE.md. Asked: in this PR vs. follow-up session.
+- Found: `marketplace.json` (`strict: true`) skill list omits `session`, `requirements`, `verification`; `--plugin-dir` testing wouldn't catch it. Asked whether to add to the fix list.
