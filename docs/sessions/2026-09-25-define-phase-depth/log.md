@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
-active_agent: main
-next_step: "Hand off to compass-labs:design"
+active_agent: compass-labs:design
+next_step: "Design turns REQ-001..022 into DES-* components and decisions"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -24,8 +24,6 @@ next_step: "Hand off to compass-labs:design"
 
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
-- `origin/main` now has `912634c`, which reverts the session-open commit `d38c99c`. Before this branch's first push, merge `origin/main` into it and keep the branch's session files, so the PR doesn't delete them.
-- Issue #23's title and body still describe the original, narrower proposal (a Q0 problem-framing step in `skills/plan/SKILL.md`). Rewrite both once Define's problem statement is agreed.
 
 ## Key decisions
 
@@ -141,3 +139,12 @@ next_step: "Hand off to compass-labs:design"
 ### 2026-09-25 — main — milestone: ✅ Define complete
 - The user approved requirements.md: REQ-001 to REQ-022, with REQ-012 struck through. Open questions: all resolved.
 - Carried into Design: who writes anchor changes to project docs (REQ-011, 020, 021) under the phase-agent contract; the user must approve compass-labs' vision and mission wording during Implement (REQ-016).
+
+## Phase: Design
+
+### 2026-09-25 — main — note: Define milestone synced; branch reconciled with main
+- Merged `origin/main` into the branch (`39ad3dd`), keeping the session files over main's revert, then pushed `feat/23-define-phase-depth`. #23 moved to `phase:design` with the milestone comment.
+- Rewrote #23's title and body to the agreed scope, with the original Q0 proposal kept in a collapsed section. Commented on #26 and #32 that they are absorbed into #23.
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:design (DES-* for REQ-001..022)
+- **Input:** requirements.md approved (REQ-001 to REQ-022, REQ-012 dropped). Carried questions: who writes anchor changes to project docs (REQ-011, 020, 021) under the phase-agent contract, and where the anchor lives (REQ-018 leaves the layout to Design). The user prefers problem framing before solutions and wants options with leans, not a finished design dropped on them.
