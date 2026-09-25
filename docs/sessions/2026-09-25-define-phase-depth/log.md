@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
 active_agent: compass-labs:define
-next_step: "Define drafts problem framing from the four answers; user reviews before REQ rows"
+next_step: "Define folds in open-question answers and drafts REQ rows; user reviews for Define milestone"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -22,10 +22,12 @@ next_step: "Define drafts problem framing from the four answers; user reviews be
 
 ## Open items
 
+- Commit `d38c99c` (session open) was pushed straight to `origin/main` before the move to a branch. The user hasn't yet decided whether to revert it on `main`.
 - Issue #23's title and body still describe the original, narrower proposal (a Q0 problem-framing step in `skills/plan/SKILL.md`). Rewrite both once Define's problem statement is agreed.
 
 ## Key decisions
 
+- **2026-09-25**: Framing open questions settled: full refresh of compass-labs README + solution-design in this session; owed anchor update made at framing time; no-anchor fallback = ask user for 1–2 sentence purpose, recorded in session; framing effort scales with size of work (in scope)
 - **2026-09-25**: Framing standards are one skill per artifact section (problem statement, requirements), with standards picked by session type
 - **2026-09-25**: Project anchor = README + docs/explanation/solution-design.md; registry/ADRs are overlap/conflict context only; "extends" owes an anchor update
 - **2026-09-25**: Generalise the problem-framing step (not a Define phase) across session types; Feature + Bugfix concrete here, Research gets an extension point only (#25)
@@ -60,3 +62,21 @@ next_step: "Define drafts problem framing from the four answers; user reviews be
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (draft problem framing from answers)
 - **Input:** the four answers above. Task: draft the Problem statement, Scope, Non-goals, Constraints and Open questions in requirements.md. No REQ rows until the framing is agreed.
+- **Output:** done (framing draft for review); files_changed: requirements.md
+
+### 2026-09-25 — compass-labs:define — attempt: framing draft written for review
+- Filled in Problem statement, Scope, Non-goals, Constraints and Open questions in requirements.md from the user's answers: absorb #26 and #32; generalise the framing step, not a Define phase; Feature and Bugfix concrete, Research as an extension point only; anchor is the README plus solution-design, with the registry and ADRs checked only for overlap or conflict; one skill per artifact section.
+- Fixed #32's boundary in Scope item 6 and Constraints: a named candidate list with at most 3 additions per section, an adopt/adapt/reject verdict for each of Feature and Bugfix, and the research is done when every candidate has one.
+- No REQ rows yet. 4 open questions await the user: fixing compass-labs' own stale anchor docs, when an owed anchor update is made, the no-anchor fallback, and scaling framing effort to the size of the work.
+
+### 2026-09-25 — main — note: session moved to branch feat/23-define-phase-depth
+- The user asked for session work to go on a new branch, not `main`. The opening commit `d38c99c` had already been pushed to `origin/main`, and it's now also part of the branch's history. Whether to revert it on `main` is still open (see Open items). Local `main` has been reset to `origin/main`.
+
+### 2026-09-25 — main — decision: framing open questions settled
+- **Stale anchor docs:** refresh compass-labs' README and `solution-design.md` fully in this session (not the agent's suggested middle path).
+- **When an owed anchor update happens:** at framing time, before anything is built. This isn't the agent's lean either; nothing waits for Close.
+- **No-anchor fallback:** the framing step asks the user for a 1–2 sentence project purpose and records it in the session's own artifact. It never creates project docs.
+- **Scaling:** how much framing is done scales with the size of the work (full, short or skip), and this is in scope.
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (fold in open-question answers, draft REQ rows)
+- **Input:** the four answers above. Task: update Scope, Non-goals and Open questions to match, then draft REQ rows in EARS form with Given/When/Then criteria.
