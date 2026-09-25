@@ -6,7 +6,7 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "Test phase: live smoke tests with claude --plugin-dir . and verification.md (VER-* for REQ-001..016)"
+next_step: "Test gate refused (6 REQs lack passing VER): user to decide fix pass vs. deferral for the 8 defects, then re-verify"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -221,3 +221,31 @@ next_step: "Test phase: live smoke tests with claude --plugin-dir . and verifica
 ---
 
 ## Phase: Test
+
+### 2026-09-25 — main — handoff: orchestrator → test agent (live verification)
+- **Input:** write `verification.md` (VER-* for REQ-001–016); carried checks from Implement: live hook smoke test, `--agent` for all agents, clean `skills:` preload re-test, full Close run, gh idempotency/fail-open with a stub `gh`, counter-file gap. Throwaway repos only; no commits/pushes in the real repo.
+- **Output:** `verification.md` (VER-001–023), status `done`; 8 defects reported.
+
+### 2026-09-25 — test — attempt: live verification with claude --plugin-dir (CLI 2.1.282)
+- `verification.md` created: VER-001–VER-023 cover REQ-001–REQ-016. Unit baseline 13/13 at `4f87b94`. Live headless runs in throwaway repos under the scratchpad, fake `gh` on PATH; nothing written to the real repo except `verification.md`, real GitHub read-only.
+- Passed live: all three hooks through Claude Code (SessionStart, PreToolUse guard, Stop guard); `--agent` for all 7 agents plus the repo-default setting; `new`, resume recap, SendMessage relay to the same agent; full Close sequence (fold-back → `status: archived` commit → `archive-session.sh` → commit); gh scripts safe to re-run and fail open with `SYNC_PENDING`.
+- `check-traceability.sh` → exit 1, missing REQ-007, REQ-009, REQ-010, REQ-014, REQ-015, REQ-016 (a REQ whose live check failed gets no separate pass row).
+
+### 2026-09-25 — test — note: `skills:` preload question resolved
+- Marker probe (random tokens in a scratch plugin copy, tools disabled, positive control in the agent body, no Read calls): preload **works in subagent mode** (test, close, define) and **injects nothing in `--agent` main-session mode**.
+- The orchestrator's `skills: [compass-labs:session]` resolves to `commands/session.md`, not `skills/session/SKILL.md` (name collision; VER-021). Its explicit read-the-file fallback is what makes it work today.
+
+### 2026-09-25 — test — note: defects found (VER-010/013/014/019/020/021/022/023)
+- Command/skill name collision `compass-labs:session` (VER-021); documented `/compass:session` doesn't exist, real name is `/compass-labs:session` (VER-020).
+- Milestone gate commits only `log.md`, leaving the approved artifact untracked and unpushed (VER-013).
+- Orchestrator logs no `handoff` entries and doesn't mirror decisions to Key decisions (VER-010).
+- `gh-milestone.sh` never removes a stale `phase:*` label after a partial failure (VER-014).
+- Stop guard: CLI sends `stop_hook_active`, so the stop is allowed after 1 block, not 2 (VER-022); counter files leak, including 3 per `tests/run.sh` run (VER-023).
+- Task 3 names no D-item (VER-019).
+
+### 2026-09-25 — main — note: Test gate refused (REQ-011); staying in Test
+- `check-traceability.sh` exit 1: REQ-007, 009, 010, 014, 015, 016 have no passing VER. Milestone not offered.
+- Spot-checked: `/compass:session` appears in README, `commands/session.md`, SKILL.md; `session-commit-guard.sh` exits early on `stop_hook_active`; `/tmp/compass-session-commit-guard/` holds leaked `test-*.count` files.
+- Also noted by the agent (no VER row): Close's preloaded `doc-maintainer` pushes a branch/commit workflow at odds with Close; SKILL.md New flow claims `type:feature` is applied but the script only adds `phase:define`; `.claude/rules` copy denied as a sensitive path in headless mode; `SendMessage` fails under `--no-session-persistence`; #32 missing from `requirements.md` follow-up table.
+- Preload finding: `--agent` mode gets no preloaded skills; the read-the-file fallbacks stay necessary.
+- **Next:** user decides how to handle the defects (fix pass vs. defer to issues). Fixes to frozen `tasks.md`/code need a logged `decision`.
