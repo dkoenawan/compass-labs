@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
 active_agent: main
-next_step: "Define agent proposes Feature-depth outcome REQs for problem statement + requirements standards; user agrees; re-approve Define"
+next_step: "Define milestone re-review: REQ-001..046; two gate questions (traceability chain owner, Bugfix verdicts in REQ-014)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -240,3 +240,17 @@ next_step: "Define agent proposes Feature-depth outcome REQs for problem stateme
   - NFRs: adopt ISO 25010:2023; adapt SEI QA scenarios and Planguage; reject FURPS+.
   - Acceptance criteria: adopt GWT; adapt Example Mapping and Specification by Example.
   - Priority: adopt MoSCoW; reject Kano, RICE and WSJF at requirement level.
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (write Feature-depth REQs)
+- **Input:** the four Feature-depth answers plus the research verdicts (the decision above). Task: add REQ-023 onward, tighten REQ-007 and REQ-008, update Scope, Non-goals and Constraints.
+- **Output:** done (REQ-023..046; REQ-007 and 008 tightened); files_changed: requirements.md
+
+### 2026-09-25 — compass-labs:define — attempt: Feature-depth outcome REQs drafted (REQ-023 to REQ-046)
+- Added tier-aware outcome REQs from the agreed Feature-depth decision:
+  - problem-statement content (REQ-023–029)
+  - requirements content: ISO 25010:2023 coverage, NFR response measures, MoSCoW, upward trace, assumptions and dependencies, example-based criteria, worked example (REQ-030–038)
+  - Mermaid visuals (REQ-039–045)
+  - research verdicts naming the outcome REQ they serve (REQ-046)
+- Tightened REQ-007 and REQ-008 to require the Feature content from REQ-023–029 and REQ-030–038, keeping their IDs and intent. REQ-014 and REQ-015 are unchanged.
+- Scope: skip-tier answer recorded; Bugfix depth stays at REQ-006–008 (#40); item 7's candidate list expanded to every method the research assessed, so the cap of three additions doesn't count them; new item 9 summarises Feature depth. Non-goals: #40, #39. Constraints: templates not mandates, Mermaid renderability, REQ-009 covers priority and trace.
+- Status: "Draft (ready for Define milestone re-review)". One open question for the gate: who extends the traceability diagram to DES and VER (lean: #39 and #29; REQ-041 stays outcome → REQ). Flagged that REQ-014 still owes Bugfix verdicts for every candidate.
