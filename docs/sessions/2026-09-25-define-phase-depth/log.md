@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: main
-next_step: "Define milestone gate: user reviews REQ-001..017"
+active_agent: compass-labs:define
+next_step: "Define revises anchor REQs for the split; then Define milestone gate"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -22,12 +22,14 @@ next_step: "Define milestone gate: user reviews REQ-001..017"
 
 ## Open items
 
+- #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 - `origin/main` now has `912634c`, which reverts the session-open commit `d38c99c`. Before this branch's first push, merge `origin/main` into it and keep the branch's session files, so the PR doesn't delete them.
 - Issue #23's title and body still describe the original, narrower proposal (a Q0 problem-framing step in `skills/plan/SKILL.md`). Rewrite both once Define's problem statement is agreed.
 
 ## Key decisions
 
+- **2026-09-25**: Project anchor split: this session defines the anchor contract (vision + mission) and framing creates it once if missing (supersedes the per-session ask fallback); init establishing it at project creation deferred to #38
 - **2026-09-25**: Framing answers folded into requirements.md: "extends" verdict applied before the framing milestone; Close fold-back unchanged (non-goal); user confirms each session's depth tier
 - **2026-09-25**: Session skill should branch before its first commit/push; deferred to #37
 - **2026-09-25**: Framing open questions settled: full refresh of compass-labs README + solution-design in this session; owed anchor update made at framing time; no-anchor fallback = ask user for 1–2 sentence purpose, recorded in session; framing effort scales with size of work (in scope)
@@ -101,3 +103,10 @@ next_step: "Define milestone gate: user reviews REQ-001..017"
 ### 2026-09-25 — compass-labs:define — attempt: REQ-001 to REQ-017 drafted for Define milestone review
 - 17 EARS requirements, each with one Given/When/Then, covering Scope items 1–8, including the #32 research (REQ-014, REQ-015) and the anchor refresh (REQ-016, REQ-017). Each was checked against the ISO 29148 quality checklist.
 - For the user to confirm at the gate: checks don't run at skip tier; REQ-011 leaves who applies the anchor update to Design; the refresh needs the user to approve a new purpose statement.
+
+### 2026-09-25 — main — decision: project anchor is established once, not asked per session; init work split to #38
+- The user interrupted the Define gate. Compass is meant to be a verbose, general workflow for any kind of work, not only full-stack development. A project's vision and mission should be anchored once, during init, and created if they don't exist, so the user doesn't have to restate them every session.
+- Split, as the user chose. **This session** defines the anchor contract: what the vision and mission must state, and where the anchor lives. The framing step reads the anchor, and if it's missing, framing creates it once with the user's approval and commits it. This **supersedes** the earlier fallback of asking every session and never creating project docs (REQ-012 as drafted). The compass-labs README and solution-design refresh (REQ-016/017) is the first anchor written to the contract. **Deferred to #38:** `init` sets up the anchor at project creation (greenfield and brownfield-migrate). Related to #19.
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (revise anchor requirements for the split)
+- **Input:** the decision above. Task: strike REQ-012 through, add requirements for the anchor contract and for create-if-missing, align REQ-016/017 to the contract, update Scope, Non-goals (#38) and Constraints. Also raise the skip-tier question (whether checks are skipped at skip tier) as an open question.
