@@ -48,18 +48,29 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
 
 ## Main loop (per phase — D3, D4)
 
-1. **Handoff.** Start (or resume via `SendMessage`, same conversation only — P4) `compass-labs:{phase}` with: session path, phase name, task, and any answers being relayed. Log a `handoff` entry (D2) once you have the input to record.
+1. **Handoff — logged every time, before the agent starts** (REQ-007). Every phase-agent start through the `Agent` tool gets its own `handoff` entry — the first start in a phase, a restart after `blocked`, a fresh agent replacing one `SendMessage` couldn't reach, a fix pass after a freeze. No exceptions, and never "once you have enough to record": append it **before** calling `Agent`:
+   ```
+   ### {date} — main — handoff: orchestrator → compass-labs:{phase} ({task, a few words})
+   - **Input:** {task}; {answers relayed, if any}
+   ```
+   Then start `compass-labs:{phase}` with: session path, phase name, task, and any answers being relayed. Relaying answers to the **same** running agent via `SendMessage` (same conversation only — P4) continues that invocation and needs no new handoff entry. When the agent returns, add an `- **Output:** {status}; {files_changed}` bullet to your handoff entry before appending anything below it.
 2. **Contract.** The agent returns `status` (`done` | `needs_input` | `blocked`), `questions`, `log_entries`, `files_changed` (D4). It writes only its own artifact — you write `log.md`, always (Q6 amendment: never a subagent).
    - `needs_input` → ask the `questions` via `AskUserQuestion`, then `SendMessage` the answers back to the same agent. Repeat until `done` or `blocked`.
    - `blocked` → surface the reason to the user; don't silently retry.
-3. **Append.** Add every entry from `log_entries` to `log.md` verbatim, in D2 format, under the current `## Phase: {name}` heading. Update frontmatter `active_agent` / `next_step`.
+3. **Append.** Add the entries from `log_entries` to `log.md` in D2 format, under the current `## Phase: {name}` heading, verbatim **except**:
+   - **A phase agent's `milestone` entry is never appended as a milestone.** Milestones are the user's to grant at the gate (step 4), and only you write them (step 4c). Downgrade it: rewrite its event type to `note` (keep the title and body) and append that. Don't mirror it into Key decisions, and don't treat it as approval.
+   - Every `decision` entry — the agent's or your own — is also **mirrored into Key decisions** (see below) in the same edit.
+
+   Update frontmatter `active_agent` / `next_step`.
+
+   **Key decisions mirror (REQ-007).** Every `decision` and every `milestone` entry you append to a phase section also gets a one-line bullet at the top of `## Key decisions` (newest first), written in the **same edit** so the two land in the same commit: `- **{date}**: {one line}` for a decision, `- **{date}**: ✅ {milestone label} — {one line}` for a milestone. A decision that exists only as a `note`, or only in a phase section, is a logging defect — if you find one, add the missing bullet.
 4. **Milestone gate**, once the agent returns `done` with its artifact ready:
    - Show the artifact (or a summary of it) to the user. `AskUserQuestion`: approve / adjust / rethink.
    - **Adjust/rethink** → relay back to the agent (still the same phase; not a new handoff phase).
    - **Approve**:
      a. **Test milestone only** (REQ-011): before anything else, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
      b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `${CLAUDE_PLUGIN_ROOT}/skills/session/workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
-     c. Append a `milestone` entry (D2).
+     c. Append a `milestone` entry (D2), actor `main`, and its ✅ bullet under Key decisions in the same edit (see the mirror rule in step 3).
      d. **Stage explicitly, then commit + push** (D5 order — commit and push *before* any `gh` call, so the milestone comment's links resolve):
         - Precondition: `git status --porcelain` may show only this milestone's own changes — the phase's artifact (`feature.json`'s `phases[].artifact` for the completed phase, e.g. `design.md`), `log.md`, and the session's `assets/`. Code and tests are committed per task during Implement (D8), so anything else uncommitted is either an unfinished task or unrelated work: don't bundle it into the milestone commit — surface it to the user and resolve it first.
         - `git add docs/sessions/{slug}/{artifact} docs/sessions/{slug}/log.md` (plus `docs/sessions/{slug}/assets/` if it exists). Name the paths — never rely on `git commit -a` or on an earlier add: a new artifact is **untracked** until you add it, and a milestone commit without it freezes an artifact that was never pushed (VER-013).
@@ -74,7 +85,7 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
 
 Close has no artifact and ends the session, so its milestone gate replaces steps b–f above with this **exact order** — getting this wrong either archives a folder the guard will then block further legitimate writes to, or leaves `log.md` claiming `archived` while the folder is still live:
 
-1. Append the final `milestone` entry to `log.md` (e.g. `✅ Session closed — …`), **and in the same edit** set frontmatter `milestone: close`, `status: archived`. (`log.md` is the one file always writable — see below — so this is safe to do before the move.)
+1. Append the final `milestone` entry to `log.md` (e.g. `✅ Session closed — …`) with its Key decisions bullet, **and in the same edit** set frontmatter `milestone: close`, `status: archived`. (`log.md` is the one file always writable — see below — so this is safe to do before the move.)
 2. `git add docs/sessions/{slug}/log.md` **plus every doc the Close agent returned in `files_changed`** (the fold-back edits under `docs/reference/`, `docs/explanation/`, `docs/registry/`), then `git commit` — one atomic commit (D8: the log entry, the frontmatter flip that makes it true, and the fold-back it describes belong together). Afterwards `git status --porcelain` must be empty; if it isn't, resolve that before step 3 (`archive-session.sh` refuses a dirty tree).
 3. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/archive-session.sh {session-dir}` — it refuses unless step 2 is already committed and the tree is clean, then does the `git mv` into `docs/sessions/archive/{slug}/`.
 4. `git add`+`git commit` (the move itself, separate from step 2's commit).

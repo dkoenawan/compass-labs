@@ -20,7 +20,7 @@ Return, every time:
   - `needs_input` — you need the user to answer something before continuing (conversational phases: Define, Design). Include `questions`.
   - `blocked` — you cannot proceed and this isn't something the user can answer through a question (e.g. a broken build, a missing dependency). Say why.
 - **`questions`** — only with `needs_input`. Plain text or structured prompts the orchestrator will ask via `AskUserQuestion`.
-- **`log_entries`** — zero or more entries in **D2 format** (`### {date} — {actor} — {event type}: {title}`, event type one of `handoff | decision | attempt | milestone | note`) for the orchestrator to append to `log.md` verbatim, under the current `## Phase: {name}` heading. This is how your work gets recorded — you never write `log.md` yourself.
+- **`log_entries`** — zero or more entries in **D2 format** (`### {date} — {actor} — {event type}: {title}`, event type one of `decision | attempt | note` — never `milestone`, see rule 6; `handoff` entries are the orchestrator's) for the orchestrator to append to `log.md` under the current `## Phase: {name}` heading. This is how your work gets recorded — you never write `log.md` yourself.
 - **`files_changed`** — the file(s) you wrote this turn (should be exactly your own artifact, plus code/tests for Implement).
 
 ## Rules
@@ -30,3 +30,4 @@ Return, every time:
 3. **A frozen artifact stays frozen.** Once your phase's milestone has been approved, the guard hook blocks further writes to your artifact from any subagent, full stop — not even you can amend it after that point. If something needs to change post-freeze, that's a `decision` the orchestrator logs and applies itself.
 4. **State lives in the session folder, not in your memory.** You may be a fresh invocation with no history of a previous attempt; read your own artifact and the session's other frozen artifacts (by ID reference — `REQ-*`, `DES-*`, etc.) rather than assuming continuity.
 5. **IDs link artifacts instead of repeating content** (D1). Reference upstream IDs (e.g. a task naming the `DES-*` it implements) rather than re-explaining them.
+6. **Never emit a `milestone` log entry.** A milestone exists only once the user approves it at the orchestrator's gate, and the orchestrator writes that entry itself. When your artifact is ready, return `status: done` and describe what's ready in an `attempt` or `note` entry. The orchestrator downgrades any `milestone` entry you return to a `note`.

@@ -23,5 +23,20 @@ assert_contains "$skill" "git status --porcelain" \
 assert_contains "$skill" 'files_changed`** (the fold-back edits' \
   "Close step 2 should stage the Close agent's fold-back docs so archive-session.sh sees a clean tree"
 
+# VER-010: handoff entry for every phase-agent start, Key decisions mirror,
+# phase agents' milestone entries downgraded.
+assert_contains "$skill" "Handoff — logged every time, before the agent starts" \
+  "main loop step 1 should require a handoff entry for every phase-agent start"
+assert_contains "$skill" "Key decisions mirror (REQ-007)" \
+  "main loop should require mirroring decisions/milestones into Key decisions"
+assert_contains "$skill" "A phase agent's \`milestone\` entry is never appended as a milestone" \
+  "main loop should downgrade phase agents' milestone entries"
+
+contract="$(cat "$REPO_ROOT/skills/session/reference/phase-agent-contract.md")"
+assert_contains "$contract" "Never emit a \`milestone\` log entry" \
+  "phase-agent contract should forbid phase agents from emitting milestone entries"
+assert_not_contains "$contract" "handoff | decision | attempt | milestone | note" \
+  "phase-agent contract should no longer list milestone as an event type agents may return"
+
 echo "ok: session skill orchestration rules validated"
 exit 0
