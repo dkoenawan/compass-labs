@@ -1,6 +1,6 @@
 # Requirements: Define phase depth — problem framing, per-type standards, project anchoring
 
-> Phase: Define | Started: 2026-09-25 | Status: Draft (ready for Define milestone review)
+> Phase: Define | Started: 2026-09-25 | Status: Approved (Define complete 2026-09-25)
 > Relates to: Issue #23 (absorbs #26 and #32)
 
 ## Problem statement
@@ -87,5 +87,6 @@ EARS syntax. Each requirement has one acceptance criterion in Given/When/Then fo
 
 ## Open questions
 
-1. **At skip tier, is every framing check skipped, including the anchor checks?** As written, REQ-005, 006, 010, 013, 020 and 021 run only at full or short tier. So a skip-tier session also skips the aligns/extends verdict and doesn't create a missing anchor.
-   [I lean towards yes, skip everything. A skip-tier session is small by definition (a typo, a version bump), so it can't plausibly extend the project. A missing anchor gets created at the next full or short session instead, which is soon enough because nothing at skip tier depends on it. The alternative is to let only anchor creation run at skip tier. That would put the one-time anchor conversation in front of a trivial change, which is exactly the friction skip exists to avoid.]
+1. **At skip tier, is every framing check skipped, including the anchor checks?** **Resolved 2026-09-25: yes, the user chose to skip everything.** At skip tier, framing skips every check, including the aligns/extends verdict and creating or completing the anchor. A missing anchor is created at the next full- or short-tier session. REQ-005, 006, 010, 013, 020 and 021 already say this, so they're unchanged.
+
+All questions resolved.

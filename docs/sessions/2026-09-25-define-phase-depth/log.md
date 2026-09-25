@@ -29,6 +29,7 @@ next_step: "Define milestone gate: skip-tier question + approve REQ-001..022"
 
 ## Key decisions
 
+- **2026-09-25**: Skip tier skips every framing check, including anchor verdict and anchor creation (REQs unchanged)
 - **2026-09-25**: Anchor contract: one labelled authoritative statement in persistent project docs; vision + mission + scope required, non-goals optional; create/complete once with approval (REQ-018..022); REQ-012 struck
 - **2026-09-25**: Project anchor split: this session defines the anchor contract (vision + mission) and framing creates it once if missing (supersedes the per-session ask fallback); init establishing it at project creation deferred to #38
 - **2026-09-25**: Framing answers folded into requirements.md: "extends" verdict applied before the framing milestone; Close fold-back unchanged (non-goal); user confirms each session's depth tier
@@ -123,3 +124,15 @@ next_step: "Define milestone gate: skip-tier question + approve REQ-001..022"
 ### 2026-09-25 — compass-labs:define — attempt: requirements.md revised and ready for the Define milestone gate
 - Updated Problem statement, Scope item 6 and item 8, Non-goals (#38) and Constraints (general-workflow constraint added, "never create project docs" wording removed). Added REQ-018 to REQ-022, revised REQ-010, 013, 016 and 017, and struck through REQ-012.
 - One open question for the user: whether skip tier skips all framing checks, including the anchor ones. Lean: yes.
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (resolve skip-tier question, mark approved)
+- **Input:** the user chose "skip everything" at skip tier and approved the Define milestone. Task: mark the open question resolved and set the status line to Approved. Change nothing else.
+- **Output:** done; files_changed: requirements.md
+
+### 2026-09-25 — compass-labs:define — decision: skip tier skips all framing checks, including anchor checks
+- The user took the lean: at skip tier, framing skips every check, including the aligns/extends verdict and anchor creation or completion (REQ-020, REQ-021). A missing anchor is created at the next full- or short-tier session.
+- The REQs already say this (REQ-005, 006, 010, 013, 020 and 021 run only at full or short tier), so they're unchanged. The open question is marked resolved in requirements.md.
+
+### 2026-09-25 — compass-labs:define — note: requirements.md marked approved, ready to freeze
+- Status line set to "Approved (Define complete 2026-09-25)" on the user's approval relayed by the orchestrator. Open questions: all resolved.
+- Final set: REQ-001 to REQ-022, with REQ-012 struck through (replaced by REQ-020 and REQ-021). For Design to pick up: who writes the anchor to project docs (REQ-011, 020, 021), since the phase-agent contract limits Define to its own artifact.
