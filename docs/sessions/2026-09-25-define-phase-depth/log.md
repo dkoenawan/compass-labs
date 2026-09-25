@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: compass-labs:define
-next_step: "Define revises anchor REQs for the split; then Define milestone gate"
+active_agent: main
+next_step: "Define milestone gate: skip-tier question + approve REQ-001..022"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -29,6 +29,7 @@ next_step: "Define revises anchor REQs for the split; then Define milestone gate
 
 ## Key decisions
 
+- **2026-09-25**: Anchor contract: one labelled authoritative statement in persistent project docs; vision + mission + scope required, non-goals optional; create/complete once with approval (REQ-018..022); REQ-012 struck
 - **2026-09-25**: Project anchor split: this session defines the anchor contract (vision + mission) and framing creates it once if missing (supersedes the per-session ask fallback); init establishing it at project creation deferred to #38
 - **2026-09-25**: Framing answers folded into requirements.md: "extends" verdict applied before the framing milestone; Close fold-back unchanged (non-goal); user confirms each session's depth tier
 - **2026-09-25**: Session skill should branch before its first commit/push; deferred to #37
@@ -110,3 +111,15 @@ next_step: "Define revises anchor REQs for the split; then Define milestone gate
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (revise anchor requirements for the split)
 - **Input:** the decision above. Task: strike REQ-012 through, add requirements for the anchor contract and for create-if-missing, align REQ-016/017 to the contract, update Scope, Non-goals (#38) and Constraints. Also raise the skip-tier question (whether checks are skipped at skip tier) as an open question.
+- **Output:** done after one restart. A rate limit interrupted the first run, and I resumed the same agent with SendMessage. files_changed: requirements.md
+
+### 2026-09-25 — compass-labs:define — decision: project anchoring reframed as an anchor contract, created once
+- The user reframed anchoring. A project's vision and mission are recorded once, in an anchor that meets a contract, and created if they don't exist, so they're never restated each session. Compass is a general workflow, not only for full-stack development.
+- Anchor contract: one authoritative, labelled statement in the project's persistent docs. Vision, mission and scope are required; non-goals are optional and checked when present. The exact location and layout are left to Design (REQ-018, REQ-019).
+- Create or complete if missing, once, with the user's approval, as persistent project docs (REQ-020, REQ-021). Reuse without restating (REQ-022). REQ-012's per-session fallback is dropped (struck through).
+- compass-labs' README and solution-design refresh becomes the first anchor written to the contract (REQ-016, REQ-017).
+- Anchor setup in `init` for new and existing projects is deferred to #38 (related #19).
+
+### 2026-09-25 — compass-labs:define — attempt: requirements.md revised and ready for the Define milestone gate
+- Updated Problem statement, Scope item 6 and item 8, Non-goals (#38) and Constraints (general-workflow constraint added, "never create project docs" wording removed). Added REQ-018 to REQ-022, revised REQ-010, 013, 016 and 017, and struck through REQ-012.
+- One open question for the user: whether skip tier skips all framing checks, including the anchor ones. Lean: yes.
