@@ -22,6 +22,7 @@ next_step: "Traceability passes; user to decide plugin rename (compass), marketp
 
 ## Key decisions
 
+- **2026-09-25**: Before the Test gate: add `session`/`requirements`/`verification` to `marketplace.json`, and pin session lookup to the project's git root in SKILL.md. Plugin rename to `compass` (`/compass:` prefix) deferred to a follow-up issue.
 - **2026-09-25**: Defect 8 (VER-019): task 3 (test harness) tagged `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]` post-freeze. Support tasks trace to the design item they enable; REQ-014 stays strict, no `[support]` exemption.
 - **2026-09-25**: Test gate refused. Defects 1–7 (VER-010/013/014/020/021/022/023) fixed now in an Implement fix pass (code only, `tasks.md` stays frozen); defect 8 (VER-019) handled after that.
 - **2026-09-24**: ✅ Implement milestone approved by the user ("Approve, open PR"). `tasks.md` frozen with 14/14 done. PR opened, `phase:test`.
@@ -305,3 +306,8 @@ next_step: "Traceability passes; user to decide plugin rename (compass), marketp
 ### 2026-09-25 — test — attempt: re-verified VER-019 (REQ-014) after defect 8 fix
 - `af23bf5` tagged task 3 `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]`; scripted check at `6a70e77`: 14/14 tasks carry a D-tag, D1–D8 each name REQs, all 16 REQ-* covered in design.md Traceability → VER-019 pass.
 - `check-traceability.sh`: exit 0 (re-run by main: exit 0). Test milestone ready for the user's gate, pending the open decisions (plugin rename, marketplace skill list, sessions-folder fix).
+
+### 2026-09-25 — main — decision: fix marketplace skill list + sessions-folder lookup now; defer plugin rename
+- User: "do 2 and 3 leave 1 for now".
+- Now: `marketplace.json` skill list gains `session`, `requirements`, `verification`; SKILL.md states sessions live under the project's git root, never `${CLAUDE_PLUGIN_ROOT}`. Small edits, applied by main (no phase-agent handoff), with a test.
+- Deferred: rename plugin `compass-labs` → `compass` so commands are `/compass:<skill>` (frozen REQ-001/REQ-015/design text included). Follow-up issue filed and linked below.
