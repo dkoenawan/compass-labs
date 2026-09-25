@@ -60,7 +60,10 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
      a. **Test milestone only** (REQ-011): before anything else, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
      b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `${CLAUDE_PLUGIN_ROOT}/skills/session/workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
      c. Append a `milestone` entry (D2).
-     d. `git commit` + `git push` (D5 order — commit and push *before* any `gh` call, so links resolve).
+     d. **Stage explicitly, then commit + push** (D5 order — commit and push *before* any `gh` call, so the milestone comment's links resolve):
+        - Precondition: `git status --porcelain` may show only this milestone's own changes — the phase's artifact (`feature.json`'s `phases[].artifact` for the completed phase, e.g. `design.md`), `log.md`, and the session's `assets/`. Code and tests are committed per task during Implement (D8), so anything else uncommitted is either an unfinished task or unrelated work: don't bundle it into the milestone commit — surface it to the user and resolve it first.
+        - `git add docs/sessions/{slug}/{artifact} docs/sessions/{slug}/log.md` (plus `docs/sessions/{slug}/assets/` if it exists). Name the paths — never rely on `git commit -a` or on an earlier add: a new artifact is **untracked** until you add it, and a milestone commit without it freezes an artifact that was never pushed (VER-013).
+        - Check `git diff --cached --name-only` lists the artifact (unless it's already committed unchanged), then `git commit -m "docs(sessions): {milestone label} — #{issue}"` + `git push`.
      e. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} {from-phase} {to-phase} {comment-file}`.
      f. If its output contains a `SYNC_PENDING:` line, log a `note` entry quoting it ("GitHub sync pending") — do **not** retry inline; the next milestone gate re-runs `gh-milestone.sh` first, per D5's "next milestone runs any pending sync first."
    - Move to the next phase in `feature.json`. **The `close` phase is special — see below** instead of following steps b–f as written.
@@ -72,7 +75,7 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
 Close has no artifact and ends the session, so its milestone gate replaces steps b–f above with this **exact order** — getting this wrong either archives a folder the guard will then block further legitimate writes to, or leaves `log.md` claiming `archived` while the folder is still live:
 
 1. Append the final `milestone` entry to `log.md` (e.g. `✅ Session closed — …`), **and in the same edit** set frontmatter `milestone: close`, `status: archived`. (`log.md` is the one file always writable — see below — so this is safe to do before the move.)
-2. `git add`+`git commit` (this is its own atomic commit — D8: the log entry and the frontmatter flip that make it true belong together).
+2. `git add docs/sessions/{slug}/log.md` **plus every doc the Close agent returned in `files_changed`** (the fold-back edits under `docs/reference/`, `docs/explanation/`, `docs/registry/`), then `git commit` — one atomic commit (D8: the log entry, the frontmatter flip that makes it true, and the fold-back it describes belong together). Afterwards `git status --porcelain` must be empty; if it isn't, resolve that before step 3 (`archive-session.sh` refuses a dirty tree).
 3. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/archive-session.sh {session-dir}` — it refuses unless step 2 is already committed and the tree is clean, then does the `git mv` into `docs/sessions/archive/{slug}/`.
 4. `git add`+`git commit` (the move itself, separate from step 2's commit).
 5. `git push`.
