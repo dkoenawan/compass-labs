@@ -6,7 +6,7 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "Test gate refused (6 REQs lack passing VER): user to decide fix pass vs. deferral for the 8 defects, then re-verify"
+next_step: "Implement fix pass for defects 1-7 (VER-010/013/014/020/021/022/023), then re-verify, then defect 8"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -22,6 +22,7 @@ next_step: "Test gate refused (6 REQs lack passing VER): user to decide fix pass
 
 ## Key decisions
 
+- **2026-09-25**: Test gate refused. Defects 1–7 (VER-010/013/014/020/021/022/023) fixed now in an Implement fix pass (code only, `tasks.md` stays frozen); defect 8 (VER-019) handled after that.
 - **2026-09-24**: ✅ Implement milestone approved by the user ("Approve, open PR"). `tasks.md` frozen with 14/14 done. PR opened, `phase:test`.
 - **2026-09-24**: Atomic commits are a rule: one commit per decision/milestone entry and per ticked task. Enforced by a rule file plus a `Stop` commit guard (D8, REQ-016). A global rule was added to `~/.claude/rules/atomic-commits.md`.
 - **2026-09-24**: ✅ Design milestone reached. D1a (one artifact per phase; an artifact can grow into a folder of native artifacts), D1b (ID links), D1c (EARS as the default; research in #32), D3 (three entry points, documented in the README), D5 accepted. No separate implementation guide: `tasks.md` is the Implement artifact.
@@ -249,3 +250,8 @@ next_step: "Test gate refused (6 REQs lack passing VER): user to decide fix pass
 - Also noted by the agent (no VER row): Close's preloaded `doc-maintainer` pushes a branch/commit workflow at odds with Close; SKILL.md New flow claims `type:feature` is applied but the script only adds `phase:define`; `.claude/rules` copy denied as a sensitive path in headless mode; `SendMessage` fails under `--no-session-persistence`; #32 missing from `requirements.md` follow-up table.
 - Preload finding: `--agent` mode gets no preloaded skills; the read-the-file fallbacks stay necessary.
 - **Next:** user decides how to handle the defects (fix pass vs. defer to issues). Fixes to frozen `tasks.md`/code need a logged `decision`.
+
+### 2026-09-25 — main — decision: fix defects 1–7 now, then defect 8
+- User: "Let's do 1-7 first then continue on 8".
+- Fix pass by the implement agent, code/docs only; `tasks.md` stays frozen (fixes are traced to VER ids, not new tasks). Phase stays `test`.
+- After the fix pass: re-run the failed VER rows (test agent), then handle defect 8 (task 3 has no D-item).
