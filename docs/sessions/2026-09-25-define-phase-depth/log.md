@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Design milestone gate: user reviews DES-001..016 + D6"
+next_step: "Produce BPMN 2.0 + context visual of the design; then Design milestone gate"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -22,11 +22,14 @@ next_step: "Design milestone gate: user reviews DES-001..016 + D6"
 
 ## Open items
 
+- #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
+- The Design gate is paused. The user asked for a visual of this design first: a BPMN 2.0 process view of how it fits the SDLC and session lifecycle, plus a project-context view.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 
 ## Key decisions
 
+- **2026-09-25**: Design-phase refinement (visual, type-specific artifacts — BPMN 2.0 for process designs — with explicit new/changed/deprecated delta) deferred to #39; this session gets a BPMN 2.0 visual of its own design before the gate
 - **2026-09-25**: design.md drafted to the four leans (DES-001..016); D6 proposed: pre-change sessions grandfathered (gate check a3 only when a Framing section exists) — pending user confirmation at gate
 - **2026-09-25**: Design choices: orchestrator applies anchor writes + Define-gate check; anchor = marked `## Project anchor` section in root README; new `framing` skill + per-type `framing` block in workflow JSON; `problem-statement` + `requirements` skills with `types/*.md` and per-section `reference/methods.md`, ADR-003 for the whole
 - **2026-09-25**: ✅ Define complete — REQ-001..022 approved (REQ-012 dropped); framing, per-type standards, anchor contract, #32 research bounded
@@ -174,3 +177,8 @@ next_step: "Design milestone gate: user reviews DES-001..016 + D6"
 - DES-001 to DES-016 cover REQ-001 to REQ-022; REQ-012 is struck and needs none. The #32 methods research is carried out in Implement (DES-013), before the per-type standards are finalised. ADR-003 is written in Implement (DES-016).
 - Decisions D1 to D6. D6 (the agent's addition) grandfathers sessions created before this change: the Framing section and the gate check apply only when the Framing section is present.
 - Risks cover breaking the anchor markers, preload load and gaps, research scope creep, traceability after the restructure, the new `feature.json` key, and the anchor write overwriting the user's wording.
+
+### 2026-09-25 — main — decision: visual review before the Design gate; Design-phase refinement deferred to #39
+- The user interrupted the Design gate. design.md is text-only and hard to review: it doesn't show how the design fits the SDLC or session process, or the project as a whole, and it doesn't separate what is new, changed or deprecated.
+- **For this session:** produce a visual of this design before the gate. That means a BPMN 2.0 process model, with the source kept in the session's `assets/`, showing the session lifecycle with the Define/framing flow expanded and each element marked new, changed or unchanged, plus a project-context view.
+- **Deferred to #39:** refining the Design phase itself, with visual artifacts chosen by the kind of design (BPMN 2.0 for process designs; architecture and infrastructure views for application designs; front-end design to be discussed separately) and an explicit current → new delta. Related to #27.
