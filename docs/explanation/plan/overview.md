@@ -1,12 +1,13 @@
 ---
 domain: plan
-last_updated: 2026-05-01
+last_updated: 2026-09-25
 source_path: skills/plan
 ---
 
 # Plan (L3)
 
 > → [System overview](../solution-design.md) | → [Container architecture](../containers.md)
+> Origin: #22
 
 ## What Is Plan?
 
@@ -14,21 +15,21 @@ Plan is a systematic feature specification generator that transforms a developer
 
 ## How It Works
 
-A FeatureSpec moves through five mandatory sequential phases. The developer invokes `/compass:plan` and describes what they want to build in natural language. The skill asks whether this is a new feature or extends existing code, and prompts selection of complexity signals (new DB tables, auth, real-time, file uploads, external integrations, complex state, high overall complexity). The count of selected signals locks the **adaptive depth** for all subsequent questions: 0–1 signals = shallow (1 question per layer), 2–3 = moderate, 4+ = deep plus tradeoff surfacing.
+A FeatureSpec moves through five mandatory sequential phases. The developer invokes `/compass:plan` and describes what they want to build in natural language. The skill immediately creates the spec file at `docs/sessions/{date}-{feature-name}/overview.md` with a `Status: Draft` line and a Summary from that answer; every later phase edits this file in place, so an abandoned session still leaves an honest partial draft on disk. The skill then asks whether this is a new feature or extends existing code, and prompts selection of complexity signals (new DB tables, auth, real-time, file uploads, external integrations, complex state, high overall complexity). The count of selected signals locks the **adaptive depth** for all subsequent questions: 0–1 signals = shallow (1 question per layer), 2–3 = moderate, 4+ = deep plus tradeoff surfacing.
 
 If the developer selects "Extends existing", the `explore` subskill is immediately invoked to scan related code. Its report is summarized in three bullets, and Phase 2 planning questions begin in the same response — the skill must not pause between the explore return and Q3 (a known failure mode documented in `reviews/plan/`).
 
 In Phase 2, the skill asks layer-by-layer design questions: Database (entities, relationships, constraints), Backend (operations, API boundary, error scenarios), and Frontend (pages, UI patterns, state management). Six known tension patterns are checked — frontend-heavy + auth, real-time + simple fetch, bulk operations without pagination, many-to-many with delete, file uploads, and extending existing models. Any match triggers an explicit Option A / Option B tradeoff analysis that must be resolved before synthesis proceeds.
 
-Phase 3 maps all answers into the FeatureSpec structure using CQRS naming (`CreateUserCommand`, `ListUsersQuery`), Prisma model syntax, and typed API shapes. Phase 4 presents the complete spec for approval: "This nails it" → Phase 5 (write to disk); "Adjust" → iterate Phase 3; "Rethink" → restart Phase 1. No file is written without explicit approval.
+Phase 3 maps all answers into the FeatureSpec structure using CQRS naming (`CreateUserCommand`, `ListUsersQuery`), Prisma model syntax, and typed API shapes. Phase 4 presents the complete spec for approval: "This nails it" → Phase 5 (finalize); "Adjust" → revise the session file and present again; "Rethink" → revisit earlier phases, still editing the same file. The spec is only marked approved after explicit approval.
 
-Phase 5 writes `specs/<feature-name>.md` to the project root (kebab-case filename) and presents a concrete implementation order with numbered steps.
+Phase 5 fills any section not yet written, flips the status line from `Status: Draft` to `Status: Approved`, writes construct stubs to the registry if one exists, and presents a concrete implementation order with numbered steps.
 
 ## Core Objects / Entities
 
 | Object | Description |
 | ------ | ----------- |
-| `FeatureSpec` | Complete markdown blueprint: Prisma models, CQRS operations with TypeScript types, frontend routes/components, error handling, implementation order. Written to `specs/<feature-name>.md`. |
+| `FeatureSpec` | Complete markdown blueprint: Prisma models, CQRS operations with TypeScript types, frontend routes/components, error handling, implementation order. Lives at `docs/sessions/{date}-{feature-name}/overview.md`, created at Q1 and approved in Phase 5. |
 | `ComplexityProfile` | Table of selected complexity signals that determines adaptive question depth (shallow/moderate/deep). Fixed at Phase 1 Q3. |
 | `DatabaseLayer` | Prisma models with fields, types, relations, decorators, migration notes, and data constraints for the feature. |
 | `BackendLayer` | CQRS commands (writes) and queries (reads) with API endpoints, TypeScript request/response shapes, and validation rules. |
@@ -42,7 +43,7 @@ Phase 5 writes `specs/<feature-name>.md` to the project root (kebab-case filenam
 - **FeatureSpec Template**: `skills/plan/template.md` — FeatureSpec markdown structure with all required sections (Summary, Complexity Profile, Database Layer, Backend Layer, Frontend Layer, Implementation Order, Open Questions)
 - **Reference example**: `skills/plan/examples/user-management/feature-spec.md` — complete worked example showing a User Management spec (User, Role, UserRole, UserProfile models; admin/self-only auth; CRUD + search; cache-and-revalidate strategy)
 - **Interface**: Invoked as `/compass:plan`; `AskUserQuestion` components for multi-select (complexity signals) and single-select (feature type, boundary) prompts
-- **Persistence**: Writes `specs/<feature-name>.md` to the project root after Phase 4 approval
+- **Persistence**: Creates `docs/sessions/{date}-{feature-name}/overview.md` at Q1 and edits it in place through every phase; Phase 5 marks it `Status: Approved` and writes registry construct stubs
 - **External callers**: `skills/plan/SKILL.md` invokes `compass-labs:explore` when user selects "Extends existing" in Phase 1
 
 ## Internal Architecture
@@ -69,10 +70,12 @@ Phase 5 writes `specs/<feature-name>.md` to the project root (kebab-case filenam
 - **All six tradeoffs must be resolved before synthesis**: If a tradeoff is triggered, Phase 3 cannot begin until the developer picks an option. There is no way to defer or skip tradeoff resolution.
 - **File-upload tradeoff blocks implementation**: The storage strategy choice (local filesystem vs. S3-compatible vs. database blob) is non-trivial and must be decided at planning time. The spec cannot be written with "TBD" for storage.
 - **Test generation is out of scope**: The skill produces implementation specs, not test suites. Test strategy must be handled separately.
-- **Spec filename is strict kebab-case**: Files must be written to `specs/<feature-name>.md` in kebab-case. Deviating from this convention makes specs hard to discover.
+- **Spec path is strict**: `docs/sessions/{YYYY-MM-DD}-{kebab-feature-name}/overview.md`. Deviating from this convention makes specs hard to discover.
+- **Coexists with the session guard hook**: a `docs/sessions/{id}/` folder with no `log.md` is a `plan` spec, not a lifecycle session, so `hooks/session-guard.sh` allows `overview.md` there (and nothing else until a `log.md` exists). Sessions run through [`/compass-labs:session`](../session/overview.md) use `requirements.md` and `design.md` instead; `plan` is due to be split into those two phases (#26, #27).
 - **Soft vs. hard delete is not defaulted**: If data sensitivity or cascade relationships make deletion non-trivial, the spec must capture the decision explicitly. The skill does not assume a deletion strategy.
 
 ## Changelog
 
 - 2026-04-24: Initial documentation generated by doc-maintainer.
 - 2026-05-01: Full refresh via doc-maintainer.
+- 2026-09-25: Spec file is created at Q1 under `docs/sessions/` and approved in place; the session guard hook allows `overview.md` in folders without `log.md`.

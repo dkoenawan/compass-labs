@@ -3,10 +3,10 @@ session: 2026-08-19-session-lifecycle
 type: feature
 issue: 22
 phase: close
-status: active
-milestone: deploy
+status: archived
+milestone: close
 active_agent: main (orchestrator)
-next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag on main, refresh local install, close #22"
+next_step: "Archived. Post-merge: tag compass-labs--v1.1.0 on main, refresh local install, close #22"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -22,6 +22,7 @@ next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag
 
 ## Key decisions
 
+- **2026-09-25**: ✅ Session closed: folded into `docs/explanation/session/`, `docs/reference/session/`, ADR-002 and 6 registry patterns; plan/guard clash fixed before release (`89193a0`).
 - **2026-09-25**: Release blocker found at Close: the guard blocks `/compass-labs:plan`'s spec write. Fix: the guard lets `overview.md` be written into a `docs/sessions/` folder that has no `log.md` (plan spec, not a lifecycle session); lifecycle sessions stay fully enforced.
 - **2026-09-25**: ✅ Deploy complete: v1.1.0 prepared on the branch (`9905bb9`), completeness check passed; tag + cache refresh after merge. Unquoted `$CLAUDE_PLUGIN_ROOT` in hooks.json deferred to #35.
 - **2026-09-25**: Deploy + Close run in this session (overrides Q9's separate session). v1.1.0; Deploy and Close on the branch, then squash-merge #33, tag on `main`, refresh the local install.
@@ -383,3 +384,15 @@ next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag
 - Reproduced: guard exits 2 on a Write to `docs/sessions/<id>/overview.md` with no `log.md`. `plan` wrote there on `main` already; the guard is new in v1.1.0, so plan breaks whenever the plugin's hooks are active. Merge, tag and archive paused.
 - User chose the narrow exemption (rejected: moving plan's output; shipping with an issue).
 - Also fixing at Close: the two links to the live session path (→ as-built docs) and `close-foldback.md` step 3 (→ `note`).
+
+### 2026-09-25 — main — attempt: release blocker and Close fixes
+- `89193a0`: guard allows `overview.md` in a `docs/sessions/` folder with no `log.md`; tests 3b/3c (fail on the old guard). Live `claude --plugin-dir` run in a throwaway repo: `overview.md` allowed, `requirements.md` blocked.
+- `cf7eda3`: `close-foldback.md` step 3 now returns a `note`, matching contract rule 6.
+- Fold-back docs updated to the fix (`plan/overview.md` gotcha, guard rule 2 in `hooks-and-scripts.md`). README and `.claude/rules/compass-sessions.md` now link to `docs/explanation/session/overview.md` instead of this folder.
+- `release.md` (frozen at Deploy) predates `89193a0`; the fix ships in v1.1.0 and is recorded in #22's closing comment. `tests/run.sh` 15/15.
+
+### 2026-09-25 — main — milestone: ✅ Session closed
+- Approved in advance by the user ("close the session").
+- Folded into as-built docs: `docs/explanation/session/overview.md`, `docs/reference/session/hooks-and-scripts.md`, `docs/reference/session/workflow-and-artifacts.md`, ADR-002, `docs/registry/patterns.md` (6 patterns), `docs/registry/index.md`, `docs/registry/decisions/index.md`, `docs/explanation/solution-design.md`, `docs/explanation/plan/overview.md`.
+- Follow-ups confirmed: #24–#32, #34 (plugin rename), #35 (quote `$CLAUDE_PLUGIN_ROOT`).
+- Next, after archive: squash-merge #33, tag `compass-labs--v1.1.0` on `main`, `claude plugin update compass-labs@compass-labs`, close #22.

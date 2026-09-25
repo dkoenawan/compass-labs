@@ -352,7 +352,7 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 #### `/compass-labs:session`
 
-Runs a **Feature session** end-to-end — Define → Design → Implement → Test → Deploy → Close — as one tracked unit: one session folder, one GitHub issue, one artifact per phase, and a milestone gate the user approves before each phase transition. See [`docs/sessions/2026-08-19-session-lifecycle/design.md`](docs/sessions/2026-08-19-session-lifecycle/design.md) for the full design.
+Runs a **Feature session** end-to-end — Define → Design → Implement → Test → Deploy → Close — as one tracked unit: one session folder, one GitHub issue, one artifact per phase, and a milestone gate the user approves before each phase transition. See [`docs/explanation/session/overview.md`](docs/explanation/session/overview.md) for how it works and [ADR-002](docs/registry/decisions/002-session-lifecycle.md) for the decision.
 
 **What a session is:**
 
