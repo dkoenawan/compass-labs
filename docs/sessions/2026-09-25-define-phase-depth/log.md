@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
+milestone: define
 active_agent: main
-next_step: "Define milestone gate: skip-tier question + approve REQ-001..022"
+next_step: "Hand off to compass-labs:design"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -29,6 +29,7 @@ next_step: "Define milestone gate: skip-tier question + approve REQ-001..022"
 
 ## Key decisions
 
+- **2026-09-25**: ✅ Define complete — REQ-001..022 approved (REQ-012 dropped); framing, per-type standards, anchor contract, #32 research bounded
 - **2026-09-25**: Skip tier skips every framing check, including anchor verdict and anchor creation (REQs unchanged)
 - **2026-09-25**: Anchor contract: one labelled authoritative statement in persistent project docs; vision + mission + scope required, non-goals optional; create/complete once with approval (REQ-018..022); REQ-012 struck
 - **2026-09-25**: Project anchor split: this session defines the anchor contract (vision + mission) and framing creates it once if missing (supersedes the per-session ask fallback); init establishing it at project creation deferred to #38
@@ -136,3 +137,7 @@ next_step: "Define milestone gate: skip-tier question + approve REQ-001..022"
 ### 2026-09-25 — compass-labs:define — note: requirements.md marked approved, ready to freeze
 - Status line set to "Approved (Define complete 2026-09-25)" on the user's approval relayed by the orchestrator. Open questions: all resolved.
 - Final set: REQ-001 to REQ-022, with REQ-012 struck through (replaced by REQ-020 and REQ-021). For Design to pick up: who writes the anchor to project docs (REQ-011, 020, 021), since the phase-agent contract limits Define to its own artifact.
+
+### 2026-09-25 — main — milestone: ✅ Define complete
+- The user approved requirements.md: REQ-001 to REQ-022, with REQ-012 struck through. Open questions: all resolved.
+- Carried into Design: who writes anchor changes to project docs (REQ-011, 020, 021) under the phase-agent contract; the user must approve compass-labs' vision and mission wording during Implement (REQ-016).
