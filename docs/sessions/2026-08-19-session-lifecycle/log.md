@@ -2,11 +2,11 @@
 session: 2026-08-19-session-lifecycle
 type: feature
 issue: 22
-phase: test
+phase: deploy
 status: active
-milestone: implement
+milestone: test
 active_agent: main (orchestrator)
-next_step: "Test milestone gate (traceability exit 0); user approval, then push + gh-milestone test→deploy"
+next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. Completeness check"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -22,6 +22,7 @@ next_step: "Test milestone gate (traceability exit 0); user approval, then push 
 
 ## Key decisions
 
+- **2026-09-25**: ✅ Test complete — user approved at the gate; 16/16 REQ have a passing VER; VER-006/VER-015 pending (non-blocking).
 - **2026-09-25**: No incomplete product ships: the Deploy phase gets a release-completeness check (agent + Deploy gate + `release.md` section). Now: unlist and delete the 4 empty domain skills (#28 builds them); list `adr` and `post-hook-validator`.
 - **2026-09-25**: Before the Test gate: add `session`/`requirements`/`verification` to `marketplace.json`, and pin session lookup to the project's git root in SKILL.md. Plugin rename to `compass` (`/compass:` prefix) deferred to a follow-up issue.
 - **2026-09-25**: Defect 8 (VER-019): task 3 (test harness) tagged `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]` post-freeze. Support tasks trace to the design item they enable; REQ-014 stays strict, no `[support]` exemption.
@@ -329,3 +330,13 @@ next_step: "Test milestone gate (traceability exit 0); user approval, then push 
 - `ac5d54d`: `agents/deploy.md` checks release completeness before any deploy step (manifest lists only complete components, leaves none out, checked as shipped) and returns `blocked` on gaps; `release.md` template gains *Completeness*; SKILL.md gate step a2 refuses the Deploy milestone without it. Assertions in `phase_agents_test.sh`.
 - `6bf81e6`: removed `backend`/`database`/`frontend`/`infrastructure` (`.gitkeep` only) from `marketplace.json` and the repo; listed `adr` and `post-hook-validator`; `marketplace_test.sh` requires the list to match `skills/*/SKILL.md`; CONTRIBUTING's skill steps updated (flat folders, list in marketplace.json once complete).
 - `tests/run.sh` 15/15. `check-traceability.sh` still exit 0. These changes post-date the live re-verification; covered by unit tests only.
+
+### 2026-09-25 — main — milestone: ✅ Test complete
+- User approved at the gate: "Approve".
+- `check-traceability.sh` exit 0: every REQ-001–016 has a passing VER. `verification.md` frozen (VER-001–023). Pending, non-blocking: VER-006 (interactive `AskUserQuestion` relay), VER-015 (pending-sync catch-up at the next gate).
+- Fixed during Test: defects 1–8, marketplace skill list, sessions-folder lookup, release-completeness check in Deploy. Deferred: plugin rename → #34. `tests/run.sh` 15/15.
+- **Handoff:** Test → Deploy. Deploy for this repo is the plugin release, run as its own session (Q9); it must fill `release.md`'s Completeness section.
+
+---
+
+## Phase: Deploy
