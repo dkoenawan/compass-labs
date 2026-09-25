@@ -22,6 +22,7 @@ next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag
 
 ## Key decisions
 
+- **2026-09-25**: Release blocker found at Close: the guard blocks `/compass-labs:plan`'s spec write. Fix: the guard lets `overview.md` be written into a `docs/sessions/` folder that has no `log.md` (plan spec, not a lifecycle session); lifecycle sessions stay fully enforced.
 - **2026-09-25**: ✅ Deploy complete: v1.1.0 prepared on the branch (`9905bb9`), completeness check passed; tag + cache refresh after merge. Unquoted `$CLAUDE_PLUGIN_ROOT` in hooks.json deferred to #35.
 - **2026-09-25**: Deploy + Close run in this session (overrides Q9's separate session). v1.1.0; Deploy and Close on the branch, then squash-merge #33, tag on `main`, refresh the local install.
 - **2026-09-25**: ✅ Test complete — user approved at the gate; 16/16 REQ have a passing VER; VER-006/VER-015 pending (non-blocking).
@@ -370,3 +371,15 @@ next_step: "Close: fold-back + archive on the branch, then squash-merge #33, tag
 
 ### 2026-09-25 — main — handoff: orchestrator → close agent (fold-back)
 - **Input:** fold requirements/design/Key decisions into as-built `docs/` (reference, explanation, registry) per `close-foldback.md`; one `Origin: #22` line per touched doc; no session narrative; no archive move, no `log.md`. Return the summary as a `note` (contract rule 6 supersedes `close-foldback.md`'s "milestone" entry wording).
+- **Output:** fold-back docs (4 new, 5 updated), uncommitted pending the blocker below; status `done`.
+
+### 2026-09-25 — close — note: Fold-back ready — session lifecycle documented as-built
+- New: `docs/explanation/session/overview.md`, `docs/reference/session/hooks-and-scripts.md`, `docs/reference/session/workflow-and-artifacts.md`, `docs/registry/decisions/002-session-lifecycle.md` (ADR-002, Accepted).
+- Updated: `docs/registry/patterns.md` (6 patterns), `docs/registry/index.md`, `docs/registry/decisions/index.md`, `docs/explanation/solution-design.md`, `docs/explanation/plan/overview.md`.
+- One `Origin: #22` line per doc; no session narrative; no constructs added.
+- Found: plan's Q1 write to `docs/sessions/{id}/overview.md` is blocked by `hooks/session-guard.sh`; README.md:355 and `.claude/rules/compass-sessions.md:8` link to the live session path; `close-foldback.md` step 3 asks for a `milestone` entry, contradicting contract rule 6.
+
+### 2026-09-25 — main — decision: fix the plan/guard clash before release (narrow guard exemption)
+- Reproduced: guard exits 2 on a Write to `docs/sessions/<id>/overview.md` with no `log.md`. `plan` wrote there on `main` already; the guard is new in v1.1.0, so plan breaks whenever the plugin's hooks are active. Merge, tag and archive paused.
+- User chose the narrow exemption (rejected: moving plan's output; shipping with an issue).
+- Also fixing at Close: the two links to the live session path (→ as-built docs) and `close-foldback.md` step 3 (→ `note`).
