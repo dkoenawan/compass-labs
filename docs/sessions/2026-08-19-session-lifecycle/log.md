@@ -6,12 +6,12 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "Traceability passes; user to decide plugin rename (compass), marketplace skill list, sessions-folder fix, then Test milestone gate"
+next_step: "User: where to put a ship-complete check (empty skills listed in marketplace.json); then Test milestone gate"
 ---
 # Session Log: Session Lifecycle (#22)
 
 > Format: D2 (accepted 2026-09-24). Only the orchestrator writes this file; for now that's the main session. Entries are append-only.
-> Artifacts: [`requirements.md`](requirements.md) (frozen) · [`design.md`](design.md) (frozen) · [`tasks.md`](tasks.md) · Follow-ups: #24–#32
+> Artifacts: [`requirements.md`](requirements.md) (frozen) · [`design.md`](design.md) (frozen) · [`tasks.md`](tasks.md) · Follow-ups: #24–#32, #34
 
 ## Open items
 
@@ -311,3 +311,9 @@ next_step: "Traceability passes; user to decide plugin rename (compass), marketp
 - User: "do 2 and 3 leave 1 for now".
 - Now: `marketplace.json` skill list gains `session`, `requirements`, `verification`; SKILL.md states sessions live under the project's git root, never `${CLAUDE_PLUGIN_ROOT}`. Small edits, applied by main (no phase-agent handoff), with a test.
 - Deferred: rename plugin `compass-labs` → `compass` so commands are `/compass:<skill>` (frozen REQ-001/REQ-015/design text included). Follow-up issue filed and linked below.
+
+### 2026-09-25 — main — attempt: marketplace skill list + sessions-folder lookup
+- `3bb4084`: `marketplace.json` lists `requirements`, `session`, `verification`; new `tests/session/marketplace_test.sh` (fails on the old file). `tests/run.sh` 15/15.
+- `4cfaf35`: SKILL.md path note: `docs/sessions/…` resolve against the project git root, never `${CLAUDE_PLUGIN_ROOT}`.
+- Follow-up **#34** filed: rename plugin to `compass` (`/compass:<skill>`), linked to #22 and this session. (`requirements.md` is frozen, so its follow-up table isn't updated; the log header lists it.)
+- Found: `marketplace.json` also lists `backend`, `database`, `frontend`, `infrastructure`, which are empty local directories (no SKILL.md, untracked by git). `adr` and `post-hook-validator` aren't listed. Raised with the user.
