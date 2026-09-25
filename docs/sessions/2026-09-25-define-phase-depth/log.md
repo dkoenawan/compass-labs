@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
-active_agent: compass-labs:design
-next_step: "Design revises parked design.md against REQ-001..046"
+active_agent: main
+next_step: "Design milestone gate: DES-001..018, confirm D6–D11 + verdict gaps"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -283,3 +283,10 @@ next_step: "Design revises parked design.md against REQ-001..046"
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:design (revise design.md for REQ-023..046)
 - **Input:** Define re-approved. Task: revise the parked design.md so DES items cover REQ-023..046 with concrete standard content (the problem-statement and requirements type files, the methods record with research verdicts, the Mermaid visual requirements), extend the visual overview, and keep all four earlier design choices. The research verdicts are in the Define (reopened) decision entry.
+- **Output:** done (DES-001..018; D6–D11 proposed); files_changed: design.md
+
+### 2026-09-25 — compass-labs:design — attempt: design.md revised for REQ-023..046 (Feature depth made concrete)
+- DES-011 and DES-012 now give the actual structure of each Feature type file: an element × tier table naming the required content, the optional template with its verdict, and the REQ it satisfies. The agent read `check-traceability.sh` to confirm that the Priority and Serves columns and the new tables don't affect it: it parses only the first column, matching `| REQ-nnn`, and struck rows are skipped.
+- Added DES-017 (diagram catalogue: 4 required at full tier, 6 optional, Mermaid type and checks, rendering rules) and DES-018 (worked full-tier example, which doubles as the REQ-009 test fixture). DES-008 now has a section × tier template table. DES-013 now has a starting verdict table with a Serves column (REQ-046) and "deferred to #40" as a Bugfix option.
+- Added current-vs-new comparison tables for both standards. Visual overview: a full-tier step added to diagram 2, labels updated in diagram 3, a new tier mindmap (diagram 4), and the delta table extended.
+- Coverage: REQ-001 to REQ-046 (REQ-012 struck). For the gate: D6 to D11 are proposals; D10 (traceability as a flowchart, not a requirementDiagram) departs from the research lean; the Feature verdict for symptom-vs-cause is missing from the recorded verdicts (adopt proposed); the Bugfix verdict column is a proposal.
