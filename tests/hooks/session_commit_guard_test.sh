@@ -3,7 +3,8 @@
 # Exercises hooks/session-commit-guard.sh (Stop, D8/REQ-016): blocks an
 # uncommitted decision/milestone log entry, allows once committed, allows
 # plain artifact edits with no such heading, allows after 2 consecutive
-# blocks (loop guard), ignores archive/, and fails open outside git.
+# blocks (loop guard; stop_hook_active=false restarts the count, true
+# never short-circuits it), ignores archive/, and fails open outside git.
 
 set -uo pipefail
 
@@ -29,10 +30,16 @@ new_fixture_repo() {
   echo "$dir"
 }
 
-# build_input <session_id> <cwd>
+# build_input <session_id> <cwd> [stop_hook_active: true|false]
+# Without the 3rd arg the field is omitted (older CLIs).
 build_input() {
-  local session_id="$1" cwd="$2"
-  jq -n --arg sid "$session_id" --arg c "$cwd" '{session_id:$sid, cwd:$c}'
+  local session_id="$1" cwd="$2" sha="${3:-}"
+  if [[ -n "$sha" ]]; then
+    jq -n --arg sid "$session_id" --arg c "$cwd" --argjson a "$sha" \
+      '{session_id:$sid, cwd:$c, stop_hook_active:$a}'
+  else
+    jq -n --arg sid "$session_id" --arg c "$cwd" '{session_id:$sid, cwd:$c}'
+  fi
 }
 
 fresh_session_id() {
@@ -108,6 +115,33 @@ assert_hook_exit "$HOOK" "$input" 0 "3rd attempt should be allowed with a warnin
 assert_hook_stderr_contains "WARNING" "3rd attempt should print a warning"
 # A 4th attempt (counter reset to 0 after the warning) should block again.
 assert_hook_exit "$HOOK" "$input" 2 "4th attempt (counter reset) should block again"
+
+# 5b. The real CLI sequence (VER-022): stop_hook_active is false on the
+#     first Stop and true on each hook-forced retry. The guard must still
+#     block twice before allowing (REQ-016), not short-circuit on true.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active none)"
+git_commit_all "$repo" "initial"
+cat >> "$session_dir/log.md" <<'EOF'
+
+### 2026-01-02 — main — decision: something changed
+- test-only decision entry
+EOF
+sid="$(fresh_session_id)"
+assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo" false)" 2 "first Stop (stop_hook_active=false) should block"
+assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo" true)" 2 \
+  "first forced retry (stop_hook_active=true) should block again — 2 blocks in a row"
+assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo" true)" 0 \
+  "second forced retry should be allowed after 2 blocks"
+assert_hook_stderr_contains "WARNING" "the allowed stop should warn"
+[[ ! -f "$STATE_DIR/$sid.count" ]] || fail "the counter file should be removed when the stop is allowed"
+
+# 5c. A counter left over from an earlier turn doesn't count against a
+#     new one: stop_hook_active=false restarts the sequence.
+assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo")" 2 "older-CLI block 1 (no field)"
+assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo")" 2 "older-CLI block 2 (no field)"
+assert_hook_exit "$HOOK" "$(build_input "$sid" "$repo" false)" 2 \
+  "a fresh Stop (stop_hook_active=false) should reset the counter and block, not allow"
 
 # 6. archive/ is never scanned, even with an UNCOMMITTED decision heading
 #    (appended after the initial commit, so the archive-skip is the only

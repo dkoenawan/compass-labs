@@ -7,16 +7,21 @@
 # with a reason telling Claude to commit that entry together with the
 # artifact changes it describes, per D8/`.claude/rules/compass-sessions.md`.
 #
-# Loop guard: this hook keys a per-Claude-session block counter (by
-# `session_id` from the hook input) in a state file under
-# ${TMPDIR:-/tmp}. After 2 consecutive blocks for the same session, the
-# 3rd check allows the stop anyway (with a warning on stderr) rather than
-# blocking forever — there is no documented `stop_hook_active`-style
-# field in the Stop hook's input to detect "this is a hook-forced
-# continuation" (checked; see the commit message / tasks.md), so a
-# same-session consecutive-block counter is the only loop guard
-# available. The counter resets to 0 as soon as a check finds nothing to
-# block.
+# Loop guard (REQ-016 AC: "after 2 blocks in a row, the stop is
+# allowed"): a per-Claude-session consecutive-block counter, keyed by
+# `session_id`, in a state file under ${TMPDIR:-/tmp}. Blocks 1 and 2
+# exit 2; the 3rd consecutive check allows the stop (with a warning on
+# stderr) and resets the counter.
+#
+# `stop_hook_active` (sent by Claude Code — verified on CLI 2.1.282,
+# VER-022: false on a normal Stop, true when Claude is continuing because
+# a Stop hook blocked) is used only to scope the counter to one turn: on
+# `false` the counter restarts at 0, so a block left over from an earlier
+# turn never counts against this one. It is deliberately NOT used as an
+# "allow" short-circuit: it's a boolean, so honouring it would allow the
+# stop after 1 block, not the 2 the acceptance criterion requires. If the
+# field is missing (older CLI), the counter alone still caps the loop.
+# The counter file is removed on every "allow" path.
 #
 # Fails OPEN (exit 0) if this isn't a git repository, or if jq is
 # missing — this hook must never be the reason a public install of this
@@ -39,13 +44,8 @@ session_id="$(jq -r '.session_id // empty' <<<"$input" 2>/dev/null)"
 cwd="$(jq -r '.cwd // empty' <<<"$input" 2>/dev/null)"
 [[ -n "$cwd" ]] || cwd="$(pwd)"
 
-# Checked (per task 14): the Stop hook input documented for this CLI does
-# not include a stop_hook_active-style field the way some other agent
-# frameworks' stop hooks do — there's no signal here for "this stop was
-# already forced to continue once." If a future CLI version adds one,
-# prefer it over the counter below (skip straight to "allow" when it's
-# true) rather than double-counting.
-stop_hook_active="$(jq -r '.stop_hook_active // empty' <<<"$input" 2>/dev/null)"
+# true | false | "" (missing). See the loop-guard note above.
+stop_hook_active="$(jq -r 'if has("stop_hook_active") then (.stop_hook_active | tostring) else empty end' <<<"$input" 2>/dev/null)"
 
 repo_root="$(git -C "$cwd" rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "$repo_root" ]]; then
@@ -85,10 +85,9 @@ if [[ "$found_uncommitted" != true ]]; then
   exit 0
 fi
 
-if [[ "$stop_hook_active" == "true" ]]; then
-  # A documented re-entrancy signal, if this CLI ever adds one: trust it
-  # over the counter rather than blocking again.
-  exit 0
+if [[ "$stop_hook_active" == "false" ]]; then
+  # A fresh (not hook-forced) stop starts a new block sequence.
+  rm -f "$state_file" 2>/dev/null || true
 fi
 
 count="$(read_count)"

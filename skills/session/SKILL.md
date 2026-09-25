@@ -107,7 +107,7 @@ Log a `decision` entry noting the new issue number, and list it under `log.md`'s
 
 ## Atomic commits (D8)
 
-One commit per `decision`/`milestone` log entry, and one per ticked `tasks.md` task — see `.claude/rules/compass-sessions.md` (repo-relative; copied from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` by the one-time setup step above) and `${CLAUDE_PLUGIN_ROOT}/hooks/session-commit-guard.sh`, which enforces it on `Stop`. You are the one writing `log.md`, so you are the one this rule binds most: never let a turn end with a logged decision/milestone whose artifact changes aren't committed yet — the hook will block the stop (with a 2-consecutive-block loop guard) if you try.
+One commit per `decision`/`milestone` log entry, and one per ticked `tasks.md` task — see `.claude/rules/compass-sessions.md` (repo-relative; copied from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` by the one-time setup step above) and `${CLAUDE_PLUGIN_ROOT}/hooks/session-commit-guard.sh`, which enforces it on `Stop`. You are the one writing `log.md`, so you are the one this rule binds most: never let a turn end with a logged decision/milestone whose artifact changes aren't committed yet — the hook will block the stop if you try. Its loop guard: it blocks at most **2 times in a row** within one turn, then allows the stop with a warning (the count restarts on each fresh, non-hook-forced stop — `stop_hook_active: false`). An allowed-with-warning stop means the entry is still uncommitted: commit it next turn.
 
 ## Scripts this skill uses
 
