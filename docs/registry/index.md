@@ -1,11 +1,13 @@
 ---
-last_updated: YYYY-MM-DD
+last_updated: 2026-09-25
 construct_count: 0
 verified: 0
 stubs: 0
 ---
 
 # System Model — Construct Registry
+
+> Origin: #22
 
 > Before building anything: search this index.
 > Column "Does" is the capability description — search it before creating a new construct.
@@ -26,4 +28,4 @@ stubs: 0
 
 ## Patterns
 
-[Cross-cutting conventions](patterns.md) — 0 patterns established
+[Cross-cutting conventions](patterns.md) — 6 patterns established

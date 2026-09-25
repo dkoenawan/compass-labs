@@ -1,0 +1,84 @@
+{
+  "$comment": "Feature workflow (D3): define -> design -> implement -> test -> deploy -> close. JSON (not YAML) because hooks are bash and jq is available. Read this with jq, e.g. `jq '.phases[] | select(.phase==\"define\")' feature.json`. Phases are listed in run order; `order` is 1-based and matches array position. `owner_agent` is the plugin agent that owns the phase's artifact (D4) — only that agent may write it (REQ-005). `artifact` is the filename inside the session folder that phase creates/owns, or null for Close, which produces no session file (D1). `milestone` is the name shown to the user at the milestone gate and used in gh comments (D5); `gh_label` is the label applied while that phase is active. `conversational` marks phases that talk to the user directly through the orchestrator (Define, Design) vs. phases that mostly execute (D3 main loop, D4).",
+  "workflow": "feature",
+  "session_level": {
+    "file_allowlist": [
+      "requirements.md",
+      "design.md",
+      "tasks.md",
+      "verification.md",
+      "release.md",
+      "log.md",
+      "assets/"
+    ],
+    "log_file": "log.md",
+    "log_owner": "orchestrator"
+  },
+  "github": {
+    "$comment": "One-time label setup (D5, skills/session/scripts/gh-setup.sh): one type:* label plus each phase's gh_label, colors from design.md's D5 one-time-setup block.",
+    "type_label": "type:feature",
+    "type_color": "A2EEEF"
+  },
+  "phases": [
+    {
+      "phase": "define",
+      "order": 1,
+      "owner_agent": "compass-labs:define",
+      "artifact": "requirements.md",
+      "milestone": "Define complete",
+      "gh_label": "phase:define",
+      "gh_color": "0E8A16",
+      "conversational": true
+    },
+    {
+      "phase": "design",
+      "order": 2,
+      "owner_agent": "compass-labs:design",
+      "artifact": "design.md",
+      "milestone": "Design complete",
+      "gh_label": "phase:design",
+      "gh_color": "1D76DB",
+      "conversational": true
+    },
+    {
+      "phase": "implement",
+      "order": 3,
+      "owner_agent": "compass-labs:implement",
+      "artifact": "tasks.md",
+      "milestone": "Implement complete",
+      "gh_label": "phase:implement",
+      "gh_color": "5319E7",
+      "conversational": false
+    },
+    {
+      "phase": "test",
+      "order": 4,
+      "owner_agent": "compass-labs:test",
+      "artifact": "verification.md",
+      "milestone": "Test complete",
+      "gh_label": "phase:test",
+      "gh_color": "FBCA04",
+      "conversational": false
+    },
+    {
+      "phase": "deploy",
+      "order": 5,
+      "owner_agent": "compass-labs:deploy",
+      "artifact": "release.md",
+      "milestone": "Deploy complete",
+      "gh_label": "phase:deploy",
+      "gh_color": "D93F0B",
+      "conversational": false
+    },
+    {
+      "phase": "close",
+      "order": 6,
+      "owner_agent": "compass-labs:close",
+      "artifact": null,
+      "milestone": "Closed",
+      "gh_label": "phase:close",
+      "gh_color": "6A737D",
+      "conversational": false
+    }
+  ]
+}

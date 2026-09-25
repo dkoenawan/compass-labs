@@ -36,17 +36,15 @@ compass-labs/
 
 ### 1. Choose the Right Category
 
-Skills are organized by domain:
-- `skills/infrastructure/` - Server setup, deployment, containerization
-- `skills/database/` - Schema design, migrations, queries
-- `skills/backend/` - API design, business logic, authentication
-- `skills/frontend/` - UI components, state management, routing
+Skills cover domains such as infrastructure, database, backend and frontend (domain skills are planned in #28). Each skill is a flat folder directly under `skills/`.
 
 ### 2. Create Skill Directory and File
 
 ```bash
-mkdir -p skills/category-name/skill-name
+mkdir -p skills/skill-name
 ```
+
+Add it to the `skills` list in `.claude-plugin/marketplace.json` in the same change, and only once its `SKILL.md` is complete. Placeholder folders don't ship: `tests/session/marketplace_test.sh` fails if the list and `skills/*/SKILL.md` differ.
 
 ### 3. Create SKILL.md
 

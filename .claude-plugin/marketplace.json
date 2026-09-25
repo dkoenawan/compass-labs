@@ -13,17 +13,18 @@
       "source": "./",
       "strict": true,
       "skills": [
-        "./skills/backend",
+        "./skills/adr",
         "./skills/bootstrap-new-project",
         "./skills/brand-designer",
-        "./skills/database",
         "./skills/doc-maintainer",
         "./skills/explore",
-        "./skills/frontend",
-        "./skills/infrastructure",
         "./skills/init",
         "./skills/plan",
-        "./skills/task-executor"
+        "./skills/post-hook-validator",
+        "./skills/requirements",
+        "./skills/session",
+        "./skills/task-executor",
+        "./skills/verification"
       ]
     }
   ]

@@ -71,6 +71,9 @@ This plugin follows the Claude Code plugin architecture:
 compass-labs/
 ├── .claude-plugin/
 │   └── plugin.json                    # Plugin manifest
+├── agents/                            # Subagents (session orchestrator + Feature phase agents)
+│   ├── orchestrator.md                # Session orchestrator entry point (D3)
+│   └── {define,design,implement,test,deploy,close}.md  # Thin Feature phase agents (D4)
 ├── skills/                            # Agent-based skills
 │   ├── init/                          # Project initialization (recommended)
 │   │   └── SKILL.md
@@ -84,10 +87,21 @@ compass-labs/
 │   │   └── examples/
 │   │       └── user-management/
 │   │           └── feature-spec.md
+│   ├── session/                       # Session lifecycle orchestrator (Define→Design→Implement→Test→Deploy→Close)
+│   │   ├── SKILL.md
+│   │   ├── templates/                 # Thin per-phase artifact templates + commit-rule template
+│   │   ├── workflows/                 # feature.json — phases/owners/artifacts/milestones as data
+│   │   ├── scripts/                   # gh-setup.sh, gh-milestone.sh, check-traceability.sh, archive-session.sh
+│   │   └── reference/                 # Shared D4 phase-agent contract, close fold-back procedure
+│   ├── requirements/                  # EARS + Given/When/Then + ISO 29148 requirements standard
+│   │   └── SKILL.md
+│   ├── verification/                  # VER-* verification table standard
+│   │   └── SKILL.md
 │   └── bootstrap-new-project/         # Full-stack project bootstrap (deprecated)
 │       └── SKILL.md
-├── commands/                          # Quick command skills (future)
-├── hooks/                             # Development workflow hooks (future)
+├── commands/                          # Slash commands (e.g. /compass-labs:hello); skills are slash commands too
+├── hooks/                             # PreToolUse/SessionStart/Stop hooks (session guard, commit guard, etc.)
+├── tests/                             # bash + jq test harness for hooks/scripts (tests/run.sh)
 ├── README.md                          # This file
 └── CLAUDE.md                          # Guidance for Claude Code instances
 
@@ -331,6 +345,52 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 - `- [!] <desc> (failed YYYY-MM-DD: <reason>)` failed/skipped
 
 **Failure recovery:** Failed tasks are marked `- [!]` after two consecutive failures. Dependent tasks are skipped. If all remaining tasks are blocked, a draft PR is opened with the completed work.
+
+---
+
+### Using Sessions in a Repo
+
+#### `/compass-labs:session`
+
+Runs a **Feature session** end-to-end — Define → Design → Implement → Test → Deploy → Close — as one tracked unit: one session folder, one GitHub issue, one artifact per phase, and a milestone gate the user approves before each phase transition. See [`docs/explanation/session/overview.md`](docs/explanation/session/overview.md) for how it works and [ADR-002](docs/registry/decisions/002-session-lifecycle.md) for the decision.
+
+**What a session is:**
+
+| | |
+|---|---|
+| **Folder** | `docs/sessions/{date}-{slug}/` — one artifact per phase (`requirements.md`, `design.md`, `tasks.md`, `verification.md`, `release.md`), `log.md` (state + append-only history), and an optional non-Markdown `assets/` |
+| **GitHub** | One issue per session, one `phase:*` label at a time, a milestone comment per phase transition, a branch + PR from Implement onward |
+| **Enforcement** | A `PreToolUse` guard hook restricts every write under a session folder to that file set, by ownership, and blocks writes to an already-approved ("frozen") artifact unless a decision is logged first |
+
+**Three entry points, all loading the same `session` skill (nothing duplicated between them):**
+
+1. **Repo default** — add to `.claude/settings.json`:
+   ```json
+   { "agent": "compass-labs:orchestrator" }
+   ```
+   Plain `claude` then starts as the orchestrator every time — the recommended setup for a repo that runs everything through sessions.
+2. **Explicit agent**: `claude --agent compass-labs:orchestrator`
+3. **From any conversation**: `/compass-labs:session` (also `/compass-labs:session new`, `resume [slug]`, `status [--all]`)
+
+**Requirements:** `gh` authenticated (`gh auth status`) for GitHub sync — if it isn't, the session keeps going locally and syncs at the next milestone; `jq` on PATH for every session hook/script (each fails open, never blocking, if `jq` is missing).
+
+**What the hooks enforce:**
+
+| Hook | Event | What it does |
+|---|---|---|
+| `hooks/session-guard.sh` | `PreToolUse` (`Write\|Edit\|MultiEdit`) | Blocks writes outside a session's file set, writes to another phase's artifact, writes to a frozen artifact without a freshly logged decision, and anything under `docs/sessions/archive/` |
+| `hooks/session-start.sh` | `SessionStart` | Lists active/paused sessions as context when starting as the orchestrator |
+| `hooks/session-commit-guard.sh` | `Stop` | Blocks ending a turn with an uncommitted `decision`/`milestone` log entry — one commit per entry, code and log together |
+
+**Usage:**
+```bash
+/compass-labs:session                 # list active/paused sessions, then ask new vs. resume
+/compass-labs:session new             # start a new Feature session
+/compass-labs:session resume [slug]   # pick up where a session left off
+/compass-labs:session status [--all]  # --all also lists archived sessions
+```
+
+**When a session closes:** the Close phase folds the session's requirements/design/decisions into the repo's as-built docs (`docs/reference/`, `docs/explanation/`, `docs/registry/`) with no session narrative — just the current truth, plus one `Origin: #<issue>` line per doc it touched — then the orchestrator moves the folder to `docs/sessions/archive/` and closes the issue.
 
 ---
 

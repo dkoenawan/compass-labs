@@ -1,1 +1,5 @@
 logs/
+
+# graphify output — keep only the human-readable report
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
