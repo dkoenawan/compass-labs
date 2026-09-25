@@ -22,7 +22,7 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 
 ## Open items
 
-- Commit `d38c99c` (session open) was pushed straight to `origin/main` before the move to a branch. The user hasn't yet decided whether to revert it on `main`.
+- `origin/main` now has `912634c`, which reverts the session-open commit `d38c99c`. Before this branch's first push, merge `origin/main` into it and keep the branch's session files, so the PR doesn't delete them.
 - Issue #23's title and body still describe the original, narrower proposal (a Q0 problem-framing step in `skills/plan/SKILL.md`). Rewrite both once Define's problem statement is agreed.
 
 ## Key decisions
@@ -80,3 +80,7 @@ next_step: "Define folds in open-question answers and drafts REQ rows; user revi
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (fold in open-question answers, draft REQ rows)
 - **Input:** the four answers above. Task: update Scope, Non-goals and Open questions to match, then draft REQ rows in EARS form with Given/When/Then criteria.
+
+### 2026-09-25 — main — note: reverted session-open commit on main
+- The user asked for the revert to follow best practice. I added `912634c` to `origin/main` with `git revert` (no history rewrite, no force-push), working in a temporary worktree so this branch's working tree wasn't touched.
+- Still to do: the branch contains `d38c99c`, and `main` now reverts it. Before the first push, merge `origin/main` into the branch and resolve the modify/delete conflict by keeping the branch's files.
