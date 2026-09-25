@@ -3,7 +3,9 @@
 # The marketplace entry lists skills explicitly (`strict: true`), so a skill
 # missing from that list may not ship with a marketplace install even though
 # `claude --plugin-dir` (which ignores the list) loads it. Checks that the
-# session lifecycle's skills are listed and have a SKILL.md.
+# session lifecycle's skills are listed, and that the list matches
+# skills/*/SKILL.md exactly: nothing incomplete ships (no placeholder
+# folders), nothing complete is left out.
 
 set -uo pipefail
 
@@ -22,6 +24,14 @@ for skill in session requirements verification; do
   assert_contains "$listed" "./skills/$skill" \
     "marketplace.json should list ./skills/$skill"
   [[ -f "$REPO_ROOT/skills/$skill/SKILL.md" ]] || fail "skills/$skill/SKILL.md not found"
+done
+
+expected="$(cd "$REPO_ROOT" && for f in skills/*/SKILL.md; do echo "./${f%/SKILL.md}"; done | sort)"
+assert_eq "$expected" "$(sort <<<"$listed")" \
+  "marketplace.json skills should match skills/*/SKILL.md exactly"
+
+for dir in "$REPO_ROOT"/skills/*/; do
+  [[ -f "$dir/SKILL.md" ]] || fail "skills/$(basename "$dir") has no SKILL.md (placeholder folders don't ship)"
 done
 
 exit 0
