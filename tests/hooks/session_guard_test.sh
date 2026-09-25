@@ -57,6 +57,18 @@ mkdir -p "$repo/docs/sessions/2026-01-01-new"
 assert_hook_exit "$HOOK" "$(build_input Write "$repo/docs/sessions/2026-01-01-new/requirements.md" "$repo")" 2 \
   "writing anything but log.md before log.md exists should be blocked"
 
+# 3b. A plan spec (overview.md) in a folder with no log.md is allowed —
+# that's the `plan` skill's output, not a lifecycle session.
+assert_hook_exit "$HOOK" "$(build_input Write "$repo/docs/sessions/2026-01-01-new/overview.md" "$repo")" 0 \
+  "plan's overview.md should be allowed in a folder without log.md"
+
+# 3c. Once log.md exists, overview.md is outside the lifecycle file set.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active none)"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/overview.md" "$repo")" 2 \
+  "overview.md should be blocked in a lifecycle session (has log.md)"
+
 # 4. Disallowed top-level filename is blocked.
 repo="$(new_fixture_repo)"
 session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active none)"

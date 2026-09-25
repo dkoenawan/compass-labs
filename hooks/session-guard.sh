@@ -131,8 +131,11 @@ session_dir="$repo_root/docs/sessions/$session_id"
 log_path="$session_dir/log.md"
 
 # --- Brand-new session: only log.md may be created first. ---------------
+# Exception: the `plan` skill keeps its spec at docs/sessions/<id>/overview.md
+# with no log.md. A folder without log.md isn't a lifecycle session, so the
+# plan spec is allowed there (and only that file).
 if [[ ! -f "$log_path" ]]; then
-  if [[ "$path_in_session" == "log.md" ]]; then
+  if [[ "$path_in_session" == "log.md" || "$path_in_session" == "overview.md" ]]; then
     exit 0
   fi
   echo "[session-guard] BLOCKED: session '$session_id' has no log.md yet. The orchestrator creates log.md first; nothing else may be written before it exists." >&2
