@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: compass-labs:design
-next_step: "Design turns REQ-001..022 into DES-* components and decisions"
+next_step: "Design drafts design.md from the four choices; then Design milestone gate"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -27,6 +27,7 @@ next_step: "Design turns REQ-001..022 into DES-* components and decisions"
 
 ## Key decisions
 
+- **2026-09-25**: Design choices: orchestrator applies anchor writes + Define-gate check; anchor = marked `## Project anchor` section in root README; new `framing` skill + per-type `framing` block in workflow JSON; `problem-statement` + `requirements` skills with `types/*.md` and per-section `reference/methods.md`, ADR-003 for the whole
 - **2026-09-25**: ✅ Define complete — REQ-001..022 approved (REQ-012 dropped); framing, per-type standards, anchor contract, #32 research bounded
 - **2026-09-25**: Skip tier skips every framing check, including anchor verdict and anchor creation (REQs unchanged)
 - **2026-09-25**: Anchor contract: one labelled authoritative statement in persistent project docs; vision + mission + scope required, non-goals optional; create/complete once with approval (REQ-018..022); REQ-012 struck
@@ -148,3 +149,18 @@ next_step: "Design turns REQ-001..022 into DES-* components and decisions"
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:design (DES-* for REQ-001..022)
 - **Input:** requirements.md approved (REQ-001 to REQ-022, REQ-012 dropped). Carried questions: who writes anchor changes to project docs (REQ-011, 020, 021) under the phase-agent contract, and where the anchor lives (REQ-018 leaves the layout to Design). The user prefers problem framing before solutions and wants options with leans, not a finished design dropped on them.
+- **Output:** needs_input (4 design questions); files_changed: none
+
+### 2026-09-25 — compass-labs:design — note: current-state review; four design decisions put to the user
+- Read requirements.md (REQ-001 to REQ-022, REQ-012 struck), log.md, the design and requirements templates, the define, design and close agents, the requirements and session skills, the phase-agent contract, session-guard.sh, feature.json, README.md, solution-design.md, init SKILL.md and the ADR index.
+- Findings: the guard hook only enforces inside `docs/sessions/`, so writes to project docs are limited by the contract alone, and Close already has a documented exception for writing `docs/`. REQ-011 needs a Define-gate check like Deploy's step a2. The anchor needs a location that can be detected mechanically for REQ-018 and REQ-022. The next ADR number is 003.
+- Asked 4 questions, each with a lean: who writes the anchor (lean: the orchestrator, plus a gate check); the anchor's location and form (lean: a README section with markers); framing's relation to Define and other types (lean: a `framing` skill plus a per-type `framing` block in the workflow JSON); skill layout and research record (lean: `problem-statement` plus `requirements` skills with per-type files, and a methods record per section).
+
+### 2026-09-25 — main — decision: four design choices (all agent leans)
+- **Anchor writes:** Define drafts the anchor text with the user and records it in requirements.md. The orchestrator writes it into the anchor in the same commit as the decision. A Define-gate check, like Deploy's step a2, refuses the milestone while an agreed update is missing. The phase-agent contract is unchanged.
+- **Anchor home:** a `## Project anchor` section in the root README (Vision, Mission, Scope, optional Non-goals) between `<!-- compass:anchor -->` markers. Other docs link to it.
+- **Framing packaging:** a new `framing` skill holds the phase-agnostic procedure. Each `workflows/<type>.json` gets a `framing` block, and requirements.md gets a Framing section.
+- **Skills layout:** a new `problem-statement` skill, and the existing `requirements` skill. Each has `types/feature.md` and `types/bugfix.md`, loaded only when needed, and a `reference/methods.md` holding its method verdicts. ADR-003 records the overall decision.
+
+### 2026-09-25 — main — handoff: orchestrator → compass-labs:design (relay answers; draft design.md)
+- **Input:** all four leans accepted. Draft design.md with DES-* components covering every REQ.
