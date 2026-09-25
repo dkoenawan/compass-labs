@@ -22,6 +22,7 @@ next_step: "Define agent proposes Feature-depth outcome REQs for problem stateme
 
 ## Open items
 
+- #40: Bugfix framing depth, deferred until the Bugfix workflow (#24) exists.
 - design.md (DES-001..016 plus the visual overview) is a parked draft. After Define is re-approved, the Design agent revises it against the new requirements.
 - #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
@@ -29,6 +30,7 @@ next_step: "Define agent proposes Feature-depth outcome REQs for problem stateme
 
 ## Key decisions
 
+- **2026-09-25**: Feature-depth outcomes: problem statement = SCQ context, job-story need, observed/assumed evidence, impact + why now, measurable outcome, appetite + no-gos (templates offered, not mandated); requirements add ISO 25010:2023 coverage, NFR response measures, MoSCoW, upward trace, assumptions/dependencies, example-based criteria, worked example; tiered Mermaid visuals; Bugfix depth deferred to #40
 - **2026-09-25**: Define reopened (milestone rolled back to none): REQs don't demand concrete Feature-depth outcomes for the problem statement and requirements standards; design.md parked as draft until Define is re-approved
 - **2026-09-25**: Design-phase refinement (visual, type-specific artifacts — BPMN 2.0 for process designs — with explicit new/changed/deprecated delta) deferred to #39; this session gets a BPMN 2.0 visual of its own design before the gate
 - **2026-09-25**: design.md drafted to the four leans (DES-001..016); D6 proposed: pre-change sessions grandfathered (gate check a3 only when a Framing section exists) — pending user confirmation at gate
@@ -200,3 +202,41 @@ next_step: "Define agent proposes Feature-depth outcome REQs for problem stateme
 
 ### 2026-09-25 — main — handoff: orchestrator → compass-labs:define (Feature-depth outcome requirements)
 - **Input:** Define reopened. Task: find out with the user what "deeper Define for Feature work" must achieve for the problem-statement and requirements standards, and add outcome-level REQs for it. Options with leans, not solutions. Existing REQ-001..022 stay unless the user changes them.
+- **Output:** needs_input (4 Feature-depth questions); files_changed: requirements.md (status line only)
+
+### 2026-09-25 — compass-labs:define — note: Define reopened to deepen the Feature definition
+- requirements.md status set back to "Draft (reopened 2026-09-25)". REQ-001 to REQ-022 are unchanged so far.
+- Gap: REQ-007 and REQ-008 only require that a standard "defines content and methods". They set no depth a Feature problem statement or Feature requirements must reach, so the draft design only reshuffled the existing EARS standard.
+- Asked the user 4 questions: required Feature problem-statement elements by tier (lean: need and who, evidence, impact/why now, measurable success outcomes; no mandated framework); requirements additions (lean: ISO 25010 coverage with explicit N/A, priority, upward traceability, assumptions and dependencies, worked example); Bugfix now or later (lean: Feature now, Bugfix as a follow-up); relation to the #32 research (lean: Define fixes the outcomes, the research only picks methods).
+
+### 2026-09-25 — main — note: user asked for methods research before answering
+- The user asked the orchestrator to research methodologies for Feature definition now: problem statement, functional requirements, non-functional requirements, acceptance criteria, and visual representations beyond tables. The Define agent's 4 questions are held until the research is presented.
+
+### 2026-09-25 — main — note: methods research presented (problem statement, FR, NFR, acceptance criteria, visuals)
+- Surveyed methods for each part of a Feature definition and presented a verdict lean for each.
+  - Problem statement: SCQ/Minto, JTBD job stories, the XY check, observed vs assumed evidence, Impact Mapping, the Opportunity Solution Tree, and Shape Up's appetite and no-gos.
+  - Functional requirements: EARS (keep), user and job stories, story mapping.
+  - Non-functional requirements: an ISO/IEC 25010:2023 checklist (9 characteristics; the Define agent's list used the older 2011 names), SEI quality-attribute scenarios, and Planguage.
+  - Acceptance criteria: Given/When/Then (keep) plus Example Mapping. Prioritisation: MoSCoW per requirement.
+  - Visuals, each checked for Mermaid support: impact map and OST (mindmap), context and as-is/to-be flows (flowchart), journey (journey), quality utility tree (mindmap), priority quadrant (quadrantChart), traceability (requirementDiagram).
+- The research feeds the Define agent's 4 Feature-depth questions, which go to the user next.
+
+### 2026-09-25 — main — decision: Feature-depth outcomes agreed (all research-informed leans)
+- **Feature problem statement, full tier:** context (SCQ), the need and who has it (job story), evidence tagged observed or assumed with sources, impact and why now, a measurable success outcome, and appetite plus no-gos. The standard mandates the content; frameworks are offered as templates. Short tier keeps the need and who, the evidence, and the success outcome.
+- **Feature requirements, beyond EARS, Given/When/Then and 29148, at full tier:**
+  - ISO/IEC 25010:2023 coverage: each of the 9 characteristics either gets a requirement or is marked not applicable with a reason.
+  - NFRs carry a response measure, with a Tolerable/Goal pair when numeric.
+  - MoSCoW priority on every requirement.
+  - Upward trace: each requirement names the outcome it serves, and every outcome is served.
+  - Assumptions and dependencies.
+  - Acceptance criteria built from worked examples, with unknowns sent to Open questions.
+  - A worked example in the standard.
+  - Short tier keeps priority and the trace to an outcome. REQ-009 (the traceability parser) still binds.
+- **Visuals, tiered:** full tier requires an impact map, a context diagram and a traceability diagram (outcome → requirement → design → verification), plus an as-is/to-be flow when a process changes. Others are optional. All in Mermaid. Short and skip tiers need none.
+- **Scope:** Feature now; Bugfix depth goes to #40. The research becomes the #32 verdict record, and REQs fix the outcomes the methods serve.
+- **Research verdicts (the #32 record, carried into Implement):**
+  - Problem statement: adopt XY, SCQ, job story and observed/assumed evidence; adapt Impact Mapping, the OST and Shape Up appetite/no-gos; reject 5 Whys (it belongs to Bugfix) and PR-FAQ.
+  - Functional requirements: adopt EARS (5 patterns) and 29148; adapt stories and story mapping; reject use cases.
+  - NFRs: adopt ISO 25010:2023; adapt SEI QA scenarios and Planguage; reject FURPS+.
+  - Acceptance criteria: adopt GWT; adapt Example Mapping and Specification by Example.
+  - Priority: adopt MoSCoW; reject Kano, RICE and WSJF at requirement level.
