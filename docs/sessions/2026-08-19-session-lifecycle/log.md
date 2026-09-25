@@ -346,3 +346,6 @@ next_step: "Deploy: plugin release in a separate session (Q9); release.md incl. 
 - User: "Let's deploy this. close the session. merge the PR. and then update the local system to get the latest." Overrides Q9 (release as its own session).
 - Version **1.1.0** (minor: new skills/agents/hooks; no skill interface broken; the `compass-labs:` → `compass:` break is #34's).
 - Order, fitted to squash-only merges: Deploy agent on the branch (completeness check, bump, `release.md`) → Deploy gate → Close agent fold-back + archive on the branch → squash-merge #33 → `claude plugin tag --push` on `main` (a branch tag would be orphaned by the squash) → `claude plugin update compass-labs@compass-labs` from the local-directory marketplace → verify 1.1.0 installed → close #22. Post-merge results go in #22's closing comment, since the archived `release.md` is written before the tag exists.
+
+### 2026-09-25 — main — handoff: orchestrator → deploy agent (v1.1.0 on the branch)
+- **Input:** release-completeness check against `marketplace.json` as shipped; bump `plugin.json` to 1.1.0 (commit); `claude plugin tag --dry-run`; fill `release.md` incl. Completeness, with tag/merge/cache steps marked as run by the orchestrator after the merge. No merge, tag, push or cache update.
