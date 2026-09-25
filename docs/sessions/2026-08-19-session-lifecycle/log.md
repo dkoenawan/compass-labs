@@ -6,7 +6,7 @@ phase: test
 status: active
 milestone: implement
 active_agent: main (orchestrator)
-next_step: "Re-check VER-019 (test agent); user to decide plugin rename (compass) and marketplace skill list, then Test gate"
+next_step: "Traceability passes; user to decide plugin rename (compass), marketplace skill list, sessions-folder fix, then Test milestone gate"
 ---
 # Session Log: Session Lifecycle (#22)
 
@@ -301,3 +301,7 @@ next_step: "Re-check VER-019 (test agent); user to decide plugin rename (compass
 ### 2026-09-25 — main — note: pending user decisions
 - User wants `/compass:` not `/compass-labs:`. That requires renaming the plugin (`plugin.json` `name`) → all `compass-labs:<agent>` ids (~59 refs incl. `feature.json` owner_agent), reverts part of `cc1042c`, breaks existing installs (2.0.0), contradicts repo CLAUDE.md. Asked: in this PR vs. follow-up session.
 - Found: `marketplace.json` (`strict: true`) skill list omits `session`, `requirements`, `verification`; `--plugin-dir` testing wouldn't catch it. Asked whether to add to the fix list.
+
+### 2026-09-25 — test — attempt: re-verified VER-019 (REQ-014) after defect 8 fix
+- `af23bf5` tagged task 3 `[D7, D8 · REQ-004, REQ-005, REQ-006, REQ-016]`; scripted check at `6a70e77`: 14/14 tasks carry a D-tag, D1–D8 each name REQs, all 16 REQ-* covered in design.md Traceability → VER-019 pass.
+- `check-traceability.sh`: exit 0 (re-run by main: exit 0). Test milestone ready for the user's gate, pending the open decisions (plugin rename, marketplace skill list, sessions-folder fix).
