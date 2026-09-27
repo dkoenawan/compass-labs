@@ -27,7 +27,7 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] `skills/requirements/` restructured: `SKILL.md` keeps the shared rules and points at `templates/define/requirements.md` and `define/index.md`; `types/feature.md` and `types/bugfix.md` [DES-012] (depends on: 8, 10)
 - [x] `skills/requirements/examples/feature-full/`: the worked full-tier password-reset example as a six-file `define/` folder, plus fixture case (c) in `tests/session/check_traceability_test.sh` using it [DES-018, DES-019] (depends on: 1, 9, 10, 11)
 - [x] `agents/define.md`: preloads three skills, reads the `framing` block and type files, writes `define/` [DES-010] (depends on: 5, 9, 11)
-- [ ] `skills/session/SKILL.md`: anchor write in main-loop step 3, gate check a3, new-session step 3 creates `define/index.md`, step d reads the Define artifact as `define/` [DES-009, DES-021] (depends on: 4, 6)
+- [x] `skills/session/SKILL.md`: anchor write in main-loop step 3, gate check a3, new-session step 3 creates `define/index.md`, step d reads the Define artifact as `define/` [DES-009, DES-021] (depends on: 4, 6)
 - [ ] Ripple: `agents/design.md`, `agents/test.md`, the design, verification, release and log templates, `skills/verification/SKILL.md`, and `close-foldback.md` step 1 point at `define/` with the root fallback; remove `skills/session/templates/requirements.md` [DES-021, DES-008] (depends on: 4, 14)
 - [ ] `skills/session/reference/close-foldback.md`: the step 2 section-by-section `define/` → Diátaxis mapping, past-session mapping, and the ban on session IDs in as-built docs [DES-023] (depends on: 15)
 - [ ] `docs/registry/decisions/003-framing-and-project-anchor.md` recording D1–D14, plus its index row [DES-016]
