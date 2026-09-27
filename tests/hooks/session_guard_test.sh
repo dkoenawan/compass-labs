@@ -112,8 +112,11 @@ assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/log.md" "$repo" agent
 assert_hook_stderr_contains "orchestrator"
 
 # 9. Frozen artifact, main session, no decision entry -> blocked.
+#    Cases 9 and 10 use a past session's root requirements.md (the legacy
+#    layout, D6), which must exist for the root path to be writable.
 repo="$(new_fixture_repo)"
 session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" design active design)"
+echo "# Requirements" > "$session_dir/requirements.md"
 git_commit_all "$repo" "initial fixture"
 assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/requirements.md" "$repo")" 2 \
   "amending a frozen artifact without a logged decision should be blocked"
@@ -152,7 +155,7 @@ assert_hook_stderr_contains "not in this workflow's session file set" \
   "assets/../notes.txt should hit the allowlist check, not be waved through as an asset"
 
 # 13. A leading ./ in the middle of the path is harmless once normalized.
-assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/./requirements.md" "$repo" agent-1 compass-labs:define)" 0 \
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/./define/requirements.md" "$repo" agent-1 compass-labs:define)" 0 \
   "./ segments should be collapsed and not change the ownership/allowlist outcome"
 
 # 14. docs/sessions/s1/../s1/notes.txt: traversal that lands back in the
@@ -166,6 +169,90 @@ mkdir -p "$repo/docs/sessions/archive/x"
 assert_hook_exit "$HOOK" "$(build_input Write "$repo/docs/sessions/../sessions/archive/x/log.md" "$repo")" 2 \
   "traversal into archive/ should still be blocked"
 assert_hook_stderr_contains "archive"
+
+# --- Folder artifacts: define/ (#23 DES-020) -----------------------------
+
+# 16. The define agent writes define/index.md in a new session -> allowed.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" define active none)"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/index.md" "$repo" agent-1 compass-labs:define)" 0 \
+  "define agent writing define/index.md in a new session should be allowed"
+
+# 17. A file outside define/'s fixed set -> blocked.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/notes.md" "$repo" agent-1 compass-labs:define)" 2 \
+  "define/notes.md is not one of define/'s files and should be blocked"
+assert_hook_stderr_contains "not one of define/'s files"
+
+# 18. Nested deeper than one level inside define/ -> unknown subdirectory.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/sub/x.md" "$repo" agent-1 compass-labs:define)" 2 \
+  "define/sub/x.md should be blocked as an unknown subdirectory"
+assert_hook_stderr_contains "unknown subdirectory"
+
+# 18b. A subdirectory that isn't a declared folder artifact -> unknown subdirectory.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/notes.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "design/notes.md should be blocked: design/ is not a folder artifact"
+assert_hook_stderr_contains "unknown subdirectory"
+
+# 19. The folder is owned as a unit: the design agent can't write in it.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/requirements.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "design agent writing define/requirements.md should be blocked (wrong owner)"
+assert_hook_stderr_contains "owned by"
+
+# 20. define/../notes.txt collapses to a top-level file -> allowlist block.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/../notes.txt" "$repo" agent-1 compass-labs:define)" 2 \
+  "define/../notes.txt should be blocked by the allowlist"
+assert_hook_stderr_contains "not in this workflow's session file set"
+
+# 21. A new session (no root requirements.md) can't create one.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/requirements.md" "$repo" agent-1 compass-labs:define)" 2 \
+  "a new session creating a root requirements.md should be blocked"
+assert_hook_stderr_contains "new sessions write define/"
+
+# 22. Frozen as a unit: after the define milestone, a subagent can't write
+#     any file in define/, and the main session can with a decision.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" design active define)"
+mkdir -p "$session_dir/define"
+echo "# Define" > "$session_dir/define/index.md"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/problem.md" "$repo" agent-1 compass-labs:define)" 2 \
+  "a subagent writing define/problem.md after the define milestone should be blocked"
+assert_hook_stderr_contains "frozen"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/problem.md" "$repo")" 2 \
+  "the main session amending frozen define/ without a decision should be blocked"
+cat >> "$session_dir/log.md" <<'EOF'
+
+### 2026-01-02 — main — decision: amend the problem statement after freeze
+- test-only decision entry
+EOF
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/problem.md" "$repo")" 0 \
+  "the main session amending frozen define/ with an uncommitted decision should be allowed"
+
+# 23. A past (legacy-layout) session can't start a define/ folder.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" define active none)"
+echo "# Requirements" > "$session_dir/requirements.md"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/index.md" "$repo" agent-1 compass-labs:define)" 2 \
+  "a legacy session writing define/index.md should be blocked"
+assert_hook_stderr_contains "this session uses the root layout"
+
+# 23b. ...and it keeps editing its root requirements.md as before.
+assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/requirements.md" "$repo" agent-1 compass-labs:define)" 0 \
+  "a legacy session editing its own root requirements.md should be allowed"
+
+# 23c. Other top-level artifacts are unaffected by the layout rule.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/tasks.md" "$repo" agent-1 compass-labs:implement)" 0 \
+  "tasks.md in a legacy session should be allowed for the implement agent"
+
+# 24. Unreadable workflow + a path with a / -> still blocked (unknown subdirectory).
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" define active none)"
+git_commit_all "$repo" "initial fixture"
+CLAUDE_PLUGIN_ROOT="$repo" assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/index.md" "$repo")" 2 \
+  "with an unreadable workflow, define/index.md should still be blocked"
+assert_hook_stderr_contains "unknown subdirectory"
 
 echo "ok: session-guard.sh validated against all D7 rules"
 exit 0
