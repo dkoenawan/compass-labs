@@ -22,6 +22,7 @@
         "./skills/init",
         "./skills/plan",
         "./skills/post-hook-validator",
+        "./skills/problem-statement",
         "./skills/requirements",
         "./skills/session",
         "./skills/task-executor",

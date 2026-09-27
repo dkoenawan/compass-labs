@@ -20,9 +20,9 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] Folder artifacts: `feature.json` declares `define/` with `artifact_files` and `legacy_artifact`; `hooks/session-guard.sh` resolves folder keys, prefix ownership and freezing, and the one-layout rule; the new and repointed cases in `tests/hooks/session_guard_test.sh` and checks 3 and 4 in `tests/session/workflow_test.sh`, test-first [DES-020] (depends on: 2, 3)
 - [x] `skills/framing/SKILL.md`: the phase-agnostic procedure, "What a session type supplies", the check × tier table, the XY and symptom/cause checks, the anchor locate/assess/verdict checks and the registry/ADR overlap check [DES-001, DES-002, DES-003, DES-004, DES-005]
 - [x] `skills/framing/reference/anchor-contract.md`: location, form, markers and checklist [DES-006]
-- [ ] `skills/problem-statement/reference/methods.md`: verdicts, rationale, applies-when, Serves and Bugfix columns, Additions and Deferred [DES-013]
+- [ ] `skills/problem-statement/reference/methods.md`: verdicts, rationale, applies-when, Serves and Bugfix columns, Additions and Deferred [DES-013] (depends on: 9)
 - [ ] `skills/requirements/reference/methods.md`: the same format for the requirements candidates [DES-013]
-- [ ] `skills/problem-statement/`: `SKILL.md`, `types/feature.md` (tier table, elements, optional templates, examples, owned diagrams), `types/bugfix.md` [DES-011] (depends on: 7)
+- [x] `skills/problem-statement/`: `SKILL.md`, `types/feature.md` (tier table, elements, optional templates, examples, owned diagrams), `types/bugfix.md` [DES-011]
 - [ ] `skills/requirements/reference/diagrams.md`: the catalogue of 4 required and 6 optional diagrams, the traceability-form guidance and the rendering rules, each with an example that renders [DES-017]
 - [ ] `skills/requirements/` restructured: `SKILL.md` keeps the shared rules and points at `templates/define/requirements.md` and `define/index.md`; `types/feature.md` and `types/bugfix.md` [DES-012] (depends on: 8, 10)
 - [ ] `skills/requirements/examples/feature-full/`: the worked full-tier password-reset example as a six-file `define/` folder, plus fixture case (c) in `tests/session/check_traceability_test.sh` using it [DES-018, DES-019] (depends on: 1, 9, 10, 11)
@@ -39,3 +39,4 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 ## Deviations from design
 
 - **Task 5 (DES-001), `.claude-plugin/marketplace.json`.** The marketplace entry lists skills explicitly (`strict: true`), and `tests/session/marketplace_test.sh` requires the list to match `skills/*/SKILL.md` exactly. The design doesn't name this file, so each new skill (`framing`, later `problem-statement`) is added to the list in the task that creates it. Otherwise a marketplace install wouldn't ship the skill.
+- **Order: task 9 before task 7.** The same test fails for a `skills/*/` folder with no `SKILL.md`, so the `problem-statement` skill (task 9) lands before its `reference/methods.md` (task 7). The dependency is swapped in the list above. No content changes.
