@@ -1,6 +1,6 @@
 # Design: Define phase depth — problem framing, per-type standards, project anchoring
 
-> Phase: Design | Started: 2026-09-25 | Status: Draft (ready for Design milestone)
+> Phase: Design | Started: 2026-09-25 | Status: Approved (Design complete 2026-09-27)
 > Requirements: [`requirements.md`](requirements.md) · Session history: [`log.md`](log.md)
 
 ## Approach

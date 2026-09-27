@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: design
 active_agent: main
-next_step: "Design milestone approval (DES-001..023, D1–D14)"
+next_step: "Hand off to compass-labs:implement (tasks.md from DES-001..023)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -23,7 +23,6 @@ next_step: "Design milestone approval (DES-001..023, D1–D14)"
 ## Open items
 
 - #40: Bugfix framing depth, deferred until the Bugfix workflow (#24) exists.
-- design.md (DES-001..016 plus the visual overview) is being revised against REQ-023..046.
 - #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #41: doc-maintainer's session fold-back step (2.S1) still expects the old plan-format session. Deferred; #23 only updates `close-foldback.md`.
@@ -32,6 +31,11 @@ next_step: "Design milestone approval (DES-001..023, D1–D14)"
 
 ## Key decisions
 
+- **2026-09-27**: ✅ Design complete — DES-001..023, D1–D14: framing skill + anchor contract, Feature-depth standards, `define/` folder (main doc + sub-docs by tier), Close fold-back into Diátaxis, defaults not rigid rules
+- **2026-09-27**: Design gate answers: D6 = no bulk migration of past sessions; D8 "later" Won'ts go to a Deferred table with a required issue; D10 traceability form chosen per case (requirementDiagram or flowchart); no-rigidity principle; eval repo → #42
+- **2026-09-27**: Close fold-back mapping for define/ docs: still-true content → Diátaxis docs (explanation/reference), the history of how we got there stays in the archive; no session IDs in as-built docs; doc-maintainer S1 → #41
+- **2026-09-27**: Folder layout is a Design decision (D12–D13), not a Define reopen; requirements unchanged
+- **2026-09-27**: Define output becomes a `define/` folder (index.md main doc + focused sub-docs); Design gains an artifact view with this session as the before/after
 - **2026-09-25**: ✅ Define complete (re-approved) — REQ-001..046 (REQ-012 dropped): framing, anchor contract, Feature-depth problem statement + requirements + visuals, bounded methods research
 - **2026-09-25**: REQ-014 amended: Bugfix verdict may be "deferred to #40"; REQ-041 stays outcome → REQ (no new REQ)
 - **2026-09-25**: Traceability diagram at Define stays outcome → REQ (DES links via #39, VER links via #29); REQ-014 allows "deferred to #40" as a Bugfix verdict
@@ -337,3 +341,7 @@ next_step: "Design milestone approval (DES-001..023, D1–D14)"
 - D10: the traceability form is chosen per case (requirementDiagram for a simple set, flowchart LR for a complicated one), as guidance. A trace too big to review prompts Define to ask whether the feature should be split. Updated DES-017's check and rendering rules, and dropped the research-lean flag.
 - Added the "Defaults, not rigid rules" principle to the Approach (extends REQ-029) and softened form-only checks. The mechanical gate checks are unchanged. D11 notes follow-up #42; DES-023 names #41.
 - Open questions: all resolved; D6–D14 are confirmed at the gate after this revision. Status: Draft (ready for Design milestone).
+
+### 2026-09-27 — main — milestone: ✅ Design complete
+- The user approved design.md: DES-001..023 covering REQ-001..046 (REQ-012 struck), with D1–D14 confirmed. Open questions: all resolved.
+- New since the first draft: the artifact view with this session as the before and after, the `define/` folder (D12–D13), the Close fold-back mapping into Diátaxis (D14), D6 as no bulk migration, deferred Won'ts (D8), the per-case traceability form (D10), and the "defaults, not rigid rules" principle.
