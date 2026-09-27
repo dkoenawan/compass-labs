@@ -6,7 +6,7 @@ Close produces **no session artifact** of its own (`artifact: null` in `feature.
 
 ## Steps
 
-1. **Read, don't write, the session's own record**: the frozen `requirements.md`, `design.md`, and `log.md`'s **Key decisions** section (never write `log.md` — you return `log_entries` like every other phase agent).
+1. **Read, don't write, the session's own record**: the frozen `define/` folder (or the root `requirements.md` in a past session), `design.md`, and `log.md`'s **Key decisions** section (never write `log.md` — you return `log_entries` like every other phase agent).
 2. **Run a `doc-maintainer` pass** to update the repo's as-built docs:
    - `docs/reference/` and `docs/explanation/` — reflect what's now true about the system, not what happened to get there.
    - `docs/registry/index.md` and `docs/reference/constructs/*.md` — flip any construct this session built from `planned` to `built` (or add new ones the session introduced), the same way `task-executor` does per-task.

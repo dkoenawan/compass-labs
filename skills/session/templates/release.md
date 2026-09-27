@@ -1,7 +1,7 @@
 # Release: {Session Title}
 
 > Phase: Deploy | Started: {date} | Status: Draft
-> Requirements: [`requirements.md`](requirements.md) · Verification: [`verification.md`](verification.md)
+> Requirements: [`define/index.md`](define/index.md) · Verification: [`verification.md`](verification.md)
 
 ## Version / target
 

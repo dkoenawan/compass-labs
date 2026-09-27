@@ -1,7 +1,7 @@
 # Design: {Session Title}
 
 > Phase: Design | Started: {date} | Status: Draft
-> Requirements: [`requirements.md`](requirements.md) · Session history: [`log.md`](log.md)
+> Requirements: [`define/index.md`](define/index.md) · Session history: [`log.md`](log.md)
 
 ## Approach
 
