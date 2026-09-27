@@ -147,5 +147,33 @@ assert_contains "$out" "$empty_dir/define/requirements.md" "the error should nam
 assert_contains "$out" "$empty_dir/requirements.md" "the error should name the root fallback path"
 rm -rf "$empty_dir"
 
+# 9. (c) The worked full-tier example (DES-018) as a session's define/:
+#    its 5-column table parses, struck REQ-007 and deferred REQ-008 need
+#    no VER, and a missing live REQ is still caught.
+EXAMPLE="$REPO_ROOT/skills/requirements/examples/feature-full"
+[[ -f "$EXAMPLE/requirements.md" ]] || fail "worked example not found: $EXAMPLE"
+example_dir="$(mktemp -d)"
+cp -R "$EXAMPLE" "$example_dir/define"
+cat > "$example_dir/verification.md" <<'EOF'
+| ID | Covers REQ | Method | Result | Evidence |
+|---|---|---|---|---|
+| VER-001 | REQ-001, REQ-002 | e2e | pass | run 1 |
+| VER-002 | REQ-003, REQ-004 | e2e | pass | run 1 |
+| VER-003 | REQ-005 | e2e | pass | load test |
+| VER-004 | REQ-006 | manual | pass | audit log checked |
+| VER-005 | REQ-009 | manual | pass | NVDA walkthrough |
+EOF
+out="$(bash "$SCRIPT" "$example_dir" 2>&1)"
+status=$?
+assert_eq "0" "$status" "the worked example with every live REQ covered should exit 0 ($out)"
+sed -i '/VER-005/d' "$example_dir/verification.md"
+out="$(bash "$SCRIPT" "$example_dir" 2>&1)"
+status=$?
+assert_eq "1" "$status" "the worked example with REQ-009 uncovered should exit 1"
+assert_contains "$out" "REQ-009" "the uncovered example REQ should be named"
+assert_not_contains "$out" "REQ-007" "the struck example row should not be named"
+assert_not_contains "$out" "REQ-008" "the deferred example row should not be named"
+rm -rf "$example_dir"
+
 echo "ok: check-traceability.sh validated"
 exit 0
