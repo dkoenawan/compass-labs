@@ -18,7 +18,7 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] `skills/session/templates/define/`: the six templates (`index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`), each opening with a `<!-- tier: … -->` comment, with the sections and links in DES-008 detail [DES-008]
 - [x] `feature.json`: the `framing` block and `$comment` [DES-007] (depends on: 2)
 - [x] Folder artifacts: `feature.json` declares `define/` with `artifact_files` and `legacy_artifact`; `hooks/session-guard.sh` resolves folder keys, prefix ownership and freezing, and the one-layout rule; the new and repointed cases in `tests/hooks/session_guard_test.sh` and checks 3 and 4 in `tests/session/workflow_test.sh`, test-first [DES-020] (depends on: 2, 3)
-- [ ] `skills/framing/SKILL.md`: the phase-agnostic procedure, "What a session type supplies", the check × tier table, the XY and symptom/cause checks, the anchor locate/assess/verdict checks and the registry/ADR overlap check [DES-001, DES-002, DES-003, DES-004, DES-005]
+- [x] `skills/framing/SKILL.md`: the phase-agnostic procedure, "What a session type supplies", the check × tier table, the XY and symptom/cause checks, the anchor locate/assess/verdict checks and the registry/ADR overlap check [DES-001, DES-002, DES-003, DES-004, DES-005]
 - [ ] `skills/framing/reference/anchor-contract.md`: location, form, markers and checklist [DES-006]
 - [ ] `skills/problem-statement/reference/methods.md`: verdicts, rationale, applies-when, Serves and Bugfix columns, Additions and Deferred [DES-013]
 - [ ] `skills/requirements/reference/methods.md`: the same format for the requirements candidates [DES-013]
@@ -38,4 +38,4 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 
 ## Deviations from design
 
-_None yet._
+- **Task 5 (DES-001), `.claude-plugin/marketplace.json`.** The marketplace entry lists skills explicitly (`strict: true`), and `tests/session/marketplace_test.sh` requires the list to match `skills/*/SKILL.md` exactly. The design doesn't name this file, so each new skill (`framing`, later `problem-statement`) is added to the list in the task that creates it. Otherwise a marketplace install wouldn't ship the skill.
