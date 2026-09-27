@@ -1,7 +1,7 @@
 {
   "name": "compass-labs",
   "description": "Opinionated skills, agents and hooks that run software development, research and consulting work as sessions, from problem framing to a documented outcome, based on common established enterprise frameworks",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "Daniel Koenawan"
   },
