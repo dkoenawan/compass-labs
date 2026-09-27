@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Design milestone gate: DES-001..023, confirm D6–D14 + layout refinements + verdict gaps"
+next_step: "Design revises D6, D8, D10 and the no-rigidity principle; then Design milestone approval"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -27,6 +27,7 @@ next_step: "Design milestone gate: DES-001..023, confirm D6–D14 + layout refin
 - #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #41: doc-maintainer's session fold-back step (2.S1) still expects the old plan-format session. Deferred; #23 only updates `close-foldback.md`.
+- #42: use the Compass artifact repository as a bench test and eval for the session standards. Deferred to a separate conversation.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 
 ## Key decisions
@@ -317,3 +318,11 @@ next_step: "Design milestone gate: DES-001..023, confirm D6–D14 + layout refin
 - New decisions D12 (a main doc plus sub-docs by tier, called the "main doc"), D13 (the define/ layout; rejected: root requirements.md as the main doc with define/ beside it, and flat sibling files) and D14 (Close folds still-true content into Diátaxis docs; no REQ, DES or VER IDs in as-built docs). DES-008 is rewritten as templates/define/, and DES-018 is now an example folder.
 - New DES-019 (check-traceability reads define/requirements.md, root fallback, fixtures for both layouts), DES-020 (folder artifact in feature.json plus the guard: fixed file list, prefix ownership and freezing, one layout per session), DES-021 (plugin path updates), DES-022 (as-built docs at Close) and DES-023 (close-foldback.md mapping; the doc-maintainer S1 fix is out of scope as a follow-up).
 - For the gate: confirm D6–D14; the frozen Non-goal "Changing Close's fold-back" is read as covering the README and anchor only; no numbered session IDs were found in docs/; confirm the layout refinements (fixed file list, NFR measures and assumptions in quality.md, one layout per session, ADR-003 covering D12–D14). Kept flags: D10, the symptom-vs-cause verdict and the Bugfix column.
+
+### 2026-09-27 — main — decision: Design gate answers (D6–D14)
+- The user is happy with the design overall. D7, D9, D11, D12, D13 and D14 are approved as they stand, and the agent's layout refinements are accepted.
+- **D6, reframed:** there is no bulk migration of past sessions. A repo a year into using compass-labs has many historical features, and migrating them session by session is impractical and pointless. The new standard applies to new sessions. A future feature that touches an existing feature brings that feature's material up to the new standard as part of its own work.
+- **D8, refined:** a Won't meaning "we will never do this" is struck through with its reason. A Won't meaning "not this session, later" isn't kept as a live row, but it must not disappear: it's recorded as deferred with its follow-up issue.
+- **D10, changed:** the traceability diagram's form is chosen per case, for reviewability. A simple set uses `requirementDiagram`, and a complicated one uses `flowchart`. A trace too big to review is a prompt to ask the user whether the feature should be split into two.
+- **Principle:** don't be rigid. Real work doesn't fit a framework neatly, so the standards give defaults and judgement calls, not hard rules. This extends REQ-029.
+- D11 stays. Refining the Compass artifact repository as a bench test and eval is deferred to #42.
