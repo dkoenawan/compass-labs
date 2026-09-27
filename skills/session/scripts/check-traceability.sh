@@ -1,18 +1,31 @@
 #!/usr/bin/env bash
 # check-traceability.sh <session-dir>
-# REQ-011 gate for the Test milestone: every REQ-* in requirements.md must
-# have at least one VER-* row in verification.md that covers it with a
-# passing result. Prints the missing REQ ids and exits 1 if any are
-# missing; exits 0 (ok) otherwise.
+# REQ-011 gate for the Test milestone: every REQ-* in the session's
+# requirements file must have at least one VER-* row in verification.md
+# that covers it with a passing result. Prints the missing REQ ids and
+# exits 1 if any are missing; exits 0 (ok) otherwise.
+#
+# The requirements file is define/requirements.md (the define/ folder
+# layout, #23 DES-019). A past session that predates it keeps a root
+# requirements.md and is never migrated (D6), so that's the fallback. A
+# session uses one layout; if both somehow exist, define/ wins. Only the
+# first column of `| REQ-nnn |` rows is read, so extra columns (Priority,
+# Serves), struck-through rows and `## Deferred` rows (which start with
+# the follow-up issue) are all ignored.
 
 set -uo pipefail
 
 session_dir="${1:?Usage: check-traceability.sh <session-dir>}"
-req_file="$session_dir/requirements.md"
+define_req_file="$session_dir/define/requirements.md"
+root_req_file="$session_dir/requirements.md"
 ver_file="$session_dir/verification.md"
 
-if [[ ! -f "$req_file" ]]; then
-  echo "check-traceability: requirements.md not found: $req_file" >&2
+if [[ -f "$define_req_file" ]]; then
+  req_file="$define_req_file"
+elif [[ -f "$root_req_file" ]]; then
+  req_file="$root_req_file"
+else
+  echo "check-traceability: requirements not found: neither $define_req_file nor $root_req_file exists" >&2
   exit 1
 fi
 if [[ ! -f "$ver_file" ]]; then
