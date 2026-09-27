@@ -31,7 +31,7 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] Ripple: `agents/design.md`, `agents/test.md`, the design, verification, release and log templates, `skills/verification/SKILL.md`, and `close-foldback.md` step 1 point at `define/` with the root fallback; remove `skills/session/templates/requirements.md` [DES-021, DES-008] (depends on: 4, 14)
 - [x] `skills/session/reference/close-foldback.md`: the step 2 section-by-section `define/` → Diátaxis mapping, past-session mapping, and the ban on session IDs in as-built docs [DES-023] (depends on: 15)
 - [x] `docs/registry/decisions/003-framing-and-project-anchor.md` recording D1–D14, plus its index row [DES-016]
-- [ ] `docs/explanation/solution-design.md`: full refresh, links to the README anchor, domain map covers every `skills/*` directory [DES-015] (depends on: 5, 9)
+- [x] `docs/explanation/solution-design.md`: full refresh, links to the README anchor, domain map covers every `skills/*` directory [DES-015] (depends on: 5, 9)
 - [ ] compass-labs `README.md` refresh outside the anchor: plugin name, every skill and agent, the `define/` session row, command prefix as today [DES-014] (depends on: 5, 9)
 - [ ] compass-labs `README.md` `## Project anchor` section between the markers, with the vision, mission, scope and non-goals the user approved (anchor writes go through the orchestrator, D1) [DES-014] (depends on: 6, 19)
 - [ ] As-built session docs describe the `define/` folder — **deferred to Close** (Close's doc-maintainer pass, not Implement) [DES-022]
