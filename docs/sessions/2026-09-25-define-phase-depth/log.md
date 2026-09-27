@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
+milestone: deploy
 active_agent: main
-next_step: "User approves Deploy complete; then Close fold-back on the branch, merge PR #44, tag v1.2.0"
+next_step: "Hand off to compass-labs:close (fold-back into docs, incl. DES-022)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -32,6 +32,7 @@ next_step: "User approves Deploy complete; then Close fold-back on the branch, m
 
 ## Key decisions
 
+- **2026-09-27**: ✅ Deploy complete — v1.2.0 bumped on branch, PR #44 open to main, release.md completeness shows no gaps; tag and plugin update after the merge
 - **2026-09-27**: ✅ Test complete — 37 VER rows, all 45 live REQs pass at 58f91dd after the worked-example fixes; tests 15/15; check-traceability exit 0
 - **2026-09-27**: ✅ Implement complete — tasks 1–20 done (DES-001..021, DES-023), task 21 (DES-022) deferred to Close; tests 15/15 green
 - **2026-09-27**: compass-labs project anchor approved and written to README (vision: AI-assisted delivery work across software, research and consulting, based on common enterprise frameworks); Consulting session type → #43
@@ -445,3 +446,7 @@ next_step: "User approves Deploy complete; then Close fold-back on the branch, m
 
 ### 2026-09-27 — compass-labs:deploy — note: steps after the merge are still to run
 - Squash-merge #44, then on main: `claude plugin tag --push`, `claude plugin update compass-labs@compass-labs`, the confirmation checks and a restart. This follows the v1.1.0 split, because merges are squash-only.
+
+### 2026-09-27 — main — milestone: ✅ Deploy complete
+- The user approved. Gate check a2: release.md's Completeness section lists only complete components and leaves none out. DES-022 is explicitly deferred to Close.
+- v1.2.0 is on the branch (95dbe79), and PR #44 is open to main. The squash-merge, `claude plugin tag --push` and `claude plugin update` run after the merge.
