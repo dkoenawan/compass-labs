@@ -15,7 +15,7 @@ budget:
 Each task names the `DES-*` item it implements ([design.md](design.md)). One commit per ticked task (D8). `bash tests/run.sh` stays green after every task. This session keeps its own root `requirements.md` layout (D6).
 
 - [x] `check-traceability.sh` reads `define/requirements.md`, falls back to the root `requirements.md`, and exits 1 naming both paths when neither exists; fixture cases (a), (b), (d) and (e) test-first in `tests/session/check_traceability_test.sh` [DES-019]
-- [ ] `skills/session/templates/define/`: the six templates (`index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`), each opening with a `<!-- tier: … -->` comment, with the sections and links in DES-008 detail [DES-008]
+- [x] `skills/session/templates/define/`: the six templates (`index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`), each opening with a `<!-- tier: … -->` comment, with the sections and links in DES-008 detail [DES-008]
 - [ ] `feature.json`: the `framing` block and `$comment` [DES-007] (depends on: 2)
 - [ ] Folder artifacts: `feature.json` declares `define/` with `artifact_files` and `legacy_artifact`; `hooks/session-guard.sh` resolves folder keys, prefix ownership and freezing, and the one-layout rule; the new and repointed cases in `tests/hooks/session_guard_test.sh` and checks 3 and 4 in `tests/session/workflow_test.sh`, test-first [DES-020] (depends on: 2, 3)
 - [ ] `skills/framing/SKILL.md`: the phase-agnostic procedure, "What a session type supplies", the check × tier table, the XY and symptom/cause checks, the anchor locate/assess/verdict checks and the registry/ADR overlap check [DES-001, DES-002, DES-003, DES-004, DES-005]
