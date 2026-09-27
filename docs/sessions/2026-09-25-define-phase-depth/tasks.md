@@ -21,7 +21,7 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] `skills/framing/SKILL.md`: the phase-agnostic procedure, "What a session type supplies", the check × tier table, the XY and symptom/cause checks, the anchor locate/assess/verdict checks and the registry/ADR overlap check [DES-001, DES-002, DES-003, DES-004, DES-005]
 - [x] `skills/framing/reference/anchor-contract.md`: location, form, markers and checklist [DES-006]
 - [x] `skills/problem-statement/reference/methods.md`: verdicts, rationale, applies-when, Serves and Bugfix columns, Additions and Deferred [DES-013] (depends on: 9)
-- [ ] `skills/requirements/reference/methods.md`: the same format for the requirements candidates [DES-013]
+- [x] `skills/requirements/reference/methods.md`: the same format for the requirements candidates [DES-013]
 - [x] `skills/problem-statement/`: `SKILL.md`, `types/feature.md` (tier table, elements, optional templates, examples, owned diagrams), `types/bugfix.md` [DES-011]
 - [ ] `skills/requirements/reference/diagrams.md`: the catalogue of 4 required and 6 optional diagrams, the traceability-form guidance and the rendering rules, each with an example that renders [DES-017]
 - [ ] `skills/requirements/` restructured: `SKILL.md` keeps the shared rules and points at `templates/define/requirements.md` and `define/index.md`; `types/feature.md` and `types/bugfix.md` [DES-012] (depends on: 8, 10)
