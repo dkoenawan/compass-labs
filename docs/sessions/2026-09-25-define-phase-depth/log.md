@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: test
 active_agent: main
-next_step: "Hand off to compass-labs:deploy (release.md)"
+next_step: "User approves Deploy complete; then Close fold-back on the branch, merge PR #44, tag v1.2.0"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -428,3 +428,20 @@ next_step: "Hand off to compass-labs:deploy (release.md)"
 ### 2026-09-27 — main — milestone: ✅ Test complete
 - The user asked for Test to run until it's complete. Gate check a ran: `check-traceability.sh` exit 0 at 58f91dd, and the orchestrator re-ran it independently along with `tests/run.sh` (15 passed, 0 failed).
 - verification.md: 37 VER rows, 0 Fail, covering REQ-001..046 (REQ-012 struck). Behaviour REQs were verified by reading the instructions, with no live run, as noted in each row. Two minor worked-example wording points are logged above and not fixed.
+
+## Phase: Deploy
+
+### 2026-09-27 — main — handoff: orchestrator → compass-labs:deploy (release.md, v1.2.0, PR)
+- **Input:** Test complete, and the user approved running Deploy. Task: follow the repo's release workflow, bump the version (MINOR), open the PR to main without merging, and write release.md with Completeness.
+- **Output:** done; files_changed: .claude-plugin/plugin.json, release.md
+
+### 2026-09-27 — compass-labs:deploy — attempt: release completeness checked, no gaps
+- All 14 skills listed in marketplace.json are complete and match `skills/` exactly, including framing and problem-statement. All 7 agents and all 3 hook scripts are present, with no stubs.
+- Tasks 1–20 ship complete. Task 21 (DES-022) is deferred to Close and isn't part of this release.
+
+### 2026-09-27 — compass-labs:deploy — attempt: v1.2.0 bumped on branch, PR #44 opened
+- plugin.json went from 1.1.0 to 1.2.0 in 95dbe79. `tests/run.sh`: 15 passed, 0 failed. `claude plugin tag --dry-run` would create `compass-labs--v1.2.0`, with the same 4 warnings as v1.1.0.
+- PR https://github.com/dkoenawan/compass-labs/pull/44 opened to main and not merged. release.md committed in 03aae5a.
+
+### 2026-09-27 — compass-labs:deploy — note: steps after the merge are still to run
+- Squash-merge #44, then on main: `claude plugin tag --push`, `claude plugin update compass-labs@compass-labs`, the confirmation checks and a restart. This follows the v1.1.0 split, because merges are squash-only.
