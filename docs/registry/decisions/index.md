@@ -1,6 +1,6 @@
 ---
-last_updated: 2026-09-25
-adr_count: 2
+last_updated: 2026-09-27
+adr_count: 3
 ---
 
 # Architecture Decision Record Index
@@ -14,3 +14,4 @@ adr_count: 2
 |----|------|--------|----------|---------|
 | [001](001-diataxis-docs-restructure.md) | 2026-08-15 | Proposed | Diataxis-based docs/ restructure + docs/sessions/ fold-back | doc-maintainer, plan, task-executor, adr |
 | [002](002-session-lifecycle.md) | 2026-09-24 | Accepted | Session lifecycle: main-session orchestrator, one artifact per phase, hook-enforced | session, requirements, verification, doc-maintainer, plan, task-executor |
+| [003](003-framing-and-project-anchor.md) | 2026-09-27 | Accepted | Shared framing step, per-type standards, README project anchor, Define output as a `define/` folder | framing, problem-statement, requirements, session, verification, doc-maintainer |
