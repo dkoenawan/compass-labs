@@ -28,7 +28,7 @@ Only the **Must contain** column below is checked. The optional templates and ex
 - **Must contain:** what's wrong, for whom, and why it matters, in two to four sentences, with no design or solution talk.
 - **Checked by:** a reader can say who has the problem and why it matters.
 - **Bad:** "Add a dark-mode toggle."
-- **Good:** "People who read the docs at night find the white pages glaring, and several have asked for a darker theme in the issue tracker."
+- **Good:** "People who read the docs at night find the white pages glaring [assumed], and several have asked for a darker theme [observed: issue tracker]."
 
 ### Context
 
@@ -36,7 +36,7 @@ Only the **Must contain** column below is checked. The optional templates and ex
 - **Checked by:** the situation and the complication can each be pointed to.
 - **Optional template (SCQ/Minto, adopt):** "Situation: … Complication: …". The *question* is left implicit, because the XY check has already turned it into the need.
 - **Bad:** "Password resets are a problem."
-- **Good:** "Situation: wiki admins reset forgotten passwords by hand from the admin panel. Complication: the team doubled this year, and resets now wait up to a day for an admin."
+- **Good:** "Situation: wiki admins reset forgotten passwords by hand from the admin panel [observed: #212]. Complication: the team doubled this year [observed: member count], and resets now wait up to a day for an admin [observed: admin panel export, #212]."
 
 ### Need and stakeholders
 
@@ -60,7 +60,7 @@ Only the **Must contain** column below is checked. The optional templates and ex
 - **Checked by:** both parts are present.
 - **Optional template:** none mandated. SCQ's complication often supplies the "why now".
 - **Bad:** "It would be nice to fix this."
-- **Good:** "If nothing changes, locked-out members lose up to a working day, and admins keep spending about two hours a week on resets. Now, because the team doubles again next quarter."
+- **Good:** "If nothing changes, locked-out members lose up to a working day [observed: admin panel export, #212], and admins keep spending about two hours a week on resets [observed: admin time sheet]. Now, because the team doubles again next quarter [observed: hiring plan]."
 
 ### Success outcomes
 

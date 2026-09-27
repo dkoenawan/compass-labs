@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
 active_agent: main
-next_step: "User decides fixes for the worked-example gaps (REQ-025, REQ-040, REQ-038); then re-test"
+next_step: "Re-test REQ-025, REQ-040, REQ-038 after the worked-example fixes"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -402,3 +402,10 @@ next_step: "User decides fixes for the worked-example gaps (REQ-025, REQ-040, RE
 - REQ-040 (a judgement call): the context diagram has no node for the admin audit log (REQ-006) or the auth log (OUT-01's signal), which quality.md lists as dependencies.
 - Observation: example REQ-009 (accessibility) has no NFR measures row.
 - Fixing these needs the example (and possibly the standard's examples) changed. The Test agent didn't change them.
+
+### 2026-09-27 — main — decision: fix the worked-example gaps found in Test
+- The user approved the fixes and asked for Test to continue until it's complete, with evidence.
+- REQ-025: tag every claim in the example's Context and Impact/why-now (plus the index summary's pointer to the evidence), and tag the "Good" examples in problem-statement/types/feature.md. The rule stays as it is, with no untagged claim.
+- REQ-040: the admin audit log and the auth log are internal to the wiki, so quality.md no longer lists them as external dependencies and says why. The context diagram is unchanged.
+- Observation: add a WCAG 2.2 A/AA measures row for the example's REQ-009.
+- tasks.md is frozen (Implement complete), so the fix is recorded as an orchestrator deviation in tasks.md in this commit. Test re-verifies VER-019, VER-032 and VER-037.

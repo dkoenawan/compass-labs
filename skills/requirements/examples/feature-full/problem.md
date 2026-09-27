@@ -5,9 +5,9 @@
 
 ### Context
 
-**Situation:** wiki admins reset forgotten passwords by hand from the admin panel, after a member asks them in chat or by email.
+**Situation:** wiki admins reset forgotten passwords by hand from the admin panel, after a member asks them in chat or by email [observed: admin panel export, #212].
 
-**Complication:** the team doubled in size this year, and reset requests now wait up to a day for an admin to be free.
+**Complication:** the team doubled in size this year [observed: member count in the admin panel], and reset requests now wait up to a day for an admin to be free [observed: admin panel export, #212].
 
 ### Need and stakeholders
 
@@ -24,8 +24,8 @@
 
 ### Impact and why now
 
-- **If nothing changes:** locked-out members lose up to a working day each time, and admins keep spending about 2 hours a week on resets, which grows with the team.
-- **Why now:** the team doubles again next quarter, and the admin rota is already stretched.
+- **If nothing changes:** locked-out members lose up to a working day each time [observed: admin panel export, #212], and admins keep spending about 2 hours a week on resets [observed: admin time sheet, #212], which grows with the team [assumed].
+- **Why now:** the team doubles again next quarter [observed: hiring plan, quoted in #212], and the admin rota is already stretched [assumed].
 
 ### Success outcomes
 

@@ -22,6 +22,7 @@
 | Requirement | Scale | Tolerable | Goal |
 |---|---|---|---|
 | REQ-005 | seconds from reset-form submit to the email service accepting the email, 95th percentile, at 200 concurrent members | 60 | 10 |
+| REQ-009 | WCAG 2.2 level A and AA success criteria failed on the reset form and the set-password page, checked with keyboard only and NVDA | 0 | 0 |
 
 ## Assumptions and dependencies
 
@@ -31,5 +32,5 @@
 
 **Dependencies:**
 - The wiki's email service, through `Notifier`: relied on by REQ-001 and REQ-005.
-- The admin audit log: relied on by REQ-006.
-- The auth log: relied on by OUT-01's signal.
+
+The admin audit log (relied on by REQ-006) and the auth log (the source of OUT-01's signal) are part of the wiki, inside the context diagram's system boundary, so they aren't external dependencies.

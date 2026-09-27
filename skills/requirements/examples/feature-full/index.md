@@ -19,7 +19,7 @@
 
 ## Problem statement
 
-Members locked out of the wiki wait for an admin to reset their password by hand, and admins spend hours a week doing it. Needs: NEED-01 (members regain access themselves), NEED-02 (admins stop handling routine resets). Outcomes: OUT-01, OUT-02. See [problem.md](problem.md).
+Members locked out of the wiki wait for an admin to reset their password by hand, and admins spend hours a week doing it. Needs: NEED-01 (members regain access themselves), NEED-02 (admins stop handling routine resets). Outcomes: OUT-01, OUT-02. This is a summary: each claim is tagged with its evidence in [problem.md](problem.md).
 
 ## Scope
 
