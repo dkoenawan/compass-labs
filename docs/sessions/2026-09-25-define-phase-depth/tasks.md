@@ -23,7 +23,7 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] `skills/problem-statement/reference/methods.md`: verdicts, rationale, applies-when, Serves and Bugfix columns, Additions and Deferred [DES-013] (depends on: 9)
 - [x] `skills/requirements/reference/methods.md`: the same format for the requirements candidates [DES-013]
 - [x] `skills/problem-statement/`: `SKILL.md`, `types/feature.md` (tier table, elements, optional templates, examples, owned diagrams), `types/bugfix.md` [DES-011]
-- [ ] `skills/requirements/reference/diagrams.md`: the catalogue of 4 required and 6 optional diagrams, the traceability-form guidance and the rendering rules, each with an example that renders [DES-017]
+- [x] `skills/requirements/reference/diagrams.md`: the catalogue of 4 required and 6 optional diagrams, the traceability-form guidance and the rendering rules, each with an example that renders [DES-017]
 - [ ] `skills/requirements/` restructured: `SKILL.md` keeps the shared rules and points at `templates/define/requirements.md` and `define/index.md`; `types/feature.md` and `types/bugfix.md` [DES-012] (depends on: 8, 10)
 - [ ] `skills/requirements/examples/feature-full/`: the worked full-tier password-reset example as a six-file `define/` folder, plus fixture case (c) in `tests/session/check_traceability_test.sh` using it [DES-018, DES-019] (depends on: 1, 9, 10, 11)
 - [ ] `agents/define.md`: preloads three skills, reads the `framing` block and type files, writes `define/` [DES-010] (depends on: 5, 9, 11)
