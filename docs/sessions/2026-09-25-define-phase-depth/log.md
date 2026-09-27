@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Revise Design: artifact view (this session as the example), define/ folder layout D12–D13; then Design gate"
+next_step: "Design milestone gate: DES-001..023, confirm D6–D14 + layout refinements + verdict gaps"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -307,3 +307,13 @@ next_step: "Revise Design: artifact view (this session as the example), define/ 
 - Agreed rule: a section that's still true once the feature has shipped goes into docs, and anything about how we got there stays in the archive. Needs, stakeholders and outcomes go to `explanation/<domain>/overview.md`. Live REQs and NFR measures go to `reference/<domain>/`. Context and to-be diagrams go to the domain overview. `index.md`, `framing.md`, evidence, appetite, struck rows, 25010 N/A reasons, and the as-is, impact-map and traceability diagrams stay in the archive. How-to comes from Implement, not Define.
 - REQ, DES and VER IDs are banned from as-built docs. The `Origin: #issue` line is the only way back.
 - Becomes a new DES item and D14 in this revision, sent to the Design agent. Out of scope: doc-maintainer's S1 step still reads the old plan format → #41.
+
+### 2026-09-27 — main — handoff: orchestrator → compass-labs:design (artifact view, define/ layout, Close fold-back)
+- **Input:** the three 2026-09-27 decisions above. Task: add an artifact view with this session as the before and after, D12 (main doc plus sub-docs by tier), D13 (the define/ layout) and its ripple changes (check-traceability, feature.json, guard hook, paths), and D14 (the Close fold-back mapping into Diátaxis, no session IDs in as-built docs).
+- **Output:** done (DES-019..023, D12–D14); files_changed: design.md
+
+### 2026-09-27 — compass-labs:design — attempt: design.md revised with the artifact view, the define/ folder layout and the Close fold-back
+- Added an Artifact view: each Define artifact marked new, changed, superseded or unchanged; a file tree per tier; this session as the worked before (root requirements.md, 148 lines) and after (full-tier define/, illustration only, D6); a Close fold-back example; and Design's reading of the "session artifact" glossary line as the define/ folder.
+- New decisions D12 (a main doc plus sub-docs by tier, called the "main doc"), D13 (the define/ layout; rejected: root requirements.md as the main doc with define/ beside it, and flat sibling files) and D14 (Close folds still-true content into Diátaxis docs; no REQ, DES or VER IDs in as-built docs). DES-008 is rewritten as templates/define/, and DES-018 is now an example folder.
+- New DES-019 (check-traceability reads define/requirements.md, root fallback, fixtures for both layouts), DES-020 (folder artifact in feature.json plus the guard: fixed file list, prefix ownership and freezing, one layout per session), DES-021 (plugin path updates), DES-022 (as-built docs at Close) and DES-023 (close-foldback.md mapping; the doc-maintainer S1 fix is out of scope as a follow-up).
+- For the gate: confirm D6–D14; the frozen Non-goal "Changing Close's fold-back" is read as covering the README and anchor only; no numbered session IDs were found in docs/; confirm the layout refinements (fixed file list, NFR measures and assumptions in quality.md, one layout per session, ADR-003 covering D12–D14). Kept flags: D10, the symptom-vs-cause verdict and the Bugfix column.
