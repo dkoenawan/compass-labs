@@ -33,7 +33,7 @@ Each task names the `DES-*` item it implements ([design.md](design.md)). One com
 - [x] `docs/registry/decisions/003-framing-and-project-anchor.md` recording D1–D14, plus its index row [DES-016]
 - [x] `docs/explanation/solution-design.md`: full refresh, links to the README anchor, domain map covers every `skills/*` directory [DES-015] (depends on: 5, 9)
 - [x] compass-labs `README.md` refresh outside the anchor: plugin name, every skill and agent, the `define/` session row, command prefix as today [DES-014] (depends on: 5, 9)
-- [ ] compass-labs `README.md` `## Project anchor` section between the markers, with the vision, mission, scope and non-goals the user approved (anchor writes go through the orchestrator, D1) [DES-014] (depends on: 6, 19)
+- [x] compass-labs `README.md` `## Project anchor` section between the markers, with the vision, mission, scope and non-goals the user approved (anchor writes go through the orchestrator, D1) [DES-014] (depends on: 6, 19)
 - [ ] As-built session docs describe the `define/` folder — **deferred to Close** (Close's doc-maintainer pass, not Implement) [DES-022]
 
 ## Deviations from design

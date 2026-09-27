@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: design
 active_agent: main
-next_step: "User approves the compass-labs anchor wording (task 20), orchestrator writes README anchor"
+next_step: "Resolve full-stack wording in plugin.json/CLAUDE.md; then Implement milestone gate"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -27,10 +27,12 @@ next_step: "User approves the compass-labs anchor wording (task 20), orchestrato
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
 - #41: doc-maintainer's session fold-back step (2.S1) still expects the old plan-format session. Deferred; #23 only updates `close-foldback.md`.
 - #42: use the Compass artifact repository as a bench test and eval for the session standards. Deferred to a separate conversation.
+- #43: Consulting engagement session type, listed as planned in the project anchor's scope.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 
 ## Key decisions
 
+- **2026-09-27**: compass-labs project anchor approved and written to README (vision: AI-assisted delivery work across software, research and consulting, based on common enterprise frameworks); Consulting session type → #43
 - **2026-09-27**: ✅ Design complete — DES-001..023, D1–D14: framing skill + anchor contract, Feature-depth standards, `define/` folder (main doc + sub-docs by tier), Close fold-back into Diátaxis, defaults not rigid rules
 - **2026-09-27**: Design gate answers: D6 = no bulk migration of past sessions; D8 "later" Won'ts go to a Deferred table with a required issue; D10 traceability form chosen per case (requirementDiagram or flowchart); no-rigidity principle; eval repo → #42
 - **2026-09-27**: Close fold-back mapping for define/ docs: still-true content → Diátaxis docs (explanation/reference), the history of how we got there stays in the archive; no session IDs in as-built docs; doc-maintainer S1 → #41
@@ -365,3 +367,13 @@ next_step: "User approves the compass-labs anchor wording (task 20), orchestrato
 
 ### 2026-09-27 — compass-labs:implement — note: blocked on the user's approval of the compass-labs anchor wording
 - Task 20 (DES-014, the README Project anchor) needs the user to approve the drafted wording. Under D1 the orchestrator writes it. Task 21 (DES-022) is deferred to Close.
+
+### 2026-09-27 — main — decision: compass-labs project anchor approved
+- The user shaped the wording over several rounds:
+  - Ground it in common, established enterprise frameworks rather than invented methods.
+  - Scope covers research and consulting engagements as well as software development.
+  - Plain engineering language, with no marketing tone.
+- Vision: AI-assisted delivery work, covering software development, research and consulting, based on common established frameworks used by enterprise teams.
+- Mission: a Claude Code plugin that runs each piece of work as a session, from problem framing to a documented outcome, with one common framework per stage (SCQ, MoSCoW, EARS and Given/When/Then, ISO/IEC 25010, MADR, C4, Diátaxis).
+- Scope and non-goals are as written in README.md. Consulting is listed as planned, tracked as #43. Other tools (SpecKit, BMAD) are deliberately not named in the anchor.
+- Orchestrator wrote the anchor (D1). The Overview paragraph links to it, and the intro line drops "software" (anchor contract, check 6). Task 20 (DES-014) is ticked in the same commit.

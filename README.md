@@ -1,12 +1,47 @@
 # compass-labs
 
-A Claude Code plugin of opinionated skills, agents and hooks for systematic software work. Its vision, mission and scope are stated once, in the [Project anchor](#project-anchor) below; the rest of this README describes what the plugin ships today.
+A Claude Code plugin of opinionated skills, agents and hooks for systematic, framework-based work. Its vision, mission and scope are stated once, in the [Project anchor](#project-anchor) below; the rest of this README describes what the plugin ships today.
 
 ## Overview
 
-compass-labs gives Claude Code structured, repeatable workflows instead of ad-hoc generation: a session lifecycle that takes a piece of work from framing to as-built docs, standards for the artifacts each phase writes, and skills for scaffolding, planning, exploring a codebase, maintaining docs, recording decisions and running tasks unattended.
+compass-labs gives Claude Code structured, repeatable workflows instead of ad-hoc generation: a session lifecycle that takes a piece of work from framing to as-built docs, standards for the artifacts each phase writes, and skills for scaffolding, planning, exploring a codebase, maintaining docs, recording decisions and running tasks unattended (see the [Project anchor](#project-anchor)).
 
 Every skill and agent is namespaced by the plugin's name: skills are invoked as `/compass-labs:<skill>` and agents as `compass-labs:<agent>`. Renaming the prefix to `/compass:` is tracked in #34.
+
+<!-- compass:anchor -->
+## Project anchor
+
+### Vision
+
+AI-assisted delivery work, covering software development, research and consulting, based on common established frameworks used by enterprise teams.
+
+### Mission
+
+compass-labs is a Claude Code plugin that structures each piece of work as a session, from problem framing to a documented outcome. Each stage uses a common framework:
+
+- SCQ for problem framing
+- MoSCoW for prioritisation
+- EARS and Given/When/Then for requirements
+- ISO/IEC 25010 for quality
+- MADR for decisions
+- C4 for architecture
+- Diátaxis for documentation
+
+### Scope
+
+- Session types: Feature (available); Bugfix, Research and Consulting (planned).
+- Standards for each session artifact, by session type and depth tier.
+- Hooks and scripts that enforce session structure and traceability.
+- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, brand design.
+- Works in any repository, independent of tech stack.
+
+### Non-goals
+
+- A runtime, framework or hosted service.
+- Replacing user approval at milestones.
+- Creating new methods where an established one exists.
+- Applying a framework where it doesn't fit.
+<!-- /compass:anchor -->
 
 ## Installation
 
