@@ -26,6 +26,7 @@ next_step: "Revise Design: artifact view (this session as the example), define/ 
 - design.md (DES-001..016 plus the visual overview) is being revised against REQ-023..046.
 - #39: refine the Design phase to use visual, type-specific artifacts with a clear new/changed/deprecated view. Deferred, related to #27.
 - #38: `init` should set up the project anchor (vision and mission) when a project is created. Blocked by this session's anchor contract.
+- #41: doc-maintainer's session fold-back step (2.S1) still expects the old plan-format session. Deferred; #23 only updates `close-foldback.md`.
 - #37: the session skill's new-session flow should create a branch before its first commit/push. Deferred, out of scope here.
 
 ## Key decisions
@@ -300,3 +301,9 @@ next_step: "Revise Design: artifact view (this session as the example), define/ 
 ### 2026-09-27 — main — decision: no Define reopen; the folder layout is a Design decision
 - Corrects the previous entry. The user pointed out that the problem statement is unchanged and that the folder structure is a design choice, not a problem. Checked: the only REQ text that names `requirements.md` is REQ-009's criterion, which `define/requirements.md` still satisfies, and the glossary's "session artifact" line, which describes where the output lands. Design records how it reads that line.
 - Define stays complete. No new REQ. The "don't overcrowd" principle and the `define/` layout become Design decisions D12 and D13.
+
+### 2026-09-27 — main — decision: Close fold-back mapping for define/ docs
+- The user asked how each Define doc is folded into the Diátaxis docs tree at Close. Today `close-foldback.md` has no per-section mapping, and nothing covers diagrams.
+- Agreed rule: a section that's still true once the feature has shipped goes into docs, and anything about how we got there stays in the archive. Needs, stakeholders and outcomes go to `explanation/<domain>/overview.md`. Live REQs and NFR measures go to `reference/<domain>/`. Context and to-be diagrams go to the domain overview. `index.md`, `framing.md`, evidence, appetite, struck rows, 25010 N/A reasons, and the as-is, impact-map and traceability diagrams stay in the archive. How-to comes from Implement, not Define.
+- REQ, DES and VER IDs are banned from as-built docs. The `Origin: #issue` line is the only way back.
+- Becomes a new DES item and D14 in this revision, sent to the Design agent. Out of scope: doc-maintainer's S1 step still reads the old plan format → #41.
