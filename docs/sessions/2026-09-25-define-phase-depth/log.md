@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
+milestone: implement
 active_agent: main
-next_step: "Resolve full-stack wording in plugin.json/CLAUDE.md; then Implement milestone gate"
+next_step: "Hand off to compass-labs:test (VER-* for REQ-001..046, render diagrams, traceability check)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -32,6 +32,7 @@ next_step: "Resolve full-stack wording in plugin.json/CLAUDE.md; then Implement 
 
 ## Key decisions
 
+- **2026-09-27**: ✅ Implement complete — tasks 1–20 done (DES-001..021, DES-023), task 21 (DES-022) deferred to Close; tests 15/15 green
 - **2026-09-27**: compass-labs project anchor approved and written to README (vision: AI-assisted delivery work across software, research and consulting, based on common enterprise frameworks); Consulting session type → #43
 - **2026-09-27**: ✅ Design complete — DES-001..023, D1–D14: framing skill + anchor contract, Feature-depth standards, `define/` folder (main doc + sub-docs by tier), Close fold-back into Diátaxis, defaults not rigid rules
 - **2026-09-27**: Design gate answers: D6 = no bulk migration of past sessions; D8 "later" Won'ts go to a Deferred table with a required issue; D10 traceability form chosen per case (requirementDiagram or flowchart); no-rigidity principle; eval repo → #42
@@ -377,3 +378,10 @@ next_step: "Resolve full-stack wording in plugin.json/CLAUDE.md; then Implement 
 - Mission: a Claude Code plugin that runs each piece of work as a session, from problem framing to a documented outcome, with one common framework per stage (SCQ, MoSCoW, EARS and Given/When/Then, ISO/IEC 25010, MADR, C4, Diátaxis).
 - Scope and non-goals are as written in README.md. Consulting is listed as planned, tracked as #43. Other tools (SpecKit, BMAD) are deliberately not named in the anchor.
 - Orchestrator wrote the anchor (D1). The Overview paragraph links to it, and the intro line drops "software" (anchor contract, check 6). Task 20 (DES-014) is ticked in the same commit.
+
+### 2026-09-27 — main — note: plugin descriptions aligned with the anchor
+- At the user's request, the "full-stack applications" wording in plugin.json, marketplace.json and CLAUDE.md was replaced to match the project anchor, and recorded as a deviation in tasks.md. The GitHub repo description was updated to the same wording.
+
+### 2026-09-27 — main — milestone: ✅ Implement complete
+- The user approved. Tasks 1–20 in tasks.md are done: DES-001..021 and DES-023, with the README anchor (DES-014) written by the orchestrator under D1. Task 21 (DES-022, the as-built session docs) is deferred to Close.
+- `bash tests/run.sh`: 15 passed, 0 failed. The deviations are recorded in tasks.md (marketplace.json skill list, task order, extra tests, the worked example's header, plugin descriptions).
