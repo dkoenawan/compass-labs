@@ -2,7 +2,7 @@
 session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Re-test REQ-025, REQ-040, REQ-038 after the worked-example fixes"
+next_step: "Hand off to compass-labs:deploy (release.md)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -32,6 +32,7 @@ next_step: "Re-test REQ-025, REQ-040, REQ-038 after the worked-example fixes"
 
 ## Key decisions
 
+- **2026-09-27**: ✅ Test complete — 37 VER rows, all 45 live REQs pass at 58f91dd after the worked-example fixes; tests 15/15; check-traceability exit 0
 - **2026-09-27**: ✅ Implement complete — tasks 1–20 done (DES-001..021, DES-023), task 21 (DES-022) deferred to Close; tests 15/15 green
 - **2026-09-27**: compass-labs project anchor approved and written to README (vision: AI-assisted delivery work across software, research and consulting, based on common enterprise frameworks); Consulting session type → #43
 - **2026-09-27**: ✅ Design complete — DES-001..023, D1–D14: framing skill + anchor contract, Feature-depth standards, `define/` folder (main doc + sub-docs by tier), Close fold-back into Diátaxis, defaults not rigid rules
@@ -409,3 +410,21 @@ next_step: "Re-test REQ-025, REQ-040, REQ-038 after the worked-example fixes"
 - REQ-040: the admin audit log and the auth log are internal to the wiki, so quality.md no longer lists them as external dependencies and says why. The context diagram is unchanged.
 - Observation: add a WCAG 2.2 A/AA measures row for the example's REQ-009.
 - tasks.md is frozen (Implement complete), so the fix is recorded as an orchestrator deviation in tasks.md in this commit. Test re-verifies VER-019, VER-032 and VER-037.
+
+### 2026-09-27 — main — handoff: orchestrator → compass-labs:test (re-verify after the fixes)
+- **Input:** the fix decision above (commit 58f91dd). Task: re-read the changed files independently and update VER-019, VER-025, VER-032 and VER-037.
+- **Output:** done; files_changed: verification.md
+
+### 2026-09-27 — compass-labs:test — attempt: worked-example fixes re-verified at 58f91dd; every REQ has a passing VER
+- Re-read examples/feature-full/problem.md sentence by sentence: Context, Evidence and Impact/why-now claims are all tagged, and so are the standard's Good examples. VER-019 (REQ-025) fail → pass.
+- quality.md now says the audit log and auth log are internal to the wiki. The context diagram shows every external system still named. VER-032 (REQ-040) fail → pass.
+- The example meets REQ-023–037 and REQ-039–042, and its 4 diagrams re-render. VER-037 (REQ-038) fail → pass. The VER-025 observation is resolved.
+- `bash tests/run.sh`: 15 passed, 0 failed. check-traceability.sh exits 0.
+
+### 2026-09-27 — compass-labs:test — note: minor points left in the worked example (not fails)
+- The outcome baselines in problem.md l.34–35 aren't tagged; they repeat the tagged Evidence, but l.19 is an average wait while OUT-01 measures a median.
+- quality.md l.36 says "inside the context diagram's system boundary", but the box drawn is the work in scope, not the whole wiki.
+
+### 2026-09-27 — main — milestone: ✅ Test complete
+- The user asked for Test to run until it's complete. Gate check a ran: `check-traceability.sh` exit 0 at 58f91dd, and the orchestrator re-ran it independently along with `tests/run.sh` (15 passed, 0 failed).
+- verification.md: 37 VER rows, 0 Fail, covering REQ-001..046 (REQ-012 struck). Behaviour REQs were verified by reading the instructions, with no live run, as noted in each row. Two minor worked-example wording points are logged above and not fixed.
