@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Amend Define for the define/ folder layout, then revise Design (artifact view, this session as the example)"
+next_step: "Revise Design: artifact view (this session as the example), define/ folder layout D12–D13; then Design gate"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -296,3 +296,7 @@ next_step: "Amend Define for the define/ folder layout, then revise Design (arti
 - **New principle:** don't overcrowd the Define document. Define's output may be a folder with one main doc linking to focused sub-docs. (Called the "main doc", not "anchor doc", to avoid clashing with the project anchor.)
 - **Layout chosen:** everything in `define/`: `index.md` (the main doc), `requirements.md` (the REQ table), `framing.md`, `problem.md`, `quality.md`, `diagrams.md`. Sub-docs exist only when the confirmed tier requires them. Rejected: keeping `requirements.md` at the root as the main doc with a `define/` folder (fewer changes), and flat sibling files.
 - **Consequences:** Define is amended: the "session artifact" glossary line becomes the folder, a new REQ covers the layout principle, and REQ-009's path moves to `define/requirements.md`. Design is revised: the artifact view, `check-traceability.sh` reading `define/requirements.md` with a root fallback for pre-change sessions (D6), the `feature.json` allowlist and artifact, the guard hook matching by folder prefix, and links in the downstream agents and templates. `design.md` stays flat. Whether the other phases get folders is #39's question.
+
+### 2026-09-27 — main — decision: no Define reopen; the folder layout is a Design decision
+- Corrects the previous entry. The user pointed out that the problem statement is unchanged and that the folder structure is a design choice, not a problem. Checked: the only REQ text that names `requirements.md` is REQ-009's criterion, which `define/requirements.md` still satisfies, and the glossary's "session artifact" line, which describes where the output lands. Design records how it reads that line.
+- Define stays complete. No new REQ. The "don't overcrowd" principle and the `define/` layout become Design decisions D12 and D13.
