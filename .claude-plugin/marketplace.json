@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "compass-labs",
-  "description": "Systematic development skills for building full-stack applications",
+  "description": "Session-based workflows for software development, research and consulting, based on common established enterprise frameworks",
   "owner": {
     "name": "Daniel Koenawan",
     "email": "daniel.k.koenawan@gmail.com"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "compass-labs",
-      "description": "A systematic methodology for building full-stack applications - opinionated skills covering infrastructure, database, backend, and frontend development",
+      "description": "Opinionated skills, agents and hooks that run software development, research and consulting work as sessions, from problem framing to a documented outcome, based on common established enterprise frameworks",
       "source": "./",
       "strict": true,
       "skills": [
