@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Design revises D6, D8, D10 and the no-rigidity principle; then Design milestone approval"
+next_step: "Design milestone approval (DES-001..023, D1–D14)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -326,3 +326,14 @@ next_step: "Design revises D6, D8, D10 and the no-rigidity principle; then Desig
 - **D10, changed:** the traceability diagram's form is chosen per case, for reviewability. A simple set uses `requirementDiagram`, and a complicated one uses `flowchart`. A trace too big to review is a prompt to ask the user whether the feature should be split into two.
 - **Principle:** don't be rigid. Real work doesn't fit a framework neatly, so the standards give defaults and judgement calls, not hard rules. This extends REQ-029.
 - D11 stays. Refining the Compass artifact repository as a bench test and eval is deferred to #42.
+
+### 2026-09-27 — main — handoff: orchestrator → compass-labs:design (fold in Design gate answers)
+- **Input:** the "Design gate answers (D6–D14)" entry above. Task: reframe D6 as no bulk migration, give deferred Won'ts a recorded home, choose the traceability form per case, add the no-rigidity principle, and name #41 and #42.
+- **Output:** done; files_changed: design.md
+
+### 2026-09-27 — compass-labs:design — attempt: design.md revised to the Design gate answers (D6, D8, D10, no-rigidity principle)
+- D6 reframed as no bulk migration: past sessions are never migrated; the new standard applies to new sessions; a later feature that touches an existing one brings its as-built docs up to the standard. Kept the root-layout fallback in check-traceability and the guard, and one layout per session.
+- D8: a "never" Won't is struck through with its reason. A "later" Won't moves to a `## Deferred` table in define/requirements.md (`Follow-up | Was | Requirement | Reason`, issue link required and first), so check-traceability ignores it like a struck row. Added fixture case (e) under DES-019. At Close it stays in the archive and the issue carries it forward (D14).
+- D10: the traceability form is chosen per case (requirementDiagram for a simple set, flowchart LR for a complicated one), as guidance. A trace too big to review prompts Define to ask whether the feature should be split. Updated DES-017's check and rendering rules, and dropped the research-lean flag.
+- Added the "Defaults, not rigid rules" principle to the Approach (extends REQ-029) and softened form-only checks. The mechanical gate checks are unchanged. D11 notes follow-up #42; DES-023 names #41.
+- Open questions: all resolved; D6–D14 are confirmed at the gate after this revision. Status: Draft (ready for Design milestone).
