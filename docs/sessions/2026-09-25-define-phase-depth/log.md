@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: design
 active_agent: main
-next_step: "Hand off to compass-labs:implement (tasks.md from DES-001..023)"
+next_step: "User approves the compass-labs anchor wording (task 20), orchestrator writes README anchor"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -345,3 +345,23 @@ next_step: "Hand off to compass-labs:implement (tasks.md from DES-001..023)"
 ### 2026-09-27 — main — milestone: ✅ Design complete
 - The user approved design.md: DES-001..023 covering REQ-001..046 (REQ-012 struck), with D1–D14 confirmed. Open questions: all resolved.
 - New since the first draft: the artifact view with this session as the before and after, the `define/` folder (D12–D13), the Close fold-back mapping into Diátaxis (D14), D6 as no bulk migration, deferred Won'ts (D8), the per-case traceability form (D10), and the "defaults, not rigid rules" principle.
+
+## Phase: Implement
+
+### 2026-09-27 — main — handoff: orchestrator → compass-labs:implement (tasks.md from DES-001..023)
+- **Input:** Design complete. Task: write tasks.md and execute it, one commit per task, plumbing test-first, with DES-014's anchor wording returned for the user's approval (D1) and DES-022 deferred to Close.
+- **Output:** blocked on the anchor wording (19 of 21 tasks done); files_changed: tasks.md plus the code, skills, templates, agents and docs listed in tasks.md
+
+### 2026-09-27 — compass-labs:implement — attempt: tasks.md written and 19 of 21 tasks done
+- tasks.md turns DES-001..023 into 21 tasks, one commit per ticked task. `bash tests/run.sh` was green after each, and the final run is 15 passed, 0 failed.
+- Done: DES-001..013, DES-015..021, DES-023, and the README refresh outside the anchor (DES-014, task 19).
+- The guard was checked against this session: tasks.md and log.md writes are allowed, and define/ is blocked (one layout per session, D6).
+- Every shipped diagram renders with mermaid-cli, using the system Chrome.
+
+### 2026-09-27 — compass-labs:implement — note: deviations from design recorded in tasks.md
+- marketplace.json's explicit skill list gets framing and problem-statement, because marketplace_test.sh requires it. The design doesn't name the file.
+- Task 9 was done before task 7, because a skill folder without SKILL.md fails the same test.
+- Extra test cases were added, and the worked example's index.md has no ../log.md link. Neither changes behaviour.
+
+### 2026-09-27 — compass-labs:implement — note: blocked on the user's approval of the compass-labs anchor wording
+- Task 20 (DES-014, the README Project anchor) needs the user to approve the drafted wording. Under D1 the orchestrator writes it. Task 21 (DES-022) is deferred to Close.
