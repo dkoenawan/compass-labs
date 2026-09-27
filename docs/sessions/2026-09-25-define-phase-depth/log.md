@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Design milestone gate: DES-001..018, confirm D6–D11 + verdict gaps"
+next_step: "Amend Define for the define/ folder layout, then revise Design (artifact view, this session as the example)"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -290,3 +290,9 @@ next_step: "Design milestone gate: DES-001..018, confirm D6–D11 + verdict gaps
 - Added DES-017 (diagram catalogue: 4 required at full tier, 6 optional, Mermaid type and checks, rendering rules) and DES-018 (worked full-tier example, which doubles as the REQ-009 test fixture). DES-008 now has a section × tier template table. DES-013 now has a starting verdict table with a Serves column (REQ-046) and "deferred to #40" as a Bugfix option.
 - Added current-vs-new comparison tables for both standards. Visual overview: a full-tier step added to diagram 2, labels updated in diagram 3, a new tier mindmap (diagram 4), and the delta table extended.
 - Coverage: REQ-001 to REQ-046 (REQ-012 struck). For the gate: D6 to D11 are proposals; D10 (traceability as a flowchart, not a requirementDiagram) departs from the research lean; the Feature verdict for symptom-vs-cause is missing from the recorded verdicts (adopt proposed); the Bugfix verdict column is a proposal.
+
+### 2026-09-27 — main — decision: Define output becomes a `define/` folder; Design gains an artifact view
+- **Gap raised by the user at the Design gate:** design.md never shows the actual artifacts: which files exist today, which are new or changed, and how a real session's Define output differs before and after. This session should be the example.
+- **New principle:** don't overcrowd the Define document. Define's output may be a folder with one main doc linking to focused sub-docs. (Called the "main doc", not "anchor doc", to avoid clashing with the project anchor.)
+- **Layout chosen:** everything in `define/`: `index.md` (the main doc), `requirements.md` (the REQ table), `framing.md`, `problem.md`, `quality.md`, `diagrams.md`. Sub-docs exist only when the confirmed tier requires them. Rejected: keeping `requirements.md` at the root as the main doc with a `define/` folder (fewer changes), and flat sibling files.
+- **Consequences:** Define is amended: the "session artifact" glossary line becomes the folder, a new REQ covers the layout principle, and REQ-009's path moves to `define/requirements.md`. Design is revised: the artifact view, `check-traceability.sh` reading `define/requirements.md` with a root fallback for pre-change sessions (D6), the `feature.json` allowlist and artifact, the guard hook matching by folder prefix, and links in the downstream agents and templates. `design.md` stays flat. Whether the other phases get folders is #39's question.
