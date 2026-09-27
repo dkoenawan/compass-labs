@@ -74,7 +74,7 @@ Only the **Must contain** column below is checked. The optional templates and ex
 
 - **Must contain:** the **appetite**, as an amount of effort or time (a budget, not an estimate); and the **no-gos**, listed here or by a link to `index.md`'s Non-goals.
 - **Checked by:** the appetite is an amount; the no-gos are listed or linked.
-- **Optional template (Shape Up appetite and no-gos, adapt):** "Appetite: two weeks for one developer. No-gos: see [Non-goals](index.md#non-goals)."
+- **Optional template (Shape Up appetite and no-gos, adapt):** "Appetite: two weeks for one developer. No-gos: see Non-goals", linking to `index.md#non-goals`.
 - **Bad:** "As soon as possible."
 - **Good:** "Appetite: one week. No-gos: no SMS reset, no change to how admins create accounts."
 
