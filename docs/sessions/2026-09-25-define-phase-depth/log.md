@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
 active_agent: main
-next_step: "Hand off to compass-labs:test (VER-* for REQ-001..046, render diagrams, traceability check)"
+next_step: "User decides fixes for the worked-example gaps (REQ-025, REQ-040, REQ-038); then re-test"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -385,3 +385,20 @@ next_step: "Hand off to compass-labs:test (VER-* for REQ-001..046, render diagra
 ### 2026-09-27 — main — milestone: ✅ Implement complete
 - The user approved. Tasks 1–20 in tasks.md are done: DES-001..021 and DES-023, with the README anchor (DES-014) written by the orchestrator under D1. Task 21 (DES-022, the as-built session docs) is deferred to Close.
 - `bash tests/run.sh`: 15 passed, 0 failed. The deviations are recorded in tasks.md (marketplace.json skill list, task order, extra tests, the worked example's header, plugin descriptions).
+
+## Phase: Test
+
+### 2026-09-27 — main — handoff: orchestrator → compass-labs:test (verification.md for REQ-001..046)
+- **Input:** Implement complete. Task: at least one VER per live REQ, checked against the actual files, tests and behaviour. Render every shipped diagram, check the worked example item by item, check the README anchor against the contract, and run check-traceability. Record failures; don't fix them.
+- **Output:** done (42 of 45 live REQs pass); files_changed: verification.md
+
+### 2026-09-27 — compass-labs:test — attempt: verification.md written; 42 of 45 live REQs pass
+- 37 VER rows cover REQ-001..046 (REQ-012 struck). `bash tests/run.sh` at 83ee33b: 15 passed, 0 failed. mermaid-cli 12.0.0 rendered every shipped diagram (reference 11/11, define template 4/4, worked example 4/4) plus design.md's 4, with no errors.
+- README anchor passes all six anchor-contract checks. Behaviour REQs were verified by reading the skill and agent instructions; no live session was run.
+- check-traceability.sh exits 1: REQ-025, REQ-038 and REQ-040 have no passing VER.
+
+### 2026-09-27 — compass-labs:test — note: worked example fails REQ-025 and REQ-040, so REQ-038 fails
+- REQ-025: examples/feature-full/problem.md has untagged claims in Context (l.8, l.10) and Why now (l.28). The standard's Good examples for Context and Impact (types/feature.md l.39, l.63) are untagged too.
+- REQ-040 (a judgement call): the context diagram has no node for the admin audit log (REQ-006) or the auth log (OUT-01's signal), which quality.md lists as dependencies.
+- Observation: example REQ-009 (accessibility) has no NFR measures row.
+- Fixing these needs the example (and possibly the standard's examples) changed. The Test agent didn't change them.
