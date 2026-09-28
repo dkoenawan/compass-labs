@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: compass-labs:define
-next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to define"
+active_agent: main
+next_step: "Define gate: user reviews define/ (approve / adjust / rethink)"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -27,6 +27,7 @@ next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to 
 
 ## Key decisions
 
+- **2026-09-28**: Design reads prior knowledge only from the Diátaxis docs, never past sessions (REQ-035/036). SOLID, YAGNI and KISS are checked on every choice and DES item, and unneeded items are rejected (REQ-037/038).
 - **2026-09-28**: Retiring brand-designer deferred to #53 (REQ-034).
 - **2026-09-28**: One primary kind plus a scope checklist (REQ-001/002). Design depth matches Define (REQ-032). Claude Design handoff (REQ-033). Terraform is the infrastructure default (REQ-008–010). Documented SVG route only (REQ-015). Anchor still aligns.
 - **2026-09-28**: REQ-028 → #52. Mixed solutions: one primary kind plus an in-scope checklist. Design depth matches Define. Visual UI design is delegated to Claude Design (handoff only). Infrastructure is always Terraform.
@@ -112,3 +113,24 @@ next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to 
 
 ### 2026-09-28 — main — decision: brand-designer retirement deferred to #53 (REQ-034)
 - Created #53, linked to #27 and this session. It owns the anchor Scope change for "brand design".
+- **Output (relay 3):** done; define/ requirements, index, framing updated (#53 swapped in)
+
+### 2026-09-28 — define — attempt: define/ ready for the Define gate
+- #53 (retire or redirect `brand-designer`) was recorded against REQ-034 in the Deferred table and in index Open question 4, and cited in the index header, index Non-goals and framing.md. No placeholders remain.
+- The full-tier `define/` has 26 live requirements (21 Must, 5 Should) and 8 deferred rows (#46–#53). The anchor verdict is aligns, with anchor-update action `none`.
+
+### 2026-09-28 — main — note: Define gate — adjust
+- User feedback relayed to Define:
+  - Design reads prior design knowledge only from the Diátaxis docs (explanation, reference, registry and ADRs), never from past session folders, because those corrupt context.
+  - Design always applies SOLID, YAGNI and KISS, especially for software.
+- **Output (relay 4, gate adjust):** done; all six define/ files updated
+
+### 2026-09-28 — define — decision: Define-gate adjust — prior knowledge from docs only; design principles
+- Design takes prior knowledge only from the project's Diátaxis docs (`docs/explanation`, `docs/reference`, `docs/registry` and ADRs), the code and the current session. It never reads past session folders, `archive/` included (REQ-035). With no project docs, it designs from the Define output and the code, and records that fact (REQ-036). This is distinct from REQ-024, which covers tools treating old artifacts the same.
+- `plan`'s registry read (REQ-022) is consistent, because the registry is project documentation. #45 is recorded as a dependency, and REQ-036 covers repos where nothing is folded back.
+- Design principles apply always: KISS and YAGNI on every element of every solution kind, and SOLID as well on software elements. Each significant choice and `DES-*` item gets a recorded principles check, with trade-offs resolved by the user (REQ-037). Anything no live `REQ-*` needs is rejected under YAGNI (REQ-038).
+- New needs NEED-05 and NEED-06 and outcomes OUT-05 and OUT-06. The anchor verdict is unchanged: *aligns*, with update action `none`.
+
+### 2026-09-28 — define — attempt: define/ ready for the Define gate (revision 2)
+- There are 30 live requirements (25 Must, 5 Should) and 8 deferred rows (#46–#53). Quality coverage, assumptions, dependencies, framing interactions and all four diagrams are updated.
+- New open question: whether the no-past-sessions rule should also apply to Define and the other phases.
