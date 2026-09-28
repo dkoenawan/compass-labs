@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Hand off to compass-labs:design"
+next_step: "Design gate: user reviews design.md"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -27,6 +27,7 @@ next_step: "Hand off to compass-labs:design"
 
 ## Key decisions
 
+- **2026-09-28**: Design choices settled. Plugin/tooling kind. ADRs written at Close. notations.md catalogue. Flowchart + table delta. design/ folder + check-design.sh. Design agent gets Bash (render only). skills/{layer}/ home. No stubs. plan deleted. stack-defaults.md. Claude Design zip + PNGs.
 - **2026-09-28**: ✅ Define complete — 30 live REQs, 9 deferred (#46–#54), anchor aligns.
 - **2026-09-28**: REQ-035 stays Design-only; widening it to every phase is deferred to #54 (REQ-039).
 - **2026-09-28**: Design reads prior knowledge only from the Diátaxis docs, never past sessions (REQ-035/036). SOLID, YAGNI and KISS are checked on every choice and DES item, and unneeded items are rejected (REQ-037/038).
@@ -146,3 +147,38 @@ next_step: "Hand off to compass-labs:design"
 - Next: the Design phase. This session's own Design uses the current template (constraint; REQ-024).
 
 ## Phase: Design
+
+### 2026-09-28 — main — handoff: orchestrator → compass-labs:design (design from frozen define/)
+- **Input:** design the solution for the 30 live REQs in the frozen `define/`, using the current `design.md` template (REQ-024 constraint). The open design choices named in `define/index.md` are Design's to settle with the user.
+- **Output:** needs_input (11 design choices); design.md draft written
+
+### 2026-09-28 — design — attempt: design.md draft written; 11 choices awaiting the user
+- Drafted DES-001 to DES-017 covering all 30 live REQs, each with a result, a check and dependencies. It includes a proposed classification (plugin/tooling; scope checklist), a C4 component context view in Mermaid with delta styling, a delta list, a notation catalogue, the `plan` carry-over map (REQ-022), a principles check per DES item, a list of items rejected under YAGNI, and risks.
+- Recommendations, pending the user:
+  - ADRs recorded in the design, written to the registry at Close;
+  - notation declared in `skills/design/reference/notations.md`;
+  - delta as flowchart classDefs plus label suffix plus the delta table;
+  - a `design/` folder with `design.md` as legacy, and a `check-design.sh` gate script;
+  - no Bash, with a documented SVG route;
+  - per-layer home `skills/{layer}/`;
+  - no construct stubs, so nothing replaces `planned_in`;
+  - `plan` deleted and its callers repointed;
+  - stack defaults in `skills/design/reference/stack-defaults.md`;
+  - Claude Design output as a link plus exported images in `assets/`.
+- Prior knowledge came from the project docs, the ADRs and the code only; no past session folder was read.
+- **Output (relay 1):** done; design.md finalised
+
+### 2026-09-28 — design — decision: Design choices settled (Q1–Q11)
+- The user confirmed primary kind plugin/tooling and its scope checklist (in: plugin/tooling, process/workflow; out: frontend, backend, database, infrastructure, visual UI design).
+- ADRs: the design records options and links existing ADRs; new decisions are flagged, and Close writes them into docs/registry/decisions/ (ADR-004 for this session).
+- Notation is declared in one catalogue, skills/design/reference/notations.md. The delta is a Mermaid flowchart with C4 abstractions, four classDefs, a [status] label suffix and the delta list table.
+- The design artifact becomes a design/ folder, with design.md as its legacy layout, and a check-design.sh Design-gate script.
+- Bash is granted to the Design agent, for rendering and render checks only (the user overrode the no-Bash recommendation). Mitigation for Bash writes bypassing the guard: a Bash rule in agents/design.md, plus the gate's existing git-status check before the commit.
+- Per-layer home: skills/{layer}/, with nothing created now. No construct stubs, so nothing replaces planned_in.
+- plan: the carry-over map is approved, and skills/plan/ is deleted with its callers repointed.
+- Stack defaults live in skills/design/reference/stack-defaults.md.
+- Claude Design's HTML zip is kept as-is at assets/ui-design.zip and linked, with one PNG screenshot per screen embedded in ui-handoff.md.
+- The skill name stays `design`.
+
+### 2026-09-28 — design — attempt: design.md ready for the Design gate
+- DES-001 to DES-017 cover all 30 live REQs, with result, check and dependencies. The artifact has a context view, a delta list, options per decision, a principles check (two trade-offs for the user to resolve at the gate: DES-006 and DES-014) and risks. There are no open questions.
