@@ -3,7 +3,7 @@
 > These are non-negotiable conventions. Before implementing anything,
 > check if a pattern applies. If you need to deviate, write an ADR first.
 >
-> Origin: #22
+> Origin: #22 · #23
 
 <!-- Pattern format:
 ## Pattern Name
@@ -25,9 +25,9 @@ Each `decision` or `milestone` entry in a session's `log.md` gets exactly one co
 
 ## Phase-artifact ownership
 
-Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone.
-- Implements: `hooks/session-guard.sh` (PreToolUse), `skills/session/workflows/feature.json` (`file_allowlist`, `owner_agent`, `order`)
-- ADR: [ADR-002](decisions/002-session-lifecycle.md)
+Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone. A folder artifact (`define/`) is one artifact: only its fixed files, one level deep, can be written, and the whole folder has one owner and one freeze point. Each session uses one layout for a phase, the folder or its legacy root file, never both, and past sessions are never migrated.
+- Implements: `hooks/session-guard.sh` (PreToolUse), `skills/session/workflows/feature.json` (`file_allowlist`, `owner_agent`, `order`, `artifact_files`, `legacy_artifact`), `skills/session/scripts/check-traceability.sh` (reads `define/requirements.md`, falls back to the root file)
+- ADR: [ADR-002](decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md)
 
 ## Never ship an incomplete product
 
@@ -48,6 +48,18 @@ Plugin hooks and scripts never hard-block a repo that lacks their dependencies. 
 
 Plugin files (scripts, templates, workflows) resolve through `${CLAUDE_PLUGIN_ROOT}`. The consuming project's files (`docs/sessions/`, `.claude/rules/`) resolve against the project's git root, never the plugin root.
 - Implements: `skills/session/SKILL.md`, `hooks/session-guard.sh`, `skills/session/scripts/gh-setup.sh`
+
+## Framing names no phase
+
+The shared framing step never names a phase or a session type. A session type plugs in through a `framing` block in its workflow JSON, templates for its framing artifact, and a `types/{type}.md` in each standards skill it lists; adding a type changes none of the framing skill.
+- Implements: `skills/framing/SKILL.md`, `skills/session/workflows/feature.json` (`framing`), `skills/problem-statement/types/`, `skills/requirements/types/`
+- ADR: [ADR-003](decisions/003-framing-and-project-anchor.md)
+
+## One project anchor, written by the orchestrator
+
+A project's vision, mission, scope and non-goals live in exactly one place: the README's `## Project anchor` section between `<!-- compass:anchor -->` markers. Any restatement elsewhere matches it or links to it. Phase agents only draft anchor text; the orchestrator writes it, in the same commit as the decision, and the Define gate refuses the milestone until the README contains the agreed text.
+- Implements: `skills/framing/reference/anchor-contract.md`, `skills/session/SKILL.md` (anchor write, gate check a3), `README.md`
+- ADR: [ADR-003](decisions/003-framing-and-project-anchor.md)
 
 ## Anti-Patterns
 

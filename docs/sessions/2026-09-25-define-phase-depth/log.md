@@ -3,7 +3,7 @@ session: 2026-09-25-define-phase-depth
 type: feature
 issue: 23
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
+milestone: close
 active_agent: main
-next_step: "Close milestone: commit fold-back, archive, push, close #23"
+next_step: "None. Session archived. The user merges PR #44, then runs claude plugin tag --push and claude plugin update on main"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -32,6 +32,7 @@ next_step: "Close milestone: commit fold-back, archive, push, close #23"
 
 ## Key decisions
 
+- **2026-09-28**: ✅ Session closed — fold-back into the as-built docs (define/ folder, framing domain, 2 registry patterns); PR #44 left for the user to merge; #23 closed
 - **2026-09-28**: Task 21 (DES-022) ticked in the frozen tasks.md; the Close fold-back covers the `define/` folder in the as-built docs
 - **2026-09-27**: ✅ Deploy complete — v1.2.0 bumped on branch, PR #44 open to main, release.md completeness shows no gaps; tag and plugin update after the merge
 - **2026-09-27**: ✅ Test complete — 37 VER rows, all 45 live REQs pass at 58f91dd after the worked-example fixes; tests 15/15; check-traceability exit 0
@@ -468,3 +469,7 @@ next_step: "Close milestone: commit fold-back, archive, push, close #23"
 
 ### 2026-09-28 — main — decision: Task 21 (DES-022) ticked in the frozen tasks.md
 - The Close fold-back covers DES-022. The as-built session and plan docs describe the `define/` folder. tasks.md is frozen, so the tick is amended under this decision, in the Close commit.
+
+### 2026-09-28 — main — milestone: ✅ Session closed
+- The user approved. The fold-back is committed with this entry: `define/` folder (DES-022) in the session and plan docs, a new framing explanation and reference, registry patterns "Framing names no phase" and "One project anchor, written by the orchestrator", and no session IDs in the as-built docs. Task 21 ticked in 5c7796f.
+- PR #44 is left open for the user to merge. After the merge, on main: `claude plugin tag --push` and `claude plugin update compass-labs@compass-labs`. Issue #23 is closed now, at the user's request. Follow-ups #37–#43 stay open.

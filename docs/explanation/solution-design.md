@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-09-27
+last_updated: 2026-09-28
 generated_by: /compass-labs:doc-maintainer
 ---
 
@@ -68,9 +68,9 @@ See the [Project anchor](../../README.md#project-anchor)'s vision and scope. In 
 | Domain | Path | Purpose | Status |
 | ------ | ---- | ------- | ------ |
 | [session](./session/overview.md) | `skills/session`, `agents/`, `hooks/` | Session lifecycle orchestrator: runs a Feature session Define → Design → Implement → Test → Deploy → Close through one phase agent per phase, with a hook-enforced file set, ownership, freezing and commit points | 📄 |
-| `framing` | `skills/framing` | The shared problem-framing step every session type runs: a depth tier, solution-first and symptom checks, the project-anchor check and verdict, and registry/ADR overlap. Defines the anchor contract. | ⬜ |
-| `problem-statement` | `skills/problem-statement` | Problem-statement standard by session type (`types/feature.md`, `types/bugfix.md`) and depth tier, with its methods record | ⬜ |
-| `requirements` | `skills/requirements` | Requirements standard: EARS and Given/When/Then shared rules, per-type depth by tier, methods record, diagram catalogue and a worked full-tier example | — (see [session](./session/overview.md)) |
+| [framing](./framing/overview.md) | `skills/framing` | The shared problem-framing step every session type runs: a depth tier, solution-first and symptom checks, the project-anchor check and verdict, and registry/ADR overlap. Defines the anchor contract. | 📄 |
+| `problem-statement` | `skills/problem-statement` | Problem-statement standard by session type (`types/feature.md`, `types/bugfix.md`) and depth tier, with its methods record | — (see [framing](./framing/overview.md)) |
+| `requirements` | `skills/requirements` | Requirements standard: EARS and Given/When/Then shared rules, per-type depth by tier, methods record, diagram catalogue and a worked full-tier example | — (see [framing](./framing/overview.md)) |
 | `verification` | `skills/verification` | `VER-*` table standard preloaded by the Test phase agent | — (see [session](./session/overview.md)) |
 | [plan](./plan/overview.md) | `skills/plan` | Adaptive five-phase feature specification generator producing layer-by-layer `FeatureSpec` documents | 📄 |
 | [explore](./explore/overview.md) | `skills/explore` | Token-efficient tiered codebase investigation; returns structured architecture reports used by `plan` and `doc-maintainer` | 📄 |
@@ -120,3 +120,4 @@ See the [Project anchor](../../README.md#project-anchor)'s vision and scope. In 
 - 2026-05-01: Full refresh via doc-maintainer.
 - 2026-09-25: Added the session domain and GitHub as an external system; removed the empty domain-skill stubs.
 - 2026-09-27: Full refresh: the plugin's current name, What It Does and Who It's For link to the README's project anchor, and the domain map covers every skill directory, including `framing` and `problem-statement`.
+- 2026-09-28: Added the framing domain overview; `problem-statement` and `requirements` are covered there.
