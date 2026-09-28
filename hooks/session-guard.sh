@@ -5,6 +5,14 @@
 # agent_type, frozen artifacts, and a read-only archive/. Everything
 # outside docs/sessions/ is untouched.
 #
+# Folder artifacts (#23 DES-020, D13): a phase whose `artifact` ends in
+# `/` (e.g. define/) owns that folder as a unit. Only the files in its
+# fixed `artifact_files` set, one level deep, may be written; ownership
+# and freezing resolve by the folder prefix. A phase's `legacy_artifact`
+# (the root requirements.md past sessions use) stays writable only in a
+# session that already has it, and such a session can't start the folder:
+# one layout per session, and nothing is migrated (D6).
+#
 # Reads the PreToolUse hook JSON from stdin. Exit 2 (with a reason on
 # stderr) blocks the write; exit 0 allows it. Fails OPEN (exit 0, warning
 # on stderr) if jq is missing or the workflow file can't be read, since
@@ -151,10 +159,15 @@ if [[ "$path_in_session" == assets/* ]]; then
   exit 0
 fi
 
-# --- Any other subdirectory of the session folder is blocked. -----------
-if [[ "$path_in_session" == */* ]]; then
-  echo "[session-guard] BLOCKED: unknown subdirectory in session folder ($path_in_session). Only the top-level artifact set and assets/ are allowed (D1)." >&2
+# --- Depth: nothing more than one folder deep. ---------------------------
+# Folder artifacts (e.g. define/, #23 DES-020) are one level deep, so a
+# path with two or more slashes inside the session is never valid.
+unknown_subdir() {
+  echo "[session-guard] BLOCKED: unknown subdirectory in session folder ($path_in_session). Only the top-level artifact set, declared folder artifacts and assets/ are allowed (D1)." >&2
   exit 2
+}
+if [[ "$path_in_session" == */*/* ]]; then
+  unknown_subdir
 fi
 
 # --- Read session type + milestone from log.md frontmatter. -------------
@@ -164,11 +177,17 @@ session_type="$(echo "$frontmatter" | sed -n 's/^type:[[:space:]]*//p' | head -1
 milestone_key="$(echo "$frontmatter" | sed -n 's/^milestone:[[:space:]]*//p' | head -1)"
 [[ -n "$milestone_key" ]] || milestone_key="none"
 
-# --- Load the workflow definition for this session type. Fail open. -----
+# --- Load the workflow definition for this session type. ----------------
+# Fails open for a top-level path, but a path with a / is still blocked as
+# an unknown subdirectory: without the workflow there's no way to know a
+# folder artifact is declared, and that was the behaviour before folders.
 plugin_root="${CLAUDE_PLUGIN_ROOT:-$repo_root}"
 workflow_file="$plugin_root/skills/session/workflows/${session_type}.json"
 
 if [[ ! -f "$workflow_file" ]] || ! jq empty "$workflow_file" >/dev/null 2>&1; then
+  if [[ "$path_in_session" == */* ]]; then
+    unknown_subdir
+  fi
   echo "[session-guard] WARNING: workflow file unreadable ($workflow_file) — allowing write (fail open)" >&2
   exit 0
 fi
@@ -182,20 +201,61 @@ if [[ "$path_in_session" == "log.md" ]]; then
   exit 0
 fi
 
-# --- Allowlist check (everything else must be a known top-level file). --
+# --- Resolve the artifact key. -------------------------------------------
+# A top-level file must match the allowlist exactly; its key is its name.
+# A `dir/file` path must be inside an allowlisted folder that some phase
+# declares as its `artifact`, and `file` must be in that phase's fixed
+# `artifact_files`; its key is `dir/`, so every file in the folder shares
+# one owner and one freeze point (a prefix match on the folder, D13).
 allowlist="$(jq -r '.session_level.file_allowlist[]' "$workflow_file")"
-if ! grep -qxF "$path_in_session" <<<"$allowlist"; then
-  echo "[session-guard] BLOCKED: '$path_in_session' is not in this workflow's session file set (D1/D7)." >&2
-  exit 2
+if [[ "$path_in_session" == */* ]]; then
+  folder="${path_in_session%%/*}/"
+  file_in_folder="${path_in_session#*/}"
+  folder_phase="$(jq -r --arg a "$folder" '.phases[] | select(.artifact == $a) | .phase' "$workflow_file")"
+  if ! grep -qxF "$folder" <<<"$allowlist" || [[ -z "$folder_phase" ]]; then
+    unknown_subdir
+  fi
+  folder_files="$(jq -r --arg a "$folder" '.phases[] | select(.artifact == $a) | .artifact_files[]?' "$workflow_file")"
+  if [[ -z "$file_in_folder" ]] || ! grep -qxF "$file_in_folder" <<<"$folder_files"; then
+    echo "[session-guard] BLOCKED: '$path_in_session' is not one of ${folder}'s files ($(echo $folder_files | tr ' ' ',' | sed 's/,/, /g')) (D13)." >&2
+    exit 2
+  fi
+  artifact_key="$folder"
+else
+  if ! grep -qxF "$path_in_session" <<<"$allowlist"; then
+    echo "[session-guard] BLOCKED: '$path_in_session' is not in this workflow's session file set (D1/D7)." >&2
+    exit 2
+  fi
+  artifact_key="$path_in_session"
 fi
 
 # --- Ownership: which phase owns this artifact? --------------------------
-owner_agent="$(jq -r --arg a "$path_in_session" '.phases[] | select(.artifact == $a) | .owner_agent' "$workflow_file")"
-artifact_order="$(jq -r --arg a "$path_in_session" '.phases[] | select(.artifact == $a) | .order' "$workflow_file")"
+# A past session's root file (a phase's `legacy_artifact`) belongs to the
+# same phase as its folder artifact.
+owner_select='.phases[] | select(.artifact == $k or .legacy_artifact == $k)'
+owner_agent="$(jq -r --arg k "$artifact_key" "$owner_select | .owner_agent" "$workflow_file")"
+artifact_order="$(jq -r --arg k "$artifact_key" "$owner_select | .order" "$workflow_file")"
 
 if [[ -z "$owner_agent" || -z "$artifact_order" ]]; then
-  echo "[session-guard] BLOCKED: no phase in $workflow_file owns artifact '$path_in_session' — refusing to guess." >&2
+  echo "[session-guard] BLOCKED: no phase in $workflow_file owns artifact '$artifact_key' — refusing to guess." >&2
   exit 2
+fi
+
+# --- One layout per session (D6). ----------------------------------------
+# A new session writes the folder; a past session that's still open keeps
+# its root file. Nothing converts one layout into the other.
+legacy_for_key="$(jq -r --arg k "$artifact_key" '.phases[] | select(.legacy_artifact == $k) | .legacy_artifact' "$workflow_file")"
+if [[ -n "$legacy_for_key" && ! -f "$session_dir/$legacy_for_key" ]]; then
+  new_layout="$(jq -r --arg k "$artifact_key" '.phases[] | select(.legacy_artifact == $k) | .artifact' "$workflow_file")"
+  echo "[session-guard] BLOCKED: '$path_in_session' is the root layout past sessions use; new sessions write $new_layout instead (D6/D13)." >&2
+  exit 2
+fi
+if [[ "$artifact_key" == */ ]]; then
+  folder_legacy="$(jq -r --arg k "$artifact_key" '.phases[] | select(.artifact == $k) | .legacy_artifact // empty' "$workflow_file")"
+  if [[ -n "$folder_legacy" && -f "$session_dir/$folder_legacy" ]]; then
+    echo "[session-guard] BLOCKED: '$path_in_session' — this session uses the root layout ($folder_legacy exists), so it can't also use $artifact_key (D6: one layout per session)." >&2
+    exit 2
+  fi
 fi
 
 if [[ -n "$agent_id" ]]; then

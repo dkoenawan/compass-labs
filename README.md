@@ -1,10 +1,47 @@
-# Systematic Dev Kit
+# compass-labs
 
-A systematic methodology for building full-stack applications - opinionated Claude Code skills covering infrastructure, database, backend, and frontend development.
+A Claude Code plugin of opinionated skills, agents and hooks for systematic, framework-based work. Its vision, mission and scope are stated once, in the [Project anchor](#project-anchor) below; the rest of this README describes what the plugin ships today.
 
 ## Overview
 
-This plugin provides a comprehensive set of skills that guide Claude Code through a structured, step-by-step approach to building production-ready applications. Each skill follows established best practices and provides clear, opinionated guidance for common development tasks.
+compass-labs gives Claude Code structured, repeatable workflows instead of ad-hoc generation: a session lifecycle that takes a piece of work from framing to as-built docs, standards for the artifacts each phase writes, and skills for scaffolding, planning, exploring a codebase, maintaining docs, recording decisions and running tasks unattended (see the [Project anchor](#project-anchor)).
+
+Every skill and agent is namespaced by the plugin's name: skills are invoked as `/compass-labs:<skill>` and agents as `compass-labs:<agent>`. Renaming the prefix to `/compass:` is tracked in #34.
+
+<!-- compass:anchor -->
+## Project anchor
+
+### Vision
+
+AI-assisted delivery work, covering software development, research and consulting, based on common established frameworks used by enterprise teams.
+
+### Mission
+
+compass-labs is a Claude Code plugin that structures each piece of work as a session, from problem framing to a documented outcome. Each stage uses a common framework:
+
+- SCQ for problem framing
+- MoSCoW for prioritisation
+- EARS and Given/When/Then for requirements
+- ISO/IEC 25010 for quality
+- MADR for decisions
+- C4 for architecture
+- Diátaxis for documentation
+
+### Scope
+
+- Session types: Feature (available); Bugfix, Research and Consulting (planned).
+- Standards for each session artifact, by session type and depth tier.
+- Hooks and scripts that enforce session structure and traceability.
+- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, brand design.
+- Works in any repository, independent of tech stack.
+
+### Non-goals
+
+- A runtime, framework or hosted service.
+- Replacing user approval at milestones.
+- Creating new methods where an established one exists.
+- Applying a framework where it doesn't fit.
+<!-- /compass:anchor -->
 
 ## Installation
 
@@ -70,48 +107,49 @@ This plugin follows the Claude Code plugin architecture:
 ```
 compass-labs/
 ├── .claude-plugin/
-│   └── plugin.json                    # Plugin manifest
-├── agents/                            # Subagents (session orchestrator + Feature phase agents)
-│   ├── orchestrator.md                # Session orchestrator entry point (D3)
-│   └── {define,design,implement,test,deploy,close}.md  # Thin Feature phase agents (D4)
-├── skills/                            # Agent-based skills
-│   ├── init/                          # Project initialization (recommended)
-│   │   └── SKILL.md
-│   ├── brand-designer/                # Brand identity design through discovery
-│   │   └── SKILL.md
-│   ├── explore/                        # Token-efficient codebase investigation
-│   │   └── SKILL.md
-│   ├── plan/                          # Feature planning and spec generation
-│   │   ├── SKILL.md
-│   │   ├── template.md
-│   │   └── examples/
-│   │       └── user-management/
-│   │           └── feature-spec.md
+│   ├── plugin.json                    # Plugin manifest
+│   └── marketplace.json               # Local marketplace entry (lists every shipped skill)
+├── agents/                            # Subagents: the session orchestrator + one agent per Feature phase
+│   ├── orchestrator.md                # Session orchestrator entry point
+│   ├── define.md                      # Define: frames the problem, writes define/
+│   ├── design.md                      # Design: writes design.md
+│   ├── implement.md                   # Implement: writes tasks.md and the code
+│   ├── test.md                        # Test: writes verification.md
+│   ├── deploy.md                      # Deploy: writes release.md
+│   └── close.md                       # Close: folds the session into as-built docs
+├── skills/                            # Agent-based skills, one folder each
 │   ├── session/                       # Session lifecycle orchestrator (Define→Design→Implement→Test→Deploy→Close)
 │   │   ├── SKILL.md
-│   │   ├── templates/                 # Thin per-phase artifact templates + commit-rule template
-│   │   ├── workflows/                 # feature.json — phases/owners/artifacts/milestones as data
+│   │   ├── templates/                 # Per-phase artifact templates (define/ folder templates included) + commit-rule template
+│   │   ├── workflows/                 # feature.json: phases, owners, artifacts, milestones, framing block
 │   │   ├── scripts/                   # gh-setup.sh, gh-milestone.sh, check-traceability.sh, archive-session.sh
-│   │   └── reference/                 # Shared D4 phase-agent contract, close fold-back procedure
-│   ├── requirements/                  # EARS + Given/When/Then + ISO 29148 requirements standard
-│   │   └── SKILL.md
+│   │   └── reference/                 # Shared phase-agent contract, Close fold-back procedure
+│   ├── framing/                       # Shared problem-framing step + the project anchor contract
+│   ├── problem-statement/             # Problem-statement standard, per session type (types/) + methods record
+│   ├── requirements/                  # Requirements standard: EARS + Given/When/Then + ISO 29148, per type, diagrams, worked example
 │   ├── verification/                  # VER-* verification table standard
-│   │   └── SKILL.md
-│   └── bootstrap-new-project/         # Full-stack project bootstrap (deprecated)
-│       └── SKILL.md
+│   ├── init/                          # Project initialization (recommended)
+│   ├── plan/                          # Feature planning and spec generation
+│   ├── explore/                       # Token-efficient codebase investigation
+│   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
+│   ├── adr/                           # Architecture decision records
+│   ├── task-executor/                 # Autonomous, scheduled task execution for large issues
+│   ├── post-hook-validator/           # Post-commit functional-requirement validation
+│   ├── brand-designer/                # Brand identity design through discovery
+│   └── bootstrap-new-project/         # Direct-generation project bootstrap (deprecated)
 ├── commands/                          # Slash commands (e.g. /compass-labs:hello); skills are slash commands too
-├── hooks/                             # PreToolUse/SessionStart/Stop hooks (session guard, commit guard, etc.)
-├── tests/                             # bash + jq test harness for hooks/scripts (tests/run.sh)
+├── hooks/                             # PreToolUse/SessionStart/Stop hooks (session guard, commit guard, session start)
+├── tests/                             # bash + jq test harness for hooks and scripts (tests/run.sh)
+├── docs/                              # The plugin's own Diátaxis docs, registry and session folders
 ├── README.md                          # This file
 └── CLAUDE.md                          # Guidance for Claude Code instances
-
 ```
 
 ## Skills Included
 
 ### Project Initialization
 
-#### `/compass:init` (Recommended)
+#### `/compass-labs:init` (Recommended)
 
 Initialize a new full-stack project from a template repository with opt-out component selection.
 
@@ -126,7 +164,7 @@ Initialize a new full-stack project from a template repository with opt-out comp
 
 **Usage:**
 ```bash
-/compass:init
+/compass-labs:init
 ```
 
 **How it works:**
@@ -151,7 +189,7 @@ Initialize a new full-stack project from a template repository with opt-out comp
 
 ### Brand Design
 
-#### `/compass:brand-designer`
+#### `/compass-labs:brand-designer`
 
 Design a distinctive brand identity through systematic emotional discovery — generates brand guidelines, CSS custom properties, and optional Tailwind config.
 
@@ -165,7 +203,7 @@ Design a distinctive brand identity through systematic emotional discovery — g
 
 **Usage:**
 ```bash
-/compass:brand-designer
+/compass-labs:brand-designer
 ```
 
 **How it works (6 phases):**
@@ -183,7 +221,7 @@ Design a distinctive brand identity through systematic emotional discovery — g
 
 ### Codebase Investigation
 
-#### `/compass:explore`
+#### `/compass-labs:explore`
 
 Token-efficient codebase investigation — reads docs before code, stops when context is sufficient.
 
@@ -193,7 +231,7 @@ A structured Investigation Report covering tech stack, data models, backend stru
 
 **Usage:**
 ```bash
-/compass:explore
+/compass-labs:explore
 ```
 
 **How it works (3 tiers, stops early):**
@@ -212,7 +250,7 @@ A structured Investigation Report covering tech stack, data models, backend stru
 
 ### Feature Planning
 
-#### `/compass:plan`
+#### `/compass-labs:plan`
 
 Systematic feature planning through structured discovery — generates detailed specs (DB → Backend → Frontend) that eliminate re-scanning and token waste in future implementation prompts.
 
@@ -224,7 +262,7 @@ Systematic feature planning through structured discovery — generates detailed 
 
 **Usage:**
 ```bash
-/compass:plan
+/compass-labs:plan
 ```
 
 **How it works (5 phases):**
@@ -243,7 +281,7 @@ Systematic feature planning through structured discovery — generates detailed 
 
 ### Documentation Maintenance
 
-#### `/compass:doc-maintainer`
+#### `/compass-labs:doc-maintainer`
 
 Builds and maintains a **C4-layered documentation tree** that grows incrementally — one file per run. Designed so both humans and agents can navigate to exactly the information they need without reading everything.
 
@@ -271,11 +309,11 @@ The C4 tree lives under `docs/explanation/` as part of the plugin's [Diataxis](h
 
 **Usage:**
 ```bash
-/compass:doc-maintainer          # auto-detect: init if docs/ absent, else maintain
-/compass:doc-maintainer init     # generate L1 (solution-design.md) only
-/compass:doc-maintainer maintain # one unit of work: next missing doc, stale patch, or clarity review
-/compass:doc-maintainer refresh  # full rewrite of all docs
-/compass:doc-maintainer refresh <domain>  # full rewrite of one named domain
+/compass-labs:doc-maintainer          # auto-detect: init if docs/ absent, else maintain
+/compass-labs:doc-maintainer init     # generate L1 (solution-design.md) only
+/compass-labs:doc-maintainer maintain # one unit of work: next missing doc, stale patch, or clarity review
+/compass-labs:doc-maintainer refresh  # full rewrite of all docs
+/compass-labs:doc-maintainer refresh <domain>  # full rewrite of one named domain
 ```
 
 **How maintain mode prioritises work (one per run):**
@@ -310,7 +348,7 @@ crontab -l | grep doc-maintainer
 
 ### Autonomous Task Execution
 
-#### `/compass:task-executor`
+#### `/compass-labs:task-executor`
 
 Runs large GitHub issues autonomously via cron over multiple days. An interactive planning conversation decomposes an issue into hour-sized tasks, then executes up to 3 per scheduled run — rebasing, implementing, testing, committing, and opening a PR on completion.
 
@@ -326,11 +364,11 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 **Usage:**
 ```bash
-/compass:task-executor                    # auto: show status or start planning
-/compass:task-executor plan <issue-number> # interactive planning conversation
-/compass:task-executor status             # show active plan summary
-/compass:task-executor stop               # pause (preserves branch + plan)
-/compass:task-executor resume             # resume a paused plan
+/compass-labs:task-executor                    # auto: show status or start planning
+/compass-labs:task-executor plan <issue-number> # interactive planning conversation
+/compass-labs:task-executor status             # show active plan summary
+/compass-labs:task-executor stop               # pause (preserves branch + plan)
+/compass-labs:task-executor resume             # resume a paused plan
 ```
 
 **Typical workflow:**
@@ -346,6 +384,14 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 **Failure recovery:** Failed tasks are marked `- [!]` after two consecutive failures. Dependent tasks are skipped. If all remaining tasks are blocked, a draft PR is opened with the completed work.
 
+#### `/compass-labs:post-hook-validator`
+
+The quality gate after a `task-executor` commit that updated a construct file. It reads that construct's functional requirements, walks the developer through a pass/fail checklist, moves the construct to `verified` or `diverged`, and on divergence triggers `/compass-labs:adr` and blocks the next `task-executor` run until the ADR is written.
+
+```bash
+/compass-labs:post-hook-validator [construct-name]
+```
+
 ---
 
 ### Using Sessions in a Repo
@@ -358,7 +404,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 
 | | |
 |---|---|
-| **Folder** | `docs/sessions/{date}-{slug}/` — one artifact per phase (`requirements.md`, `design.md`, `tasks.md`, `verification.md`, `release.md`), `log.md` (state + append-only history), and an optional non-Markdown `assets/` |
+| **Folder** | `docs/sessions/{date}-{slug}/` — one artifact per phase (`define/`, `design.md`, `tasks.md`, `verification.md`, `release.md`), `log.md` (state + append-only history), and an optional non-Markdown `assets/`. `define/` is a folder: a main doc, `index.md`, plus sub-docs by depth tier. Sessions from before it keep a root `requirements.md` instead. |
 | **GitHub** | One issue per session, one `phase:*` label at a time, a milestone comment per phase transition, a branch + PR from Implement onward |
 | **Enforcement** | A `PreToolUse` guard hook restricts every write under a session folder to that file set, by ownership, and blocks writes to an already-approved ("frozen") artifact unless a decision is logged first |
 
@@ -378,7 +424,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 
 | Hook | Event | What it does |
 |---|---|---|
-| `hooks/session-guard.sh` | `PreToolUse` (`Write\|Edit\|MultiEdit`) | Blocks writes outside a session's file set, writes to another phase's artifact, writes to a frozen artifact without a freshly logged decision, and anything under `docs/sessions/archive/` |
+| `hooks/session-guard.sh` | `PreToolUse` (`Write\|Edit\|MultiEdit`) | Blocks writes outside a session's file set (including files outside `define/`'s fixed set), writes to another phase's artifact, writes to a frozen artifact without a freshly logged decision, and anything under `docs/sessions/archive/` |
 | `hooks/session-start.sh` | `SessionStart` | Lists active/paused sessions as context when starting as the orchestrator |
 | `hooks/session-commit-guard.sh` | `Stop` | Blocks ending a turn with an uncommitted `decision`/`milestone` log entry — one commit per entry, code and log together |
 
@@ -390,13 +436,60 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 /compass-labs:session status [--all]  # --all also lists archived sessions
 ```
 
-**When a session closes:** the Close phase folds the session's requirements/design/decisions into the repo's as-built docs (`docs/reference/`, `docs/explanation/`, `docs/registry/`) with no session narrative — just the current truth, plus one `Origin: #<issue>` line per doc it touched — then the orchestrator moves the folder to `docs/sessions/archive/` and closes the issue.
+**When a session closes:** the Close phase folds whatever is still true from the session's `define/` output, design and decisions into the repo's as-built docs (`docs/reference/`, `docs/explanation/`, `docs/registry/`) with no session narrative — just the current truth, plus one `Origin: #<issue>` line per doc it touched — then the orchestrator moves the folder to `docs/sessions/archive/` and closes the issue.
+
+**The agents:**
+
+| Agent | Phase | Writes |
+|---|---|---|
+| `compass-labs:orchestrator` | All (main session) | `log.md`, milestone commits, GitHub sync, and the README's project anchor |
+| `compass-labs:define` | Define | `define/` (framing, problem statement, requirements) |
+| `compass-labs:design` | Design | `design.md` |
+| `compass-labs:implement` | Implement | `tasks.md` and the code |
+| `compass-labs:test` | Test | `verification.md` |
+| `compass-labs:deploy` | Deploy | `release.md` |
+| `compass-labs:close` | Close | As-built docs only; never the session folder |
+
+The phase agents are started by the orchestrator, never directly.
 
 ---
 
-#### `/compass:bootstrap-new-project` (Deprecated)
+### Framing and Artifact Standards
 
-> **Deprecated**: Use `/compass:init` instead. This skill generates files directly which is less token-efficient.
+These skills are the standards the phase agents follow. They're preloaded by the agents that need them, and can be read on their own.
+
+#### `/compass-labs:framing`
+
+The shared problem-framing step every session type runs before writing its problem statement and requirements. It proposes a depth tier (full, short or skip) for the user to confirm, then runs that tier's checks: whether the issue names a fix rather than the need behind it, whether it reports a symptom rather than a cause, how the work fits the project anchor (aligns or extends), and whether the registry or ADRs already cover it. Its [anchor contract](skills/framing/reference/anchor-contract.md) defines the marked `## Project anchor` section a project's README holds. Framing names no phase: each session type plugs in through a `framing` block in its workflow file.
+
+#### `/compass-labs:problem-statement`
+
+The problem-statement standard, per session type (`types/feature.md`, `types/bugfix.md`) and depth tier: the need and who has it, evidence tagged observed or assumed, and at deeper tiers context, impact and why now, measurable success outcomes and appetite. Frameworks such as SCQ, job stories and Shape Up are offered as templates, never mandated. Each method's verdict is in its `reference/methods.md`.
+
+#### `/compass-labs:requirements`
+
+The requirements standard: EARS sentences, one Given/When/Then each, and the ISO/IEC/IEEE 29148 checks. Per type and tier it adds MoSCoW priority, a trace from each requirement to the outcome it serves, a table for requirements deferred to later work, ISO/IEC 25010:2023 quality coverage, measurable non-functional requirements, and criteria built from concrete examples. It includes a Mermaid [diagram catalogue](skills/requirements/reference/diagrams.md) and a [worked full-tier example](skills/requirements/examples/feature-full/index.md).
+
+#### `/compass-labs:verification`
+
+The `VER-*` table standard the Test agent follows, in the fixed column order `check-traceability.sh` depends on.
+
+
+---
+
+### Architecture Decisions
+
+#### `/compass-labs:adr`
+
+Captures a significant architecture decision as a MADR-format ADR. A six-phase conversation draws out the decision's context, options, NFRs and revisit conditions, then writes `docs/registry/decisions/<NNN>-<title>.md`, updates the decisions index, cross-links affected construct files, and appends to `patterns.md` when a cross-cutting convention is set. Also triggered by `post-hook-validator` when an implementation diverges from its construct.
+
+---
+
+### Deprecated
+
+#### `/compass-labs:bootstrap-new-project` (Deprecated)
+
+> **Deprecated**: Use `/compass-labs:init` instead. This skill generates files directly which is less token-efficient.
 
 Bootstrap a complete full-stack project with systematic structure and best practices.
 
@@ -419,7 +512,7 @@ Bootstrap a complete full-stack project with systematic structure and best pract
 
 **Usage:**
 ```bash
-/compass:bootstrap-new-project
+/compass-labs:bootstrap-new-project
 ```
 
 **Interactive prompts:**
@@ -439,9 +532,10 @@ Bootstrap a complete full-stack project with systematic structure and best pract
 To develop this plugin locally:
 
 1. Clone the repository
-2. Make changes to skills, commands, or hooks
-3. Test using `claude --plugin-dir .`
-4. Submit pull requests for improvements
+2. Make changes to skills, agents, commands, or hooks
+3. Run the test harness: `bash tests/run.sh`
+4. Test live using `claude --plugin-dir .`
+5. Submit pull requests for improvements
 
 ## Contributing
 

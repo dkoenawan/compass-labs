@@ -25,7 +25,7 @@ Use `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/verification.md` for the fil
 
 ## The REQ-011 gate
 
-**Every `REQ-*` in `requirements.md` needs at least one `VER-*` row with a passing Result before the Test milestone can be approved.** A `REQ-*` you haven't verified yet should still get a row — `pending` or `fail`, naming why — rather than being left out of the table entirely; an absent REQ and an unverified REQ should both surface as "missing" to the gate, and a `pending`/`fail` row is more honest about what's actually been checked.
+**Every `REQ-*` in `define/requirements.md` (the root `requirements.md` in a past session that predates the `define/` folder) needs at least one `VER-*` row with a passing Result before the Test milestone can be approved.** A `REQ-*` you haven't verified yet should still get a row — `pending` or `fail`, naming why — rather than being left out of the table entirely; an absent REQ and an unverified REQ should both surface as "missing" to the gate, and a `pending`/`fail` row is more honest about what's actually been checked.
 
 ## Growing into a folder (later, #29)
 

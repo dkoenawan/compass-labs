@@ -38,7 +38,7 @@ Run once per repo, the first time `/compass-labs:session` is used in it:
 2. **Slug**: derive `{today}-{kebab-title}`. Create `docs/sessions/{slug}/`.
 3. **Folder, in order** (the guard hook requires log.md to exist before anything else — D7):
    - `log.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`).
-   - `requirements.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/requirements.md` (thin — Define fills it in).
+   - `define/index.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/define/index.md` (thin — title, header and issue only). Define fills it in and creates the rest of `define/` by the tier the user confirms. Never create a root `requirements.md` in a new session: that's the layout past sessions keep (they're never migrated), and the guard blocks it.
 4. Commit + push (`docs(sessions): open session #{issue}`), **then** `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} none define {comment-file}` where the comment file says "Session opened." — this applies `phase:define` + `type:feature` and posts the opening comment (D5, order: commit → push → gh).
 5. Enter the **main loop** at `define`.
 
@@ -60,6 +60,7 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
 3. **Append.** Add the entries from `log_entries` to `log.md` in D2 format, under the current `## Phase: {name}` heading, verbatim **except**:
    - **A phase agent's `milestone` entry is never appended as a milestone.** Milestones are the user's to grant at the gate (step 4), and only you write them (step 4c). Downgrade it: rewrite its event type to `note` (keep the title and body) and append that. Don't mirror it into Key decisions, and don't treat it as approval.
    - Every `decision` entry — the agent's or your own — is also **mirrored into Key decisions** (see below) in the same edit.
+   - **Anchor write (D1, Define only).** When Define returns a `decision` entry for an anchor update (its `define/framing.md` anchor-update block has an action other than `none`), you write the anchor, because a phase agent never writes outside its own artifact. Take the agreed text from that block and write it into the repo's root `README.md` between `<!-- compass:anchor -->` and `<!-- /compass:anchor -->`, to the contract in `${CLAUDE_PLUGIN_ROOT}/skills/framing/reference/anchor-contract.md`. If the README doesn't exist, create it; if it has no markers, append the whole `## Project anchor` section. Write **only** the elements the block names, and never change wording outside them. Then commit the decision entry, `define/framing.md` and `README.md` together, in one commit.
 
    Update frontmatter `active_agent` / `next_step`.
 
@@ -70,11 +71,12 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
    - **Approve**:
      a. **Test milestone only** (REQ-011): before anything else, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
      a2. **Deploy milestone only** (never ship an incomplete product): before anything else, check `release.md`'s *Completeness* section says the release manifest lists only complete components and leaves none out. Missing, or any gap named → refuse the milestone, show the gaps, stay in Deploy.
+     a3. **Define milestone only** (the anchor is updated before the Define milestone, D1): if `define/index.md` records a full or short tier and `define/framing.md`'s anchor-update action is anything but `none`, the README's marked anchor section must contain that agreed text and pass the anchor contract's checklist. Otherwise refuse the milestone, show the gap (which element is missing or differs), apply the anchor write above, and ask again. A session with no `define/` folder (one from before it existed) gets no a3 check.
      b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `${CLAUDE_PLUGIN_ROOT}/skills/session/workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
      c. Append a `milestone` entry (D2), actor `main`, and its ✅ bullet under Key decisions in the same edit (see the mirror rule in step 3).
      d. **Stage explicitly, then commit + push** (D5 order — commit and push *before* any `gh` call, so the milestone comment's links resolve):
-        - Precondition: `git status --porcelain` may show only this milestone's own changes — the phase's artifact (`feature.json`'s `phases[].artifact` for the completed phase, e.g. `design.md`), `log.md`, and the session's `assets/`. Code and tests are committed per task during Implement (D8), so anything else uncommitted is either an unfinished task or unrelated work: don't bundle it into the milestone commit — surface it to the user and resolve it first.
-        - `git add docs/sessions/{slug}/{artifact} docs/sessions/{slug}/log.md` (plus `docs/sessions/{slug}/assets/` if it exists). Name the paths — never rely on `git commit -a` or on an earlier add: a new artifact is **untracked** until you add it, and a milestone commit without it freezes an artifact that was never pushed (VER-013).
+        - Precondition: `git status --porcelain` may show only this milestone's own changes — the phase's artifact (`feature.json`'s `phases[].artifact` for the completed phase, e.g. `design.md`, or the whole `define/` folder for Define; a past session's Define artifact is its root `requirements.md`, the phase's `legacy_artifact`), `log.md`, and the session's `assets/`. Code and tests are committed per task during Implement (D8), so anything else uncommitted is either an unfinished task or unrelated work: don't bundle it into the milestone commit — surface it to the user and resolve it first.
+        - `git add docs/sessions/{slug}/{artifact} docs/sessions/{slug}/log.md` (plus `docs/sessions/{slug}/assets/` if it exists). Name the paths — never rely on `git commit -a` or on an earlier add: a new artifact is **untracked** until you add it (for a folder artifact, `{artifact}` is `define/`, which stages every file in it), and a milestone commit without it freezes an artifact that was never pushed (VER-013).
         - Check `git diff --cached --name-only` lists the artifact (unless it's already committed unchanged), then `git commit -m "docs(sessions): {milestone label} — #{issue}"` + `git push`.
      e. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} {from-phase} {to-phase} {comment-file}`.
      f. If its output contains a `SYNC_PENDING:` line, log a `note` entry quoting it ("GitHub sync pending") — do **not** retry inline; the next milestone gate re-runs `gh-milestone.sh` first, per D5's "next milestone runs any pending sync first."
@@ -118,7 +120,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/`:
 |---|---|
 | `gh-setup.sh` | One-time label creation (D5) |
 | `gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
-| `check-traceability.sh` | REQ-011 gate: every `REQ-*` has a passing `VER-*` |
+| `check-traceability.sh` | REQ-011 gate: every `REQ-*` in `define/requirements.md` (or a past session's root `requirements.md`) has a passing `VER-*` |
 | `archive-session.sh` | Close milestone only: `git mv` a session into `docs/sessions/archive/`, refusing unless `status: archived` is already committed and the tree is clean (D6) |
 
 ## C8 note

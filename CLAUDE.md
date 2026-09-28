@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This is a **Claude Code plugin repository** that provides systematic development skills for building full-stack applications. It follows the Claude Code plugin architecture as documented at https://code.claude.com/docs/en/plugins.
+This is a **Claude Code plugin repository** that runs software development, research and consulting work as sessions, based on common established enterprise frameworks. Its vision, mission and scope are the `## Project anchor` section of `README.md`. It follows the Claude Code plugin architecture as documented at https://code.claude.com/docs/en/plugins.
 
 ## Architecture
 

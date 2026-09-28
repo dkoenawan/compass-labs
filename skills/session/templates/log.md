@@ -18,7 +18,7 @@ next_step: "{what happens next}"
 # Session Log: {Session Title} (#{issue})
 
 > Format: D2. Only the orchestrator writes this file. Entries are append-only.
-> Artifacts: [`requirements.md`](requirements.md) · [`design.md`](design.md) · [`tasks.md`](tasks.md) · [`verification.md`](verification.md) · [`release.md`](release.md)
+> Artifacts: [`define/index.md`](define/index.md) · [`design.md`](design.md) · [`tasks.md`](tasks.md) · [`verification.md`](verification.md) · [`release.md`](release.md)
 
 ## Open items
 

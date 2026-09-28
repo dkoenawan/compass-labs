@@ -72,5 +72,108 @@ if [[ $status -eq 0 ]]; then
   fail "missing verification.md should not exit 0"
 fi
 
+# --- define/ layout (#23 DES-019) ------------------------------------
+# Cases 1-4 above are the root-layout fallback (past sessions, D6).
+
+# write_define_requirements <dir>: the same REQ content as
+# write_requirements, under define/requirements.md, in the 5-column
+# table, plus a Deferred table (D8) whose row names a REQ in column 2.
+write_define_requirements() {
+  local dir="$1"
+  mkdir -p "$dir/define"
+  cat > "$dir/define/requirements.md" <<'EOF'
+# Requirements
+
+| ID | Requirement | Priority | Serves | Acceptance criterion |
+|---|---|---|---|---|
+| REQ-001 | thing one | Must | OUT-01 | given/when/then |
+| REQ-002 | thing two | Should | NEED-01 | given/when/then |
+
+## Deferred
+
+| Follow-up | Was | Requirement | Reason |
+|---|---|---|---|
+| #999 | REQ-003 | thing three | later |
+EOF
+}
+
+# 5. (b) Same content under define/ -> same exit code as case 1.
+define_dir="$(mktemp -d)"
+write_define_requirements "$define_dir"
+cat > "$define_dir/verification.md" <<'EOF'
+| ID | Covers REQ | Method | Result | Evidence |
+|---|---|---|---|---|
+| VER-001 | REQ-001 | unit | pass | ci run 1 |
+| VER-002 | REQ-002 | e2e | pass | ci run 2 |
+EOF
+out="$(bash "$SCRIPT" "$define_dir" 2>&1)"
+status=$?
+assert_eq "0" "$status" "define/ layout with every REQ covered should exit 0"
+assert_contains "$out" "define/requirements.md" "should report the define/ file it read"
+
+# 6. (b, e) Same missing IDs as case 2; the Deferred row (REQ-003) has no
+#    VER and is never reported missing.
+cat > "$define_dir/verification.md" <<'EOF'
+| ID | Covers REQ | Method | Result | Evidence |
+|---|---|---|---|---|
+| VER-001 | REQ-001 | unit | pass | ci run 1 |
+EOF
+out="$(bash "$SCRIPT" "$define_dir" 2>&1)"
+status=$?
+assert_eq "1" "$status" "define/ layout with a REQ missing a VER should exit 1"
+assert_contains "$out" "REQ-002" "define/ layout should name the missing REQ"
+assert_not_contains "$out" "REQ-003" "a Deferred row should never be named as missing"
+
+# 7. define/requirements.md is read in preference to a root file.
+cat > "$define_dir/requirements.md" <<'EOF'
+| ID | Requirement | Acceptance criterion |
+|---|---|---|
+| REQ-900 | root only | given/when/then |
+EOF
+out="$(bash "$SCRIPT" "$define_dir" 2>&1)"
+assert_not_contains "$out" "REQ-900" "define/requirements.md should be read in preference to the root file"
+rm -rf "$define_dir"
+
+# 8. (d) Neither file exists -> exit 1, naming both paths.
+empty_dir="$(mktemp -d)"
+cat > "$empty_dir/verification.md" <<'EOF'
+| ID | Covers REQ | Method | Result | Evidence |
+|---|---|---|---|---|
+EOF
+out="$(bash "$SCRIPT" "$empty_dir" 2>&1)"
+status=$?
+assert_eq "1" "$status" "no requirements file in either layout should exit 1"
+assert_contains "$out" "$empty_dir/define/requirements.md" "the error should name the define/ path"
+assert_contains "$out" "$empty_dir/requirements.md" "the error should name the root fallback path"
+rm -rf "$empty_dir"
+
+# 9. (c) The worked full-tier example (DES-018) as a session's define/:
+#    its 5-column table parses, struck REQ-007 and deferred REQ-008 need
+#    no VER, and a missing live REQ is still caught.
+EXAMPLE="$REPO_ROOT/skills/requirements/examples/feature-full"
+[[ -f "$EXAMPLE/requirements.md" ]] || fail "worked example not found: $EXAMPLE"
+example_dir="$(mktemp -d)"
+cp -R "$EXAMPLE" "$example_dir/define"
+cat > "$example_dir/verification.md" <<'EOF'
+| ID | Covers REQ | Method | Result | Evidence |
+|---|---|---|---|---|
+| VER-001 | REQ-001, REQ-002 | e2e | pass | run 1 |
+| VER-002 | REQ-003, REQ-004 | e2e | pass | run 1 |
+| VER-003 | REQ-005 | e2e | pass | load test |
+| VER-004 | REQ-006 | manual | pass | audit log checked |
+| VER-005 | REQ-009 | manual | pass | NVDA walkthrough |
+EOF
+out="$(bash "$SCRIPT" "$example_dir" 2>&1)"
+status=$?
+assert_eq "0" "$status" "the worked example with every live REQ covered should exit 0 ($out)"
+sed -i '/VER-005/d' "$example_dir/verification.md"
+out="$(bash "$SCRIPT" "$example_dir" 2>&1)"
+status=$?
+assert_eq "1" "$status" "the worked example with REQ-009 uncovered should exit 1"
+assert_contains "$out" "REQ-009" "the uncovered example REQ should be named"
+assert_not_contains "$out" "REQ-007" "the struck example row should not be named"
+assert_not_contains "$out" "REQ-008" "the deferred example row should not be named"
+rm -rf "$example_dir"
+
 echo "ok: check-traceability.sh validated"
 exit 0

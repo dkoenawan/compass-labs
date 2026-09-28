@@ -1,7 +1,7 @@
 # Verification: {Session Title}
 
 > Phase: Test | Started: {date} | Status: Draft
-> Requirements: [`requirements.md`](requirements.md) · Tasks: [`tasks.md`](tasks.md)
+> Requirements: [`define/index.md`](define/index.md) · Tasks: [`tasks.md`](tasks.md)
 
 Every requirement must be traceable to at least one passing test before the Test milestone can be approved (REQ-011).
 

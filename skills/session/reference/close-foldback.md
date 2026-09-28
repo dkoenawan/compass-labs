@@ -6,13 +6,39 @@ Close produces **no session artifact** of its own (`artifact: null` in `feature.
 
 ## Steps
 
-1. **Read, don't write, the session's own record**: the frozen `requirements.md`, `design.md`, and `log.md`'s **Key decisions** section (never write `log.md` — you return `log_entries` like every other phase agent).
+1. **Read, don't write, the session's own record**: the frozen `define/` folder (or the root `requirements.md` in a past session), `design.md`, and `log.md`'s **Key decisions** section (never write `log.md` — you return `log_entries` like every other phase agent).
 2. **Run a `doc-maintainer` pass** to update the repo's as-built docs:
    - `docs/reference/` and `docs/explanation/` — reflect what's now true about the system, not what happened to get there.
    - `docs/registry/index.md` and `docs/reference/constructs/*.md` — flip any construct this session built from `planned` to `built` (or add new ones the session introduced), the same way `task-executor` does per-task.
    - **No session narrative anywhere in as-built docs.** No "we discussed," no "first we tried X, then...". That story stays in the archived session folder, not in the flat docs.
    - Add exactly **one `Origin: #{issue}` line** to each doc file you touch — a stable pointer back to the session's GitHub issue (which persists after archive; the session path inside the archived folder is the fuller "why," reachable from the issue if anyone needs it).
+   - **Map Define's output section by section**, using [Folding back `define/`](#folding-back-define) below. A section that's still true once the feature has shipped is rewritten as current fact; anything about how we got there stays in the archive.
+   - **No session IDs in as-built docs.** Never cite a specific session's `REQ-*`, `DES-*` or `VER-*` ID (like `REQ-004`) in `docs/`: those IDs only mean something inside their session, and every session has a `REQ-001`. The `Origin: #{issue}` line is the only way back. Naming the ID *scheme* (`REQ-*`, "REQ → DES → task → VER") is fine where it's current fact about the session system itself. Before returning `done`, grep every doc you touched for `(REQ|DES|VER)-[0-9]` and rewrite any hit.
 3. **Return `done`** with `log_entries` including one `note` entry (e.g. `Fold-back ready — folded requirements/design into <list of doc files>`) summarizing what was folded back and where. Phase agents never emit `milestone` entries (contract rule 6): the orchestrator writes the `✅ Session closed` milestone itself at the gate, then does the archive move (see below) — that's what actually finishes the session.
+
+## Folding back `define/`
+
+The rule: a section that's still true once the feature has shipped goes into the Diátaxis docs tree, rewritten as current fact. Anything about how we got there stays in the archived session folder. Anything this table doesn't map stays archived too.
+
+| Define doc and section | Destination | Diátaxis |
+|---|---|---|
+| `index.md` (the main doc): framing summary, scope, non-goals, constraints, open questions | Stays in the archive. The issue link and the `Origin` lines point back. | — |
+| `framing.md`: tier, XY, anchor verdict, overlaps | Stays in the archive. Any anchor change is already in the README, written at Define. | — |
+| `problem.md`: context, needs and stakeholders, success outcomes | Rewritten as "why this exists and who it's for" in the domain's `docs/explanation/<domain>/overview.md` | Explanation |
+| `problem.md`: evidence, impact and why now, appetite | Stays in the archive, because it's time-bound | — |
+| `requirements.md`: live `REQ-*` rows | The behaviour, stated as current fact, in `docs/reference/<domain>/*.md`. Matching construct files in `docs/reference/constructs/` get their functional requirements. | Reference |
+| `requirements.md`: struck rows (dropped rows and "never" Won'ts) | Stay in the archive | — |
+| `requirements.md`: the Deferred table | Stays in the archive. Each row's follow-up issue carries the requirement forward, and a later session writes it afresh. | — |
+| `quality.md`: NFRs with their measures | `docs/reference/<domain>/`, as limits and targets | Reference |
+| `quality.md`: 25010 N/A reasons, assumptions | Stay in the archive, except still-true assumptions, which go to the domain overview's Dependencies or Gotchas | Explanation |
+| `diagrams.md`: context diagram, to-be process | The domain overview's architecture and "How it works" sections | Explanation |
+| `diagrams.md`: as-is, impact map, traceability | Stay in the archive. The as-is is superseded, and the others are tied to session IDs. | — |
+
+Tutorials and how-to guides don't come from Define. A how-to comes from Implement's `tasks.md`, when the session built a repeatable procedure.
+
+**Past sessions.** A session from before the `define/` folder keeps its root `requirements.md`; it's never migrated. Map it by section: its problem statement like `problem.md`, its `REQ-*` table like `requirements.md`, and the rest like `index.md`.
+
+**`doc-maintainer`'s session step.** `doc-maintainer`'s Step 2.S1 still expects the old plan-format `overview.md` (#41). For a session run through this lifecycle, the mapping above is what you follow.
 
 ## What you don't do
 
