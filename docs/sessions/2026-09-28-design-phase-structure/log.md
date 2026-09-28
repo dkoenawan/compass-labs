@@ -2,7 +2,7 @@
 session: 2026-09-28-design-phase-structure
 type: feature
 issue: 27
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
+milestone: define
 active_agent: main
-next_step: "Define gate: user reviews define/ (approve / adjust / rethink)"
+next_step: "Hand off to compass-labs:design"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -27,6 +27,7 @@ next_step: "Define gate: user reviews define/ (approve / adjust / rethink)"
 
 ## Key decisions
 
+- **2026-09-28**: ✅ Define complete — 30 live REQs, 9 deferred (#46–#54), anchor aligns.
 - **2026-09-28**: REQ-035 stays Design-only; widening it to every phase is deferred to #54 (REQ-039).
 - **2026-09-28**: Design reads prior knowledge only from the Diátaxis docs, never past sessions (REQ-035/036). SOLID, YAGNI and KISS are checked on every choice and DES item, and unneeded items are rejected (REQ-037/038).
 - **2026-09-28**: Retiring brand-designer deferred to #53 (REQ-034).
@@ -139,3 +140,9 @@ next_step: "Define gate: user reviews define/ (approve / adjust / rethink)"
 
 ### 2026-09-28 — define — decision: OQ4 resolved — no-past-sessions rule stays Design-only; widening deferred to #54 (REQ-039)
 - The user chose Design-only with a follow-up. The orchestrator created #54. Deferred row REQ-039 was added, with a matching Non-goals bullet.
+
+### 2026-09-28 — main — milestone: ✅ Define complete
+- The user approved `define/` (full tier): 30 live requirements (25 Must, 5 Should) and 9 deferred (#46–#54), needs NEED-01 to NEED-06 and outcomes OUT-01 to OUT-06. The anchor verdict is aligns, with action `none`, so no README write was needed.
+- Next: the Design phase. This session's own Design uses the current template (constraint; REQ-024).
+
+## Phase: Design
