@@ -27,6 +27,8 @@ next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to 
 
 ## Key decisions
 
+- **2026-09-28**: Retiring brand-designer deferred to #53 (REQ-034).
+- **2026-09-28**: One primary kind plus a scope checklist (REQ-001/002). Design depth matches Define (REQ-032). Claude Design handoff (REQ-033). Terraform is the infrastructure default (REQ-008–010). Documented SVG route only (REQ-015). Anchor still aligns.
 - **2026-09-28**: REQ-028 → #52. Mixed solutions: one primary kind plus an in-scope checklist. Design depth matches Define. Visual UI design is delegated to Claude Design (handoff only). Infrastructure is always Terraform.
 - **2026-09-28**: Created #46/#47/#48 (frontend, backend and database layer sub-issues of #27) and #49/#50/#51 (process, infra and plugin kinds).
 - **2026-09-28**: Framing confirmed: full tier. The layered structure is a candidate solution. Stack defaults, not mandates (anchor aligns). Three-tier gets depth now. Layers split to sub-issues. `plan` retired into Design. Handoff only for Implement. GitHub-native visuals. Two days.
@@ -92,3 +94,21 @@ next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to 
   - **ADRs inline or linked, and notation per kind:** Design's choice. ADRs stay grouped together with the other docs.
 - New constraint: **visual UI design is delegated to Claude Design.** The frontend layer covers components and functionality (React). `brand-designer` shouldn't manage visual design; this repo's sessions only hand off to Claude Design.
 - New constraint: **infrastructure is always Terraform.** Noted on #50; related to #20.
+- **Output (relay 2):** needs_input (issue number for the brand-designer deferral); define/ index, framing, requirements, quality, diagrams updated
+
+### 2026-09-28 — define — decision: open questions answered, Claude Design and Terraform constraints added
+- Classification gives one primary kind plus a scope checklist of the areas that might be in scope, rather than several kinds (REQ-001, REQ-002).
+- Design depth matches Define's tier and scope, with no separate Design tiers (new REQ-032).
+- Visual UI design is delegated to Claude Design. The frontend layer covers components and functionality only. The Design path gets a Claude Design handoff (new REQ-033). #46 inherits the split.
+- Retiring or redirecting `brand-designer` is deferred (REQ-034) because of the appetite and because it changes the anchor's "brand design" Scope line. The follow-up issue runs its own anchor check.
+- Terraform is the infrastructure stack default and, like the others, yields to an established repo stack (REQ-008 to REQ-010; related #20, #50).
+- Non-Mermaid visuals need only a documented SVG render route this session (REQ-015). Three-tier designs use C4 in Mermaid.
+- ADR placement, notation declaration, delta encoding, a `design/` folder and granting Bash to the Design agent stay Design's choices. The user leans towards ADRs grouped in the registry.
+- The anchor verdict is unchanged: *aligns*, with update action `none`.
+
+### 2026-09-28 — define — attempt: define/ updated with issue numbers and new constraints
+- Deferred rows carry #46–#52. REQ-034 waits on a follow-up issue number for the `brand-designer` retirement.
+- There are 26 live requirements (21 Must, 5 Should). Quality coverage, assumptions, dependencies and all four diagrams are updated.
+
+### 2026-09-28 — main — decision: brand-designer retirement deferred to #53 (REQ-034)
+- Created #53, linked to #27 and this session. It owns the anchor Scope change for "brand design".
