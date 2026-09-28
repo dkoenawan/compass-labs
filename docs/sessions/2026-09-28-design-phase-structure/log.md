@@ -27,6 +27,7 @@ next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to 
 
 ## Key decisions
 
+- **2026-09-28**: REQ-028 → #52. Mixed solutions: one primary kind plus an in-scope checklist. Design depth matches Define. Visual UI design is delegated to Claude Design (handoff only). Infrastructure is always Terraform.
 - **2026-09-28**: Created #46/#47/#48 (frontend, backend and database layer sub-issues of #27) and #49/#50/#51 (process, infra and plugin kinds).
 - **2026-09-28**: Framing confirmed: full tier. The layered structure is a candidate solution. Stack defaults, not mandates (anchor aligns). Three-tier gets depth now. Layers split to sub-issues. `plan` retired into Design. Handoff only for Implement. GitHub-native visuals. Two days.
 - **2026-09-28**: Session covers #27 (primary) and #39 (refines #27) together.
@@ -81,3 +82,13 @@ next_step: "User reviews define/ draft; relay REQ-028 choice + issue numbers to 
 - Sub-issues of #27, linked as GitHub sub-issues: #46 frontend layer (REQ-025), #47 backend layer (REQ-026), #48 database layer (REQ-027).
 - Follow-ups for the other solution kinds: #49 process/workflow with BPMN (REQ-029), #50 infrastructure (REQ-030), #51 plugin/tooling (REQ-031).
 - REQ-028 (Implement derives tasks and tests from the design): waiting for the user to choose between a new issue and folding it into #28.
+
+### 2026-09-28 — main — decision: REQ-028 follow-up created as #52; open-question answers and two new constraints
+- The user chose a new issue for REQ-028 after checking that none exists (#28 covers per-layer Implement skills, not task derivation). Created #52.
+- Open-question answers:
+  - **SVG rendering:** use a documented route when rendering isn't possible. Three-tier uses C4, which Mermaid renders natively. The user believes the Design agent has Bash, but `agents/design.md` grants only Read, Glob, Grep, Write and Edit (flagged).
+  - **Mixed solutions:** one primary kind, plus a checklist of what else might be in scope (for example, a three-tier app still has infrastructure), not grouping by kind.
+  - **Design depth:** Design depth matches the Define tier and scope; a smaller scope gets a thinner design.
+  - **ADRs inline or linked, and notation per kind:** Design's choice. ADRs stay grouped together with the other docs.
+- New constraint: **visual UI design is delegated to Claude Design.** The frontend layer covers components and functionality (React). `brand-designer` shouldn't manage visual design; this repo's sessions only hand off to Claude Design.
+- New constraint: **infrastructure is always Terraform.** Noted on #50; related to #20.
