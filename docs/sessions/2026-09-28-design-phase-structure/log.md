@@ -27,6 +27,7 @@ next_step: "Define gate: user reviews define/ (approve / adjust / rethink)"
 
 ## Key decisions
 
+- **2026-09-28**: REQ-035 stays Design-only; widening it to every phase is deferred to #54 (REQ-039).
 - **2026-09-28**: Design reads prior knowledge only from the Diátaxis docs, never past sessions (REQ-035/036). SOLID, YAGNI and KISS are checked on every choice and DES item, and unneeded items are rejected (REQ-037/038).
 - **2026-09-28**: Retiring brand-designer deferred to #53 (REQ-034).
 - **2026-09-28**: One primary kind plus a scope checklist (REQ-001/002). Design depth matches Define (REQ-032). Claude Design handoff (REQ-033). Terraform is the infrastructure default (REQ-008–010). Documented SVG route only (REQ-015). Anchor still aligns.
@@ -134,3 +135,7 @@ next_step: "Define gate: user reviews define/ (approve / adjust / rethink)"
 ### 2026-09-28 — define — attempt: define/ ready for the Define gate (revision 2)
 - There are 30 live requirements (25 Must, 5 Should) and 8 deferred rows (#46–#53). Quality coverage, assumptions, dependencies, framing interactions and all four diagrams are updated.
 - New open question: whether the no-past-sessions rule should also apply to Define and the other phases.
+- **Output (relay 5):** done; define/index.md, define/requirements.md updated
+
+### 2026-09-28 — define — decision: OQ4 resolved — no-past-sessions rule stays Design-only; widening deferred to #54 (REQ-039)
+- The user chose Design-only with a follow-up. The orchestrator created #54. Deferred row REQ-039 was added, with a matching Non-goals bullet.

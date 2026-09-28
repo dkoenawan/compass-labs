@@ -47,6 +47,7 @@ Each claim is tagged with its evidence in [problem.md](problem.md).
 - **Changes to the Implement phase.** This session defines only the handoff; Implement consuming it is #52 (deferred REQ-028).
 - **In-depth paths for the process/workflow, infrastructure and plugin/tooling kinds.** These are #49, #50 and #51 (deferred REQ-029 to REQ-031). Classification recognises them now.
 - **Visual UI design in this plugin.** It is delegated to Claude Design. Retiring or redirecting `brand-designer` is deferred to #53 (REQ-034).
+- **The no-past-sessions rule for phases other than Design.** REQ-035 covers Design only; extending it to every phase is #54 (deferred REQ-039).
 - **Mandating a tech stack.** The stack defaults never override a repo's established stack.
 - **Migrating past sessions' design artifacts.** They stay as written (REQ-024).
 - **Changing the Define phase or its standards.**
@@ -91,5 +92,5 @@ Each claim is tagged with its evidence in [problem.md](problem.md).
    - whether the design artifact becomes a `design/` folder;
    - where the stack defaults' single source lives (REQ-010).
 3. **The form of the returned visual design (REQ-033).** Claude Design hands back a visual design; is it a link, an exported image in `assets/`, or both? Left to Design, within the rendering constraint.
-4. **Other phases and past sessions.** REQ-035 governs Design only, as asked. This Define itself cited archived sessions (#22, #23) as evidence for the problem statement. Should the same rule apply to Define and the other phases? That's for the user to decide; it isn't part of this session unless they widen it.
+4. **Other phases and past sessions:** resolved. REQ-035 stays Design-only in this session. Extending the rule to every phase is follow-up #54 (deferred REQ-039).
 5. **Follow-up for REQ-034:** resolved. Retiring or redirecting `brand-designer` is tracked in #53, which also runs the anchor check for the "brand design" Scope line.
