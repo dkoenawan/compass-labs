@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: deploy
 active_agent: main
-next_step: "Hand off to compass-labs:close (fold-back into docs, incl. DES-022)"
+next_step: "Close milestone: commit fold-back, archive, push, close #23"
 ---
 # Session Log: Define phase depth — problem framing, per-type standards, project anchoring (#23)
 
@@ -32,6 +32,7 @@ next_step: "Hand off to compass-labs:close (fold-back into docs, incl. DES-022)"
 
 ## Key decisions
 
+- **2026-09-28**: Task 21 (DES-022) ticked in the frozen tasks.md; the Close fold-back covers the `define/` folder in the as-built docs
 - **2026-09-27**: ✅ Deploy complete — v1.2.0 bumped on branch, PR #44 open to main, release.md completeness shows no gaps; tag and plugin update after the merge
 - **2026-09-27**: ✅ Test complete — 37 VER rows, all 45 live REQs pass at 58f91dd after the worked-example fixes; tests 15/15; check-traceability exit 0
 - **2026-09-27**: ✅ Implement complete — tasks 1–20 done (DES-001..021, DES-023), task 21 (DES-022) deferred to Close; tests 15/15 green
@@ -450,3 +451,20 @@ next_step: "Hand off to compass-labs:close (fold-back into docs, incl. DES-022)"
 ### 2026-09-27 — main — milestone: ✅ Deploy complete
 - The user approved. Gate check a2: release.md's Completeness section lists only complete components and leaves none out. DES-022 is explicitly deferred to Close.
 - v1.2.0 is on the branch (95dbe79), and PR #44 is open to main. The squash-merge, `claude plugin tag --push` and `claude plugin update` run after the merge.
+
+## Phase: Close
+
+### 2026-09-28 — main — handoff: orchestrator → compass-labs:close (fold-back incl. DES-022)
+- **Input:** Deploy complete; the user asked to close the session and will merge PR #44 themselves. Task: fold the session back into the as-built docs, including DES-022 (the as-built session docs describe the `define/` folder). Uncommitted fold-back edits are already in the working tree from an earlier, unlogged pass (7 modified docs, plus new `docs/explanation/framing/` and `docs/reference/framing/`). Review and keep them, and complete them rather than redo.
+- **Output:** done; files_changed: docs/explanation/framing/overview.md (new), docs/reference/framing/tiers-and-anchor.md (new), docs/explanation/session/overview.md, docs/explanation/plan/overview.md, docs/explanation/solution-design.md, docs/reference/session/workflow-and-artifacts.md, docs/reference/session/hooks-and-scripts.md, docs/registry/index.md, docs/registry/patterns.md
+
+### 2026-09-28 — compass-labs:close — note: Fold-back ready — define/ folder, framing and anchor folded into as-built docs
+- Reviewed the uncommitted fold-back from an earlier, unlogged pass. It was accurate and complete, so it was kept, and only its dates were moved to 2026-09-28.
+- Checked against hooks/session-guard.sh, feature.json, check-traceability.sh, the define/ templates, anchor-contract.md, session SKILL.md gate a3, agents/define.md and both types/feature.md tier tables. Everything matches.
+- DES-022 (task 21) is covered: the session reference and explanation docs and the plan overview describe the define/ folder. That includes the index.md main doc, sub-docs by tier, and the root requirements.md kept only for past sessions. The old "folder next to its Markdown file" wording is rewritten.
+- New framing domain: docs/explanation/framing/overview.md (why it exists and who it's for, how it works, context diagram) and docs/reference/framing/tiers-and-anchor.md (tiers, checks by tier, Feature content by tier, anchor contract, framing block).
+- The session ID ban holds: no (REQ|DES|VER)-[0-9] outside docs/sessions/. Each touched doc has one Origin line ("#22 · #23" where #22 was already there, "#23" on the new files).
+- Stays in the archive: framing record, evidence, appetite, struck and deferred rows, impact map, traceability. No constructs to flip, because the registry has none.
+
+### 2026-09-28 — main — decision: Task 21 (DES-022) ticked in the frozen tasks.md
+- The Close fold-back covers DES-022. The as-built session and plan docs describe the `define/` folder. tasks.md is frozen, so the tick is amended under this decision, in the Close commit.
