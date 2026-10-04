@@ -281,3 +281,8 @@ next_step: "Deploy: hand off to compass-labs:deploy (release.md, MAJOR version b
 - The user approved verification.md: 32 of 32 checks pass across the 30 live REQs. The orchestrator re-ran `check-traceability.sh` (exit 0) and `bash tests/run.sh` (19 of 19) at `39dcc7a` before the gate.
 - Known limit: the new Design path hasn't run end to end, so REQ-035's "no past-session reads" part is verified against the rules only.
 - Next: the Deploy phase, including the MAJOR version bump for retiring `plan`.
+
+## Phase: Deploy
+
+### 2026-10-04 — main — handoff: orchestrator → compass-labs:deploy (release v2.0.0 on the branch)
+- **Input:** release the plugin following the split the last two releases used (see the archived #23 `release.md`). Run the completeness check against `marketplace.json` as it ships. Bump `plugin.json` 1.2.0 → 2.0.0 (MAJOR, because `plan` is retired) on the branch, run tests, run `claude plugin tag --dry-run`, push the branch and open a PR to main. Never merge, tag or push to main; the tag and cache refresh come after the user merges.
