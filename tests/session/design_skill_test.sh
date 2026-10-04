@@ -130,6 +130,35 @@ if grep -nE '(^|[^/a-z0-9-])#(4[6-9]|5[01])\b' "$THREE_TIER" | grep -q .; then
   fail "three-tier.md should cite follow-up issues as dkoenawan/compass-labs#nn"
 fi
 
+# --- design/ folder templates (DES-009) ------------------------------------
+
+TPL_DIR="$REPO_ROOT/skills/session/templates/design"
+for f in index.md solution.md ui-handoff.md; do
+  [[ -f "$TPL_DIR/$f" ]] || fail "template missing: skills/session/templates/design/$f"
+done
+index_tpl="$(cat "$TPL_DIR/index.md")"
+for section in "Prior knowledge" "Classification" "Scope checklist" "Context view" "Delta list" \
+  "Components (DES)" "Decisions" "Principles check" "Risks" "Open questions"; do
+  grep -qxF "## $section" "$TPL_DIR/index.md" || fail "templates/design/index.md should have the heading '## $section'"
+done
+assert_contains "$index_tpl" "No project documentation found; designed from the Define output and the code." \
+  "templates/design/index.md should carry the no-docs sentence"
+assert_contains "$index_tpl" "| ID | Component | Covers | Result | Check |" \
+  "templates/design/index.md should have the handoff columns"
+assert_contains "$index_tpl" "Rejected under YAGNI" "templates/design/index.md should have the YAGNI list"
+assert_contains "$(head -1 "$REPO_ROOT/skills/session/templates/design.md")" "Legacy layout" \
+  "the old design.md template should be marked as legacy"
+
+ui_tpl="$TPL_DIR/ui-handoff.md"
+for part in "Screens and components" "Serves" "States" "Behaviour constraints" "Returned visual design" \
+  "ui-design.zip" "ui-{screen}.png"; do
+  assert_contains "$(cat "$ui_tpl")" "$part" "templates/design/ui-handoff.md should have '$part'"
+done
+# REQ-033: no colour, font or spacing values anywhere in the handoff template.
+if grep -nE '#[0-9A-Fa-f]{3,8}\b|\b[0-9]+(\.[0-9]+)?(px|rem|em|pt)\b|rgba?\(|hsla?\(|font-(family|size|weight)|line-height|letter-spacing' "$ui_tpl"; then
+  fail "templates/design/ui-handoff.md should contain no colour, font or spacing values"
+fi
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do

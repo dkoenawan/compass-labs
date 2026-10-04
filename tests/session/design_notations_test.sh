@@ -52,8 +52,10 @@ fi
 # --- Rendering -----------------------------------------------------------
 
 render_files=("$NOTATIONS")
-[[ -f "$REPO_ROOT/skills/design/kinds/three-tier.md" ]] \
-  && render_files+=("$REPO_ROOT/skills/design/kinds/three-tier.md")
+for extra in skills/design/kinds/three-tier.md \
+  skills/session/templates/design/index.md skills/session/templates/design/solution.md; do
+  [[ -f "$REPO_ROOT/$extra" ]] && render_files+=("$REPO_ROOT/$extra")
+done
 
 mmdc_cmd=()
 if command -v mmdc >/dev/null 2>&1; then
