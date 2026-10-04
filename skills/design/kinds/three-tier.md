@@ -23,6 +23,36 @@ Draw both views in the notation that [`reference/notations.md`](../reference/not
 
 **Approval step.** When the whole-system design is written, return `needs_input` and ask the user to approve it: the layers marked changing, and the contracts. Write no layer file until the user approves. A change to a contract later goes back to the user in the same way.
 
+## Layer designs and the layer contract
+
+After the user approves the whole-system design, write one layer design for each *changing* layer, at `design/{layer}.md` (`frontend.md`, `backend.md`, `database.md`). Each one refines its layer's part of the whole-system design, to that layer's design standard.
+
+### Per-layer home
+
+Each layer has **one home**, `skills/{layer}/` (`skills/frontend/`, `skills/backend/`, `skills/database/`). The home holds both the layer's design standard and its Implement guidance (dkoenawan/compass-labs#28):
+
+| File in the home | Holds | Delivered by |
+|---|---|---|
+| `skills/{layer}/SKILL.md` | The layer skill's entry point, indexing the two files below | whichever of dkoenawan/compass-labs#28 and the layer's design issue lands first |
+| `skills/{layer}/reference/design.md` | The layer's design standard: this contract's three parts | frontend dkoenawan/compass-labs#46, backend dkoenawan/compass-labs#47, database dkoenawan/compass-labs#48 |
+| `skills/{layer}/reference/implement.md` | How Implement builds that layer | dkoenawan/compass-labs#28 |
+
+Nothing exists under `skills/{layer}/` until one of those issues delivers it. No stub folders.
+
+### What a layer's design standard supplies
+
+A layer's `reference/design.md` plugs in by supplying three things, with no change to this file or to `SKILL.md`:
+
+1. **Inputs.** The whole-system item it refines: the layer's row in the Layers table, and every contract in which the layer is one side. For example, the backend refines the frontend ↔ backend and backend ↔ database contracts.
+2. **Required sections.** The sections a `design/{layer}.md` must have, its visuals (with their rows in [`reference/notations.md`](../reference/notations.md#catalogue)), and the template the session copies.
+3. **Output.** `design/{layer}.md`, already declared in the workflow's `design/` file set. Its `DES-*` items go in the Components (DES) table in `design/index.md`, named by the layer.
+
+A layer design may add detail inside a contract. It may not change a contract the user approved without returning to the user.
+
+### When a layer's standard is missing
+
+If a changing layer has no `skills/{layer}/reference/design.md` yet, write no `design/{layer}.md`. Cover the layer in the all-kinds sections (its `DES-*` items, decisions and risks) and in `design/solution.md`, and cite the layer's follow-up issue under Open questions. This is the same fallback as a kind without an in-depth path (see [Kind catalogue](../SKILL.md#kind-catalogue)).
+
 ## Example: notification preferences
 
 The requirements for this example: members choose which notification emails they receive (REQ-001), their choices are saved per member (REQ-002), and emails are sent only for the kinds a member has opted into (REQ-003). Define's tier: short. The user chose to store preferences in a new `NotificationPreference` table rather than as columns on `User` (a significant choice, recorded in Decisions).

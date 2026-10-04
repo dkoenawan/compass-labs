@@ -119,6 +119,17 @@ assert_contains "$tt" "## Example: notification preferences" "three-tier should 
 assert_contains "$tt" "save-preferences API" "the example should name the frontend-backend contract"
 assert_contains "$tt" "*unchanged*" "the example should show an unchanged layer (REQ-032)"
 
+# --- Layer contract and per-layer home (DES-005, REQ-005, REQ-006) -----------
+
+assert_contains "$tt" "### Per-layer home" "three-tier should define the per-layer home"
+assert_contains "$tt" "skills/{layer}/reference/design.md" "the layer home should hold the design standard"
+assert_contains "$tt" "skills/{layer}/reference/implement.md" "the layer home should hold the Implement guidance"
+assert_contains "$tt" "### What a layer's design standard supplies" "three-tier should state the layer contract"
+assert_contains "$tt" "### When a layer's standard is missing" "three-tier should give the missing-standard fallback"
+if grep -nE '(^|[^/a-z0-9-])#(4[6-9]|5[01])\b' "$THREE_TIER" | grep -q .; then
+  fail "three-tier.md should cite follow-up issues as dkoenawan/compass-labs#nn"
+fi
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do
