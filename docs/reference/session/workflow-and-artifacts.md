@@ -1,28 +1,28 @@
 # Session workflow and artifacts
 
 > → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md)
-> Origin: #22 · #23
+> Origin: #22 · #23 · #27
 
 ## Feature workflow (`skills/session/workflows/feature.json`)
 
 | Order | `phase` | `owner_agent` | `artifact` | `milestone` (display label) | `gh_label` | Conversational |
 |---|---|---|---|---|---|---|
 | 1 | `define` | `compass-labs:define` | `define/` (folder) | Define complete | `phase:define` | yes |
-| 2 | `design` | `compass-labs:design` | `design.md` | Design complete | `phase:design` | yes |
+| 2 | `design` | `compass-labs:design` | `design/` (folder) | Design complete | `phase:design` | yes |
 | 3 | `implement` | `compass-labs:implement` | `tasks.md` | Implement complete | `phase:implement` | no |
 | 4 | `test` | `compass-labs:test` | `verification.md` | Test complete | `phase:test` | no |
 | 5 | `deploy` | `compass-labs:deploy` | `release.md` | Deploy complete | `phase:deploy` | no |
 | 6 | `close` | `compass-labs:close` | `null` | Closed | `phase:close` | no |
 
-Top-level keys: `workflow`, `framing` (what this session type plugs into the shared framing step; see the [framing reference](../framing/tiers-and-anchor.md#the-framing-block)), `session_level.file_allowlist` (`define/`, the legacy root `requirements.md`, the other four artifacts, `log.md`, `assets/`), `session_level.log_file`, `session_level.log_owner` (`orchestrator`), `github.type_label` (`type:feature`) and `github.type_color`. A new session type is a new `workflows/{type}.json` with the same shape. The guard hook picks the file from `log.md`'s `type`.
+Top-level keys: `workflow`, `framing` (what this session type plugs into the shared framing step; see the [framing reference](../framing/tiers-and-anchor.md#the-framing-block)), `session_level.file_allowlist` (`define/` and `design/`, their legacy root files `requirements.md` and `design.md`, the other three artifacts, `log.md`, `assets/`), `session_level.log_file`, `session_level.log_owner` (`orchestrator`), `github.type_label` (`type:feature`) and `github.type_color`. A new session type is a new `workflows/{type}.json` with the same shape. The guard hook picks the file from `log.md`'s `type`.
 
 Phase keys for folder artifacts:
 
 | Key | Meaning |
 |---|---|
-| `artifact` ending in `/` | A **folder artifact**: one artifact with one owner, frozen as a unit. Feature's Define phase declares `define/`. |
-| `artifact_files` | The folder's fixed file set, one level deep. For `define/`: `index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`. |
-| `legacy_artifact` | The root path sessions from before the folder use for the same phase (`requirements.md`). It stays in the allowlist because those sessions are never migrated. |
+| `artifact` ending in `/` | A **folder artifact**: one artifact with one owner, frozen as a unit. Feature's Define phase declares `define/`, and its Design phase declares `design/`. |
+| `artifact_files` | The folder's fixed file set, one level deep. For `define/`: `index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`. For `design/`: `index.md`, `solution.md`, `frontend.md`, `backend.md`, `database.md`, `ui-handoff.md`. |
+| `legacy_artifact` | The root path sessions from before the folder use for the same phase (`requirements.md`, `design.md`). It stays in the allowlist because those sessions are never migrated. |
 
 ## Artifacts
 
@@ -30,14 +30,15 @@ Phase keys for folder artifacts:
 |---|---|---|---|
 | `define/` | `compass-labs:define` | `framing`, `problem-statement` and `requirements` skills, by depth tier (see [The `define/` folder](#the-define-folder)) | `milestone` ≥ `define` (the whole folder at once) |
 | `requirements.md` (root, past sessions only) | `compass-labs:define` | `requirements` skill. Only a session that already has this file may write it, and such a session can't create `define/`. | `milestone` ≥ `define` |
-| `design.md` | `compass-labs:design` | `DES-*` items, each naming the `REQ-*` it covers; ADRs in `docs/registry/decisions/` | `milestone` ≥ `design` |
+| `design/` | `compass-labs:design` | The `design` skill (see [The `design/` folder](#the-design-folder)) | `milestone` ≥ `design` (the whole folder at once) |
+| `design.md` (root, past sessions only) | `compass-labs:design` | The older template: `DES-*` items, each naming the `REQ-*` it covers. Only a session that already has this file may write it, and such a session can't create `design/`. | `milestone` ≥ `design` |
 | `tasks.md` | `compass-labs:implement` | `task-executor` tasks format; each task names the `DES-*` it implements; a Deviations section | `milestone` ≥ `implement` |
 | `verification.md` | `compass-labs:test` | `verification` skill: `\| ID \| Covers REQ \| Method \| Result \| Evidence \|`, in that exact column order | `milestone` ≥ `test` |
 | `release.md` | `compass-labs:deploy` | Version/target, what changed (by `REQ-*`), Completeness, deploy steps, confirmation, rollback | `milestone` ≥ `deploy` |
 | `log.md` | orchestrator (main session) only | Log format below | Never frozen; read-only once archived |
 | `assets/` | any | Non-Markdown files only | — |
 
-IDs are sequential and never reused. Dropped items are struck through, not deleted. Templates for every file are in `skills/session/templates/` (the Define templates in `templates/define/`). An artifact that needs more than one file is a folder artifact: the folder is the artifact, its main doc (`index.md`) sits inside it and links to the other files, and its file set is fixed in the workflow. `define/` is the only folder artifact today; the other phases' artifacts are flat files.
+IDs are sequential and never reused. Dropped items are struck through, not deleted. Templates for every file are in `skills/session/templates/` (the Define templates in `templates/define/`, the Design templates in `templates/design/`; layer design templates come from each layer's home, `skills/{layer}/`). An artifact that needs more than one file is a folder artifact: the folder is the artifact, its main doc (`index.md`) sits inside it and links to the other files, and its file set is fixed in the workflow. `define/` and `design/` are the folder artifacts today; the other phases' artifacts are flat files.
 
 ## The `define/` folder
 
@@ -67,13 +68,29 @@ define/                  define/                  define/
 - **The Deferred table** holds requirements moved to later work: `| Follow-up | Was | Requirement | Reason |`, with the follow-up issue link required and first. A requirement that will never be done is struck through in the `REQ-*` table instead. Neither form is a live row, so neither needs a `VER-*`.
 - **One layout per session.** A new session writes `define/` and can't create a root `requirements.md`. A session from before the folder keeps its root `requirements.md` and can't create `define/`. Nothing converts one layout into the other, and past sessions are never migrated. Every tool that reads requirements reads `define/requirements.md` first and falls back to the root file.
 
+## The `design/` folder
+
+Design's output is one main doc plus files the solution kind and scope call for. The standard is the [`design` skill](../../../skills/design/SKILL.md).
+
+| File | Holds | When |
+|---|---|---|
+| `index.md` | The **main doc**: Prior knowledge, Classification (primary kind), Scope checklist, Context view, Delta list, Components (`ID \| Component \| Covers \| Result \| Check \| Depends on`), Decisions, Principles check (with "Rejected under YAGNI"), Risks and Open questions | always |
+| `solution.md` | The kind's in-depth design. For a three-tier application: each layer changing or unchanged, the contracts between changing layers, and C4 L1 and L2 views, approved before any layer file | when the kind has an in-depth path |
+| `frontend.md`, `backend.md`, `database.md` | Layer designs, to the standard in the layer's home `skills/{layer}/` | when the layer changes and its standard exists |
+| `ui-handoff.md` | The Claude Design handoff (screens, components, the `REQ-*` they serve, states, behaviour constraints, no visual values) and the returned design: `assets/ui-design.zip` kept as-is and one embedded `assets/ui-{screen}.png` per screen | when visual UI design is in scope |
+
+Visuals follow the skill's [notation catalogue](../../../skills/design/reference/notations.md): C4 abstractions drawn as Mermaid `flowchart`s with four delta classDefs and a `[status]` label suffix, and a caption naming the notation and C4 level. A non-Mermaid source, such as BPMN, sits in `assets/` with a rendered SVG beside it.
+
+**Design gate.** The gate message shows (or links) `design/index.md#context-view` and `#delta-list`. Before the milestone, `check-design.sh {session}` requires the Classification, Scope checklist, Context view and Delta list headings, and names any that are missing. A session with only a root `design.md` gets "legacy layout: no check".
+
 ## Milestone gate checks
 
-Approval alone completes most milestones. Three gates also check the session's content before the orchestrator records the milestone:
+Approval alone completes most milestones. Four gates also check the session's content before the orchestrator records the milestone:
 
 | Gate | Check | On failure |
 |---|---|---|
 | Define | **a3.** If `define/index.md` records a full or short tier and `define/framing.md`'s anchor-update action is anything but `none`, the README's marked anchor section must contain that agreed text and pass the [anchor checklist](../framing/tiers-and-anchor.md#anchor-contract). A session with no `define/` folder gets no a3 check. | Refuse, show the missing or differing element, apply the anchor write, ask again |
+| Design | **a4.** `check-design.sh` exits 0: `design/index.md` has the Classification, Scope checklist, Context view and Delta list sections. A session with only a root `design.md` passes with no check. | Refuse, name the missing sections (e.g. "delta list missing"), stay in Design |
 | Test | `check-traceability.sh` exits 0: every live `REQ-*` has a passing `VER-*` | Refuse, list the missing IDs, stay in Test |
 | Deploy | `release.md`'s *Completeness* section shows the release manifest lists only complete components and leaves none out | Refuse, show the gaps, stay in Deploy |
 
@@ -121,6 +138,9 @@ Close has no session artifact. It writes what is still true once the feature has
 | `define/quality.md`: still-true assumptions | The domain overview's Dependencies or Gotchas |
 | `define/diagrams.md`: context diagram, to-be process | The domain overview's architecture and How It Works sections |
 | `define/diagrams.md`: as-is, impact map, traceability | Stay in the archive |
+| `design/index.md`: decisions flagged "ADR" | One ADR each in `docs/registry/decisions/`, numbered at Close |
+| `design/index.md`: context view; `design/solution.md` | The domain overview's architecture and How It Works sections, redrawn without delta styling |
+| The rest of `design/` | Stays in the archive |
 
 A session with a root `requirements.md` is mapped by section: its problem statement like `problem.md`, its `REQ-*` table like `requirements.md`, the rest like `index.md`. How-to guides come from Implement's `tasks.md`, never from Define.
 

@@ -34,8 +34,8 @@ The recommended fix is applied to the relevant `SKILL.md`, the test is re-run wi
 - **Data Shape (template)**: `reviews/TEMPLATE.md` — canonical five-section structure for all SkillReview documents (Invocation, What Happened, Root Cause Analysis, Recommended Fix, Follow-up Checklist)
 - **Business Logic (patterns + workflow)**: `reviews/README.md` — defines the review system, file naming convention (`YYYYMMDD_<short-description>.md`), three canonical failure patterns with diagnostic signatures and fix strategies, and the end-to-end debugging workflow
 - **Interface**: No programmatic interface — reviews are created and read manually by developers; files are plain markdown
-- **Persistence**: `reviews/<skill-name>/` subdirectories containing dated review files; e.g., `reviews/plan/20260309_weekly-assessment.md` (the first concrete review, documenting the Mandatory Continuation Point failure in the `plan` skill)
-- **External callers**: `skills/*/SKILL.md` files are the *subjects* of recommended fixes; reviews reference specific line numbers and excerpts from those files. `docs/plan/overview.md` references known failure modes documented in `reviews/plan/`.
+- **Persistence**: `reviews/<skill-name>/` subdirectories containing dated review files; e.g., `reviews/plan/20260309_weekly-assessment.md` (the first concrete review, documenting the Mandatory Continuation Point failure in the `plan` skill, since retired into the Design phase)
+- **External callers**: `skills/*/SKILL.md` files are the *subjects* of recommended fixes; reviews reference specific line numbers and excerpts from those files. The retired `plan` skill's overview referenced the failure modes documented in `reviews/plan/`.
 
 ## Internal Architecture
 
@@ -48,14 +48,14 @@ These fix strategies are reusable — the same language patterns appear across m
 
 ## Dependencies
 
-- **Internal**: All skills in `skills/*/` are potential subjects of reviews; `reviews/plan/` contains the first concrete example. The `plan` skill's SKILL.md has already been hardened based on review findings (Mandatory Continuation Point after `explore` return).
+- **Internal**: All skills in `skills/*/` are potential subjects of reviews; `reviews/plan/` contains the first concrete example. The `plan` skill's SKILL.md was hardened based on review findings (Mandatory Continuation Point after `explore` return) before `plan` was retired into the Design phase.
 - **External**: None — reviews are pure markdown documentation with no runtime dependencies
 
 ## Gotchas
 
 - **Manual discipline required for follow-through**: The Follow-up Checklist relies on the developer to apply the recommended fix and re-test. A review can be filed and its fix left unapplied indefinitely — there is no enforcement mechanism.
 - **Observational, not regression-tested**: Reviews document manual test observations. The same failure can reoccur months later if the fix was reverted or if a skill was heavily edited; search the review history proactively when debugging recurring issues.
-- **Sub-skill chaining is high-risk by default**: Any skill that invokes a sub-skill (like `plan` calling `explore`) is at high risk of the Natural Stopping Points failure. Use Mandatory Continuation Point language proactively — before a failure occurs — in any new skill that chains sub-skills.
+- **Sub-skill chaining is high-risk by default**: Any skill that invokes a sub-skill (as the retired `plan` skill did with `explore`) is at high risk of the Natural Stopping Points failure. Use Mandatory Continuation Point language proactively — before a failure occurs — in any new skill that chains sub-skills.
 - **No automated indexing**: Reviews are found by manual file browsing or grep. The `README.md` maintains a file index table, but a large review library could become hard to navigate without search.
 - **Fix validation burden falls on the reviewer**: The developer who applies a fix bears responsibility for re-testing. If re-testing is incomplete or undocumented, the Follow-up Checklist remains ambiguous.
 
