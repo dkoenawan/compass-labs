@@ -61,6 +61,18 @@ assert_contains "$content" "planned_in" "the rule should say to ignore planned_i
 assert_contains "$content" "No project documentation found; designed from the Define output and the code." \
   "the rule should give the no-docs sentence"
 
+# --- Kind catalogue and contract (DES-003, REQ-002, REQ-003) -----------------
+
+assert_contains "$content" "## Kind catalogue" "SKILL.md should have the kind catalogue"
+assert_contains "$content" "### What a kind supplies" "SKILL.md should have the kind contract"
+for ref in 46 47 48 49 50 51; do
+  assert_contains "$content" "dkoenawan/compass-labs#$ref" "kind catalogue should cite dkoenawan/compass-labs#$ref"
+done
+# Follow-up issues must be fully qualified so they resolve in a consuming repo.
+if grep -nE '(^|[^/a-z0-9-])#(4[6-9]|5[01])\b' "$SKILL" | grep -q .; then
+  fail "SKILL.md should cite follow-up issues as dkoenawan/compass-labs#nn"
+fi
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do

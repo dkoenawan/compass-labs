@@ -75,6 +75,32 @@ Every design has these sections in `design/index.md`, whatever its kind. The tem
 
 The kind's in-depth sections go in `design/solution.md`. They refine these sections and never replace them.
 
+## Kind catalogue
+
+Classify the solution as one primary kind. A solution that spans areas still has one primary kind, and the scope checklist covers the other areas.
+
+| Kind | In-depth path | Typical signs in the requirements |
+|---|---|---|
+| Three-tier application | `kinds/three-tier.md` | A user interface, an API or service, and stored data, changing together |
+| Process/workflow | none yet: dkoenawan/compass-labs#49 | Steps, hand-offs, approvals or roles change; little or no code |
+| Infrastructure | none yet: dkoenawan/compass-labs#50 | Hosting, networking, deployment or cloud resources change |
+| Plugin/tooling | none yet: dkoenawan/compass-labs#51 | Developer tooling, plugins, scripts, CLIs or agent skills |
+| Other | none: the all-kinds sections only | Nothing above fits. Say why in the classification reason |
+
+Areas inside a kind have their own follow-ups, for when they're in scope and their layer standard doesn't exist yet: frontend dkoenawan/compass-labs#46, backend dkoenawan/compass-labs#47, database dkoenawan/compass-labs#48.
+
+When the primary kind, or an in-scope area, has no in-depth path, write every all-kinds section so that it covers that kind or area, and cite its follow-up issue under Open questions. Always write the follow-up as the full `dkoenawan/compass-labs#nn` reference, so it resolves to this plugin's issue rather than to an issue in the repository being designed.
+
+### What a kind supplies
+
+To give a kind an in-depth path, add these three things and nothing else:
+
+1. **`kinds/{kind}.md`**: the kind's in-depth design. It lists the sections that go in `design/solution.md` and how they refine the all-kinds sections, any approval step inside the kind (for example, approving a whole-system design before any layer), whether the kind has layer files and their contract, and a worked example.
+2. **Rows in [`reference/notations.md`](reference/notations.md)**: the notation for each of the kind's visuals, with its Mermaid form, or the non-Mermaid route if GitHub can't render it.
+3. **This catalogue's row**: point the kind's In-depth path cell at its file, replacing the follow-up issue.
+
+Adding a kind never changes the procedure, the classification step, the scope checklist or the all-kinds sections. If a kind seems to need one of those changed, raise it as a change to this standard instead.
+
 ## On-demand files
 
 Read these only when the step that needs them comes up.
