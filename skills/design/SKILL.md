@@ -101,6 +101,35 @@ To give a kind an in-depth path, add these three things and nothing else:
 
 Adding a kind never changes the procedure, the classification step, the scope checklist or the all-kinds sections. If a kind seems to need one of those changed, raise it as a change to this standard instead.
 
+## Significant choices and principles check
+
+### Significant choices
+
+A choice is **significant** if a reasonable reviewer could have picked differently and the pick changes what Implement builds. Examples: where data lives, a new component or an extension of an existing one, a new dependency, an interface shape, a trade between simplicity and flexibility. For each one, record under Decisions in `design/index.md`:
+
+- **At least two options**, each with at least one pro and one con.
+- **The option chosen and the reason.**
+- **That the user chose.** Present the options through `needs_input`, with your recommendation if you have one, and let the user decide. Never pick a significant option on your own.
+
+**ADRs.** Link an existing ADR in `docs/registry/decisions/` wherever one applies, instead of re-deciding it. If a decision is new and is architecture-level, flag it "ADR" in the design. Close writes it into `docs/registry/decisions/` once the session has shipped, which keeps ADRs grouped and true to what was built. Don't write ADR files during Design. The design is your only artifact.
+
+### Principles check
+
+Every `DES-*` item and every significant choice gets a row in the principles check:
+
+- **KISS and YAGNI: always**, for every element of every kind of solution.
+- **SOLID** (single responsibility, open/closed, Liskov substitution, interface segregation, dependency inversion): **as well, for every software element** (code, modules, services, skills, agents, scripts, workflow definitions). For non-software elements such as documentation or a manual process, mark SOLID *n/a* with the reason.
+
+Mark each principle with one of three values:
+
+- *met*. Add a short reason where it isn't obvious, for example "one command, one endpoint".
+- *traded off*, with the reason. The user resolves every *traded off* mark, either at a `needs_input` or at the gate, and the log records that decision.
+- *n/a*, with the reason, for example "no substitutable types".
+
+Bare *met* marks keep the table compact. Spell out only what isn't obvious.
+
+**Rejected under YAGNI.** Any component, option or `DES-*` item that serves no live `REQ-*` is rejected. List it under "Rejected under YAGNI" in the principles check, with the reason, and design nothing for it. For example, a multi-channel notification framework is rejected when the only live requirement is email preferences.
+
 ## On-demand files
 
 Read these only when the step that needs them comes up.

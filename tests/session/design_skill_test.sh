@@ -73,6 +73,21 @@ if grep -nE '(^|[^/a-z0-9-])#(4[6-9]|5[01])\b' "$SKILL" | grep -q .; then
   fail "SKILL.md should cite follow-up issues as dkoenawan/compass-labs#nn"
 fi
 
+# --- Significant choices and principles check (DES-006) ---------------------
+
+assert_contains "$content" "## Significant choices and principles check" "SKILL.md should have the choices and principles section"
+assert_contains "$content" "At least two options" "a significant choice should need at least two options"
+assert_contains "$content" "user chose" "the user should choose significant options"
+for principle in KISS YAGNI SOLID "single responsibility" "open/closed" "Liskov substitution" \
+  "interface segregation" "dependency inversion"; do
+  assert_contains "$content" "$principle" "principles check should name '$principle'"
+done
+for mark in "*met*" "*traded off*" "*n/a*"; do
+  assert_contains "$content" "$mark" "principles check should define the mark $mark"
+done
+assert_contains "$content" "Rejected under YAGNI" "SKILL.md should have the Rejected under YAGNI list"
+assert_contains "$content" "docs/registry/decisions/" "SKILL.md should say how ADRs are handled"
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do
