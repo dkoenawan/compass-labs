@@ -141,8 +141,11 @@ Implement builds from the Components (DES) table in `design/index.md`, so the ta
 | Covers | The live `REQ-*` it delivers |
 | Result | What Implement must produce, concretely, for example "a `NotificationPreference` table related to `User`, created by a migration" |
 | Check | How to tell the result is done, for example "the migration applies to a copy of the current database, and existing users keep their data" |
+| Depends on | The `DES-*` items that must be built first, or `—` if none. For example, a save-preferences API depends on the storage it writes to, and the settings page depends on that API |
 
 Refer to requirements by ID, and don't restate their text.
+
+**Implementation order.** Under the table, give the order the Depends on column implies, for example "DES-001 → DES-002, DES-003 → DES-004". Implement orders its tasks from this order. Keep dependencies acyclic. If two items need each other, split one of them.
 
 **Coverage self-check.** Before returning `done`, list every live `REQ-*` in the frozen `define/requirements.md` (deferred and struck rows need none) and confirm that each one appears in at least one Covers cell. Record the result under the table, for example "Coverage: all 12 live REQs covered". If a live requirement isn't covered, add or extend a `DES-*` item, or raise it with the user. Never leave it silently uncovered.
 

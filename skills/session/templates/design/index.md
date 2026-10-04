@@ -60,13 +60,15 @@ Each element this design touches has exactly one status. Every visual matches th
 
 ## Components (DES)
 
-Each item names the `REQ-*` it covers, the result Implement must produce and the check that shows it's done.
+Each item names the `REQ-*` it covers, the result Implement must produce, the check that shows it's done, and the items it depends on.
 
-| ID | Component | Covers | Result | Check |
-|---|---|---|---|---|
-| DES-001 | {component, and where it lives} | REQ-{nnn} | {what Implement produces} | {how to tell it's done} |
+| ID | Component | Covers | Result | Check | Depends on |
+|---|---|---|---|---|---|
+| DES-001 | {component, and where it lives} | REQ-{nnn} | {what Implement produces} | {how to tell it's done} | {DES-{nnn}, or —} |
 
 **Coverage:** {all N live REQs covered | the uncovered REQ and what was done about it}
+
+**Implementation order** (from Depends on): {DES-001 → DES-002, DES-003 → …}
 
 ## Decisions
 

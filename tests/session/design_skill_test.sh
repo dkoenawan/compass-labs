@@ -91,10 +91,13 @@ assert_contains "$content" "docs/registry/decisions/" "SKILL.md should say how A
 # --- Design -> Implement handoff (DES-012) ----------------------------------
 
 assert_contains "$content" "## Design → Implement handoff" "SKILL.md should have the handoff contract"
-for col in ID Component Covers Result Check; do
+for col in ID Component Covers Result Check "Depends on"; do
   assert_contains "$content" "| $col |" "handoff contract should define the column '$col'"
 done
 assert_contains "$content" "Coverage self-check" "SKILL.md should have the coverage self-check"
+assert_contains "$content" "**Implementation order.**" "SKILL.md should derive the implementation order from Depends on (REQ-020)"
+assert_contains "$(cat "$REPO_ROOT/skills/session/templates/design/index.md")" "**Implementation order** (from Depends on)" \
+  "templates/design/index.md should have the implementation order line"
 
 # --- Claude Design handoff (DES-013, REQ-033) -------------------------------
 
@@ -143,7 +146,7 @@ for section in "Prior knowledge" "Classification" "Scope checklist" "Context vie
 done
 assert_contains "$index_tpl" "No project documentation found; designed from the Define output and the code." \
   "templates/design/index.md should carry the no-docs sentence"
-assert_contains "$index_tpl" "| ID | Component | Covers | Result | Check |" \
+assert_contains "$index_tpl" "| ID | Component | Covers | Result | Check | Depends on |" \
   "templates/design/index.md should have the handoff columns"
 assert_contains "$index_tpl" "Rejected under YAGNI" "templates/design/index.md should have the YAGNI list"
 assert_contains "$(head -1 "$REPO_ROOT/skills/session/templates/design.md")" "Legacy layout" \
