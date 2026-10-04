@@ -2,7 +2,7 @@
 session: 2026-09-28-design-phase-structure
 type: feature
 issue: 27
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
+milestone: implement
 active_agent: main
-next_step: "Implement: execute tasks.md from task 1"
+next_step: "Test: hand off to compass-labs:test (verification.md, VER-* per REQ)"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Implement: execute tasks.md from task 1"
 
 ## Key decisions
 
+- **2026-10-04**: ✅ Implement complete — 23 of 23 tasks, 19 of 19 tests pass; `plan` retired; MAJOR version bump left to Deploy.
 - **2026-10-04**: tasks.md approved (23 tasks, Should work last). The mermaid-cli render test skips when the tool is missing.
 - **2026-10-04**: ✅ Design complete — DES-001 to DES-017 cover all 30 live REQs; DES-006 and DES-014 trade-offs accepted; notation quality in #55.
 - **2026-10-04**: Notation quality standards (a cited source plus a checklist for each notation) deferred to #55 as an enhancement. No REQ added and Define stays frozen.
@@ -217,3 +218,20 @@ next_step: "Implement: execute tasks.md from task 1"
 ### 2026-10-04 — main — decision: tasks.md approved; the render test skips when mermaid-cli is missing
 - The user approved the 23-task list, including splitting DES-007 and DES-012 into Must and Should parts.
 - DES-008's render check: `tests/session/design_notations_test.sh` renders each block with mermaid-cli when it's available and skips with a message when it isn't. The harness stays bash and jq only. This was the recommended option; the user said "let's do" without picking one.
+
+### 2026-10-04 — implement — note: Render commands and the shared-name preload verified (tasks 1–2)
+- All three render routes work when `PUPPETEER_EXECUTABLE_PATH` points at the system Chrome: mermaid-cli 12.0.0, bpmn-to-image 0.10.0 and a headless Chrome screenshot. Without it, mermaid-cli lacks its browser and bpmn-to-image's own Chrome fails its sandbox check. The exact commands are in tasks.md and `skills/design/reference/notations.md`.
+- Preload works when the skill and the agent share the name `design`. A headless run with a scratch plugin showed the subagent reporting the skill's secret phrase without reading any file, with a differently named control pair as comparison. The skill keeps the name `design` (D12).
+
+### 2026-10-04 — implement — attempt: tasks.md complete, 23 of 23 tasks ticked, one commit each
+- DES-001 to DES-017 are implemented. New: the `skills/design/` skill (procedure, kind catalogue, three-tier path with the layer contract, notation catalogue, stack defaults), the `design/` folder templates, `check-design.sh` and Design-gate step a4. Changed: `feature.json` (the `design/` folder, with `design.md` as the legacy layout), the Design agent (preloads the skill, Bash for rendering only), Implement and Close pointers, the stack-default links, and the docs.
+- `plan` is retired. `skills/plan/` and `docs/explanation/plan/` are deleted, and its callers point to `/compass-labs:session`.
+- New tests: `design_skill_test.sh`, `design_notations_test.sh` (skips when mermaid-cli is missing), `check_design_test.sh` and `stack_defaults_test.sh`. The guard, workflow, phase-agent, marketplace, session-skill and docs tests were extended. `bash tests/run.sh`: 19 of 19 pass.
+- Two deviations are logged in tasks.md, both sequencing or test details with no design change: the design skill folder and its manifest entry were started early, and the layer-file templates are exempt in `workflow_test.sh`.
+- Open for Deploy: the MAJOR version bump for the `plan` removal (`plugin.json` is still 1.2.0).
+- The orchestrator re-checked: 23 commits since `a85ab65`, 23 of 23 ticked, `tests/run.sh` 19 of 19 pass, clean tree.
+
+### 2026-10-04 — main — milestone: ✅ Implement complete
+- The user approved Implement: 23 of 23 tasks in 23 commits (`ee004ca` to `15153c5`), and `bash tests/run.sh` passes 19 of 19. tasks.md frontmatter is set to `status: complete`.
+- Two deviations are logged in tasks.md, with no design change. The MAJOR version bump for retiring `plan` is left to Deploy.
+- Next: the Test phase.
