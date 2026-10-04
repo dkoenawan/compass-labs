@@ -2,7 +2,7 @@
 session: 2026-09-28-design-phase-structure
 type: feature
 issue: 27
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Test gate: resolve VER-025 (explore doc) and VER-015 (github.com check)"
+next_step: "Deploy: hand off to compass-labs:deploy (release.md, MAJOR version bump)"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Test gate: resolve VER-025 (explore doc) and VER-015 (github.com che
 
 ## Key decisions
 
+- **2026-10-04**: ✅ Test complete — 32 of 32 VER-* pass across 30 live REQs; traceability gate passes at `39dcc7a`.
 - **2026-10-04**: Stale `plan` mentions (explore overview, doc-maintainer:501) to be fixed now in an Implement fix pass. VER-015 passes on the user's github.com check.
 - **2026-10-04**: ✅ Implement complete — 23 of 23 tasks, 19 of 19 tests pass; `plan` retired; MAJOR version bump left to Deploy.
 - **2026-10-04**: tasks.md approved (23 tasks, Should work last). The mermaid-cli render test skips when the tool is missing.
@@ -264,3 +265,19 @@ next_step: "Test gate: resolve VER-025 (explore doc) and VER-015 (github.com che
 
 ### 2026-10-04 — main — handoff: orchestrator → compass-labs:implement (fix pass: stale `plan` mentions)
 - **Input:** remove `plan` as a live caller from `docs/explanation/explore/overview.md:13` and `skills/doc-maintainer/SKILL.md:501`. Add a `docs_test.sh` assertion if one fits. Commit, run tests, don't push.
+- **Output:** done; explore overview, doc-maintainer SKILL.md and docs_test.sh changed (commit `39dcc7a`)
+
+### 2026-10-04 — implement — attempt: Fix pass: plan no longer a live caller or producer (Test findings)
+- `docs/explanation/explore/overview.md:13` no longer lists `plan` as a caller of Explore (REQ-023, VER-025).
+- `skills/doc-maintainer/SKILL.md:501` no longer names `plan` as a writer of construct files. The rest of the plan-format step is untouched (#41).
+- `docs_test.sh` now also catches "by `plan`", "`plan` and" and "`plan`/" phrasings in README and docs. `bash tests/run.sh`: 19 of 19 pass. Commit `39dcc7a`.
+
+### 2026-10-04 — test — attempt: verification.md updated at 39dcc7a; all 32 checks pass
+- VER-015 (REQ-014) is now a pass, based on the user's hand count on github.com at `755bcb2`: all diagrams in the four new standard and template files rendered, and none showed as source text.
+- VER-022 (REQ-021) and VER-025 (REQ-023) were re-run at `39dcc7a`, after the fix that drops `plan` as a live caller in the explore overview and as a construct producer in the doc-maintainer skill. Both pass, and `docs_test.sh` now catches more phrasings.
+- At `39dcc7a`: `bash tests/run.sh` passes 19 of 19, and `check-traceability.sh` exits 0. 32 of 32 checks pass, and all 30 live REQs are covered.
+
+### 2026-10-04 — main — milestone: ✅ Test complete
+- The user approved verification.md: 32 of 32 checks pass across the 30 live REQs. The orchestrator re-ran `check-traceability.sh` (exit 0) and `bash tests/run.sh` (19 of 19) at `39dcc7a` before the gate.
+- Known limit: the new Design path hasn't run end to end, so REQ-035's "no past-session reads" part is verified against the rules only.
+- Next: the Deploy phase, including the MAJOR version bump for retiring `plan`.
