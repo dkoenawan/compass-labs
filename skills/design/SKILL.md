@@ -41,6 +41,22 @@ Design has **no depth tiers of its own**. Its depth follows the tier and scope t
 - A short-tier Define output with two backend requirements gives a design whose only layer design is the backend's.
 - Don't record a Design tier. Name Define's tier where depth needs explaining.
 
+## Prior knowledge
+
+Design builds on what the project already knows. Read prior knowledge **only** from these sources:
+
+- **The project documentation:** `docs/explanation/`, `docs/reference/` and `docs/registry/` (its `index.md`, `patterns.md` and the ADRs in `decisions/`).
+- **The repository's code and manifests:** the established stack, existing modules, and the constructs the design extends.
+- **The current session's folder:** the frozen `define/` output and this session's own `log.md`.
+
+**Never read a past session folder.** That means anything under `docs/sessions/` other than the current session, `docs/sessions/archive/` included. Use no tool to reach one: no Read, Glob or Grep, and no Bash `cat`, `grep -r` or `find` that descends into `docs/sessions/`. Past session folders hold drafts, abandoned options and decisions that were later reversed. What a past session actually shipped was folded back into the project documentation at Close, so read it there. If a registry construct has a `planned_in` pointer into `docs/sessions/`, ignore the pointer and use the construct's own doc and the code.
+
+**Record what you read.** Under a "Prior knowledge" heading in `design/index.md`, list the docs and code you read, and the sources you deliberately didn't read (past sessions). Cite a doc wherever the design reuses something from it.
+
+**With no project documentation** (no `docs/`, or none of the folders above), design from the frozen Define output and the code alone, and write this sentence in the Prior knowledge section:
+
+> No project documentation found; designed from the Define output and the code.
+
 ## All-kinds sections
 
 Every design has these sections in `design/index.md`, whatever its kind. The template has a heading for each, and the Design gate checks the first four.

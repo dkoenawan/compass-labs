@@ -49,6 +49,18 @@ while IFS= read -r line; do
   fi
 done < <(grep -iE 'design (depth )?tiers?' "$SKILL" || true)
 
+# --- Prior-knowledge rule (DES-002, REQ-035, REQ-036) ------------------------
+
+assert_contains "$content" "## Prior knowledge" "SKILL.md should have the prior-knowledge rule"
+for src in "docs/explanation/" "docs/reference/" "docs/registry/"; do
+  assert_contains "$content" "$src" "prior knowledge should include $src"
+done
+assert_contains "$content" "Never read a past session folder" "prior knowledge should forbid past session folders"
+assert_contains "$content" "docs/sessions/archive/" "the rule should name the archive explicitly"
+assert_contains "$content" "planned_in" "the rule should say to ignore planned_in pointers"
+assert_contains "$content" "No project documentation found; designed from the Define output and the code." \
+  "the rule should give the no-docs sentence"
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do
