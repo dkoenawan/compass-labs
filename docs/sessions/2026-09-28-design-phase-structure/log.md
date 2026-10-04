@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: design
 active_agent: main
-next_step: "Implement: hand off to compass-labs:implement (tasks.md from design.md)"
+next_step: "Implement: execute tasks.md from task 1"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Implement: hand off to compass-labs:implement (tasks.md from design.
 
 ## Key decisions
 
+- **2026-10-04**: tasks.md approved (23 tasks, Should work last). The mermaid-cli render test skips when the tool is missing.
 - **2026-10-04**: ✅ Design complete — DES-001 to DES-017 cover all 30 live REQs; DES-006 and DES-014 trade-offs accepted; notation quality in #55.
 - **2026-10-04**: Notation quality standards (a cited source plus a checklist for each notation) deferred to #55 as an enhancement. No REQ added and Define stays frozen.
 - **2026-09-28**: Design choices settled. Plugin/tooling kind. ADRs written at Close. notations.md catalogue. Flowchart + table delta. design/ folder + check-design.sh. Design agent gets Bash (render only). skills/{layer}/ home. No stubs. plan deleted. stack-defaults.md. Claude Design zip + PNGs.
@@ -200,3 +201,19 @@ next_step: "Implement: hand off to compass-labs:implement (tasks.md from design.
 - The two *traded off* principles marks are resolved by the approval: DES-006 (the weight of the principles check) and DES-014 (Bash for rendering).
 - Notation quality standards are deferred to #55.
 - Next: the Implement phase. It has to verify the render commands and that preload works with the shared name `design` (see Risks).
+
+## Phase: Implement
+
+### 2026-10-04 — main — handoff: orchestrator → compass-labs:implement (tasks.md from frozen design.md)
+- **Input:** turn the frozen design.md (DES-001 to DES-017, with their dependencies and checks) into a task-executor-format tasks.md. Should REQs (010, 016, 017, 020, 023) go last. Return needs_input for the user to approve the task list before executing it. Early tasks verify the render commands and preload under the shared name `design`. Notation quality is out of scope (#55).
+- **Output:** needs_input (task-list approval; how to run the mermaid-cli render test); tasks.md written, not yet committed
+
+### 2026-10-04 — implement — attempt: tasks.md drafted from the frozen design.md (23 tasks), awaiting approval
+- There are 23 tasks covering DES-001 to DES-017, ordered by the design's Depends on column. Tasks 1–2 verify the render commands (mermaid-cli, bpmn-to-image, a headless-chrome screenshot) and the `compass-labs:design` preload under the shared name `design`. If the preload fails, the skill is renamed `solution-design` and the rename is logged as a deviation.
+- The Should REQs (010, 016, 017, 020, 023) are tasks 19–23. The Should parts of DES-007 (REQ-010) and DES-012 (REQ-020) are split into their own late tasks.
+- Notation quality (#55) and #46–#54 are out of scope. Baseline `bash tests/run.sh`: 15 of 15 pass. No task has been executed.
+- Open choice for the user: the mermaid-cli render test (DES-008 check) would skip when the tool is missing, keeping the harness bash and jq only.
+
+### 2026-10-04 — main — decision: tasks.md approved; the render test skips when mermaid-cli is missing
+- The user approved the 23-task list, including splitting DES-007 and DES-012 into Must and Should parts.
+- DES-008's render check: `tests/session/design_notations_test.sh` renders each block with mermaid-cli when it's available and skips with a message when it isn't. The harness stays bash and jq only. This was the recommended option; the user said "let's do" without picking one.
