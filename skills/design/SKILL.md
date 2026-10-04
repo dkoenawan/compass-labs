@@ -11,4 +11,5 @@ Read these only when the step that needs them comes up.
 
 | File | Read it when |
 |---|---|
+| [`reference/notations.md`](reference/notations.md) | Drawing any visual: the notation for the kind, the delta styling, captions, and rendering (including non-Mermaid sources and Claude Design screenshots) |
 | [`reference/stack-defaults.md`](reference/stack-defaults.md) | A stack area is in scope: detect an established stack, or propose the default |
