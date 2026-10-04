@@ -130,6 +130,22 @@ Bare *met* marks keep the table compact. Spell out only what isn't obvious.
 
 **Rejected under YAGNI.** Any component, option or `DES-*` item that serves no live `REQ-*` is rejected. List it under "Rejected under YAGNI" in the principles check, with the reason, and design nothing for it. For example, a multi-channel notification framework is rejected when the only live requirement is email preferences.
 
+## Design → Implement handoff
+
+Implement builds from the Components (DES) table in `design/index.md`, so the table must be complete on its own. Its columns, in this order:
+
+| Column | Holds |
+|---|---|
+| ID | `DES-001`, `DES-002`, … sequential and never reused, always the first column |
+| Component | The component or layer, and the file or location it lives in |
+| Covers | The live `REQ-*` it delivers |
+| Result | What Implement must produce, concretely, for example "a `NotificationPreference` table related to `User`, created by a migration" |
+| Check | How to tell the result is done, for example "the migration applies to a copy of the current database, and existing users keep their data" |
+
+Refer to requirements by ID, and don't restate their text.
+
+**Coverage self-check.** Before returning `done`, list every live `REQ-*` in the frozen `define/requirements.md` (deferred and struck rows need none) and confirm that each one appears in at least one Covers cell. Record the result under the table, for example "Coverage: all 12 live REQs covered". If a live requirement isn't covered, add or extend a `DES-*` item, or raise it with the user. Never leave it silently uncovered.
+
 ## On-demand files
 
 Read these only when the step that needs them comes up.

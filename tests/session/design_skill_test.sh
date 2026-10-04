@@ -88,6 +88,14 @@ done
 assert_contains "$content" "Rejected under YAGNI" "SKILL.md should have the Rejected under YAGNI list"
 assert_contains "$content" "docs/registry/decisions/" "SKILL.md should say how ADRs are handled"
 
+# --- Design -> Implement handoff (DES-012) ----------------------------------
+
+assert_contains "$content" "## Design → Implement handoff" "SKILL.md should have the handoff contract"
+for col in ID Component Covers Result Check; do
+  assert_contains "$content" "| $col |" "handoff contract should define the column '$col'"
+done
+assert_contains "$content" "Coverage self-check" "SKILL.md should have the coverage self-check"
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do
