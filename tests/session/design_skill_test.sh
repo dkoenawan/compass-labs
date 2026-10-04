@@ -96,6 +96,15 @@ for col in ID Component Covers Result Check; do
 done
 assert_contains "$content" "Coverage self-check" "SKILL.md should have the coverage self-check"
 
+# --- Claude Design handoff (DES-013, REQ-033) -------------------------------
+
+assert_contains "$content" "## Claude Design handoff" "SKILL.md should have the Claude Design handoff"
+assert_contains "$content" "design/ui-handoff.md" "the handoff should name design/ui-handoff.md"
+assert_contains "$content" "assets/ui-design.zip" "the returned design should keep the zip at assets/ui-design.zip"
+assert_contains "$content" "assets/ui-{screen}.png" "the returned design should embed one PNG per screen"
+assert_contains "$content" "Never unzip it into the repo" "the zip should never be unzipped into the repo"
+assert_contains "$content" "Never specify visual values" "the handoff should forbid visual values"
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do

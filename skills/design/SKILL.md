@@ -146,6 +146,27 @@ Refer to requirements by ID, and don't restate their text.
 
 **Coverage self-check.** Before returning `done`, list every live `REQ-*` in the frozen `define/requirements.md` (deferred and struck rows need none) and confirm that each one appears in at least one Covers cell. Record the result under the table, for example "Coverage: all 12 live REQs covered". If a live requirement isn't covered, add or extend a `DES-*` item, or raise it with the user. Never leave it silently uncovered.
 
+## Claude Design handoff
+
+Design doesn't do visual UI design. That belongs to Claude Design. When the scope checklist marks **visual UI design** *in*, write `design/ui-handoff.md` from the template. It hands the visual work over and records what comes back.
+
+**The handoff** names what needs visual design and the constraints on it:
+
+- **Screens and components**: each screen and each component that needs visual design.
+- **The `REQ-*` each one serves.**
+- **States**: every state that needs a visual, for example loading, empty, saved, error, disabled.
+- **Behaviour constraints** from the frontend design: the content each element shows, what each interaction does, validation, and anything the component hierarchy or routes fix.
+
+**Never specify visual values.** No colour, font, typeface, size or spacing values go into the handoff or anywhere else in the design. The returned visual design decides them.
+
+**Returned visual design.** Claude Design returns an HTML zip export. The handoff's "Returned visual design" slot holds three things:
+
+1. **The zip, as-is**, at `assets/ui-design.zip`, linked. Never unzip it into the repo.
+2. **One PNG screenshot per screen**, at `assets/ui-{screen}.png`, embedded so reviewers see it on GitHub, which can't render HTML inline. Take the screenshots from a temp copy of the export, by the route in [`reference/notations.md`](reference/notations.md#screenshots-of-the-claude-design-export).
+3. **The Claude Design project link**, if there is one.
+
+The design doesn't wait for the visual design. The slot can be filled later in the session, and it stays empty until then.
+
 ## On-demand files
 
 Read these only when the step that needs them comes up.
