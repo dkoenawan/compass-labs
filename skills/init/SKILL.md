@@ -15,14 +15,16 @@ This skill creates a new full-stack project by cloning a pre-built template repo
 4. **Configures the project** - Updates names, docker-compose.yml, package.json
 5. **Brownfield-migrate mode** - Seeds an architecture registry from an existing codebase (run with `brownfield-migrate` argument)
 
-## Default Stack (Opinionated)
+## What the template contains
+
+The plugin's stack defaults live in one place, [`${CLAUDE_PLUGIN_ROOT}/skills/design/reference/stack-defaults.md`](../design/reference/stack-defaults.md). The template scaffolds those defaults. This table only describes what it contains:
 
 | Component | Technology |
 |-----------|------------|
 | Frontend | React + Vite + TypeScript |
 | Backend | Node.js + TypeScript + Prisma |
 | Database | PostgreSQL |
-| Infrastructure | Docker with docker-compose |
+| Local development | Docker with docker-compose (no infrastructure-as-code is scaffolded) |
 
 ## Usage
 

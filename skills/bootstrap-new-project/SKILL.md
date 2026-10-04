@@ -16,6 +16,8 @@ description: "[DEPRECATED] Bootstrap a new full-stack project - use /compass:ini
 
 This skill creates a complete full-stack project structure following systematic development best practices.
 
+> **Stack defaults** live in one place: [`${CLAUDE_PLUGIN_ROOT}/skills/design/reference/stack-defaults.md`](../design/reference/stack-defaults.md). This deprecated scaffold predates that file. It generates Swagger UI for API docs, where the default is Scalar, and it scaffolds no infrastructure-as-code (the default is Terraform). The defaults file wins wherever the two differ.
+
 ## What This Skill Does
 
 When invoked, this skill will:

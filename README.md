@@ -153,14 +153,7 @@ compass-labs/
 
 Initialize a new full-stack project from a template repository with opt-out component selection.
 
-**Default Stack (Opinionated):**
-
-| Component | Technology |
-|-----------|------------|
-| Frontend | React + Vite + TypeScript |
-| Backend | Node.js + TypeScript + Prisma |
-| Database | PostgreSQL |
-| Infrastructure | Docker with docker-compose |
+**What the template contains:** React + Vite + TypeScript (frontend), Node.js + TypeScript + Prisma (backend), PostgreSQL (database), and Docker with docker-compose for local development. These follow the plugin's stack defaults, stated once in [`skills/design/reference/stack-defaults.md`](skills/design/reference/stack-defaults.md). The Design phase proposes those defaults only where a repository has no established stack.
 
 **Usage:**
 ```bash
@@ -489,7 +482,7 @@ Captures a significant architecture decision as a MADR-format ADR. A six-phase c
 
 #### `/compass-labs:bootstrap-new-project` (Deprecated)
 
-> **Deprecated**: Use `/compass-labs:init` instead. This skill generates files directly which is less token-efficient.
+> **Deprecated**: Use `/compass-labs:init` instead. This skill generates files directly which is less token-efficient. It predates the [stack defaults](skills/design/reference/stack-defaults.md): it generates Swagger UI rather than Scalar, and no infrastructure-as-code.
 
 Bootstrap a complete full-stack project with systematic structure and best practices.
 
