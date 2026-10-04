@@ -81,7 +81,7 @@ Classify the solution as one primary kind. A solution that spans areas still has
 
 | Kind | In-depth path | Typical signs in the requirements |
 |---|---|---|
-| Three-tier application | `kinds/three-tier.md` | A user interface, an API or service, and stored data, changing together |
+| Three-tier application | [`kinds/three-tier.md`](kinds/three-tier.md) | A user interface, an API or service, and stored data, changing together |
 | Process/workflow | none yet: dkoenawan/compass-labs#49 | Steps, hand-offs, approvals or roles change; little or no code |
 | Infrastructure | none yet: dkoenawan/compass-labs#50 | Hosting, networking, deployment or cloud resources change |
 | Plugin/tooling | none yet: dkoenawan/compass-labs#51 | Developer tooling, plugins, scripts, CLIs or agent skills |
@@ -173,5 +173,6 @@ Read these only when the step that needs them comes up.
 
 | File | Read it when |
 |---|---|
+| [`kinds/three-tier.md`](kinds/three-tier.md) | The primary kind is three-tier application: the whole-system design, its approval step and the layer contract |
 | [`reference/notations.md`](reference/notations.md) | Drawing any visual: the notation for the kind, the delta styling, captions, and rendering (including non-Mermaid sources and Claude Design screenshots) |
 | [`reference/stack-defaults.md`](reference/stack-defaults.md) | A stack area is in scope: detect an established stack, or propose the default |

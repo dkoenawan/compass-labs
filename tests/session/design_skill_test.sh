@@ -105,6 +105,20 @@ assert_contains "$content" "assets/ui-{screen}.png" "the returned design should 
 assert_contains "$content" "Never unzip it into the repo" "the zip should never be unzipped into the repo"
 assert_contains "$content" "Never specify visual values" "the handoff should forbid visual values"
 
+# --- Three-tier in-depth path (DES-004, REQ-004, REQ-032) ---------------------
+
+THREE_TIER="$SKILL_DIR/kinds/three-tier.md"
+[[ -f "$THREE_TIER" ]] || fail "skills/design/kinds/three-tier.md not found"
+tt="$(cat "$THREE_TIER")"
+assert_contains "$tt" "design/solution.md" "three-tier should write the whole-system design to design/solution.md"
+for part in "Layers" "Contracts between changing layers" "C4 L1 context view" "C4 L2 container view"; do
+  assert_contains "$tt" "$part" "three-tier whole-system design should have '$part'"
+done
+assert_contains "$tt" "Write no layer file until the user approves" "three-tier should require approval before any layer file"
+assert_contains "$tt" "## Example: notification preferences" "three-tier should have the notification-preferences example"
+assert_contains "$tt" "save-preferences API" "the example should name the frontend-backend contract"
+assert_contains "$tt" "*unchanged*" "the example should show an unchanged layer (REQ-032)"
+
 # --- On-demand files exist -------------------------------------------------
 
 while IFS= read -r link; do
