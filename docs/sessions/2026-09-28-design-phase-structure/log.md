@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
 active_agent: main
-next_step: "Test: hand off to compass-labs:test (verification.md, VER-* per REQ)"
+next_step: "Test gate: resolve VER-025 (explore doc) and VER-015 (github.com check)"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Test: hand off to compass-labs:test (verification.md, VER-* per REQ)
 
 ## Key decisions
 
+- **2026-10-04**: Stale `plan` mentions (explore overview, doc-maintainer:501) to be fixed now in an Implement fix pass. VER-015 passes on the user's github.com check.
 - **2026-10-04**: ✅ Implement complete — 23 of 23 tasks, 19 of 19 tests pass; `plan` retired; MAJOR version bump left to Deploy.
 - **2026-10-04**: tasks.md approved (23 tasks, Should work last). The mermaid-cli render test skips when the tool is missing.
 - **2026-10-04**: ✅ Design complete — DES-001 to DES-017 cover all 30 live REQs; DES-006 and DES-014 trade-offs accepted; notation quality in #55.
@@ -235,3 +236,31 @@ next_step: "Test: hand off to compass-labs:test (verification.md, VER-* per REQ)
 - The user approved Implement: 23 of 23 tasks in 23 commits (`ee004ca` to `15153c5`), and `bash tests/run.sh` passes 19 of 19. tasks.md frontmatter is set to `status: complete`.
 - Two deviations are logged in tasks.md, with no design change. The MAJOR version bump for retiring `plan` is left to Deploy.
 - Next: the Test phase.
+
+## Phase: Test
+
+### 2026-10-04 — main — handoff: orchestrator → compass-labs:test (verify 30 live REQs)
+- **Input:** write verification.md with VER-* rows that verify each of the 30 live REQs in the frozen define/requirements.md against the branch head, using each DES item's Check column and the acceptance criteria. Deferred REQs (#46–#54) and #55 are out of scope. Run check-traceability.sh before returning done.
+- **Output:** done (traceability passes; VER-025 fails in part, VER-015 pending a github.com check); verification.md written, not yet committed
+
+### 2026-10-04 — test — attempt: verification.md ready, 32 checks covering 30 live REQs; traceability gate passes
+- Checked at `755bcb2`: `bash tests/run.sh` passes 19 of 19, and `check-traceability.sh` exits 0. Each check follows its requirement's acceptance criterion and the Check column of the design item that covers it.
+- Executed checks:
+  - REQ-024: a comparison against `main` on the archived #22 and #23 sessions gave 774 identical guard and traceability results.
+  - REQ-017: a test design with no Delta list is refused with "delta list missing" and exit 1.
+  - REQ-015: the documented BPMN render command produces an SVG.
+  - REQ-014: mermaid-cli renders all 10 Mermaid diagrams, and GitHub's Markdown API marks each one as a diagram.
+  - REQ-018: all 30 live REQs appear in a Covers cell of `design.md`.
+  - REQ-010 and REQ-021: greps found every default-stack statement links to `stack-defaults.md`, and nothing invokes `plan`.
+- Limit: the new Design path hasn't run end to end yet, so checks of a running session's outputs inspect the standard, templates, gate and agent rules instead.
+
+### 2026-10-04 — test — note: REQ-023 partial fail and REQ-014 github.com hand count still to do
+- VER-025 fails: `docs/explanation/explore/overview.md:13` still describes `plan` as a live caller of Explore. The README criterion passes (VER-024). The fix is a one-line edit outside Test's artifact.
+- VER-015 is pending: a reviewer needs to open the four new standard and template files on github.com at `755bcb2` and confirm no diagram shows as source text. A headless screenshot couldn't tell, because GitHub's diagram frame won't load in headless Chrome, which also fails on the already-approved `define/diagrams.md`.
+
+### 2026-10-04 — main — decision: fix the stale `plan` mentions now; VER-015 confirmed on github.com
+- VER-025: the user chose to fix both stale lines now: `docs/explanation/explore/overview.md:13` and `skills/doc-maintainer/SKILL.md:501`. An Implement fix pass edits them, then Test re-runs VER-025 and VER-022.
+- VER-015: the user opened the four standard and template files on github.com at `755bcb2`. Every diagram renders and none shows as source text, so VER-015 passes.
+
+### 2026-10-04 — main — handoff: orchestrator → compass-labs:implement (fix pass: stale `plan` mentions)
+- **Input:** remove `plan` as a live caller from `docs/explanation/explore/overview.md:13` and `skills/doc-maintainer/SKILL.md:501`. Add a `docs_test.sh` assertion if one fits. Commit, run tests, don't push.
