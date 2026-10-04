@@ -422,8 +422,8 @@ Registry bootstrapped:
     001-initial-stack-choices.md  (stack decision captured)
   CLAUDE.md updated               (agent navigation protocol injected)
 
-Next: run /compass:plan to design your first feature. The plan skill
-will read the registry before proposing anything new.
+Next: run /compass-labs:session to start your first feature. Its Design
+phase reads the project docs and registry before proposing anything new.
 ```
 
 ---
@@ -661,5 +661,5 @@ Summary:
 Next steps:
   1. Review each stub in docs/reference/constructs/ — fix inferred descriptions
   2. Run /compass:explore to fill Known Gaps one area at a time
-  3. Run /compass:plan — it will now read the registry before designing
+  3. Run /compass-labs:session — its Design phase will now read the registry before designing
 ```

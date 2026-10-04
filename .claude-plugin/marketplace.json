@@ -21,7 +21,6 @@
         "./skills/explore",
         "./skills/framing",
         "./skills/init",
-        "./skills/plan",
         "./skills/post-hook-validator",
         "./skills/problem-statement",
         "./skills/requirements",
