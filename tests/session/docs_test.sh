@@ -45,7 +45,7 @@ while IFS= read -r hit; do
   [[ -z "$hit" ]] && continue
   grep -qiE 'retired|removed|no longer' <<<"$hit" \
     || fail "plan is described as a live skill: $hit"
-done < <(cd "$REPO_ROOT" && grep -rnE 'compass(-labs)?:plan\b|skills/plan\b|`plan` skill|the plan skill' \
+done < <(cd "$REPO_ROOT" && grep -rnE 'compass(-labs)?:plan\b|skills/plan\b|`plan` skill|the plan skill|(by|from) `plan`|`plan`/|`plan` and' \
   README.md docs --include='*.md' \
   | grep -vE '^docs/(sessions|registry/decisions|explanation/reviews)/' || true)
 

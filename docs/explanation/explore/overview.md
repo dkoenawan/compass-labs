@@ -10,7 +10,7 @@ source_path: skills/explore
 
 ## What Is Explore?
 
-Explore is a token-efficient codebase investigation capability whose primary object is an **InvestigationReport** — a structured summary that answers a specific question about a codebase by reading the minimum number of files necessary. It distils large codebases into essential architectural knowledge without broad file scanning, making it the preferred entry point for any task that requires understanding an unfamiliar codebase or a specific domain before acting. Explore is both a standalone skill developers invoke directly and an internal dependency called automatically by `plan` and `doc-maintainer`.
+Explore is a token-efficient codebase investigation capability whose primary object is an **InvestigationReport** — a structured summary that answers a specific question about a codebase by reading the minimum number of files necessary. It distils large codebases into essential architectural knowledge without broad file scanning, making it the preferred entry point for any task that requires understanding an unfamiliar codebase or a specific domain before acting. Explore is both a standalone skill developers invoke directly and an internal dependency called automatically by `doc-maintainer`.
 
 ## How It Works
 
