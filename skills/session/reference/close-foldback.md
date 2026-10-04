@@ -6,13 +6,13 @@ Close produces **no session artifact** of its own (`artifact: null` in `feature.
 
 ## Steps
 
-1. **Read, don't write, the session's own record**: the frozen `define/` folder (or the root `requirements.md` in a past session), `design.md`, and `log.md`'s **Key decisions** section (never write `log.md` — you return `log_entries` like every other phase agent).
+1. **Read, don't write, the session's own record**: the frozen `define/` folder (or the root `requirements.md` in a past session), the frozen `design/` folder (or the root `design.md` in a past session), and `log.md`'s **Key decisions** section (never write `log.md` — you return `log_entries` like every other phase agent).
 2. **Run a `doc-maintainer` pass** to update the repo's as-built docs:
    - `docs/reference/` and `docs/explanation/` — reflect what's now true about the system, not what happened to get there.
    - `docs/registry/index.md` and `docs/reference/constructs/*.md` — flip any construct this session built from `planned` to `built` (or add new ones the session introduced), the same way `task-executor` does per-task.
    - **No session narrative anywhere in as-built docs.** No "we discussed," no "first we tried X, then...". That story stays in the archived session folder, not in the flat docs.
    - Add exactly **one `Origin: #{issue}` line** to each doc file you touch — a stable pointer back to the session's GitHub issue (which persists after archive; the session path inside the archived folder is the fuller "why," reachable from the issue if anyone needs it).
-   - **Map Define's output section by section**, using [Folding back `define/`](#folding-back-define) below. A section that's still true once the feature has shipped is rewritten as current fact; anything about how we got there stays in the archive.
+   - **Map Define's and Design's output section by section**, using [Folding back `define/`](#folding-back-define) and [Folding back `design/`](#folding-back-design) below. A section that's still true once the feature has shipped is rewritten as current fact; anything about how we got there stays in the archive.
    - **No session IDs in as-built docs.** Never cite a specific session's `REQ-*`, `DES-*` or `VER-*` ID (like `REQ-004`) in `docs/`: those IDs only mean something inside their session, and every session has a `REQ-001`. The `Origin: #{issue}` line is the only way back. Naming the ID *scheme* (`REQ-*`, "REQ → DES → task → VER") is fine where it's current fact about the session system itself. Before returning `done`, grep every doc you touched for `(REQ|DES|VER)-[0-9]` and rewrite any hit.
 3. **Return `done`** with `log_entries` including one `note` entry (e.g. `Fold-back ready — folded requirements/design into <list of doc files>`) summarizing what was folded back and where. Phase agents never emit `milestone` entries (contract rule 6): the orchestrator writes the `✅ Session closed` milestone itself at the gate, then does the archive move (see below) — that's what actually finishes the session.
 
@@ -39,6 +39,19 @@ Tutorials and how-to guides don't come from Define. A how-to comes from Implemen
 **Past sessions.** A session from before the `define/` folder keeps its root `requirements.md`; it's never migrated. Map it by section: its problem statement like `problem.md`, its `REQ-*` table like `requirements.md`, and the rest like `index.md`.
 
 **`doc-maintainer`'s session step.** `doc-maintainer`'s Step 2.S1 still expects the old plan-format `overview.md` (#41). For a session run through this lifecycle, the mapping above is what you follow.
+
+## Folding back `design/`
+
+The same rule applies: what's true of the shipped system goes into the docs tree as current fact, and the rest stays archived.
+
+| Design doc and section | Destination | Diátaxis |
+|---|---|---|
+| `index.md`: Decisions flagged "ADR" | One ADR each in `docs/registry/decisions/`, numbered at Close (the next free `ADR-nnn`), with the options, the choice and the reason. A decision that refines an existing ADR says so and links it | Explanation |
+| `index.md`: Decisions that link an existing ADR, or that aren't flagged | Stay in the archive. The linked ADR already holds the decision | — |
+| `index.md`: Context view; `solution.md`: the in-depth design (for three-tier, the whole-system design and its C4 views) | The domain overview's architecture and "How it works" sections, redrawn without delta styling, as the system is now | Explanation |
+| Everything else: Classification, Scope checklist, Delta list, Components (DES), Principles check, Risks, Open questions, the layer designs and `ui-handoff.md` | Stays in the archive. These describe the change, not the result, and they cite session IDs. The as-built behaviour reaches `docs/reference/` through the requirements mapping above | — |
+
+**Past sessions.** A session from before the `design/` folder keeps its root `design.md`; it's never migrated. Map its Decisions like `index.md`'s Decisions (an ADR link stays a link), and its approach like the solution design. The rest stays in the archive.
 
 ## What you don't do
 

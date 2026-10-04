@@ -89,6 +89,14 @@ implement_agent="$(cat "$REPO_ROOT/agents/implement.md")"
 assert_contains "$implement_agent" "design/index.md" "agents/implement.md should read design/index.md"
 assert_contains "$implement_agent" "the root \`design.md\`" "agents/implement.md should still read a past session's design.md"
 
+# Close reads design/ (or a past session's design.md) and folds flagged
+# decisions into ADRs (#27 DES-017).
+foldback="$(cat "$REPO_ROOT/skills/session/reference/close-foldback.md")"
+assert_contains "$foldback" "the frozen \`design/\` folder (or the root \`design.md\` in a past session)" \
+  "close-foldback.md step 1 should read design/ or a past session's design.md"
+assert_contains "$foldback" "## Folding back \`design/\`" "close-foldback.md should map design/ sections"
+assert_contains "$foldback" "Decisions flagged \"ADR\"" "close-foldback.md should turn flagged decisions into ADRs"
+
 # Deploy must refuse to ship an incomplete product (release-completeness check),
 # and the Deploy gate + release.md template must carry it through.
 assert_contains "$(cat "$REPO_ROOT/agents/deploy.md")" "Never ship an incomplete product" \
