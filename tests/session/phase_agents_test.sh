@@ -19,10 +19,12 @@ CONTRACT="$REPO_ROOT/skills/session/reference/phase-agent-contract.md"
 
 [[ -f "$CONTRACT" ]] || fail "shared phase-agent-contract.md reference not found"
 
-# phase -> should this agent's tools include Bash?
+# phase -> should this agent's tools include Bash? Design is conversational
+# but renders and checks its own visuals (#27 D6, DES-014), under a Bash
+# rule checked below.
 declare -A wants_bash=(
   [define]=no
-  [design]=no
+  [design]=yes
   [implement]=yes
   [test]=yes
   [deploy]=yes
@@ -64,6 +66,23 @@ while IFS=$'\t' read -r phase owner_agent; do
       "agents/${phase}.md (conversational phase) should not need Bash"
   fi
 done < <(jq -r '.phases[] | [.phase, .owner_agent] | @tsv' "$WORKFLOW")
+
+# The Design agent (#27 DES-014): preloads the design skill, keeps the
+# read-it-yourself fallback, writes design/, has its Bash rule, no TODO.
+design_agent="$(cat "$REPO_ROOT/agents/design.md")"
+design_frontmatter="$(awk 'NR==1{next} /^---$/{exit} {print}' "$REPO_ROOT/agents/design.md")"
+assert_contains "$design_frontmatter" "  - compass-labs:design" \
+  "agents/design.md should preload compass-labs:design"
+assert_contains "$design_agent" "skills/design/SKILL.md" \
+  "agents/design.md should keep the read-SKILL.md-yourself fallback"
+assert_contains "$design_agent" "design/" "agents/design.md should write the design/ folder"
+assert_contains "$design_agent" "Bash is for rendering and render checks only" \
+  "agents/design.md should carry the Bash rule"
+assert_contains "$design_agent" "Never run \`git\`" "the Bash rule should forbid git"
+assert_contains "$design_agent" "assets/" "the Bash rule should limit outputs to assets/ or a temp directory"
+assert_contains "$design_agent" "Never read a past session folder" \
+  "agents/design.md should forbid reading past session folders"
+assert_not_contains "$design_agent" "TODO" "agents/design.md should have no TODO left"
 
 # Deploy must refuse to ship an incomplete product (release-completeness check),
 # and the Deploy gate + release.md template must carry it through.
