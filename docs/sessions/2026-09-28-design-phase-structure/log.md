@@ -2,7 +2,7 @@
 session: 2026-09-28-design-phase-structure
 type: feature
 issue: 27
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: design
 active_agent: main
-next_step: "Design gate: user approves design.md (#55 deferred)"
+next_step: "Implement: hand off to compass-labs:implement (tasks.md from design.md)"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Design gate: user approves design.md (#55 deferred)"
 
 ## Key decisions
 
+- **2026-10-04**: ✅ Design complete — DES-001 to DES-017 cover all 30 live REQs; DES-006 and DES-014 trade-offs accepted; notation quality in #55.
 - **2026-10-04**: Notation quality standards (a cited source plus a checklist for each notation) deferred to #55 as an enhancement. No REQ added and Define stays frozen.
 - **2026-09-28**: Design choices settled. Plugin/tooling kind. ADRs written at Close. notations.md catalogue. Flowchart + table delta. design/ folder + check-design.sh. Design agent gets Bash (render only). skills/{layer}/ home. No stubs. plan deleted. stack-defaults.md. Claude Design zip + PNGs.
 - **2026-09-28**: ✅ Define complete — 30 live REQs, 9 deferred (#46–#54), anchor aligns.
@@ -193,3 +194,9 @@ next_step: "Design gate: user approves design.md (#55 deferred)"
 - The user chose a follow-up issue over reopening Define or stretching REQ-013. Created #55, linked to #27 and this session.
 - Agreed shape for #55: for each notation, cite an authoritative source (for example c4model.com, OMG BPMN 2.0.2 with Silver's Method and Style, crow's-foot conventions and normal forms) and write a short pass/fail checklist that Design records per visual.
 - design.md is unchanged; the Design gate continues.
+
+### 2026-10-04 — main — milestone: ✅ Design complete
+- The user approved design.md: DES-001 to DES-017 cover all 30 live REQs. The delta has 8 new, 11 changed, 2 deprecated and 4 unchanged elements.
+- The two *traded off* principles marks are resolved by the approval: DES-006 (the weight of the principles check) and DES-014 (Bash for rendering).
+- Notation quality standards are deferred to #55.
+- Next: the Implement phase. It has to verify the render commands and that preload works with the shared name `design` (see Risks).
