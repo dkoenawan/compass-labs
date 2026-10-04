@@ -84,6 +84,11 @@ assert_contains "$design_agent" "Never read a past session folder" \
   "agents/design.md should forbid reading past session folders"
 assert_not_contains "$design_agent" "TODO" "agents/design.md should have no TODO left"
 
+# Implement reads the new design/ folder, or a past session's design.md (#27 DES-012).
+implement_agent="$(cat "$REPO_ROOT/agents/implement.md")"
+assert_contains "$implement_agent" "design/index.md" "agents/implement.md should read design/index.md"
+assert_contains "$implement_agent" "the root \`design.md\`" "agents/implement.md should still read a past session's design.md"
+
 # Deploy must refuse to ship an incomplete product (release-completeness check),
 # and the Deploy gate + release.md template must carry it through.
 assert_contains "$(cat "$REPO_ROOT/agents/deploy.md")" "Never ship an incomplete product" \
