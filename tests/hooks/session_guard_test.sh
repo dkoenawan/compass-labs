@@ -92,8 +92,8 @@ assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/assets/diagram.png" 
 repo="$(new_fixture_repo)"
 session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" define active none)"
 git_commit_all "$repo" "initial fixture"
-assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design.md" "$repo" agent-1 compass-labs:define)" 2 \
-  "define agent writing design.md should be blocked (wrong owner)"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/index.md" "$repo" agent-1 compass-labs:define)" 2 \
+  "define agent writing design/index.md should be blocked (wrong owner)"
 assert_hook_stderr_contains "owned by"
 
 # 7. Owner subagent is allowed (artifact not yet frozen).
@@ -190,8 +190,8 @@ assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/sub/x.md" "$r
 assert_hook_stderr_contains "unknown subdirectory"
 
 # 18b. A subdirectory that isn't a declared folder artifact -> unknown subdirectory.
-assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/notes.md" "$repo" agent-1 compass-labs:design)" 2 \
-  "design/notes.md should be blocked: design/ is not a folder artifact"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/notes/x.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "notes/x.md should be blocked: notes/ is not a folder artifact"
 assert_hook_stderr_contains "unknown subdirectory"
 
 # 19. The folder is owned as a unit: the design agent can't write in it.
@@ -253,6 +253,53 @@ git_commit_all "$repo" "initial fixture"
 CLAUDE_PLUGIN_ROOT="$repo" assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/define/index.md" "$repo")" 2 \
   "with an unreadable workflow, define/index.md should still be blocked"
 assert_hook_stderr_contains "unknown subdirectory"
+
+# --- Folder artifacts: design/ (#27 DES-010) ------------------------------
+
+# 25. The design agent writes design/index.md in a new session -> allowed.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" design active define)"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/index.md" "$repo" agent-1 compass-labs:design)" 0 \
+  "design agent writing design/index.md in a new session should be allowed"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/backend.md" "$repo" agent-1 compass-labs:design)" 0 \
+  "design agent writing design/backend.md in a new session should be allowed"
+
+# 26. A file outside design/'s fixed set -> blocked.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/notes.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "design/notes.md is not one of design/'s files and should be blocked"
+assert_hook_stderr_contains "not one of design/'s files"
+
+# 27. A new session (no root design.md) can't create one.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "a new session creating a root design.md should be blocked"
+assert_hook_stderr_contains "new sessions write design/"
+
+# 28. design/ is owned as a unit: another phase's agent can't write in it.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/index.md" "$repo" agent-1 compass-labs:implement)" 2 \
+  "implement agent writing design/index.md should be blocked (wrong owner)"
+assert_hook_stderr_contains "owned by compass-labs:design"
+
+# 29. Frozen as a unit after the design milestone.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active design)"
+mkdir -p "$session_dir/design"
+echo "# Design" > "$session_dir/design/index.md"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/solution.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "a subagent writing design/solution.md after the design milestone should be blocked"
+assert_hook_stderr_contains "frozen"
+
+# 30. A past session with a root design.md keeps it and can't start design/.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" design active define)"
+echo "# Design" > "$session_dir/design.md"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/design.md" "$repo" agent-1 compass-labs:design)" 0 \
+  "a legacy session editing its own root design.md should be allowed"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/index.md" "$repo" agent-1 compass-labs:design)" 2 \
+  "a legacy session writing design/index.md should be blocked"
+assert_hook_stderr_contains "this session uses the root layout"
 
 echo "ok: session-guard.sh validated against all D7 rules"
 exit 0

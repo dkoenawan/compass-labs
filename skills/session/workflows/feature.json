@@ -19,6 +19,7 @@
     "file_allowlist": [
       "define/",
       "requirements.md",
+      "design/",
       "design.md",
       "tasks.md",
       "verification.md",
@@ -58,7 +59,16 @@
       "phase": "design",
       "order": 2,
       "owner_agent": "compass-labs:design",
-      "artifact": "design.md",
+      "artifact": "design/",
+      "artifact_files": [
+        "index.md",
+        "solution.md",
+        "frontend.md",
+        "backend.md",
+        "database.md",
+        "ui-handoff.md"
+      ],
+      "legacy_artifact": "design.md",
       "milestone": "Design complete",
       "gh_label": "phase:design",
       "gh_color": "1D76DB",
