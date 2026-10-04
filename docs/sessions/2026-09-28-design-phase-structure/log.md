@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Design gate: user reviews design.md"
+next_step: "Design gate: user approves design.md (#55 deferred)"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -24,9 +24,11 @@ next_step: "Design gate: user reviews design.md"
 
 - #39 (visual, type-specific design artifacts with a current → new delta) is covered by this session alongside #27.
 - Per-layer design work (frontend, backend, database) may be big enough for its own sub-issues. Flag and map them during Define and Design.
+- #55: a quality reference (cited source plus pass/fail checklist) for each notation in the catalogue. Deferred from the Design gate as an enhancement.
 
 ## Key decisions
 
+- **2026-10-04**: Notation quality standards (a cited source plus a checklist for each notation) deferred to #55 as an enhancement. No REQ added and Define stays frozen.
 - **2026-09-28**: Design choices settled. Plugin/tooling kind. ADRs written at Close. notations.md catalogue. Flowchart + table delta. design/ folder + check-design.sh. Design agent gets Bash (render only). skills/{layer}/ home. No stubs. plan deleted. stack-defaults.md. Claude Design zip + PNGs.
 - **2026-09-28**: ✅ Define complete — 30 live REQs, 9 deferred (#46–#54), anchor aligns.
 - **2026-09-28**: REQ-035 stays Design-only; widening it to every phase is deferred to #54 (REQ-039).
@@ -182,3 +184,12 @@ next_step: "Design gate: user reviews design.md"
 
 ### 2026-09-28 — design — attempt: design.md ready for the Design gate
 - DES-001 to DES-017 cover all 30 live REQs, with result, check and dependencies. The artifact has a context view, a delta list, options per decision, a principles check (two trade-offs for the user to resolve at the gate: DES-006 and DES-014) and risks. There are no open questions.
+
+### 2026-10-04 — main — note: Design gate — adjust: no quality standard per notation
+- The user raised a gap at the Design gate: the design says which notation each visual uses (REQ-013, `notations.md`) but not what makes a diagram in that notation good. There is no reference material or checklist for a good ERD or a good BPMN workflow, and no step checks a visual against one. Define has this through the `requirements` skill's ISO/IEC/IEEE 29148 rules; Design has no equivalent.
+- No live REQ asks for notation quality rules, so under REQ-038 Design can't add them alone. Asking the user how to scope it.
+
+### 2026-10-04 — main — decision: notation quality standards deferred to #55
+- The user chose a follow-up issue over reopening Define or stretching REQ-013. Created #55, linked to #27 and this session.
+- Agreed shape for #55: for each notation, cite an authoritative source (for example c4model.com, OMG BPMN 2.0.2 with Silver's Method and Style, crow's-foot conventions and normal forms) and write a short pass/fail checklist that Design records per visual.
+- design.md is unchanged; the Design gate continues.
