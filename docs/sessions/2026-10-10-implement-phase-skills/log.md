@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
 active_agent: compass-labs:define
-next_step: "Relay the user's framing answers (tier, need, layers, AI-agent meaning) to Define"
+next_step: "Define drafts requirements.md and quality.md against the agreed problem statement"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -23,11 +23,12 @@ next_step: "Relay the user's framing answers (tier, need, layers, AI-agent meani
 ## Open items
 
 - To decide (from the issue): the order to build the layer skills in, and whether Implement falls back to `task-executor` until a layer skill exists.
-- Follow-ups: #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. Infra placement (#50 or new) and appetite still open.
+- Follow-ups: #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50.
 - Work is on branch `feat/28-implement-phase-skills`.
 
 ## Key decisions
 
+- **2026-10-10**: Appetite = this one working session; infra Implement guidance goes to #50; #61 filed for a standard Define problem visual.
 - **2026-10-10**: Follow-ups filed — #57 frontend, #58 database, #59 AI-agent layer, #60 non-OpenAPI backend artifacts.
 - **2026-10-10**: Problem statement agreed — Implement produces nothing reviewable besides code; as-built record per DES-*, backend OpenAPI/Scalar check, variations raised at the gate and folded back by Close (in scope), unit+component vs integration/UI/Playwright boundary; non-OpenAPI deferred; unit tests may support VER.
 - **2026-10-10**: Framing: full tier; split = Implement standard + plug-in contract + backend first; #52 folded in; task-executor drift in scope; AI-agent = consuming-repo LLM-agent code; infra stays a Design kind.
@@ -75,3 +76,11 @@ next_step: "Relay the user's framing answers (tier, need, layers, AI-agent meani
 
 ### 2026-10-10 — main — decision: Deferred layers and non-OpenAPI artifacts filed as follow-up issues
 - #57 frontend Implement guidance and artifact (pairs #46); #58 database Implement guidance and artifact (pairs #48); #59 AI-agent layer design + Implement guidance (own anchor check); #60 non-OpenAPI backend API artifacts (GraphQL, gRPC).
+
+### 2026-10-10 — main — decision: Appetite one working session; infra to #50; Define visual standard to #61
+- Appetite: the user's words, "You can do it in this session". Scope stays as agreed; anything that doesn't fit becomes a follow-up issue.
+- Infrastructure Implement guidance added to #50's scope (comment posted on #50).
+- #61 filed: make the as-is/to-be problem-statement visual a standard part of Define.
+
+### 2026-10-10 — main — handoff: orchestrator → compass-labs:define (draft requirements)
+- **Input:** Problem statement agreed; appetite = this one session; infra → #50; follow-ups #57–#61 for the Deferred table. Draft requirements.md, quality.md, remaining diagrams.
