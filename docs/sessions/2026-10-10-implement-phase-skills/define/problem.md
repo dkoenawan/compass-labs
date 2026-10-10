@@ -79,5 +79,5 @@ Supporting:
 
 ### Appetite and no-gos
 
-- **Appetite:** to be agreed with the user (asked 2026-10-10).
+- **Appetite:** one working session (user, 2026-10-10: "You can do it in this session"). Requirements are sized to it as Must and Should; anything beyond it is in the Deferred table.
 - **No-gos:** see [Non-goals](index.md#non-goals).

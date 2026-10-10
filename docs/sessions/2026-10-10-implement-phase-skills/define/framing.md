@@ -74,7 +74,7 @@
   - Mission: "structures each piece of work as a session, from problem framing to a documented outcome." Variations reaching the as-built docs through Close makes the documented outcome match what was built.
   - Scope: "Hooks and scripts that enforce session structure and traceability." Any check of the built API against the design, or of the as-built record at the Implement gate, falls under this line.
   - Scope: "Supporting skills: … task execution …" Bringing `task-executor` in line keeps an existing supporting skill working.
-  - Scope: "Works in any repository, independent of tech stack." OpenAPI with Scalar is the backend *default*. A repo whose established backend has no OpenAPI (for example GraphQL or gRPC) still needs an API artifact in its own ecosystem (ADR-004 D10; see Open questions).
+  - Scope: "Works in any repository, independent of tech stack." OpenAPI with Scalar is the backend *default*. An established stack that produces OpenAPI is built in its own way (REQ-013). A backend with no OpenAPI (for example GraphQL or gRPC) is deferred to #60, where its own ecosystem's API description is checked (ADR-004 D10).
   - Non-goal: "Creating new methods where an established one exists." The backend artifact uses an established standard (OpenAPI), and the testing boundary uses the established unit, component and integration split.
   - Non-goal: "Replacing user approval at milestones." Variations are *raised* at the Implement gate for the user to decide on. Implement doesn't resolve them alone.
   - **Not judged here:** the AI-agent layer (code in consuming repos that builds LLM agents) is deferred to a sub-issue. It may *extend* Scope and must run its own anchor check.
@@ -95,15 +95,15 @@
 - **`close-foldback.md` (gap, central to NEED-03):**
   - Its map has no row for Implement's output, so variations aren't folded back.
   - Closing the gap means Close reads Implement's artifact.
-  - Whether that change is in this session is an open question.
+  - The user put this change in scope (REQ-006).
 - **`agents/test.md` and the `verification` skill (boundary, central to NEED-04):**
   - The `VER-*` method column allows "unit". The new boundary says Implement owns unit and component tests.
-  - Whether a `VER-*` row may still cite a unit test as evidence is an open question.
+  - User decision: a `VER-*` row may cite Implement's unit or component tests only as supporting evidence, and each `REQ-*` needs at least one Test-owned `VER-*` (REQ-009, REQ-010).
   - `check-traceability.sh` reads only IDs, so the gate isn't affected.
 - **#52 (Implement derives tasks and tests from `DES-*`):** folded into this session by the user's decision. It closes with this session.
 - **ADR-004 D8 and `close-foldback.md` vs. `task-executor` Step 5 (conflict, in scope):** constructs have two writers, and ADR-004 D8 names Close. Design decides which owner wins.
 - **`post-hook-validator` (interaction):** it's triggered by `task-executor`'s construct writes. Changing Step 5 has to say what happens to it.
 - **ADR-002 (consistent unless Design adds an artifact):** Implement's artifact is `tasks.md`, and `REQ → DES → task → VER` stays. A second Implement file would refine ADR-002, the way ADR-003 and ADR-004 did for `define/` and `design/`.
-- **#50 (infrastructure kind):** infrastructure stays a Design kind, not a layer. Its Implement guidance is out of this session.
-- **#46 (frontend design) and #48 (database design):** their layers' Implement guidance and artifacts become sub-issues.
+- **#50 (infrastructure kind):** infrastructure stays a Design kind, not a layer. Its Implement guidance was added to #50's scope (deferred REQ-025).
+- **#46 (frontend design) and #48 (database design):** their layers' Implement guidance and artifacts are #57 and #58 (deferred REQ-021, REQ-022). The AI-agent layer is #59, and non-OpenAPI backends are #60.
 - **Construct registry:** empty (`construct_count: 0`). No construct overlaps were found.

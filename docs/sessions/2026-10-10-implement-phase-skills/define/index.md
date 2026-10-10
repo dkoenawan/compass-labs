@@ -1,21 +1,21 @@
 <!-- tier: full. The main doc (D12). Summarise and link; never restate a sub-doc's content. -->
 # Define: Implement phase — an as-built artifact, the backend API artifact and the testing boundary
 
-> Phase: Define | Started: 2026-10-10 | Status: Draft (revised problem statement and constraints awaiting agreement)
-> Relates to: Issue #28 (primary, parent #22 Q11); #52 (folded in); related #47, #46, #48, #50 · Session history: [`log.md`](../log.md)
+> Phase: Define | Started: 2026-10-10 | Status: Ready for the Define milestone gate
+> Relates to: Issue #28 (primary, parent #22 Q11); #52 (folded in, closes with this session); follow-ups #57, #58, #59, #60, #61, #50 · Session history: [`log.md`](../log.md)
 
 ## Contents
 
+- [Requirements](requirements.md): REQ-001 to REQ-020 live (16 Must, 4 Should); REQ-021 to REQ-026 deferred to #57, #58, #59, #60, #50 and #61
 - [Framing](framing.md): the XY check (the user's reframe), symptoms, the anchor verdict (aligns), and the overlaps with ADR-004 D7/D8, the design's API contract, stack defaults, Close's fold-back, Test's method column, #52, `task-executor`, `post-hook-validator` and ADR-002
-- [Problem](problem.md): context, NEED-01 to NEED-07 (four central, three supporting), evidence, impact, OUT-01 to OUT-07, appetite (pending)
-- [Diagrams](diagrams.md): **the as-is and to-be view of the problem** (phases, artifacts, the variation path, the backend API artifact and the two kinds of testing) and the context diagram; the impact map and traceability diagrams follow the requirements
-
-`requirements.md` and `quality.md` follow once the problem statement and constraints are agreed.
+- [Problem](problem.md): context, NEED-01 to NEED-07 (four central, three supporting), evidence, impact, OUT-01 to OUT-07, appetite
+- [Quality](quality.md): ISO/IEC 25010:2023 coverage, NFR measures, assumptions and dependencies
+- [Diagrams](diagrams.md): **the as-is and to-be view of the problem**, the context diagram, the impact map and the traceability diagram
 
 ## Framing
 
 - **Tier:** full. The work gives the Implement phase an artifact standard and its first layer's guidance, changes what every Feature session's Implement and Test phases own, feeds Close's fold-back, and touches `task-executor` and construct ownership. The user confirmed it (2026-10-10).
-- **Verdict:** aligns with the project anchor. The deferred AI-agent layer may extend Scope and must run its own anchor check. See [framing.md](framing.md).
+- **Verdict:** aligns with the project anchor. The deferred AI-agent layer (#59) may extend Scope and runs its own anchor check. See [framing.md](framing.md).
 
 ## Problem statement
 
@@ -32,25 +32,24 @@ Each claim is tagged with its evidence in [problem.md](problem.md).
 
 ## Scope
 
-Draft for agreement:
+As agreed with the user (2026-10-10):
 
-1. **The Implement artifact standard:** an as-built record for every `DES-*` (built as designed, deviated, or not built, each with a reason) and a list of the variations found while building. Its form, whether in `tasks.md` or a new file, is Design's choice.
-2. **Raising variations at the Implement milestone:** the gate shows them for the user to decide on. Implement doesn't send them upstream itself.
-3. **Folding variations back at Close:** Close reads Implement's artifact so the as-built docs match what was built. *Proposed in scope; see Open questions.*
-4. **The testing boundary:**
-   - Implement writes and runs unit and component tests, and backend always gets both.
-   - Test runs integration, UI and Playwright tests.
-   - Both phases' guidance says so.
-5. **Backend, the first layer:** Implement guidance that produces an OpenAPI spec, rendered with Scalar, alongside the code, and checks it against the API in `design/`. A mismatch becomes a variation.
-6. **A layer plug-in contract for Implement**, so each later layer adds its guidance and artifact by files alone, in its ADR-004 home.
-7. **Tasks derived from the design** (#52, folded in): each task from a `DES-*`'s result, check and dependencies, in the design's implementation order.
-8. **`task-executor` in step with the lifecycle:** it finds a session's design (`design/` folder or a past session's root `design.md`), and construct registration has a single owner, including what that means for `post-hook-validator`.
-9. **Past sessions stay valid:** their `tasks.md`, root `design.md` and `verification.md` keep working.
+1. **The as-built record and variations:** [REQ-001](requirements.md#requirements) to [REQ-003](requirements.md#requirements).
+2. **Raising variations at the Implement milestone:** [REQ-004](requirements.md#requirements), [REQ-005](requirements.md#requirements).
+3. **Folding variations back at Close:** [REQ-006](requirements.md#requirements).
+4. **The testing boundary:** [REQ-007](requirements.md#requirements) to [REQ-010](requirements.md#requirements), plus [REQ-016](requirements.md#requirements).
+5. **Backend, the first layer** (an OpenAPI spec rendered with Scalar, checked against the design; an established stack wins): [REQ-011](requirements.md#requirements) to [REQ-013](requirements.md#requirements).
+6. **A layer plug-in contract for Implement:** [REQ-014](requirements.md#requirements).
+7. **Tasks derived from the design** (#52): [REQ-015](requirements.md#requirements), [REQ-016](requirements.md#requirements).
+8. **`task-executor` in step with the lifecycle, with one construct owner:** [REQ-017](requirements.md#requirements) to [REQ-019](requirements.md#requirements).
+9. **Past sessions stay valid:** [REQ-020](requirements.md#requirements).
 
 ### Non-goals
 
-- **Frontend, database and AI-agent Implement guidance and artifacts.** Each becomes a sub-issue (see Open questions). Frontend's component inventory with screenshots is recorded only as an example for its issue. The AI-agent issue also needs a Design-side standard and its own anchor check.
-- **Infrastructure Implement guidance.** Infrastructure is a solution kind in Design (#50), not a layer.
+- **Frontend, database and AI-agent Implement guidance and artifacts:** #57 (pairs with #46), #58 (pairs with #48) and #59 (with its own Design standard and anchor check). Frontend's component inventory with screenshots is only an example for #57.
+- **Non-OpenAPI backend API artifacts** (GraphQL, gRPC): #60.
+- **Infrastructure Implement guidance:** added to #50's scope. Infrastructure is a Design solution kind, not a layer.
+- **The problem visual as part of Define's standard:** #61. This session has one, but doesn't change the standard.
 - **Implement sending variations upstream itself**, or editing frozen `define/` or `design/` artifacts. Variations are recorded and raised. Close folds them back.
 - **Integration, UI and Playwright testing standards in depth.** This session states the boundary; how Test does that testing isn't redesigned here.
 - **Layer design standards** (#46, #47, #48). This session checks against `design/backend.md` if #47 has shipped, and against `design/solution.md` and the backend `DES-*` items if not.
@@ -60,11 +59,13 @@ Draft for agreement:
 
 ## Constraints
 
-Draft for agreement:
-
-- **Variations are recorded and raised, never sent upstream by Implement** (user decision): Implement records each variation in its artifact and raises it at the Implement milestone. Only Close folds variations back into the as-built docs.
-- **The testing boundary** (user decision): Implement owns unit and component tests, and backend always has both. Test owns integration, UI and Playwright tests.
-- **The backend artifact is an OpenAPI spec rendered with Scalar**, produced alongside the code and checked against the API in `design/` (user decision). Where a repo's established backend doesn't use OpenAPI, the stack-independence rule applies (see Open questions).
+- **Variations are recorded and raised, never sent upstream by Implement** (user decision). Only Close folds them back into the as-built docs.
+- **The testing boundary** (user decision):
+  - Implement owns unit and component tests, and backend always has both.
+  - Test owns integration, UI and Playwright tests. A harness test that runs real hooks and scripts together counts as integration.
+  - Inspection stays a valid Test-owned method for requirements about documents or instructions.
+  - A `VER-*` row may cite Implement's tests as supporting evidence only, and each `REQ-*` needs at least one Test-owned `VER-*`. Unit-only verification is ruled out.
+- **The backend artifact is an OpenAPI spec rendered with Scalar, and only that, in this session** (user decision). Other API description formats are #60.
 - **One home per layer (ADR-004 D7):** backend guidance goes in `skills/backend/` (`reference/implement.md`, plus `SKILL.md` unless #47 lands first). No stub folders for other layers.
 - **Single responsibility per skill or file** (from #28).
 - **Stack independence (ADR-004 D10):** build on a repo's established backend stack. Use `skills/design/reference/stack-defaults.md` only where none exists, and link to it rather than restate it.
@@ -73,18 +74,10 @@ Draft for agreement:
 - **Construct ownership follows ADR-004 D8** (Close adds the constructs a session built), unless it's revisited in Design with an ADR.
 - **Established methods only** (anchor non-goal): OpenAPI for the API description, and the established unit, component and integration split.
 - **This session's own Implement** runs before the new standard exists, so it uses the current `agents/implement.md`.
-- **Appetite:** pending (see Open questions).
+- **Appetite:** one working session (see [problem.md](problem.md#appetite-and-no-gos)).
 
 ## Open questions
 
-1. **Agree the revised problem statement and constraints:** NEED-01 to NEED-07, OUT-01 to OUT-07, the scope and the constraints above, and the [as-is and to-be view](diagrams.md#as-is-and-to-be). Requirements are drafted only after that.
-2. **Close's fold-back of variations (scope item 3):** is changing Close to read Implement's artifact in this session, or a follow-up? Without it, NEED-03 is met only up to the Implement gate.
-3. **Backend without OpenAPI:** where a repo's established backend has no OpenAPI (for example GraphQL or gRPC), should the API artifact be that ecosystem's own schema (for example a GraphQL SDL or `.proto`), checked against the design the same way? Or does this session cover OpenAPI only, with the rest deferred?
-4. **Unit tests as Test evidence:** may a `VER-*` row still cite an Implement-phase unit or component test as its evidence, or must every `VER-*` come from integration, UI or Playwright testing?
-5. **Appetite:** how much effort is this session worth? For comparison, #27 was "two focused days".
-6. **Sub-issues for the orchestrator to create** (each one links back to #28 and this session):
-   - Frontend Implement guidance and artifact (for example a component inventory with screenshots), `skills/frontend/reference/implement.md`. Pairs with #46.
-   - Database Implement guidance and artifact, `skills/database/reference/implement.md`. Pairs with #48.
-   - AI-agent layer: design and Implement guidance for code in consuming repos that builds LLM agents. Needs its own anchor check.
-   - Infrastructure Implement guidance: a new issue, or added to #50's scope?
-7. **#52:** closed by this session's PR (`Closes #52`), as the user decided.
+All questions resolved.
+- What counts as Test-owned for REQ-009 (option a): harness tests count as integration, and inspection is valid for document requirements.
+- #52 is closed by this session's PR (`Closes #52`).

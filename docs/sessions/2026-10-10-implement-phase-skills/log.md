@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: compass-labs:define
-next_step: "Define drafts requirements.md and quality.md against the agreed problem statement"
+active_agent: main
+next_step: "Define milestone gate: user approves / adjusts / rethinks define/"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -28,6 +28,7 @@ next_step: "Define drafts requirements.md and quality.md against the agreed prob
 
 ## Key decisions
 
+- **2026-10-10**: Test-owned VER = integration (incl. harness tests running real hooks/scripts), UI/Playwright, or inspection for document requirements; unit-only verification ruled out (REQ-009).
 - **2026-10-10**: Appetite = this one working session; infra Implement guidance goes to #50; #61 filed for a standard Define problem visual.
 - **2026-10-10**: Follow-ups filed — #57 frontend, #58 database, #59 AI-agent layer, #60 non-OpenAPI backend artifacts.
 - **2026-10-10**: Problem statement agreed — Implement produces nothing reviewable besides code; as-built record per DES-*, backend OpenAPI/Scalar check, variations raised at the gate and folded back by Close (in scope), unit+component vs integration/UI/Playwright boundary; non-OpenAPI deferred; unit tests may support VER.
@@ -84,3 +85,19 @@ next_step: "Define drafts requirements.md and quality.md against the agreed prob
 
 ### 2026-10-10 — main — handoff: orchestrator → compass-labs:define (draft requirements)
 - **Input:** Problem statement agreed; appetite = this one session; infra → #50; follow-ups #57–#61 for the Deferred table. Draft requirements.md, quality.md, remaining diagrams.
+
+### 2026-10-10 — compass-labs:define — note: Requirements, quality and diagrams drafted for the Define gate
+- requirements.md: REQ-001 to REQ-020 live (16 Must, 4 Should), sized to the one-session appetite. Deferred: REQ-021 → #57, REQ-022 → #58, REQ-023 → #59, REQ-024 → #60, REQ-025 → #50, REQ-026 → #61.
+- quality.md: 25010:2023 coverage (N/A: performance, security, safety, with reasons); NFR measures for REQ-013, REQ-014, REQ-020; assumptions and dependencies.
+- diagrams.md: impact map and traceability added; every OUT is served.
+- index.md, problem.md, framing.md: the user's answers applied (Close fold-back in scope, OpenAPI only, VER evidence rule, appetite of one session, infra on #50).
+- Open: whether harness tests and inspection count as Test-owned for REQ-009 (affects this session's own Test gate).
+- **Output** (of the requirements handoff): done; define/requirements.md, quality.md, diagrams.md, index.md, problem.md, framing.md
+
+### 2026-10-10 — compass-labs:define — decision: Test-owned verification includes harness integration tests and inspection (REQ-009)
+- The user chose option (a). A harness test that runs the real hooks and scripts together (e.g. tests/run.sh) counts as an integration test. Inspection stays a valid Test-owned method for requirements about documents or instructions.
+- Unit-only verification is still ruled out: each REQ-* needs at least one Test-owned VER-*, and Implement's unit and component tests may be cited only as supporting evidence (REQ-010).
+- Applied to REQ-009's acceptance criterion, the "Test-owned test" glossary entry in define/requirements.md, and the testing-boundary constraint in define/index.md. Open questions are now resolved.
+
+### 2026-10-10 — compass-labs:define — note: Define output ready for the gate
+- define/ holds index, framing, problem, requirements, quality and diagrams (full tier). REQ-001 to REQ-020 are live (16 Must, 4 Should). REQ-021 to REQ-026 are deferred to #57, #58, #59, #60, #50 and #61. Every OUT-01 to OUT-07 is served. Anchor verdict: aligns; anchor update: none. #52 closes with this session's PR.
