@@ -23,10 +23,12 @@ next_step: "Relay the user's framing answers (tier, need, layers, AI-agent meani
 ## Open items
 
 - To decide (from the issue): the order to build the layer skills in, and whether Implement falls back to `task-executor` until a layer skill exists.
+- Follow-ups: #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. Infra placement (#50 or new) and appetite still open.
 - Work is on branch `feat/28-implement-phase-skills`.
 
 ## Key decisions
 
+- **2026-10-10**: Follow-ups filed — #57 frontend, #58 database, #59 AI-agent layer, #60 non-OpenAPI backend artifacts.
 - **2026-10-10**: Problem statement agreed — Implement produces nothing reviewable besides code; as-built record per DES-*, backend OpenAPI/Scalar check, variations raised at the gate and folded back by Close (in scope), unit+component vs integration/UI/Playwright boundary; non-OpenAPI deferred; unit tests may support VER.
 - **2026-10-10**: Framing: full tier; split = Implement standard + plug-in contract + backend first; #52 folded in; task-executor drift in scope; AI-agent = consuming-repo LLM-agent code; infra stays a Design kind.
 ---
@@ -70,3 +72,6 @@ next_step: "Relay the user's framing answers (tier, need, layers, AI-agent meani
 - Backend API artifact: OpenAPI (rendered with Scalar) only; GraphQL/gRPC schema artifacts deferred to a follow-up issue.
 - VER-* rows may cite Implement unit/component tests as supporting evidence, but each REQ needs at least one Test-owned (integration, UI or Playwright) VER.
 - Still open: appetite; infrastructure Implement guidance placement (#50 or new issue).
+
+### 2026-10-10 — main — decision: Deferred layers and non-OpenAPI artifacts filed as follow-up issues
+- #57 frontend Implement guidance and artifact (pairs #46); #58 database Implement guidance and artifact (pairs #48); #59 AI-agent layer design + Implement guidance (own anchor check); #60 non-OpenAPI backend API artifacts (GraphQL, gRPC).
