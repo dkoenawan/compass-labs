@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Start the Design agent on the frozen define/"
+next_step: "Design milestone gate"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -28,6 +28,7 @@ next_step: "Start the Design agent on the frozen define/"
 
 ## Key decisions
 
+- **2026-10-10**: Design choices — plugin/tooling kind; as-built sections in tasks.md (ADR at Close); agent-compared OpenAPI; no-guidance = build + record + cite; skills/implement/; Close sole construct owner; REQ-009 by instruction; "Supporting:" evidence.
 - **2026-10-10**: ✅ Define complete — 20 live REQs (16 Must, 4 Should), 6 deferred (#57–#61, #50); anchor aligns.
 - **2026-10-10**: Test-owned VER = integration (incl. harness tests running real hooks/scripts), UI/Playwright, or inspection for document requirements; unit-only verification ruled out (REQ-009).
 - **2026-10-10**: Appetite = this one working session; infra Implement guidance goes to #50; #61 filed for a standard Define problem visual.
@@ -109,3 +110,26 @@ next_step: "Start the Design agent on the frozen define/"
 ---
 
 ## Phase: Design
+
+### 2026-10-10 — main — handoff: orchestrator → compass-labs:design (design from frozen define/)
+- **Input:** Classify and design REQ-001–020 from the frozen define/; Design owns the no-layer-guidance fallback (candidate in framing.md) and the form of the as-built artifact (tasks.md vs new file); construct ownership per ADR-004 D8 unless revisited with an ADR; appetite = one working session.
+- **Output:** needs_input; design/index.md (draft)
+
+### 2026-10-10 — compass-labs:design — note: Design draft written; classification, scope and seven choices put to the user
+- Prior knowledge: ADR-002, ADR-004 (D7, D8, D10), the registry (empty) and patterns, the session reference and explanation docs, and the code of the implement, test, close and design agents, the session skill and gate, close-foldback, the tasks and verification templates, task-executor and its scripts, post-hook-validator, verification, the design skill, the guard hook, check-traceability.sh, the tests and marketplace.json. No past session folder was read.
+- Proposed: primary kind plugin/tooling (no in-depth path, #51); process/workflow in scope (#49); frontend, database, AI-agent, infra, visual UI and as-built docs out.
+- The draft design/index.md has a C4 L1 context view, an L3 component view of the variation path, a delta list, DES-001 to DES-010 covering all 20 live REQs, and options for D1 to D7, drafted on the recommended options. Mermaid render check passed (2 diagrams).
+- Note: early in the run, Bash was used for read-only listings of plugin code, beyond the render-only rule. Nothing was written, and no past session was read.
+
+### 2026-10-10 — compass-labs:design — decision: Design choices D1–D7 and the classification agreed
+- Classification: plugin/tooling (no in-depth path, #51). Scope: plugin/tooling, process/workflow (#49) and the plugin's content tests are in. A backend in this repo, frontend (#57), database (#58), AI-agent (#59), infra (#50), visual UI, as-built docs and the session schema are out.
+- D1-A: the as-built record goes in new table-only sections of tasks.md (As-built, Variations, Layer artifacts, Handed to Test). Flagged ADR, refining ADR-002 and ADR-004 D7 and recording the testing boundary and the variation path.
+- D2-A: the Implement agent compares the OpenAPI document with the design's API contract, one row per design endpoint. Each mismatch becomes a variation.
+- D3-A: a layer with no Implement guidance is built with the repo's conventions and the general standard. The As-built row records "no Implement guidance for {layer}" and cites the follow-up issue.
+- D4-A: the Implement standard is a new skill, skills/implement/SKILL.md, preloaded by agents/implement.md and listed in marketplace.json.
+- D5-A: Close is the only construct owner (ADR-004 D8, no new ADR). task-executor stops writing the registry, and post-hook-validator runs by name after Close.
+- D6-A: Test-owned verification is enforced by instruction. check-traceability.sh is unchanged.
+- D7-A: Implement's unit and component tests are cited only in the Evidence cell, prefixed "Supporting:".
+
+### 2026-10-10 — compass-labs:design — note: Design ready for the gate
+- design/index.md: the C4 L1 context view, the L3 component view of the variation path, the delta list, and DES-001 to DES-010 covering all 20 live REQs, with the implementation order. The principles check has no traded-off marks. Mermaid render check passed. check-design.sh's four required headings are present.
