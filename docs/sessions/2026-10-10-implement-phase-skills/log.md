@@ -2,7 +2,7 @@
 session: 2026-10-10-implement-phase-skills
 type: feature
 issue: 28
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
+milestone: define
 active_agent: main
-next_step: "Define milestone gate: user approves / adjusts / rethinks define/"
+next_step: "Start the Design agent on the frozen define/"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -28,6 +28,7 @@ next_step: "Define milestone gate: user approves / adjusts / rethinks define/"
 
 ## Key decisions
 
+- **2026-10-10**: ✅ Define complete — 20 live REQs (16 Must, 4 Should), 6 deferred (#57–#61, #50); anchor aligns.
 - **2026-10-10**: Test-owned VER = integration (incl. harness tests running real hooks/scripts), UI/Playwright, or inspection for document requirements; unit-only verification ruled out (REQ-009).
 - **2026-10-10**: Appetite = this one working session; infra Implement guidance goes to #50; #61 filed for a standard Define problem visual.
 - **2026-10-10**: Follow-ups filed — #57 frontend, #58 database, #59 AI-agent layer, #60 non-OpenAPI backend artifacts.
@@ -101,3 +102,10 @@ next_step: "Define milestone gate: user approves / adjusts / rethinks define/"
 
 ### 2026-10-10 — compass-labs:define — note: Define output ready for the gate
 - define/ holds index, framing, problem, requirements, quality and diagrams (full tier). REQ-001 to REQ-020 are live (16 Must, 4 Should). REQ-021 to REQ-026 are deferred to #57, #58, #59, #60, #50 and #61. Every OUT-01 to OUT-07 is served. Anchor verdict: aligns; anchor update: none. #52 closes with this session's PR.
+
+### 2026-10-10 — main — milestone: ✅ Define complete
+- The user approved define/ (full tier): 20 live REQs (16 Must, 4 Should), 6 deferred (#57, #58, #59, #60, #50, #61). Anchor aligns, no update (a3: nothing to check). #52 closes with this session's PR.
+
+---
+
+## Phase: Design
