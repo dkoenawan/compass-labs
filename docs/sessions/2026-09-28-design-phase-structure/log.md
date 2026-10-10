@@ -2,7 +2,7 @@
 session: 2026-09-28-design-phase-structure
 type: feature
 issue: 27
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
+milestone: deploy
 active_agent: main
-next_step: "Deploy: hand off to compass-labs:deploy (release.md, MAJOR version bump)"
+next_step: "Close: fold back into as-built docs, archive, then merge PR #56 and tag v2.0.0"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Deploy: hand off to compass-labs:deploy (release.md, MAJOR version b
 
 ## Key decisions
 
+- **2026-10-10**: ✅ Deploy complete — release.md approved; v2.0.0 on the branch, PR #56 open, completeness check finds no gaps.
 - **2026-10-04**: ✅ Test complete — 32 of 32 VER-* pass across 30 live REQs; traceability gate passes at `39dcc7a`.
 - **2026-10-04**: Stale `plan` mentions (explore overview, doc-maintainer:501) to be fixed now in an Implement fix pass. VER-015 passes on the user's github.com check.
 - **2026-10-04**: ✅ Implement complete — 23 of 23 tasks, 19 of 19 tests pass; `plan` retired; MAJOR version bump left to Deploy.
@@ -286,3 +287,17 @@ next_step: "Deploy: hand off to compass-labs:deploy (release.md, MAJOR version b
 
 ### 2026-10-04 — main — handoff: orchestrator → compass-labs:deploy (release v2.0.0 on the branch)
 - **Input:** release the plugin following the split the last two releases used (see the archived #23 `release.md`). Run the completeness check against `marketplace.json` as it ships. Bump `plugin.json` 1.2.0 → 2.0.0 (MAJOR, because `plan` is retired) on the branch, run tests, run `claude plugin tag --dry-run`, push the branch and open a PR to main. Never merge, tag or push to main; the tag and cache refresh come after the user merges.
+- **Output:** done; release.md written (not yet committed), plugin.json bumped in `657c835`, PR #56 open
+
+### 2026-10-04 — deploy — attempt: Release v2.0.0 prepared on the branch, PR #56 open
+- The completeness check against `.claude-plugin/marketplace.json` as it ships found no gaps: `plan` is gone from the manifest and `skills/`, and `design` is listed and complete.
+- Bumped `plugin.json` from 1.2.0 to 2.0.0 (MAJOR, because retiring `plan` breaks `/compass:plan`; see `1c00284`) and committed it as `657c835`.
+- `bash tests/run.sh` passed 19/19 and `claude plugin tag --dry-run` succeeded for `compass-labs--v2.0.0`.
+- Pushed the branch and opened PR #56 to `main`. The squash-merge, the tag on `main` and the cache refresh are pending, and they're recorded in `release.md`.
+
+### 2026-10-04 — deploy — note: PR #56 links #27 and #39 without closing keywords
+- This follows PR #44's precedent, so Close still closes #27 and #39.
+
+### 2026-10-10 — main — milestone: ✅ Deploy complete
+- The user approved release.md and asked to wrap up: commit, release, fold back into the docs. The Completeness section names no gaps (gate a2 passes).
+- Order agreed for the rest: Close fold-back and archive on the branch first, so the as-built docs ship in the same squash-merge; then merge PR #56, tag `compass-labs--v2.0.0` on `main` and refresh the plugin cache.
