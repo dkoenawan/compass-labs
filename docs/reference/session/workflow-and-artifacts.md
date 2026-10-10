@@ -1,6 +1,6 @@
 # Session workflow and artifacts
 
-> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md)
+> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md) · → [Design standard](../design/standard.md)
 > Origin: #22 · #23 · #27
 
 ## Feature workflow (`skills/session/workflows/feature.json`)

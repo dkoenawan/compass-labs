@@ -6,7 +6,7 @@ source_path: skills/session
 
 # Session (L3)
 
-> → [System overview](../solution-design.md) | → Reference: [hooks and scripts](../../reference/session/hooks-and-scripts.md) · [workflow and artifacts](../../reference/session/workflow-and-artifacts.md) | → Framing: [overview](../framing/overview.md) | → Usage: [README, "Using Sessions in a Repo"](../../../README.md#using-sessions-in-a-repo)
+> → [System overview](../solution-design.md) | → Reference: [hooks and scripts](../../reference/session/hooks-and-scripts.md) · [workflow and artifacts](../../reference/session/workflow-and-artifacts.md) | → Framing: [overview](../framing/overview.md) | → Design: [overview](../design/overview.md) | → Usage: [README, "Using Sessions in a Repo"](../../../README.md#using-sessions-in-a-repo)
 > Origin: #22 · #23 · #27
 
 ## What Is a Session?

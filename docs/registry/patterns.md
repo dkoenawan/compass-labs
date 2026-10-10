@@ -3,7 +3,7 @@
 > These are non-negotiable conventions. Before implementing anything,
 > check if a pattern applies. If you need to deviate, write an ADR first.
 >
-> Origin: #22 · #23
+> Origin: #22 · #23 · #27
 
 <!-- Pattern format:
 ## Pattern Name
@@ -25,9 +25,9 @@ Each `decision` or `milestone` entry in a session's `log.md` gets exactly one co
 
 ## Phase-artifact ownership
 
-Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone. A folder artifact (`define/`) is one artifact: only its fixed files, one level deep, can be written, and the whole folder has one owner and one freeze point. Each session uses one layout for a phase, the folder or its legacy root file, never both, and past sessions are never migrated.
-- Implements: `hooks/session-guard.sh` (PreToolUse), `skills/session/workflows/feature.json` (`file_allowlist`, `owner_agent`, `order`, `artifact_files`, `legacy_artifact`), `skills/session/scripts/check-traceability.sh` (reads `define/requirements.md`, falls back to the root file)
-- ADR: [ADR-002](decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md)
+Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone. A folder artifact (`define/`, `design/`) is one artifact: only its fixed files, one level deep, can be written, and the whole folder has one owner and one freeze point. Each session uses one layout for a phase, the folder or its legacy root file, never both, and past sessions are never migrated.
+- Implements: `hooks/session-guard.sh` (PreToolUse), `skills/session/workflows/feature.json` (`file_allowlist`, `owner_agent`, `order`, `artifact_files`, `legacy_artifact`), `skills/session/scripts/check-traceability.sh` (reads `define/requirements.md`, falls back to the root file), `skills/session/scripts/check-design.sh` (passes a root `design.md` as legacy)
+- ADR: [ADR-002](decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md), [ADR-004](decisions/004-design-path.md)
 
 ## Never ship an incomplete product
 
@@ -61,9 +61,28 @@ A project's vision, mission, scope and non-goals live in exactly one place: the 
 - Implements: `skills/framing/reference/anchor-contract.md`, `skills/session/SKILL.md` (anchor write, gate check a3), `README.md`
 - ADR: [ADR-003](decisions/003-framing-and-project-anchor.md)
 
+## Prior knowledge comes from the docs, never past sessions
+
+Design builds on what the project already knows only through the as-built docs (`docs/explanation/`, `docs/reference/`, `docs/registry/`), the code, and the current session's folder. It never reads another session folder, archived or live, by any tool, because those hold drafts and reversed decisions; Close's fold-back is what carries a session's still-true content into the docs.
+- Implements: `skills/design/SKILL.md` (prior-knowledge rule), `agents/design.md`, `skills/session/reference/close-foldback.md`
+- ADR: [ADR-004](decisions/004-design-path.md)
+
+## One source of stack defaults; an established stack wins
+
+The plugin's default stack per area is stated once, in `skills/design/reference/stack-defaults.md`, and every other file that names a default links to it. A repo's established stack, detected from its files, always wins over a default.
+- Implements: `skills/design/reference/stack-defaults.md`, `skills/init/SKILL.md`, `skills/bootstrap-new-project/SKILL.md`, `README.md`
+- ADR: [ADR-004](decisions/004-design-path.md)
+
+## Extend by adding files, not by editing the procedure
+
+A solution kind gains an in-depth path by adding `kinds/{kind}.md`, notation catalogue rows and its catalogue row; a layer gains a design standard by adding `skills/{layer}/reference/design.md`. Neither changes the Design procedure, the classification step, the scope checklist or the all-kinds sections.
+- Implements: `skills/design/SKILL.md` ("What a kind supplies"), `skills/design/kinds/three-tier.md` (layer contract)
+- ADR: [ADR-004](decisions/004-design-path.md)
+
 ## Anti-Patterns
 
 - ❌ Letting a subagent write `log.md`: parallel agents would clash, and handoffs would go unrecorded. Agents return `log_entries` instead.
 - ❌ `git commit -a` at a milestone: a new artifact is untracked until it's staged by name.
 - ❌ A `commands/<name>.md` with the same name as a skill: it shadows the skill for the Skill tool and for `skills:` preload.
 - ❌ Bare `skills/…` paths in skill prose: they resolve only while developing inside this repo.
+- ❌ Writing an ADR during Design: it records decisions that may still change and breaks one-artifact ownership. Flag it "ADR"; Close writes it.

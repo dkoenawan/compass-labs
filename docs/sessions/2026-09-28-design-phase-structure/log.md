@@ -3,7 +3,7 @@ session: 2026-09-28-design-phase-structure
 type: feature
 issue: 27
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
+milestone: close
 active_agent: main
-next_step: "Close: fold back into as-built docs, archive, then merge PR #56 and tag v2.0.0"
+next_step: "None: session closed. After the archive push: merge PR #56, tag compass-labs--v2.0.0 on main, refresh the plugin cache, close #27 and #39"
 ---
 # Session Log: Design phase structure — opinionated, layered design skills (#27)
 
@@ -28,6 +28,7 @@ next_step: "Close: fold back into as-built docs, archive, then merge PR #56 and 
 
 ## Key decisions
 
+- **2026-10-10**: ✅ Session closed — fold-back into the design domain explanation and reference, ADR-004, and three registry patterns; then merge PR #56 and tag v2.0.0.
 - **2026-10-10**: ✅ Deploy complete — release.md approved; v2.0.0 on the branch, PR #56 open, completeness check finds no gaps.
 - **2026-10-04**: ✅ Test complete — 32 of 32 VER-* pass across 30 live REQs; traceability gate passes at `39dcc7a`.
 - **2026-10-04**: Stale `plan` mentions (explore overview, doc-maintainer:501) to be fixed now in an Implement fix pass. VER-015 passes on the user's github.com check.
@@ -301,3 +302,21 @@ next_step: "Close: fold back into as-built docs, archive, then merge PR #56 and 
 ### 2026-10-10 — main — milestone: ✅ Deploy complete
 - The user approved release.md and asked to wrap up: commit, release, fold back into the docs. The Completeness section names no gaps (gate a2 passes).
 - Order agreed for the rest: Close fold-back and archive on the branch first, so the as-built docs ship in the same squash-merge; then merge PR #56, tag `compass-labs--v2.0.0` on `main` and refresh the plugin cache.
+
+## Phase: Close
+
+### 2026-10-10 — main — note: fold-back run in the main session, not handed to compass-labs:close
+- The user asked to wrap up in one go. The main session followed `skills/session/reference/close-foldback.md` directly; it wrote only under `docs/explanation/`, `docs/reference/` and `docs/registry/`.
+
+### 2026-10-10 — main — note: Fold-back ready — design domain, ADR-004, registry patterns
+- New design domain: `docs/explanation/design/overview.md` (why it exists and who it's for, from problem.md; how it works; the context view redrawn without delta styling; gotchas from quality.md's assumptions) and `docs/reference/design/standard.md` (the live requirements as current fact: procedure, prior-knowledge rule, kind catalogue, three-tier path, DES table, principles, stack rule, visuals with the 0-unrendered render target, Claude Design handoff, gate and agent tools).
+- `docs/registry/decisions/004-design-path.md`: the "ADR" decision from design.md D2, recording D1–D12 and refining ADR-002 / extending ADR-003's Renderable NFR. Indexed in `decisions/index.md`.
+- `docs/registry/patterns.md`: folder-artifact ownership now names `design/`; new patterns "Prior knowledge comes from the docs, never past sessions", "One source of stack defaults; an established stack wins", "Extend by adding files, not by editing the procedure", and an anti-pattern for ADRs written during Design.
+- `docs/explanation/solution-design.md` links the new overview and ADR-004; the session explanation and reference link the design docs. Session docs already described the `design/` folder (Implement's docs task).
+- No `(REQ|DES|VER)-[0-9]` in as-built docs. One Origin line per new doc. No constructs to add: the registry has none and this session built plugin files, not constructs. `bash tests/run.sh`: 19 of 19 pass.
+- Stays in the archive: framing, evidence, appetite, deferred rows, the delta list, DES table, carry-over map, principles check, risks and traceability.
+
+### 2026-10-10 — main — milestone: ✅ Session closed
+- The user asked to wrap up: commit, release and fold back. The fold-back is committed with this entry; the session folder moves to `docs/sessions/archive/` in the next commit.
+- After the archive push: squash-merge PR #56, then on `main` `claude plugin tag --push` (`compass-labs--v2.0.0`) and `claude plugin update compass-labs@compass-labs`, then close #27 and #39. release.md's post-merge checklist is frozen, so the outcome is reported on the issue rather than ticked there.
+- Follow-ups stay open: #41, #46–#55.
