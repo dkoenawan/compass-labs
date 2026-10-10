@@ -10,11 +10,11 @@ source_path: skills/explore
 
 ## What Is Explore?
 
-Explore is a token-efficient codebase investigation capability whose primary object is an **InvestigationReport** — a structured summary that answers a specific question about a codebase by reading the minimum number of files necessary. It distils large codebases into essential architectural knowledge without broad file scanning, making it the preferred entry point for any task that requires understanding an unfamiliar codebase or a specific domain before acting. Explore is both a standalone skill developers invoke directly and an internal dependency called automatically by `plan` and `doc-maintainer`.
+Explore is a token-efficient codebase investigation capability whose primary object is an **InvestigationReport** — a structured summary that answers a specific question about a codebase by reading the minimum number of files necessary. It distils large codebases into essential architectural knowledge without broad file scanning, making it the preferred entry point for any task that requires understanding an unfamiliar codebase or a specific domain before acting. Explore is both a standalone skill developers invoke directly and an internal dependency called automatically by `doc-maintainer`.
 
 ## How It Works
 
-An InvestigationReport is produced through a three-tier traversal with sufficiency gates between each tier. The investigation begins when the skill receives a focus question — either from a developer invoking `/compass:explore` directly, or passed automatically by the `plan` or `doc-maintainer` skills.
+An InvestigationReport is produced through a three-tier traversal with sufficiency gates between each tier. The investigation begins when the skill receives a focus question — either from a developer invoking `/compass:explore` directly, or passed automatically by the `doc-maintainer` skill.
 
 **Tier 1 (Docs First)**: Read `README.md`, check for a `docs/` directory, and read `CLAUDE.md` if present. After each read, a sufficiency gate evaluates whether the tech stack, project structure, and focus-relevant context are now understood. If yes, investigation stops immediately. If gaps remain, advance to Tier 2.
 
@@ -22,7 +22,7 @@ An InvestigationReport is produced through a three-tier traversal with sufficien
 
 **Tier 3 (Targeted Code)**: Read up to 5 specific source files, capped at 50 lines each for files over 300 lines. Import chains are never followed. Hard stop — no further reading regardless of remaining gaps.
 
-The completed InvestigationReport is returned with fixed sections: Tech Stack, Data Models, Backend Structure, Frontend Structure, Key Architectural Patterns, Relevance to Focus, and What Was Not Determined. When invoked automatically by `plan` or `doc-maintainer`, the report flows directly back into the calling skill's workflow without surfacing to the user.
+The completed InvestigationReport is returned with fixed sections: Tech Stack, Data Models, Backend Structure, Frontend Structure, Key Architectural Patterns, Relevance to Focus, and What Was Not Determined. When invoked automatically by `doc-maintainer`, the report flows directly back into the calling skill's workflow without surfacing to the user.
 
 ## Core Objects / Entities
 
@@ -36,9 +36,9 @@ The completed InvestigationReport is returned with fixed sections: Tech Stack, D
 ## Code Map — Which Code Touches This
 
 - **Business Logic**: `skills/explore/SKILL.md` — the full three-tier traversal algorithm, sufficiency gate logic, file-read ordering rules (README first, schema before source, docs before code), hard limits (max 5 files in Tier 3, max 50 lines for large files), monorepo and large-schema handling rules, and fixed Report section structure
-- **Interface**: Invoked as `/compass:explore` (standalone, user provides focus); or called automatically with a focus parameter by `compass-labs:plan` and `compass-labs:doc-maintainer`
+- **Interface**: Invoked as `/compass:explore` (standalone, user provides focus); or called automatically with a focus parameter by `compass-labs:doc-maintainer`
 - **Persistence**: None — the skill produces a report returned in-context; no files are written or modified
-- **External callers**: `skills/plan/SKILL.md` — invokes explore when user selects "Extends existing" to investigate related code before feature planning; `skills/doc-maintainer/SKILL.md` — spawns explore subagents for whole-system archaeology and per-domain deep dives
+- **External callers**: `skills/doc-maintainer/SKILL.md` — spawns explore subagents for whole-system archaeology and per-domain deep dives
 
 ## Internal Architecture
 
@@ -46,13 +46,13 @@ The completed InvestigationReport is returned with fixed sections: Tech Stack, D
 
 **Token Economy Read Ordering**: Read order is designed to maximize information density per token used: README (high context, low file size) → CLAUDE.md (architectural constraints and conventions) → schema files (data model, compact) → directory listings (structure without reading files) → targeted source files (highest cost, only when necessary). This ordering is not configurable.
 
-**Fixed Output Schema**: The InvestigationReport has a rigid structure with required sections, making outputs deterministic and suitable for downstream parsing by skills like `plan` and `doc-maintainer`. The "What Was Not Determined" section is mandatory — it must honestly record what the investigation could not answer rather than silently omitting gaps.
+**Fixed Output Schema**: The InvestigationReport has a rigid structure with required sections, making outputs deterministic and suitable for downstream parsing by skills like `doc-maintainer`. The "What Was Not Determined" section is mandatory — it must honestly record what the investigation could not answer rather than silently omitting gaps.
 
-**Context Fork Isolation**: The skill runs in an isolated context from its parent (e.g., `plan`). State from the parent is not available; the focus question must be passed explicitly at invocation.
+**Context Fork Isolation**: The skill runs in an isolated context from its parent (e.g., `doc-maintainer`). State from the parent is not available; the focus question must be passed explicitly at invocation.
 
 ## Dependencies
 
-- **Internal**: Called by `compass-labs:plan` and `compass-labs:doc-maintainer` as a subskill; no outbound calls to other skills
+- **Internal**: Called by `compass-labs:doc-maintainer` as a subskill (the retired `plan` skill also called it; the Design phase reads docs and code itself); no outbound calls to other skills
 - **External**: Read, Glob, Grep, and Bash (`ls` only) tools — standard Claude Code tooling; no external packages or APIs required
 
 ## Gotchas

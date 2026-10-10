@@ -38,5 +38,12 @@ assert_contains "$contract" "Never emit a \`milestone\` log entry" \
 assert_not_contains "$contract" "handoff | decision | attempt | milestone | note" \
   "phase-agent contract should no longer list milestone as an event type agents may return"
 
+# #27 DES-011: the Design gate shows the context view and delta list
+# (REQ-016) and runs check-design.sh before the milestone (REQ-017).
+assert_contains "$skill" "design/index.md#context-view" "the Design gate should show the context view"
+assert_contains "$skill" "design/index.md#delta-list" "the Design gate should show the delta list"
+assert_contains "$skill" "a4. **Design milestone only**" "milestone gate should have step a4 for Design"
+assert_contains "$skill" "scripts/check-design.sh {session-dir}" "step a4 should run check-design.sh"
+
 echo "ok: session skill orchestration rules validated"
 exit 0

@@ -52,6 +52,13 @@ while IFS=$'\t' read -r phase artifact; do
     mapfile -t files < <(jq -r --arg p "$phase" '.phases[] | select(.phase == $p) | .artifact_files[]?' "$WORKFLOW")
     [[ ${#files[@]} -gt 0 ]] || fail "folder artifact $artifact for phase $phase has no artifact_files"
     for f in "${files[@]}"; do
+      # Layer design files (design/{frontend,backend,database}.md) take their
+      # template from the layer's own home, skills/{layer}/ (#27 DES-005,
+      # DES-009), so the session templates don't hold them.
+      if [[ "$phase" == "design" && "$f" =~ ^(frontend|backend|database)\.md$ ]]; then
+        [[ -f "$template_path$f" ]] && fail "layer template $artifact$f belongs in skills/${f%.md}/, not in session templates"
+        continue
+      fi
       [[ -f "$template_path$f" ]] || fail "template missing for $phase's $artifact$f: $template_path$f"
     done
   else
@@ -59,14 +66,21 @@ while IFS=$'\t' read -r phase artifact; do
   fi
 done < <(jq -r '.phases[] | [.phase, (.artifact // "null")] | @tsv' "$WORKFLOW")
 
-# 4. Session-level file allowlist includes the five artifacts (define/ plus
-#    the legacy root requirements.md, D6) + log.md + assets/.
+# 4. Session-level file allowlist includes the five artifacts (define/ and
+#    design/ plus their legacy root files, D6) + log.md + assets/.
 allowlist_str="$(jq -r '.session_level.file_allowlist[]' "$WORKFLOW")"
-for entry in "define/" requirements.md design.md tasks.md verification.md release.md log.md "assets/"; do
+for entry in "define/" requirements.md "design/" design.md tasks.md verification.md release.md log.md "assets/"; do
   grep -qxF "$entry" <<<"$allowlist_str" || fail "file_allowlist missing $entry"
 done
 assert_eq "requirements.md" "$(jq -r '.phases[] | select(.phase == "define") | .legacy_artifact' "$WORKFLOW")" \
   "define's legacy_artifact should be the root requirements.md"
+assert_eq "design/" "$(jq -r '.phases[] | select(.phase == "design") | .artifact' "$WORKFLOW")" \
+  "design's artifact should be the design/ folder (#27 DES-010)"
+assert_eq "design.md" "$(jq -r '.phases[] | select(.phase == "design") | .legacy_artifact' "$WORKFLOW")" \
+  "design's legacy_artifact should be the root design.md"
+assert_eq "index.md solution.md frontend.md backend.md database.md ui-handoff.md" \
+  "$(jq -r '.phases[] | select(.phase == "design") | .artifact_files | join(" ")' "$WORKFLOW")" \
+  "design/'s fixed file set"
 assert_eq "define/" "$(jq -r '.framing.produces' "$WORKFLOW")" \
   "framing.produces should be the define phase's artifact"
 

@@ -19,10 +19,12 @@ CONTRACT="$REPO_ROOT/skills/session/reference/phase-agent-contract.md"
 
 [[ -f "$CONTRACT" ]] || fail "shared phase-agent-contract.md reference not found"
 
-# phase -> should this agent's tools include Bash?
+# phase -> should this agent's tools include Bash? Design is conversational
+# but renders and checks its own visuals (#27 D6, DES-014), under a Bash
+# rule checked below.
 declare -A wants_bash=(
   [define]=no
-  [design]=no
+  [design]=yes
   [implement]=yes
   [test]=yes
   [deploy]=yes
@@ -64,6 +66,36 @@ while IFS=$'\t' read -r phase owner_agent; do
       "agents/${phase}.md (conversational phase) should not need Bash"
   fi
 done < <(jq -r '.phases[] | [.phase, .owner_agent] | @tsv' "$WORKFLOW")
+
+# The Design agent (#27 DES-014): preloads the design skill, keeps the
+# read-it-yourself fallback, writes design/, has its Bash rule, no TODO.
+design_agent="$(cat "$REPO_ROOT/agents/design.md")"
+design_frontmatter="$(awk 'NR==1{next} /^---$/{exit} {print}' "$REPO_ROOT/agents/design.md")"
+assert_contains "$design_frontmatter" "  - compass-labs:design" \
+  "agents/design.md should preload compass-labs:design"
+assert_contains "$design_agent" "skills/design/SKILL.md" \
+  "agents/design.md should keep the read-SKILL.md-yourself fallback"
+assert_contains "$design_agent" "design/" "agents/design.md should write the design/ folder"
+assert_contains "$design_agent" "Bash is for rendering and render checks only" \
+  "agents/design.md should carry the Bash rule"
+assert_contains "$design_agent" "Never run \`git\`" "the Bash rule should forbid git"
+assert_contains "$design_agent" "assets/" "the Bash rule should limit outputs to assets/ or a temp directory"
+assert_contains "$design_agent" "Never read a past session folder" \
+  "agents/design.md should forbid reading past session folders"
+assert_not_contains "$design_agent" "TODO" "agents/design.md should have no TODO left"
+
+# Implement reads the new design/ folder, or a past session's design.md (#27 DES-012).
+implement_agent="$(cat "$REPO_ROOT/agents/implement.md")"
+assert_contains "$implement_agent" "design/index.md" "agents/implement.md should read design/index.md"
+assert_contains "$implement_agent" "the root \`design.md\`" "agents/implement.md should still read a past session's design.md"
+
+# Close reads design/ (or a past session's design.md) and folds flagged
+# decisions into ADRs (#27 DES-017).
+foldback="$(cat "$REPO_ROOT/skills/session/reference/close-foldback.md")"
+assert_contains "$foldback" "the frozen \`design/\` folder (or the root \`design.md\` in a past session)" \
+  "close-foldback.md step 1 should read design/ or a past session's design.md"
+assert_contains "$foldback" "## Folding back \`design/\`" "close-foldback.md should map design/ sections"
+assert_contains "$foldback" "Decisions flagged \"ADR\"" "close-foldback.md should turn flagged decisions into ADRs"
 
 # Deploy must refuse to ship an incomplete product (release-completeness check),
 # and the Deploy gate + release.md template must carry it through.

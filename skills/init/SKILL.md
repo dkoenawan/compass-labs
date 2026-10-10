@@ -15,14 +15,16 @@ This skill creates a new full-stack project by cloning a pre-built template repo
 4. **Configures the project** - Updates names, docker-compose.yml, package.json
 5. **Brownfield-migrate mode** - Seeds an architecture registry from an existing codebase (run with `brownfield-migrate` argument)
 
-## Default Stack (Opinionated)
+## What the template contains
+
+The plugin's stack defaults live in one place, [`${CLAUDE_PLUGIN_ROOT}/skills/design/reference/stack-defaults.md`](../design/reference/stack-defaults.md). The template scaffolds those defaults. This table only describes what it contains:
 
 | Component | Technology |
 |-----------|------------|
 | Frontend | React + Vite + TypeScript |
 | Backend | Node.js + TypeScript + Prisma |
 | Database | PostgreSQL |
-| Infrastructure | Docker with docker-compose |
+| Local development | Docker with docker-compose (no infrastructure-as-code is scaffolded) |
 
 ## Usage
 
@@ -422,8 +424,8 @@ Registry bootstrapped:
     001-initial-stack-choices.md  (stack decision captured)
   CLAUDE.md updated               (agent navigation protocol injected)
 
-Next: run /compass:plan to design your first feature. The plan skill
-will read the registry before proposing anything new.
+Next: run /compass-labs:session to start your first feature. Its Design
+phase reads the project docs and registry before proposing anything new.
 ```
 
 ---
@@ -661,5 +663,5 @@ Summary:
 Next steps:
   1. Review each stub in docs/reference/constructs/ — fix inferred descriptions
   2. Run /compass:explore to fill Known Gaps one area at a time
-  3. Run /compass:plan — it will now read the registry before designing
+  3. Run /compass-labs:session — its Design phase will now read the registry before designing
 ```

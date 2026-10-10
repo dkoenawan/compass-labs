@@ -112,7 +112,7 @@ compass-labs/
 ├── agents/                            # Subagents: the session orchestrator + one agent per Feature phase
 │   ├── orchestrator.md                # Session orchestrator entry point
 │   ├── define.md                      # Define: frames the problem, writes define/
-│   ├── design.md                      # Design: writes design.md
+│   ├── design.md                      # Design: writes design/ (context view, delta list, DES items)
 │   ├── implement.md                   # Implement: writes tasks.md and the code
 │   ├── test.md                        # Test: writes verification.md
 │   ├── deploy.md                      # Deploy: writes release.md
@@ -120,16 +120,16 @@ compass-labs/
 ├── skills/                            # Agent-based skills, one folder each
 │   ├── session/                       # Session lifecycle orchestrator (Define→Design→Implement→Test→Deploy→Close)
 │   │   ├── SKILL.md
-│   │   ├── templates/                 # Per-phase artifact templates (define/ folder templates included) + commit-rule template
+│   │   ├── templates/                 # Per-phase artifact templates (define/ and design/ folder templates included) + commit-rule template
 │   │   ├── workflows/                 # feature.json: phases, owners, artifacts, milestones, framing block
-│   │   ├── scripts/                   # gh-setup.sh, gh-milestone.sh, check-traceability.sh, archive-session.sh
+│   │   ├── scripts/                   # gh-setup.sh, gh-milestone.sh, check-traceability.sh, check-design.sh, archive-session.sh
 │   │   └── reference/                 # Shared phase-agent contract, Close fold-back procedure
 │   ├── framing/                       # Shared problem-framing step + the project anchor contract
 │   ├── problem-statement/             # Problem-statement standard, per session type (types/) + methods record
 │   ├── requirements/                  # Requirements standard: EARS + Given/When/Then + ISO 29148, per type, diagrams, worked example
 │   ├── verification/                  # VER-* verification table standard
+│   ├── design/                        # Design standard: solution kinds, notation catalogue, stack defaults
 │   ├── init/                          # Project initialization (recommended)
-│   ├── plan/                          # Feature planning and spec generation
 │   ├── explore/                       # Token-efficient codebase investigation
 │   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
 │   ├── adr/                           # Architecture decision records
@@ -153,14 +153,7 @@ compass-labs/
 
 Initialize a new full-stack project from a template repository with opt-out component selection.
 
-**Default Stack (Opinionated):**
-
-| Component | Technology |
-|-----------|------------|
-| Frontend | React + Vite + TypeScript |
-| Backend | Node.js + TypeScript + Prisma |
-| Database | PostgreSQL |
-| Infrastructure | Docker with docker-compose |
+**What the template contains:** React + Vite + TypeScript (frontend), Node.js + TypeScript + Prisma (backend), PostgreSQL (database), and Docker with docker-compose for local development. These follow the plugin's stack defaults, stated once in [`skills/design/reference/stack-defaults.md`](skills/design/reference/stack-defaults.md). The Design phase proposes those defaults only where a repository has no established stack.
 
 **Usage:**
 ```bash
@@ -244,38 +237,13 @@ A structured Investigation Report covering tech stack, data models, backend stru
 
 **Invocation modes:**
 - **Standalone**: Invoke directly and provide an investigation focus (e.g., "auth system", "order management", "overall architecture")
-- **Via plan**: Automatically invoked by the plan skill when a feature extends existing code — no manual invocation needed
+- **From another skill**: `doc-maintainer` passes the focus directly — no manual invocation needed
 
 ---
 
-### Feature Planning
+### Feature Planning (retired)
 
-#### `/compass-labs:plan`
-
-Systematic feature planning through structured discovery — generates detailed specs (DB → Backend → Frontend) that eliminate re-scanning and token waste in future implementation prompts.
-
-**What it produces:**
-
-| File | Description |
-|------|-------------|
-| `docs/sessions/{date}-{feature-name}/overview.md` | Complete feature spec with Prisma models, CQRS commands/queries, API shapes, routes, and implementation order |
-
-**Usage:**
-```bash
-/compass-labs:plan
-```
-
-**How it works (5 phases):**
-
-1. **Feature Intent** — Understand what the user wants to build, whether it's new or extends existing code, and assess complexity signals
-2. **Layer-by-Layer Design** — Walk through Database → Backend → Frontend with adaptive depth (simple features get fewer questions, complex features get the full set plus tradeoff surfacing)
-3. **Spec Synthesis** — Synthesize all answers into a complete spec with Prisma models, CQRS operations, TypeScript interfaces, routes, and component hierarchy
-4. **Approval Gate** — Present full spec for user approval with option to adjust or rethink
-5. **File Generation & Handoff** — Generate spec file and explain how to reference it for implementation
-
-**Key principle:** Plan once, implement by referencing the spec. Each section of the generated spec is detailed enough to implement a full layer (DB, Backend, or Frontend) without re-scanning the codebase or re-explaining context.
-
-**Adaptive depth:** The skill adjusts question count based on feature complexity — a simple CRUD feature gets 3 core questions per layer, while a feature with auth, real-time updates, and file uploads gets the full question set plus inline tradeoff surfacing.
+The `plan` skill has been retired into the Design phase of a Feature session. Run `/compass-labs:session` to design a feature: its Design phase follows the [`design` standard](#compass-labsdesign). `/compass-labs:plan` no longer exists. Its registry read, trade-off surfacing, approval gate and stack handling are part of Design now. Its layer-by-layer depth (entities, API shapes, routes) moves to the per-layer design standards, which are tracked as follow-up issues.
 
 ---
 
@@ -404,7 +372,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 
 | | |
 |---|---|
-| **Folder** | `docs/sessions/{date}-{slug}/` — one artifact per phase (`define/`, `design.md`, `tasks.md`, `verification.md`, `release.md`), `log.md` (state + append-only history), and an optional non-Markdown `assets/`. `define/` is a folder: a main doc, `index.md`, plus sub-docs by depth tier. Sessions from before it keep a root `requirements.md` instead. |
+| **Folder** | `docs/sessions/{date}-{slug}/` — one artifact per phase (`define/`, `design/`, `tasks.md`, `verification.md`, `release.md`), `log.md` (state + append-only history), and an optional non-Markdown `assets/`. `define/` is a folder: a main doc, `index.md`, plus sub-docs by depth tier. `design/` is a folder too: `index.md` plus the files the solution kind needs. Sessions from before them keep a root `requirements.md` or `design.md` instead. |
 | **GitHub** | One issue per session, one `phase:*` label at a time, a milestone comment per phase transition, a branch + PR from Implement onward |
 | **Enforcement** | A `PreToolUse` guard hook restricts every write under a session folder to that file set, by ownership, and blocks writes to an already-approved ("frozen") artifact unless a decision is logged first |
 
@@ -424,7 +392,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 
 | Hook | Event | What it does |
 |---|---|---|
-| `hooks/session-guard.sh` | `PreToolUse` (`Write\|Edit\|MultiEdit`) | Blocks writes outside a session's file set (including files outside `define/`'s fixed set), writes to another phase's artifact, writes to a frozen artifact without a freshly logged decision, and anything under `docs/sessions/archive/` |
+| `hooks/session-guard.sh` | `PreToolUse` (`Write\|Edit\|MultiEdit`) | Blocks writes outside a session's file set (including files outside `define/`'s or `design/`'s fixed set), writes to another phase's artifact, writes to a frozen artifact without a freshly logged decision, and anything under `docs/sessions/archive/` |
 | `hooks/session-start.sh` | `SessionStart` | Lists active/paused sessions as context when starting as the orchestrator |
 | `hooks/session-commit-guard.sh` | `Stop` | Blocks ending a turn with an uncommitted `decision`/`milestone` log entry — one commit per entry, code and log together |
 
@@ -444,7 +412,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 |---|---|---|
 | `compass-labs:orchestrator` | All (main session) | `log.md`, milestone commits, GitHub sync, and the README's project anchor |
 | `compass-labs:define` | Define | `define/` (framing, problem statement, requirements) |
-| `compass-labs:design` | Design | `design.md` |
+| `compass-labs:design` | Design | `design/` (and rendered visuals in `assets/`) |
 | `compass-labs:implement` | Implement | `tasks.md` and the code |
 | `compass-labs:test` | Test | `verification.md` |
 | `compass-labs:deploy` | Deploy | `release.md` |
@@ -470,6 +438,16 @@ The problem-statement standard, per session type (`types/feature.md`, `types/bug
 
 The requirements standard: EARS sentences, one Given/When/Then each, and the ISO/IEC/IEEE 29148 checks. Per type and tier it adds MoSCoW priority, a trace from each requirement to the outcome it serves, a table for requirements deferred to later work, ISO/IEC 25010:2023 quality coverage, measurable non-functional requirements, and criteria built from concrete examples. It includes a Mermaid [diagram catalogue](skills/requirements/reference/diagrams.md) and a [worked full-tier example](skills/requirements/examples/feature-full/index.md).
 
+#### `/compass-labs:design`
+
+The Design standard the Design agent preloads. It is the plugin's only path to a solution design, and it replaces the retired `plan` skill. Design reads prior knowledge from the project's docs and code only, never from past session folders. It names the solution's primary kind and a scope checklist for you to confirm, then follows the kind's in-depth path. A three-tier application gets a whole-system design, approved before any layer design. Other kinds use the shared sections and cite their follow-up issue. The output is a `design/` folder:
+
+- **What it holds:** a context view and a delta list, with every touched element marked new, changed, deprecated or unchanged in both the visuals and the list. Then `DES-*` items, each with the requirements it covers, its result, its check and its dependencies, which Implement orders its tasks from. Then the options for every significant choice, which you decide, and a KISS/YAGNI/SOLID principles check.
+- **Visuals:** they use established notations from its [notation catalogue](skills/design/reference/notations.md) (C4 by default) and render on GitHub. A non-Mermaid source such as BPMN is committed with a rendered SVG beside it.
+- **Visual UI design:** it is handed to Claude Design through `design/ui-handoff.md`, never specified directly.
+- **Stack defaults:** the plugin's defaults are stated once, in [`stack-defaults.md`](skills/design/reference/stack-defaults.md). Design proposes them only where the repository has no established stack.
+- **The Design gate:** it shows the context view and the delta list, and `check-design.sh` refuses the milestone if either is missing, or if the classification or scope checklist is.
+
 #### `/compass-labs:verification`
 
 The `VER-*` table standard the Test agent follows, in the fixed column order `check-traceability.sh` depends on.
@@ -489,7 +467,7 @@ Captures a significant architecture decision as a MADR-format ADR. A six-phase c
 
 #### `/compass-labs:bootstrap-new-project` (Deprecated)
 
-> **Deprecated**: Use `/compass-labs:init` instead. This skill generates files directly which is less token-efficient.
+> **Deprecated**: Use `/compass-labs:init` instead. This skill generates files directly which is less token-efficient. It predates the [stack defaults](skills/design/reference/stack-defaults.md): it generates Swagger UI rather than Scalar, and no infrastructure-as-code.
 
 Bootstrap a complete full-stack project with systematic structure and best practices.
 

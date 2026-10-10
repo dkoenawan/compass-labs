@@ -498,7 +498,7 @@ Reconciles one completed `docs/sessions/<session>/` into the durable Diataxis tr
 
 4. **Extract fold-back candidates** from the session content:
    - **How-to candidate**: if the session's Implementation Order or tasks.md contains a non-obvious multi-step procedure a future contributor would need to repeat (e.g., "how to add a new X"), it's a how-to candidate.
-   - **Reference candidate**: the spec's Backend Layer (API endpoints/shapes) and Frontend Layer (pages/components) sections are reference candidates — these belong in `docs/reference/api/` and construct files respectively (construct files are typically already written by `plan`/`task-executor`, so this is usually just a link, not new content).
+   - **Reference candidate**: the spec's Backend Layer (API endpoints/shapes) and Frontend Layer (pages/components) sections are reference candidates — these belong in `docs/reference/api/` and construct files respectively (construct files are typically already written by `task-executor`, so this is usually just a link, not new content).
    - **Explanation candidate**: any architectural decision embedded in the spec that isn't already captured as an ADR is an explanation candidate — note it, but do NOT write a new ADR from doc-maintainer; instead flag it for the developer (see step 7).
    - **Gotchas**: any failed-task reasons or edge cases discovered during the session are candidates for the owning domain's `docs/explanation/<domain>/overview.md` Gotchas section.
 

@@ -1,3 +1,4 @@
+<!-- Legacy layout: only for a past session that already has a root design.md. A new session writes the design/ folder from templates/design/ (skills/design/SKILL.md). -->
 # Design: {Session Title}
 
 > Phase: Design | Started: {date} | Status: Draft

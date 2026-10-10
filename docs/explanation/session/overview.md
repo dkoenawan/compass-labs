@@ -1,13 +1,13 @@
 ---
 domain: session
-last_updated: 2026-09-28
+last_updated: 2026-10-04
 source_path: skills/session
 ---
 
 # Session (L3)
 
-> → [System overview](../solution-design.md) | → Reference: [hooks and scripts](../../reference/session/hooks-and-scripts.md) · [workflow and artifacts](../../reference/session/workflow-and-artifacts.md) | → Framing: [overview](../framing/overview.md) | → Usage: [README, "Using Sessions in a Repo"](../../../README.md#using-sessions-in-a-repo)
-> Origin: #22 · #23
+> → [System overview](../solution-design.md) | → Reference: [hooks and scripts](../../reference/session/hooks-and-scripts.md) · [workflow and artifacts](../../reference/session/workflow-and-artifacts.md) | → Framing: [overview](../framing/overview.md) | → Design: [overview](../design/overview.md) | → Usage: [README, "Using Sessions in a Repo"](../../../README.md#using-sessions-in-a-repo)
+> Origin: #22 · #23 · #27
 
 ## What Is a Session?
 
@@ -23,9 +23,11 @@ A new session gets an issue (existing or newly created) and a folder. `log.md` i
 
 **Define** runs the shared [framing](../framing/overview.md) step before anything else: it proposes a depth tier (full, short or skip) for the user to confirm, runs that tier's checks, and checks the work against the project anchor in the README. It then writes the problem statement and requirements to the tier's depth. Its output is the `define/` folder: a main doc, `define/index.md`, linking to sub-docs that exist only when the tier needs them. When framing agrees an anchor change with the user, Define only records the agreed text; the orchestrator writes it into the README, and the Define gate refuses the milestone until the README contains it.
 
+**Design** follows the [`design` skill](../../../skills/design/SKILL.md), which the Design agent preloads. It reads prior knowledge only from the project's docs and code, never from past session folders. It names the solution's primary kind and a scope checklist for the user to confirm, then follows that kind's in-depth path. Three-tier applications have one: a whole-system design the user approves before any layer design is written. Other kinds use the all-kinds sections and cite their follow-up issue. Depth follows Define's tier, and Design has no tiers of its own. The output is the `design/` folder: `design/index.md` holds the context view, the delta list (each touched element marked new, changed, deprecated or unchanged), the `DES-*` table with each item's result, check and dependencies, the decisions the user chose with their options, and a KISS/YAGNI/SOLID principles check. Visuals use the notation the skill's catalogue gives for the kind, and they render on GitHub. A non-Mermaid source is committed with a rendered SVG beside it in `assets/`, which the Design agent produces with Bash, the only thing it uses Bash for. When visual UI design is in scope, `design/ui-handoff.md` hands it to Claude Design and holds the returned export and screenshots. The skill also holds the plugin's single source of stack defaults. Design proposes them only where the repository has no established stack. The older `plan` skill was retired into this path.
+
 Each phase runs the same loop. The orchestrator logs a `handoff` entry, then starts `compass-labs:{phase}` with the session path, the phase and a task. The phase agent writes only its own artifact and returns `done`, `needs_input` or `blocked`, plus log entries. For `needs_input`, the orchestrator asks the user, since subagents can't, and relays the answers to the same agent with `SendMessage`. The orchestrator is the only writer of `log.md`. It appends the returned entries, mirrors every decision into the log's **Key decisions** list, and downgrades any `milestone` entry an agent returns to a `note`, because milestones belong to the user.
 
-At the **milestone gate** the user approves, adjusts or rethinks the phase's artifact. Three gates check more than approval. Define can't complete while an agreed anchor change is missing from the README. Test can't complete unless every `REQ-*` has a passing `VER-*` (`check-traceability.sh`). Deploy can't complete unless `release.md`'s *Completeness* section shows that the release manifest lists only complete components and leaves none out. On approval, the orchestrator sets `milestone` to the finished phase's key and `phase` to the next one. That freezes the artifact. It then commits the artifact and log explicitly, pushes, and runs `gh-milestone.sh` to move the issue's label and post the milestone comment. If GitHub is unreachable, the script reports `SYNC_PENDING` and exits cleanly. The session continues locally and the next gate replays the sync.
+At the **milestone gate** the user approves, adjusts or rethinks the phase's artifact. Four gates check more than approval. Define can't complete while an agreed anchor change is missing from the README. The Design gate shows the context view and the delta list with the question, and Design can't complete while `design/index.md` lacks its Classification, Scope checklist, Context view or Delta list (`check-design.sh`). Test can't complete unless every `REQ-*` has a passing `VER-*` (`check-traceability.sh`). Deploy can't complete unless `release.md`'s *Completeness* section shows that the release manifest lists only complete components and leaves none out. On approval, the orchestrator sets `milestone` to the finished phase's key and `phase` to the next one. That freezes the artifact. It then commits the artifact and log explicitly, pushes, and runs `gh-milestone.sh` to move the issue's label and post the milestone comment. If GitHub is unreachable, the script reports `SYNC_PENDING` and exits cleanly. The session continues locally and the next gate replays the sync.
 
 A session can pause at any point (`status: paused`, `next_step` set, committed). Resuming, in any later conversation, reads only `log.md`'s frontmatter, Open items, Key decisions and the latest entry. Nothing depends on conversation memory.
 
@@ -35,9 +37,9 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 
 | Object | Description |
 | ------ | ----------- |
-| Session folder | `docs/sessions/{date}-{slug}/`. Holds a fixed file set: five phase artifacts (one of them the `define/` folder), `log.md`, and an optional non-Markdown `assets/`. Nothing else can be created in it. |
+| Session folder | `docs/sessions/{date}-{slug}/`. Holds a fixed file set: five phase artifacts (two of them folders, `define/` and `design/`), `log.md`, and an optional non-Markdown `assets/`. Nothing else can be created in it. |
 | `log.md` | Session state (YAML frontmatter: `phase`, `status`, `milestone`, `active_agent`, `next_step`, `issue`), then Open items, Key decisions (newest first), then append-only entries grouped by `## Phase:`. Written only by the orchestrator. |
-| Phase artifact | One per phase (`define/`, `design.md`, `tasks.md`, `verification.md`, `release.md`), each owned by one phase agent. It is frozen once its milestone is approved. |
+| Phase artifact | One per phase (`define/`, `design/`, `tasks.md`, `verification.md`, `release.md`), each owned by one phase agent. It is frozen once its milestone is approved. |
 | Folder artifact | A phase artifact that is a folder with a fixed file set, owned and frozen as a unit. `define/` holds `index.md` (the main doc) plus `requirements.md`, `framing.md`, `problem.md`, `quality.md` and `diagrams.md` by depth tier. Sessions from before it keep a root `requirements.md` instead; each session uses one layout, and past sessions are never migrated. |
 | Workflow definition | `skills/session/workflows/feature.json`. Lists phases in order, with each phase's owner agent, artifact (and, for a folder, its file set and legacy root path), milestone label and GitHub label, plus the `framing` block that plugs the type into framing. The orchestrator and the guard hook both read it. |
 | Phase agent | `agents/{define,design,implement,test,deploy,close}.md`. A thin wrapper around the shared phase agent contract. Define and Design are conversational (through the orchestrator). The others execute. |
@@ -77,7 +79,8 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 - **The VER table's column order is load-bearing.** `check-traceability.sh` parses it by position, and any Result containing "pass" counts as passing.
 - **Stage milestone artifacts by name.** A new artifact is untracked until it's added, and `git commit -a` would freeze an artifact that was never pushed.
 - **The Stop guard allows the stop after 2 consecutive blocks** in one turn, with a warning. The entry is still uncommitted and must be committed next turn.
-- **A new session can't create a root `requirements.md`, and an old one can't create `define/`.** The guard enforces one layout per session. Tools read `define/requirements.md` first and fall back to the root file for sessions from before the folder.
+- **A new session can't create a root `requirements.md`, and an old one can't create `define/`.** The guard enforces one layout per session. Tools read `define/requirements.md` first and fall back to the root file for sessions from before the folder. The same holds for `design/` and a root `design.md`. A past session's `design.md` gets no Design-gate check.
+- **The Design agent's Bash isn't guarded by the hook.** The guard sees only Write, Edit and MultiEdit. The agent's own rule limits Bash to render commands that write to `assets/` or a temp directory, and the gate's `git status` precondition surfaces any stray file before the milestone commit.
 - **Close's mapping lives in `close-foldback.md`.** `doc-maintainer`'s own session fold-back step still expects the older `plan`-format `overview.md` (#41), so for lifecycle sessions the Close procedure's mapping is what applies.
 - **Order matters at Close.** Set `status: archived` and commit it before the `git mv`. Once the folder is under `archive/`, the guard blocks every write there, the orchestrator's included.
 - **Hooks in `hooks.json` use an unquoted `$CLAUDE_PLUGIN_ROOT`**, so an install path containing a space breaks them. This is tracked in #35.
@@ -87,3 +90,4 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 
 - 2026-09-25: Initial documentation.
 - 2026-09-28: Define's output is the `define/` folder; framing, the anchor write and the Define gate check; the Close fold-back mapping.
+- 2026-10-04: The Design path: the `design` skill, the `design/` folder, the Design gate check; `plan` retired into Design.

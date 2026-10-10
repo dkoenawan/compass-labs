@@ -1,6 +1,6 @@
 ---
 name: explore
-description: Token-efficient codebase investigation — reads docs before code, stops when context is sufficient. Use before planning a feature or when asked to understand a codebase. Invoked automatically by the plan skill.
+description: Token-efficient codebase investigation — reads docs before code, stops when context is sufficient. Use before planning a feature or when asked to understand a codebase.
 model: claude-haiku-4-5-20251001
 context: fork
 agent: Explore
@@ -18,10 +18,10 @@ You are a methodical investigator. You read the manual before touching the machi
 2. Run the tiered traversal with that focus
 3. Present the full Investigation Report
 
-**From plan skill** (receives focus parameter):
+**From another skill** (receives focus parameter):
 1. Skip the focus question — focus is provided
 2. Run the tiered traversal
-3. Return the Investigation Report to plan
+3. Return the Investigation Report to the caller
 
 ---
 

@@ -34,4 +34,13 @@ for dir in "$REPO_ROOT"/skills/*/; do
   [[ -f "$dir/SKILL.md" ]] || fail "skills/$(basename "$dir") has no SKILL.md (placeholder folders don't ship)"
 done
 
+# The plan skill is retired into Design (#27 DES-015): nothing in the
+# plugin's runtime surface still invokes it.
+[[ -e "$REPO_ROOT/skills/plan" ]] && fail "skills/plan should be deleted (retired into Design)"
+if hits="$(grep -rnE '/compass(-labs)?:plan\b|compass-labs:plan\b|skills/plan\b' \
+  "$REPO_ROOT/skills" "$REPO_ROOT/agents" "$REPO_ROOT/.claude-plugin")"; then
+  echo "$hits" >&2
+  fail "no file in skills/, agents/ or .claude-plugin/ should invoke the retired plan skill"
+fi
+
 exit 0

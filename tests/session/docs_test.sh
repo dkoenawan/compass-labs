@@ -31,5 +31,23 @@ assert_contains "$claude_md" "tests/" "CLAUDE.md directory rules should mention 
 assert_contains "$claude_md" '`plugin.json` goes inside `.claude-plugin/`' \
   "CLAUDE.md should still say .claude-plugin/ holds only plugin.json"
 
+# #27 DES-016 (REQ-023): the Design path is documented, and plan appears
+# only as retired. ADRs and review records are history and keep their wording.
+assert_contains "$readme" "#### \`/compass-labs:design\`" "README should document the design skill"
+assert_contains "$readme" "Feature Planning (retired)" "README should say plan was retired"
+[[ -e "$REPO_ROOT/docs/explanation/plan" ]] && fail "docs/explanation/plan/ should be removed"
+for f in docs/reference/session/workflow-and-artifacts.md docs/explanation/session/overview.md; do
+  assert_contains "$(cat "$REPO_ROOT/$f")" "design/" "$f should describe the design/ folder"
+done
+assert_contains "$(cat "$REPO_ROOT/docs/explanation/solution-design.md")" "| \`plan\` | \`skills/plan\` (removed) |" \
+  "solution-design.md's domain map should mark plan retired"
+while IFS= read -r hit; do
+  [[ -z "$hit" ]] && continue
+  grep -qiE 'retired|removed|no longer' <<<"$hit" \
+    || fail "plan is described as a live skill: $hit"
+done < <(cd "$REPO_ROOT" && grep -rnE 'compass(-labs)?:plan\b|skills/plan\b|`plan` skill|the plan skill|(by|from) `plan`|`plan`/|`plan` and' \
+  README.md docs --include='*.md' \
+  | grep -vE '^docs/(sessions|registry/decisions|explanation/reviews)/' || true)
+
 echo "ok: session lifecycle docs validated"
 exit 0

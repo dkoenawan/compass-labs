@@ -60,14 +60,14 @@ If branch exists, ask whether to reuse it or choose a different name.
 
 ### Phase 4 — Design Spec Resolution
 
-Resolve the session directory by globbing for an existing session, not by constructing it from today's date — the spec may have been written by `/plan` on an earlier day:
+Resolve the session directory by globbing for an existing session, not by constructing it from today's date — the spec may have been written on an earlier day:
 
 ```bash
 ls -d docs/sessions/*-<feature-name>/ 2>/dev/null
 ```
 
 - **Exactly one match** → that is `SESSION_DIR`. Read `$SESSION_DIR/overview.md` and summarise the Implementation Order section to the user.
-- **No match** → mint a new one: `SESSION_DIR=docs/sessions/<today>-<feature-name>/`, then invoke `/compass:plan` to produce it. The plan skill writes to `$SESSION_DIR/overview.md`.
+- **No match** → there is no design to decompose. Stop and point the user to `/compass-labs:session`, which designs the feature in its Define and Design phases. Its Implement phase writes `tasks.md` from the design. Don't write a spec yourself.
 - **Multiple matches** → ask the user which session directory to use, then set `SESSION_DIR` to their choice.
 
 Every later phase in Plan Mode refers to `$SESSION_DIR` (or "the session dir") rather than re-deriving `docs/sessions/<date>-<feature-name>/`.

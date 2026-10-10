@@ -101,7 +101,6 @@ flowchart LR
 - **Anchor-like wording without markers counts as missing.** Framing offers to reuse it in the draft, but only the marked section is the anchor.
 - **The overlap check never feeds the verdict.** Registry and ADR hits are recorded as overlaps or conflicts; fit with the project is judged against the anchor alone.
 - **Bugfix framing is shallower than Feature** until the Bugfix workflow exists (#24, #40).
-- **The `plan` skill's discovery questions overlap with framing** for session work. Splitting `plan` up is tracked in #27.
 
 ## Changelog
 
