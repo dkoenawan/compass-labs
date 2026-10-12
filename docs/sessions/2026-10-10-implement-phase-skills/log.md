@@ -2,7 +2,7 @@
 session: 2026-10-10-implement-phase-skills
 type: feature
 issue: 28
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: design
 active_agent: main
-next_step: "Design milestone gate"
+next_step: "Hand off to compass-labs:implement"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -27,6 +27,7 @@ next_step: "Design milestone gate"
 
 ## Key decisions
 
+- **2026-10-12**: ✅ Design complete — DES-001 to DES-011 cover all 20 live REQs; D1-B `implement/` folder; follow-ups #47 (spec-first), #63 (D4-B).
 - **2026-10-12**: D1 revised to B — Implement artifact is the `implement/` folder (`tasks.md` + `as-built.md`), folded under Diátaxis at Close; new DES-011 (schema); larger appetite accepted. D2–D7 confirmed; spec-first → #47; D4-B revisit → #63.
 - **2026-10-10**: Design choices — plugin/tooling kind; as-built sections in tasks.md (ADR at Close); agent-compared OpenAPI; no-guidance = build + record + cite; skills/implement/; Close sole construct owner; REQ-009 by instruction; "Supporting:" evidence.
 - **2026-10-10**: ✅ Define complete — 20 live REQs (16 Must, 4 Should), 6 deferred (#57–#61, #50); anchor aligns.
@@ -139,3 +140,6 @@ next_step: "Design milestone gate"
 - D2-A confirmed. No phase before Implement writes an OpenAPI file today. Spec-first (Design writes an OpenAPI draft) goes to #47, which has a comment.
 - D3, D5, D6 and D7: A confirmed. D4: A for now. Moving the standard to `skills/session/reference/implement.md` (option B) is a follow-up, #63.
 - Applied to design/index.md: the status line, the scope checklist, the L3 view, the delta list, DES-001 to DES-011, coverage, implementation order, Decisions, the principles check, Risks and Open questions. check-design.sh: ok. The Mermaid render check wasn't run: the renderer's headless Chrome isn't installed here.
+
+### 2026-10-12 — main — milestone: ✅ Design complete
+- The user approved design/index.md: plugin/tooling kind, DES-001 to DES-011 covering all 20 live REQs, and D1 (B), D2 to D7 (A). check-design.sh: ok. The ADR flagged under D1 is written at Close. Follow-ups: #47 (spec-first OpenAPI), #63 (D4 option B).
