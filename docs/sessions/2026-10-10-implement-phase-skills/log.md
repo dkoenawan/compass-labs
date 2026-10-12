@@ -22,12 +22,12 @@ next_step: "Design milestone gate"
 
 ## Open items
 
-- To decide (from the issue): the order to build the layer skills in, and whether Implement falls back to `task-executor` until a layer skill exists.
-- Follow-ups: #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50.
+- Follow-ups: #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50. #63 revisit D4 option B. Spec-first OpenAPI → #47 (comment).
 - Work is on branch `feat/28-implement-phase-skills`.
 
 ## Key decisions
 
+- **2026-10-12**: D1 revised to B — Implement artifact is the `implement/` folder (`tasks.md` + `as-built.md`), folded under Diátaxis at Close; new DES-011 (schema); larger appetite accepted. D2–D7 confirmed; spec-first → #47; D4-B revisit → #63.
 - **2026-10-10**: Design choices — plugin/tooling kind; as-built sections in tasks.md (ADR at Close); agent-compared OpenAPI; no-guidance = build + record + cite; skills/implement/; Close sole construct owner; REQ-009 by instruction; "Supporting:" evidence.
 - **2026-10-10**: ✅ Define complete — 20 live REQs (16 Must, 4 Should), 6 deferred (#57–#61, #50); anchor aligns.
 - **2026-10-10**: Test-owned VER = integration (incl. harness tests running real hooks/scripts), UI/Playwright, or inspection for document requirements; unit-only verification ruled out (REQ-009).
@@ -133,3 +133,9 @@ next_step: "Design milestone gate"
 
 ### 2026-10-10 — compass-labs:design — note: Design ready for the gate
 - design/index.md: the C4 L1 context view, the L3 component view of the variation path, the delta list, and DES-001 to DES-010 covering all 20 live REQs, with the implementation order. The principles check has no traded-off marks. Mermaid render check passed. check-design.sh's four required headings are present.
+
+### 2026-10-12 — main — decision: D1 revised to option B (`implement/` folder); D2 to D7 confirmed
+- D1-B: Implement's artifact becomes the `implement/` folder, holding `tasks.md` (the plan) and `as-built.md` (As-built, Variations, Layer artifacts, Handed to Test). `feature.json` gives it `legacy_artifact: "tasks.md"`, so past sessions, and this one, keep a root `tasks.md` (REQ-020). The guard and the gate's staging already handle folder artifacts, so neither is edited. New DES-011 covers `feature.json`, `find-active-plan.sh` and `doc-maintainer`'s eligibility check. Close folds `implement/` under Diátaxis with a new table (DES-006). The user accepted the larger appetite.
+- D2-A confirmed. No phase before Implement writes an OpenAPI file today. Spec-first (Design writes an OpenAPI draft) goes to #47, which has a comment.
+- D3, D5, D6 and D7: A confirmed. D4: A for now. Moving the standard to `skills/session/reference/implement.md` (option B) is a follow-up, #63.
+- Applied to design/index.md: the status line, the scope checklist, the L3 view, the delta list, DES-001 to DES-011, coverage, implementation order, Decisions, the principles check, Risks and Open questions. check-design.sh: ok. The Mermaid render check wasn't run: the renderer's headless Chrome isn't installed here.

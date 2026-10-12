@@ -1,6 +1,6 @@
 # Design: Implement phase — an as-built artifact, the backend API artifact and the testing boundary
 
-> Phase: Design | Started: 2026-10-10 | Status: Ready for the Design milestone gate. The user confirmed the classification and scope and chose D1 to D7 (2026-10-10).
+> Phase: Design | Started: 2026-10-10 | Status: Ready for the Design milestone gate. The user confirmed the classification and scope and chose D1 to D7 (2026-10-10), then revised D1 to option B (2026-10-12).
 > Requirements: [`define/index.md`](../define/index.md) · Session history: [`log.md`](../log.md)
 
 ## Contents
@@ -31,7 +31,7 @@ The user confirmed the classification and the scope checklist below (2026-10-10)
 
 | Area | In scope? | Reason |
 |---|---|---|
-| Plugin/tooling (agents, skills, templates, scripts, manifest) | in | The primary kind. It covers the Implement standard, `agents/implement.md`, the `tasks.md` template, the backend layer home, the orchestrator's Implement gate, Close's fold-back, `task-executor`, `post-hook-validator`, the Test agent and the `verification` skill (REQ-001 to REQ-020) |
+| Plugin/tooling (agents, skills, templates, scripts, manifest) | in | The primary kind. It covers the Implement standard, `agents/implement.md`, the `implement/` folder artifact and its templates, the backend layer home, the orchestrator's Implement gate, Close's fold-back, `task-executor`, `post-hook-validator`, the Test agent and the `verification` skill (REQ-001 to REQ-020) |
 | Process/workflow (who decides what, and when) | in | The Implement gate gains a decision on each variation (REQ-004, REQ-005), Close folds variations back (REQ-006), and Implement and Test split testing between them (REQ-007 to REQ-010). It's covered in the all-kinds sections. No in-depth path exists: dkoenawan/compass-labs#49 |
 | Tests (the plugin's `tests/` harness) | in | Content assertions that keep `tests/run.sh` green while the files change, and that guard REQ-014, REQ-017, REQ-018 and REQ-020 |
 | Backend (a backend in this repo) | out | The plugin has no backend service. The backend *guidance* it ships for consuming repos is plugin content, under plugin/tooling. `stack-defaults.md` is linked, not applied here |
@@ -41,7 +41,7 @@ The user confirmed the classification and the scope checklist below (2026-10-10)
 | Infrastructure | out | Deferred to #50 (REQ-025). Infrastructure is a Design kind, not a layer |
 | Visual UI design | out | No screen or UI changes |
 | As-built docs (`docs/`) | out | Close folds this session back. Design and Implement don't write `docs/` |
-| Session folder schema (`feature.json`, guard hook, gate scripts) | out | Unchanged: under D1, `tasks.md` stays Implement's only artifact, and under D6 the gate scripts don't change |
+| Session folder schema (`feature.json`, guard hook, gate scripts) | in (`feature.json` and the plan lookups only) | Under D1 (B), Implement's artifact becomes the `implement/` folder, with the root `tasks.md` as the legacy artifact (DES-011). The guard already handles folder artifacts and their legacy files generically (the `design/` precedent), so its code doesn't change. Under D6 the gate scripts don't change |
 
 ## Context view
 
@@ -90,7 +90,8 @@ flowchart TB
     PHV["post-hook-validator [changed]"]:::changed
   end
   subgraph SESSION["Session folder in the consuming repo"]
-    TASKS["tasks.md: checklist plus As-built, Variations, Layer artifacts, Handed to Test [changed]"]:::changed
+    TASKS["implement/tasks.md: the task checklist [new]"]:::new
+    ASB["implement/as-built.md: As-built, Variations, Layer artifacts, Handed to Test [new]"]:::new
     LOG["log.md: variation decisions [unchanged]"]:::unchanged
   end
   OAS["OpenAPI document as built, in the repo's code [new]"]:::new
@@ -98,13 +99,15 @@ flowchart TB
   DESIGNP -->|"DES Result, Check, Depends on, API contract"| IMPL
   IMPL -->|"follows"| STD
   STD -->|"looks up skills/{layer}/reference/implement.md"| BE
-  IMPL -->|"writes tasks and the as-built record"| TASKS
+  IMPL -->|"writes the tasks"| TASKS
+  IMPL -->|"writes the as-built record"| ASB
   BE -->|"OpenAPI as built, checked against the API contract"| OAS
-  OAS -->|"each mismatch becomes a variation"| TASKS
-  TASKS -->|"statuses and variations shown before the options"| ORCH
+  OAS -->|"each mismatch becomes a variation"| ASB
+  ASB -->|"statuses and variations shown before the options"| ORCH
   ORCH -->|"one decision per variation: accept or rework"| LOG
-  TASKS -->|"Checks handed to Test"| TEST
-  TASKS -->|"accepted variations"| CLOSE
+  ASB -->|"Checks handed to Test"| TEST
+  ASB -->|"accepted variations and layer artifacts, by Diátaxis type"| CLOSE
+  TASKS -->|"repeatable procedures, as how-to guides"| CLOSE
   CLOSE -->|"describes what was built; registers constructs once"| DOCS
   CLOSE -->|"names each construct to validate"| PHV
   TE -->|"plans from design/index.md or a past design.md"| TASKS
@@ -118,22 +121,25 @@ Each element this design touches has exactly one status. Every visual matches th
 | Element | Status | DES | Note |
 |---|---|---|---|
 | Implement standard, `skills/implement/SKILL.md` | new | DES-001 | The rules for tasks, the as-built record, the testing boundary and the layer plug-in contract (D4) |
-| `skills/session/templates/tasks.md` | changed | DES-002 | New-session sections: As-built, Variations, Layer artifacts and Handed to Test (D1) |
-| "Deviations from design" section in the `tasks.md` template | deprecated | DES-002 | Replaced by Variations for new sessions. Past sessions keep theirs (REQ-020) |
+| `skills/session/templates/implement/tasks.md` and `implement/as-built.md` | new | DES-002 | The task checklist, and the as-built record's four sections: As-built, Variations, Layer artifacts and Handed to Test (D1) |
+| Root `skills/session/templates/tasks.md`, and its "Deviations from design" section | deprecated | DES-002 | Kept for past sessions' root layout, like `templates/design.md`. New sessions use `templates/implement/` (REQ-020) |
+| `skills/session/workflows/feature.json` (Implement phase) | changed | DES-011 | `artifact: "implement/"`, `artifact_files: ["tasks.md", "as-built.md"]` and `legacy_artifact: "tasks.md"` (D1) |
+| `skills/task-executor/scripts/find-active-plan.sh` | changed | DES-011 | Finds an in-progress plan in `docs/sessions/*/implement/tasks.md` and in the legacy `docs/sessions/*/tasks.md` |
+| `skills/doc-maintainer/SKILL.md` (session fold-back eligibility) | changed | DES-011 | Reads `implement/tasks.md`, or a root `tasks.md`, so an in-progress session isn't folded too early |
 | `agents/implement.md` | changed | DES-003 | Preloads the Implement standard. The "near-empty domain skills" paragraph goes |
 | Backend layer home, `skills/backend/SKILL.md` and `skills/backend/reference/implement.md` | new | DES-004 | The first layer under the plug-in contract (ADR-004 D7) |
 | `.claude-plugin/marketplace.json` | changed | DES-001, DES-004 | Lists `./skills/implement` and `./skills/backend` |
 | OpenAPI document as built (in a consuming repo) | new | DES-004 | Produced by Implement for each backend `DES-*` item that adds or changes an HTTP API |
 | Orchestrator Implement gate, `skills/session/SKILL.md` | changed | DES-005 | Shows statuses and variations, and records a decision per variation |
-| Close fold-back, `skills/session/reference/close-foldback.md` | changed | DES-006, DES-008 | Folds back accepted variations, and registers constructs on its own |
+| Close fold-back, `skills/session/reference/close-foldback.md` | changed | DES-006, DES-008 | A new Implement table folds `implement/` into the Diátaxis tree. Registers constructs on its own |
 | `skills/task-executor/SKILL.md` | changed | DES-007 | Resolves `design/index.md` or `design.md`, and derives tasks by the standard's rule |
 | `task-executor` `overview.md` resolution | deprecated | DES-007 | `overview.md` is retired |
 | `task-executor` per-task registry write (Execute Step 5 and the Step 0 status flip) | deprecated | DES-007 | One construct owner: Close (D5, ADR-004 D8) |
 | `skills/post-hook-validator/SKILL.md` | changed | DES-008 | Runs against a construct Close has registered |
 | `agents/test.md`, `skills/verification/SKILL.md`, `skills/session/templates/verification.md` | changed | DES-009 | Test-owned methods, and Implement's tests as supporting evidence only (D6, D7) |
-| `tests/session/` content tests | changed | DES-010 | New and updated assertions. `tests/run.sh` stays green |
+| `tests/session/` content tests, and `tests/hooks/session_guard_test.sh` | changed | DES-010, DES-011 | New and updated assertions, including guard cases for the `implement/` folder. `tests/run.sh` stays green |
 | `design/` standard and Design phase | unchanged | — | Supplies the `DES-*` table and the API contract |
-| `feature.json`, `hooks/session-guard.sh`, `check-traceability.sh`, `check-design.sh` | unchanged | — | Unchanged under D1 and D6 (REQ-020) |
+| `hooks/session-guard.sh`, `check-traceability.sh`, `check-design.sh`, the milestone gate's staging step | unchanged | — | The guard and the gate's staging already handle folder artifacts generically (D1). The gate scripts are unchanged under D6 (REQ-020) |
 | `log.md` format | unchanged | — | Variation decisions are ordinary `decision` entries |
 | As-built docs and the construct registry format | unchanged | — | Close writes into them as it does today |
 | Scalar, GitHub | unchanged | — | External |
@@ -144,20 +150,21 @@ Each item names the `REQ-*` it covers, the result Implement must produce, the ch
 
 | ID | Component | Covers | Result | Check | Depends on |
 |---|---|---|---|---|---|
-| DES-001 | Implement standard: `skills/implement/SKILL.md` (new standard skill, listed in `marketplace.json`) | REQ-001, REQ-002, REQ-003, REQ-007, REQ-008, REQ-014, REQ-015, REQ-016, REQ-020 | A standard in six parts. **(1) Tasks:** each task comes from one `DES-*` item's Result. The item's Check goes on its last task, unless the Check needs a Test-owned test, in which case it goes under Handed to Test. Tasks follow the Depends-on order. **(2) Testing boundary:** the standard defines unit, component and Test-owned tests itself. Implement writes unit and component tests only, and never writes integration, UI or Playwright tests. **(3) As-built record:** every `DES-*` item gets exactly one status, with a reason for any status other than *built as designed*. Every variation records the item, what was designed, what was built, and why. Frozen `define/` and `design/` are never edited. **(4) Layer plug-in contract:** for a `DES-*` item whose Component cell names layer L, Implement reads `${CLAUDE_PLUGIN_ROOT}/skills/L/reference/implement.md` if it exists. That file supplies how to build the layer, which unit and component tests to write, the layer's artifact (under Layer artifacts → L), and the check against the design, whose mismatches become variations. **(5) Fallback** when the file is missing (D3). **(6) Past sessions:** a `tasks.md` without an As-built section is treated as before | Each of the six parts is present. The lookup is the `skills/{layer}/` path convention, with no list of layer names to edit. A fixture `skills/demo/reference/implement.md` would be found with no other file changed. `tests/run.sh` passes | DES-002 |
-| DES-002 | `tasks.md` template: `skills/session/templates/tasks.md` | REQ-001, REQ-002, REQ-012, REQ-015, REQ-016 | The frontmatter and checklist stay. Each task carries `[DES-nnn]`, and each item's last task carries `— check: {Check}`. "Deviations from design" is replaced by four sections, written as tables only: **As-built** (`DES \| Status \| Reason \| Unit tests \| Component tests`), **Variations** (`ID \| DES \| Designed \| Built \| Why`, with IDs V1, V2 … local to the file), **Layer artifacts** (one `### {layer}` subsection per layer, shaped by that layer's guidance) and **Handed to Test** (`DES \| Check`) | `select-next-task.sh` on a filled-in copy returns only checklist tasks, because there are no `- [ ]` lines outside the checklist. The four headings are present, and "Deviations from design" isn't | — |
-| DES-003 | Implement agent: `agents/implement.md` | REQ-001, REQ-015 | A thin wrapper. It preloads `compass-labs:implement`, with the read-`SKILL.md`-yourself fallback. It owns `tasks.md`, and reads `design/index.md`, or the root `design.md` in a past session. It returns `done` only once the As-built record covers every `DES-*` item. The paragraph about near-empty domain skills is removed | `phase_agents_test.sh` passes, with new assertions for the preload and the fallback. No "near-empty" text remains | DES-001 |
+| DES-001 | Implement standard: `skills/implement/SKILL.md` (new standard skill, listed in `marketplace.json`) | REQ-001, REQ-002, REQ-003, REQ-007, REQ-008, REQ-014, REQ-015, REQ-016, REQ-020 | A standard in six parts. **(1) Tasks:** each task comes from one `DES-*` item's Result. The item's Check goes on its last task, unless the Check needs a Test-owned test, in which case it goes under Handed to Test. Tasks follow the Depends-on order. **(2) Testing boundary:** the standard defines unit, component and Test-owned tests itself. Implement writes unit and component tests only, and never writes integration, UI or Playwright tests. **(3) As-built record**, in `implement/as-built.md`: every `DES-*` item gets exactly one status, with a reason for any status other than *built as designed*. Every variation records the item, what was designed, what was built, and why. Frozen `define/` and `design/` are never edited. **(4) Layer plug-in contract:** for a `DES-*` item whose Component cell names layer L, Implement reads `${CLAUDE_PLUGIN_ROOT}/skills/L/reference/implement.md` if it exists. That file supplies how to build the layer, which unit and component tests to write, the layer's artifact (under Layer artifacts → L), and the check against the design, whose mismatches become variations. **(5) Fallback** when the file is missing (D3). **(6) Past sessions:** a session with a root `tasks.md` (the legacy layout) is treated as before | Each of the six parts is present. The lookup is the `skills/{layer}/` path convention, with no list of layer names to edit. A fixture `skills/demo/reference/implement.md` would be found with no other file changed. `tests/run.sh` passes | DES-002, DES-011 |
+| DES-002 | Implement templates: `skills/session/templates/implement/tasks.md` and `implement/as-built.md` | REQ-001, REQ-002, REQ-012, REQ-015, REQ-016 | **`tasks.md`** keeps the root template's frontmatter and checklist. Each task carries `[DES-nnn]`, and each item's last task carries `— check: {Check}`. It has no "Deviations from design" section. **`as-built.md`** holds four sections, written as tables only: **As-built** (`DES \| Status \| Reason \| Unit tests \| Component tests`), **Variations** (`ID \| DES \| Designed \| Built \| Why`, with IDs V1, V2 … local to the file), **Layer artifacts** (one `### {layer}` subsection per layer, shaped by that layer's guidance) and **Handed to Test** (`DES \| Check`). The root `templates/tasks.md` stays, unchanged, for past sessions | `select-next-task.sh` on a filled-in `implement/tasks.md` returns only checklist tasks. `as-built.md` has the four headings and no `- [ ]` lines. Neither file has "Deviations from design" | DES-011 |
+| DES-003 | Implement agent: `agents/implement.md` | REQ-001, REQ-015 | A thin wrapper. It preloads `compass-labs:implement`, with the read-`SKILL.md`-yourself fallback. It owns the `implement/` folder (a root `tasks.md` in a past session), and reads `design/index.md`, or the root `design.md` in a past session. It returns `done` only once `as-built.md` covers every `DES-*` item. The paragraph about near-empty domain skills is removed | `phase_agents_test.sh` passes, with new assertions for the preload and the fallback. No "near-empty" text remains | DES-001 |
 | DES-004 | Backend layer: `skills/backend/SKILL.md` and `skills/backend/reference/implement.md` (listed in `marketplace.json`) | REQ-007, REQ-011, REQ-012, REQ-013, REQ-014 | `SKILL.md` indexes `reference/implement.md`, and `reference/design.md` once #47 delivers it. `implement.md` covers four things. **(a) Stack:** detect the stack with the signals in `stack-defaults.md` and build in the established stack, linking to that file rather than restating it. **(b) Tests:** at least one unit test and one component test per backend `DES-*` item, named in its As-built row. **(c) OpenAPI:** a 3.x document of the API as built, committed in the repo (exported from the framework, or written beside the code), with its path and a Scalar render result under Layer artifacts → Backend. **(d) API check:** one row per endpoint in the design's API contract (`design/backend.md` where it exists, otherwise `design/solution.md`'s contracts and the backend `DES-*` items), comparing method, path, request, response and error cases. Each mismatch becomes a variation. A non-OpenAPI API cites dkoenawan/compass-labs#60 | Reading `implement.md` finds (a) to (d). It links `stack-defaults.md` and names no default stack itself, and `stack_defaults_test.sh` passes. No `skills/frontend/` or `skills/database/` exists. `marketplace.json` lists `./skills/backend` | DES-001, DES-002 |
-| DES-005 | Orchestrator Implement gate: `skills/session/SKILL.md` (milestone gate) | REQ-004, REQ-005, REQ-020 | A new "Implement gate" bullet. When `tasks.md` has an As-built section, the gate message lists every `DES-*` status and every variation, each with its reason, above approve, adjust and rethink. For each variation, the orchestrator asks: accept as built, or send back for rework. It appends one `decision` entry naming every outcome, mirrored to Key decisions, and relays rework to the Implement agent. It doesn't approve the milestone while any rework is outstanding, so every variation left in a frozen `tasks.md` has been accepted. A `tasks.md` without an As-built section is shown as before | Reading the gate finds these steps in order. `session_skill_test.sh` passes, with a new assertion | DES-002 |
-| DES-006 | Close fold-back of variations: `skills/session/reference/close-foldback.md` | REQ-006, REQ-020 | Step 1 also reads `tasks.md`'s As-built and Variations sections. A new "Folding back `tasks.md`" table maps each variation (every one was accepted at the gate) to the as-built reference doc, which describes the built result, not the design it varied from. The As-built table, Handed to Test and the checklist stay archived. How-to guides come from `tasks.md` as before. A past session's "Deviations from design" stays archived, as before. The no-session-IDs grep still applies | Reading `close-foldback.md` finds the new table and the change to step 1. `phase_agents_test.sh`'s fold-back assertions still pass | DES-005 |
-| DES-007 | `task-executor`: `skills/task-executor/SKILL.md` | REQ-015, REQ-017, REQ-018 | **Phase 4** resolves the session's design from `design/index.md` (the Components table and Implementation order), then the root `design.md`, and otherwise stops as it does now. `overview.md` appears nowhere. **Phase 5** decomposes by the Implement standard's task rule, linked rather than restated, and the example's integration-test task is replaced. **Execute:** Step 0 keeps the registry *read* but drops the "update its status to built" write. Step 5 (the post-task registry write) is removed, leaving one line: Close registers constructs (ADR-004 D8) | No `overview.md` remains, and no instruction writes `docs/registry/index.md` or `docs/reference/constructs/`. A fixture session with `design/index.md`, and one with a root `design.md`, each resolve to their design | DES-001 |
+| DES-005 | Orchestrator Implement gate: `skills/session/SKILL.md` (milestone gate) | REQ-004, REQ-005, REQ-020 | A new "Implement gate" bullet. When the session has `implement/as-built.md`, the gate message lists every `DES-*` status and every variation, each with its reason, above approve, adjust and rethink. For each variation, the orchestrator asks: accept as built, or send back for rework. It appends one `decision` entry naming every outcome, mirrored to Key decisions, and relays rework to the Implement agent. It doesn't approve the milestone while any rework is outstanding, so every variation left in a frozen `as-built.md` has been accepted. A past session's root `tasks.md` is shown as before | Reading the gate finds these steps in order. `session_skill_test.sh` passes, with a new assertion | DES-002 |
+| DES-006 | Close fold-back of `implement/`: `skills/session/reference/close-foldback.md` | REQ-006, REQ-020 | Step 1 also reads the `implement/` folder. A new "Implement doc and section → Destination → Diátaxis" table, like the Define and Design tables, folds it under Diátaxis. `as-built.md` Variations (every one was accepted at the gate) go to the as-built reference doc, which describes the built result, not the design it varied from, with the reason in the domain's explanation doc where it matters. Layer artifacts go to reference (for the backend, the OpenAPI document's path and its Scalar render). A repeatable procedure in `tasks.md` becomes a how-to. The As-built table, Handed to Test and the checklist stay archived. A past session's root `tasks.md` and its "Deviations from design" fold as before. The no-session-IDs grep still applies | Reading `close-foldback.md` finds the new table, with a Diátaxis column, and the change to step 1. `phase_agents_test.sh`'s fold-back assertions still pass | DES-005, DES-011 |
+| DES-007 | `task-executor`: `skills/task-executor/SKILL.md` | REQ-015, REQ-017, REQ-018 | **Phase 4** resolves the session's design from `design/index.md` (the Components table and Implementation order), then the root `design.md`, and otherwise stops as it does now. `overview.md` appears nowhere. The plan file is `$SESSION_DIR/implement/tasks.md`, or the root `tasks.md` in a session that already has one. **Phase 5** decomposes by the Implement standard's task rule, linked rather than restated, and the example's integration-test task is replaced. **Execute:** Step 0 keeps the registry *read* but drops the "update its status to built" write. Step 5 (the post-task registry write) is removed, leaving one line: Close registers constructs (ADR-004 D8) | No `overview.md` remains, and no instruction writes `docs/registry/index.md` or `docs/reference/constructs/`. A fixture session with `design/index.md`, and one with a root `design.md`, each resolve to their design | DES-001, DES-011 |
 | DES-008 | Construct registration and the validator trigger: `close-foldback.md` (registry bullet) and `skills/post-hook-validator/SKILL.md` | REQ-018, REQ-019 | Close's registry bullet stands alone, with no "the same way `task-executor` does". It adds or flips to `built` each construct the session built, in the shape of `docs/reference/constructs/ConstructName.md`, and Close's `done` note names each one with "run `/compass-labs:post-hook-validator {Name}`". `post-hook-validator` is triggered after the construct owner registers or updates a construct. Given a name, it reads that construct's file directly. Without a name, it derives one from the latest commit that touched `docs/reference/constructs/`, not just `HEAD~1`. It writes the divergence lockfile only into a live session folder, never under `archive/` | A search of `skills/` and `agents/` finds registration instructions (add a construct, or flip it to `built`) only in Close's procedure. `post-hook-validator`'s verified and diverged flips are verification, not registration. A named run reads the construct and doesn't exit with "No construct files were updated" | DES-007 |
-| DES-009 | Test boundary: `agents/test.md`, `skills/verification/SKILL.md` and `skills/session/templates/verification.md` | REQ-009, REQ-010, REQ-020 | The Method values become `integration` (including harness tests that run real hooks and scripts), `ui`, `playwright` and `inspection` (for a requirement about a document or instructions). All four are Test-owned. Each live `REQ-*` needs at least one Test-owned row. An Implement unit or component test appears only in Evidence, prefixed "Supporting:" (D7). The Test agent reads `tasks.md`'s Handed to Test section. The column order is unchanged, `check-traceability.sh` is unchanged (D6), and past sessions' `unit`, `e2e` and `manual` rows stay as they are | Reading the three files finds the methods, the at-least-one rule and the "Supporting:" rule. `requirements_verification_skills_test.sh` and `check_traceability_test.sh` pass unchanged | — |
-| DES-010 | Harness content tests: `tests/session/` (`phase_agents_test.sh` updated, plus a new `implement_standard_test.sh`) | REQ-014, REQ-017, REQ-018, REQ-020 | Content assertions: the Implement agent preloads `compass-labs:implement`; the standard names `skills/{layer}/reference/implement.md` and lists no layers; `skills/backend/` holds `SKILL.md` and `reference/implement.md`, and no other layer folder exists; `task-executor` has no `overview.md` and no registry-write instruction; the `tasks.md` template has the four sections; `marketplace.json` lists `implement` and `backend`. The existing `check-traceability.sh` and `check-design.sh` fixtures stay unchanged | `tests/run.sh` exits 0 | DES-001, DES-002, DES-003, DES-004, DES-005, DES-006, DES-007, DES-008, DES-009 |
+| DES-009 | Test boundary: `agents/test.md`, `skills/verification/SKILL.md` and `skills/session/templates/verification.md` | REQ-009, REQ-010, REQ-020 | The Method values become `integration` (including harness tests that run real hooks and scripts), `ui`, `playwright` and `inspection` (for a requirement about a document or instructions). All four are Test-owned. Each live `REQ-*` needs at least one Test-owned row. An Implement unit or component test appears only in Evidence, prefixed "Supporting:" (D7). The Test agent reads `implement/as-built.md`'s Handed to Test section. The column order is unchanged, `check-traceability.sh` is unchanged (D6), and past sessions' `unit`, `e2e` and `manual` rows stay as they are | Reading the three files finds the methods, the at-least-one rule and the "Supporting:" rule. `requirements_verification_skills_test.sh` and `check_traceability_test.sh` pass unchanged | DES-011 |
+| DES-010 | Harness content tests: `tests/session/` (`phase_agents_test.sh` updated, plus a new `implement_standard_test.sh`) | REQ-014, REQ-017, REQ-018, REQ-020 | Content assertions: the Implement agent preloads `compass-labs:implement`; the standard names `skills/{layer}/reference/implement.md` and lists no layers; `skills/backend/` holds `SKILL.md` and `reference/implement.md`, and no other layer folder exists; `task-executor` has no `overview.md` and no registry-write instruction; `templates/implement/as-built.md` has the four sections and `templates/implement/tasks.md` has none of them; `marketplace.json` lists `implement` and `backend`. The existing `check-traceability.sh` and `check-design.sh` fixtures stay unchanged | `tests/run.sh` exits 0 | DES-001, DES-002, DES-003, DES-004, DES-005, DES-006, DES-007, DES-008, DES-009, DES-011 |
+| DES-011 | Implement folder artifact in the session schema: `skills/session/workflows/feature.json`, `skills/task-executor/scripts/find-active-plan.sh` and `skills/doc-maintainer/SKILL.md` | REQ-001, REQ-002, REQ-020 | `feature.json`'s Implement phase gets `artifact: "implement/"`, `artifact_files: ["tasks.md", "as-built.md"]` and `legacy_artifact: "tasks.md"`, the same shape as Design. `hooks/session-guard.sh` isn't edited: it already gives a folder artifact to its owner, freezes it by the folder prefix, keeps a legacy root file writable only in a session that has it, and blocks mixing the two layouts. `find-active-plan.sh` searches `docs/sessions/*/implement/tasks.md` and `docs/sessions/*/tasks.md`. `doc-maintainer`'s fold-back eligibility reads `implement/tasks.md`, or a root `tasks.md` | `session_guard_test.sh` gains cases: the Implement agent may write `implement/tasks.md` and `implement/as-built.md`, and no other file in `implement/`; another agent may not; `implement/` is frozen after the Implement milestone; a session with a root `tasks.md` can't start `implement/`. `workflow_test.sh` asserts the new Implement entry. A fixture repo with one in-progress plan in each layout is found by `find-active-plan.sh`. `check_traceability_test.sh` and `check_design_test.sh` pass unchanged | — |
 
 **Coverage:** all 20 live REQs are covered.
-- REQ-001: DES-001, DES-002, DES-003.
-- REQ-002: DES-001, DES-002.
+- REQ-001: DES-001, DES-002, DES-003, DES-011.
+- REQ-002: DES-001, DES-002, DES-011.
 - REQ-003: DES-001.
 - REQ-004 and REQ-005: DES-005.
 - REQ-006: DES-006.
@@ -172,35 +179,35 @@ Each item names the `REQ-*` it covers, the result Implement must produce, the ch
 - REQ-017: DES-007, DES-010.
 - REQ-018: DES-007, DES-008, DES-010.
 - REQ-019: DES-008.
-- REQ-020: DES-001, DES-005, DES-006, DES-009, DES-010.
+- REQ-020: DES-001, DES-005, DES-006, DES-009, DES-010, DES-011.
 
 The deferred rows REQ-021 to REQ-026 need none.
 
-**Implementation order** (from Depends on): DES-002, DES-009 → DES-001 → DES-003, DES-004, DES-005, DES-007 → DES-006, DES-008 → DES-010
+**Implementation order** (from Depends on): DES-011 → DES-002, DES-009 → DES-001 → DES-003, DES-004, DES-005, DES-007 → DES-006, DES-008 → DES-010
 
 ## Decisions
 
-The user chose every option below on 2026-10-10. In each case it was the recommended option.
+The user chose every option below on 2026-10-10, each time the recommended option. On 2026-10-12 the user revised D1 to option B and confirmed D2 to D7. The D2 and D4 follow-ups are under Open questions.
 
 **D1: The form of the as-built record (ADR: refines ADR-002 and ADR-004 D7. The ADR also records the testing boundary and the variation path agreed in Define).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **A. New sections in `tasks.md` (chosen)** | `tasks.md` stays Implement's only artifact (ADR-002). No change to `feature.json`, the guard or the gate scripts, so REQ-020 is safe by construction. `find-active-plan.sh` keeps working | One file holds both the plan and the record. The new sections must avoid `- [ ]` lines, because `select-next-task.sh` parses every checklist line in the file |
-| B. An `implement/` folder artifact (`tasks.md` plus `as-built.md`), like `define/` and `design/` | Plan and record are separate, and there's room for per-layer files later | `feature.json`, the guard (with `tasks.md` as the legacy artifact), `find-active-plan.sh`'s `docs/sessions/*/tasks.md` glob, the gate staging and the tests all change. Too big for one session |
+| A. New sections in `tasks.md` | `tasks.md` stays Implement's only artifact (ADR-002). No change to `feature.json`, the guard or the gate scripts, so REQ-020 is safe by construction. `find-active-plan.sh` keeps working | One file holds both the plan and the record. The new sections must avoid `- [ ]` lines, because `select-next-task.sh` parses every checklist line in the file |
+| **B. An `implement/` folder artifact (`tasks.md` plus `as-built.md`), like `define/` and `design/` (chosen)** | Plan and record are separate, so the as-built tables can never become phantom tasks. All three conversational-and-build phases share one folder layout, which Close folds under Diátaxis section by section. There's room for per-layer files later | `feature.json`, `find-active-plan.sh`, `doc-maintainer`'s eligibility check and the tests change (DES-011). The guard and the gate's staging already handle folder artifacts and their legacy root files (the `design/` precedent), so neither is edited. The session grows beyond the one-session appetite |
 | C. A second root file, `as-built.md`, owned by Implement | Separate file, small change | Breaks one artifact per phase. The guard maps one artifact per phase, so it needs a schema change anyway |
 
-The user chose A. It keeps one artifact per phase, leaves the session schema and the gates untouched (REQ-020), and fits the one-session appetite. The new sections are tables only. Close writes the ADR. It refines ADR-002 (Implement's artifact now holds an as-built record and variations) and ADR-004 D7 (the layer plug-in contract for `reference/implement.md`). It also records the testing boundary agreed in Define (Implement: unit and component; Test: integration, UI, Playwright and inspection), and the variation path (recorded by Implement, decided at the Implement gate, folded back by Close).
+The user first chose A (2026-10-10), then revised to B (2026-10-12): Implement gets its own folder, like Define and Design, and Close folds it under Diátaxis. It's still one artifact per phase, because the folder is the artifact. Past sessions keep their root `tasks.md` and aren't migrated (REQ-020), the same way root `design.md` is handled. The user accepted the larger appetite. Close writes the ADR. It refines ADR-002 (Implement's artifact becomes the `implement/` folder, holding the plan and an as-built record with variations) and ADR-004 D7 (the layer plug-in contract for `reference/implement.md`). It also records the testing boundary agreed in Define (Implement: unit and component; Test: integration, UI, Playwright and inspection), and the variation path (recorded by Implement, decided at the Implement gate, folded back by Close).
 
 **D2: How the OpenAPI document is checked against the design's API contract (no ADR).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **A. The Implement agent compares them, one table row per endpoint, recorded in `tasks.md` (chosen)** | Works in any stack, needs no parser and no new dependency, and every endpoint row is visible at the gate | Not mechanical: a missed mismatch depends on the agent and the reviewer |
+| **A. The Implement agent compares them, one table row per endpoint, recorded in `implement/as-built.md` (chosen)** | Works in any stack, needs no parser and no new dependency, and every endpoint row is visible at the gate | Not mechanical: a missed mismatch depends on the agent and the reviewer |
 | B. A script that extracts endpoints from `design/solution.md` and compares them with the spec | Mechanical | The design's contract is prose, and YAML needs a parser beyond `jq`. Realistically it checks only method and path, not shapes. Fragile |
 | C. A contract test in the consuming repo (for example Schemathesis or Dredd) | Checks real behaviour | It's an integration test, which is Test-owned (REQ-008), and it adds a dependency per stack |
 
-The user chose A. It compares every field REQ-012 names, in any stack. One row per design endpoint makes an omission visible to the reviewer at the gate.
+The user chose A. It compares every field REQ-012 names, in any stack. One row per design endpoint makes an omission visible to the reviewer at the gate. Today no phase before Implement writes an OpenAPI file: Design states the contract in prose. Spec-first (Design writes an OpenAPI draft that Implement checks against) goes to the backend design standard, dkoenawan/compass-labs#47 (confirmed 2026-10-12).
 
 **D3: The fallback when a layer has no Implement guidance (no ADR).**
 
@@ -220,7 +227,7 @@ The user chose A. Work keeps flowing, and the gap stays visible in the as-built 
 | B. `skills/session/reference/implement.md`, like `close-foldback.md` | No new skill, and there's a precedent | Not a user-invocable standard. It mixes a phase standard into the orchestrator's skill |
 | C. Inline in `agents/implement.md` | Fewest files | Breaks the thin-wrapper rule (C8). `task-executor` can't link to it cleanly |
 
-The user chose A. It's the same pattern as the Design path. The agent stays a thin wrapper, and `task-executor` links to one task rule instead of restating it.
+The user chose A. It's the same pattern as the Design path. The agent stays a thin wrapper, and `task-executor` links to one task rule instead of restating it. The user wants option B revisited later, and that's tracked in dkoenawan/compass-labs#63.
 
 **D5: The single construct owner (links [ADR-004](../../../registry/decisions/004-design-path.md) D8, no new ADR).**
 
@@ -266,7 +273,8 @@ The marks are for the options the user chose. None is *traded off*, so there is 
 | DES-008 | met | met: the lockfile tweak only stops a write into a moved folder | SRP met: one registrar (Close), one validator. OCP, LSP, ISP, DIP n/a |
 | DES-009 | met | met | SRP met. OCP met: the gate script is untouched. LSP, ISP, DIP n/a |
 | DES-010 | met | met: content assertions only | n/a: test code. Each test file has one subject |
-| D1 (A) | met | met | SRP met at the artifact level: `tasks.md` is Implement's record. OCP met: no schema change |
+| DES-011 | met: reuses the guard's folder and legacy support, with no guard code | met: two files, no per-layer files yet | SRP met: `tasks.md` is the plan and `as-built.md` is the record. OCP met: the guard is extended by data in `feature.json`, not by code. LSP, ISP, DIP n/a |
+| D1 (B) | met | met: the folder holds only the plan and the record | SRP met: plan and record are separate files. OCP met: the guard and the gate are driven by `feature.json` data |
 | D2 (A) | met | met | n/a: a procedure, not code |
 | D3 (A) | met | met | OCP met: no list to edit when a layer ships |
 | D4 (A) | met | met | SRP met. DIP met |
@@ -275,27 +283,31 @@ The marks are for the options the user chose. None is *traded off*, so there is 
 | D7 (A) | met | met | n/a: a table convention |
 
 **Rejected under YAGNI:**
-- An `implement/` folder artifact or a second Implement file: no live REQ needs more than `tasks.md` (D1).
+- Per-layer files inside `implement/` (for example `implement/backend.md`): layer artifacts are subsections of `as-built.md` until a layer needs more (D1).
+- Migrating past sessions' root `tasks.md` to `implement/`: REQ-020 keeps them as they are.
 - A script or contract test comparing the OpenAPI document with the design (D2): REQ-012 asks for the comparison to be recorded, not mechanised.
 - Stub folders for frontend, database or AI-agent: ADR-004 D7, and deferred to #57, #58 and #59.
 - A shipped `skills/demo/` fixture: REQ-014's fixture belongs in a temporary test copy, not in the plugin.
 - Removing the guard hook's retired `overview.md` exception: no live REQ needs it.
-- A global variation ID scheme: V1, V2 … are local to `tasks.md`, like `NEED-nn` in `define/`.
+- A global variation ID scheme: V1, V2 … are local to `as-built.md`, like `NEED-nn` in `define/`.
 - Adding Scalar packages to a consuming repo: the render check runs Scalar without installing it into the repo (REQ-013).
 
 ## Risks
 
 | Risk | Mitigation |
 |---|---|
-| `select-next-task.sh` parses every `- [ ]`, `- [x]` and `- [!]` line in `tasks.md`, so a checklist line in a new section would become a phantom task | DES-002: the new sections are tables only, and DES-010 asserts it |
+| `select-next-task.sh` parses every `- [ ]`, `- [x]` and `- [!]` line in the plan file, so a checklist line in the as-built record would become a phantom task | D1 (B): the record lives in `as-built.md`, which `select-next-task.sh` never reads. Its sections are tables only anyway, and DES-010 asserts it |
+| A plan or fold-back lookup that still assumes a root `tasks.md` misses a new session's plan, for example `doc-maintainer` folding an in-progress session too early | DES-011 updates `find-active-plan.sh` and `doc-maintainer`'s eligibility check, both layouts are covered by fixtures, and a search for `tasks.md` across `skills/`, `agents/` and `hooks/` is part of DES-011's check |
+| D1 (B) grows the session beyond its one-session appetite | The user accepted the larger appetite (2026-10-12). DES-011 reuses the guard's existing folder support, so the guard's code is untouched |
 | The agent-run API comparison misses a mismatch (D2) | One row per design endpoint makes an omission visible at the Implement gate, where the reviewer sees it (DES-005) |
 | Scalar's CLI is unavailable (offline, no Node) | The backend guidance records the render result honestly, as *not rendered* with the reason, and it's raised at the gate. The OpenAPI document is still committed |
 | The REQ-018 search hits `post-hook-validator`'s verified and diverged flips, or `doc-maintainer` (Close's preloaded skill) | DES-008 defines registration as adding a construct or flipping it to `built`. `doc-maintainer` runs inside Close, so it counts as the same phase |
-| This session's own Implement runs on the old `agents/implement.md` and template | That's expected (a Define constraint). This session's `tasks.md` keeps the old "Deviations from design" section, which REQ-020 treats as a past session |
+| This session's own Implement runs on the old `agents/implement.md`, template and `feature.json` | That's expected (a Define constraint). This session writes a root `tasks.md` with the old "Deviations from design" section, which REQ-020 treats as a past session's layout. The `legacy_artifact` entry keeps it writable after DES-011 lands |
 | `post-hook-validator` runs after Close, once the session is archived | DES-008: the lockfile is written only into a live session folder, and a named run needs no last-commit derivation |
 
 ## Open questions
 
-All design questions are resolved: the classification, the scope and D1 to D7 were decided by the user on 2026-10-10. What remains are the follow-ups below.
+All design questions are resolved: the classification, the scope and D1 to D7 were decided by the user on 2026-10-10, and D1 was revised on 2026-10-12. What remains are the follow-ups below.
 - The plugin/tooling kind has no in-depth path: dkoenawan/compass-labs#51. The process/workflow area has none either: dkoenawan/compass-labs#49. Both are covered in the all-kinds sections above.
-- The backend design standard (dkoenawan/compass-labs#47) hasn't shipped, so DES-004's API check compares against `design/solution.md`'s contracts and the backend `DES-*` items, and against `design/backend.md` once #47 delivers it.
+- The backend design standard (dkoenawan/compass-labs#47) hasn't shipped, so DES-004's API check compares against `design/solution.md`'s contracts and the backend `DES-*` items, and against `design/backend.md` once #47 delivers it. #47 also takes spec-first, where Design writes an OpenAPI draft (D2, confirmed 2026-10-12).
+- Moving the Implement standard to `skills/session/reference/implement.md` (D4 option B): dkoenawan/compass-labs#63.
