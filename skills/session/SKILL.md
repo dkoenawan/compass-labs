@@ -68,6 +68,14 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
 4. **Milestone gate**, once the agent returns `done` with its artifact ready:
    - Show the artifact (or a summary of it) to the user. `AskUserQuestion`: approve / adjust / rethink.
      - **Design gate** (REQ-016): in a session with a `design/` folder, the gate message embeds, or links directly to, `design/index.md#context-view` and `design/index.md#delta-list`, before the approve / adjust / rethink options. A past session with a root `design.md` is shown as before.
+     - **Implement gate** (REQ-004, REQ-005): in a session with `implement/as-built.md`, do these in order:
+       1. The gate message lists every `DES-*` item's status from the As-built table, and every variation from the Variations table (its ID, item, what was designed, what was built and why), each with its reason, **above** the approve / adjust / rethink options.
+       2. For each variation, `AskUserQuestion`: **accept as built**, or **send back for rework**.
+       3. Append one `decision` entry naming every variation's outcome (for example "V1 accepted; V2 rework: {what to change}"), mirrored to Key decisions in the same edit.
+       4. Relay any rework to the Implement agent (the same phase, not a new handoff phase). It changes the code, never the design, and updates `as-built.md`; then the gate runs again from step 1.
+       5. Don't approve the Implement milestone while any rework is outstanding, so every variation left in a frozen `as-built.md` has been accepted.
+
+       A past session with a root `tasks.md` is shown as before.
    - **Adjust/rethink** → relay back to the agent (still the same phase; not a new handoff phase).
    - **Approve**:
      a. **Test milestone only** (REQ-011): before anything else, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/check-traceability.sh {session-dir}`. Exit 1 → refuse the milestone, show the missing `REQ-*` ids, stay in Test.
@@ -77,7 +85,7 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
      b. Set `log.md` frontmatter: `milestone: {completed phase key}`, `phase: {next phase key}` (from `${CLAUDE_PLUGIN_ROOT}/skills/session/workflows/feature.json`'s `phases[].phase` order — see the milestone-key note below).
      c. Append a `milestone` entry (D2), actor `main`, and its ✅ bullet under Key decisions in the same edit (see the mirror rule in step 3).
      d. **Stage explicitly, then commit + push** (D5 order — commit and push *before* any `gh` call, so the milestone comment's links resolve):
-        - Precondition: `git status --porcelain` may show only this milestone's own changes — the phase's artifact (`feature.json`'s `phases[].artifact` for the completed phase, e.g. `tasks.md`, or the whole `define/` or `design/` folder for Define or Design; a past session's Define or Design artifact is its root `requirements.md` or `design.md`, the phase's `legacy_artifact`), `log.md`, and the session's `assets/`. Code and tests are committed per task during Implement (D8), so anything else uncommitted is either an unfinished task or unrelated work: don't bundle it into the milestone commit — surface it to the user and resolve it first.
+        - Precondition: `git status --porcelain` may show only this milestone's own changes — the phase's artifact (`feature.json`'s `phases[].artifact` for the completed phase, e.g. `verification.md`, or the whole `define/`, `design/` or `implement/` folder for Define, Design or Implement; a past session's Define, Design or Implement artifact is its root `requirements.md`, `design.md` or `tasks.md`, the phase's `legacy_artifact`), `log.md`, and the session's `assets/`. Code and tests are committed per task during Implement (D8), so anything else uncommitted is either an unfinished task or unrelated work: don't bundle it into the milestone commit — surface it to the user and resolve it first.
         - `git add docs/sessions/{slug}/{artifact} docs/sessions/{slug}/log.md` (plus `docs/sessions/{slug}/assets/` if it exists). Name the paths — never rely on `git commit -a` or on an earlier add: a new artifact is **untracked** until you add it (for a folder artifact, `{artifact}` is `define/`, which stages every file in it), and a milestone commit without it freezes an artifact that was never pushed (VER-013).
         - Check `git diff --cached --name-only` lists the artifact (unless it's already committed unchanged), then `git commit -m "docs(sessions): {milestone label} — #{issue}"` + `git push`.
      e. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} {from-phase} {to-phase} {comment-file}`.

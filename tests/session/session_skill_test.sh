@@ -45,5 +45,21 @@ assert_contains "$skill" "design/index.md#delta-list" "the Design gate should sh
 assert_contains "$skill" "a4. **Design milestone only**" "milestone gate should have step a4 for Design"
 assert_contains "$skill" "scripts/check-design.sh {session-dir}" "step a4 should run check-design.sh"
 
+# #28 DES-005: the Implement gate shows statuses and variations above the
+# options, decides each variation, logs one decision and holds approval
+# while rework is outstanding (REQ-004, REQ-005).
+assert_contains "$skill" "**Implement gate** (REQ-004, REQ-005)" "milestone gate should have an Implement gate"
+assert_contains "$skill" "implement/as-built.md" "the Implement gate should read implement/as-built.md"
+assert_contains "$skill" "**accept as built**, or **send back for rework**" \
+  "the Implement gate should ask accept or rework for each variation"
+assert_contains "$skill" "Append one \`decision\` entry naming every variation's outcome" \
+  "the Implement gate should log one decision naming every outcome"
+assert_contains "$skill" "Don't approve the Implement milestone while any rework is outstanding" \
+  "the Implement gate should hold approval while rework is outstanding"
+gate="$(awk '/\*\*Implement gate\*\*/,/A past session with a root `tasks.md` is shown as before/' "$REPO_ROOT/skills/session/SKILL.md")"
+[[ -n "$gate" ]] || fail "could not extract the Implement gate"
+order_ok="$(awk '/every variation from the Variations table/{a=NR} /accept as built/{b=NR} /naming every variation.s outcome/{c=NR} /Relay any rework/{d=NR} /Don.t approve the Implement milestone/{e=NR} END{print (a && a<b && b<c && c<d && d<e) ? "yes" : "no"}' <<<"$gate")"
+assert_eq "yes" "$order_ok" "the Implement gate's steps should be in order"
+
 echo "ok: session skill orchestration rules validated"
 exit 0
