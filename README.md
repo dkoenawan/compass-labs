@@ -136,7 +136,7 @@ compass-labs/
 │   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
 │   ├── adr/                           # Architecture decision records
 │   ├── task-executor/                 # Autonomous, scheduled task execution for large issues
-│   ├── post-hook-validator/           # Post-commit functional-requirement validation
+│   ├── post-hook-validator/           # Construct functional-requirement validation, after Close registers it
 │   ├── brand-designer/                # Brand identity design through discovery
 │   └── bootstrap-new-project/         # Direct-generation project bootstrap (deprecated)
 ├── commands/                          # Slash commands (e.g. /compass-labs:hello); skills are slash commands too
@@ -328,7 +328,7 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 | Artifact | Description |
 |----------|-------------|
-| `docs/sessions/<date>-<feature-name>/tasks.md` | Plan file with frontmatter (issue, branch, test command, retry counts) + dependency-annotated checklist |
+| `docs/sessions/<date>-<feature-name>/implement/tasks.md` (a root `tasks.md` in a past session) | Plan file with frontmatter (issue, branch, test command, retry counts) + dependency-annotated checklist, decomposed from the session's `design/index.md` |
 | `feat/<feature-name>` branch | One commit per completed task, conventional-commit format |
 | GitHub PR | Opened automatically on completion, linked to the issue |
 
@@ -356,7 +356,7 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 #### `/compass-labs:post-hook-validator`
 
-The quality gate after a `task-executor` commit that updated a construct file. It reads that construct's functional requirements, walks the developer through a pass/fail checklist, moves the construct to `verified` or `diverged`, and on divergence triggers `/compass-labs:adr` and blocks the next `task-executor` run until the ADR is written.
+The quality gate after a construct is registered or updated. The Close phase is the only one that registers a session's constructs, and its fold-back note names each one to validate. Given a name, it reads that construct's functional requirements directly, walks the developer through a pass/fail checklist, moves the construct to `verified` or `diverged`, and on divergence triggers `/compass-labs:adr`. While the session is still live, it also blocks the next `task-executor` run until the ADR is written.
 
 ```bash
 /compass-labs:post-hook-validator [construct-name]
