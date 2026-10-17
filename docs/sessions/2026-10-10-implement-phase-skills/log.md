@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
-active_agent: compass-labs:implement
-next_step: "Implement fix pass (REQ-018, REQ-014 wording), then resume Test"
+active_agent: compass-labs:test
+next_step: "Test: re-verify REQ-018, REQ-014, REQ-001 and finish verification.md"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -200,3 +200,10 @@ next_step: "Implement fix pass (REQ-018, REQ-014 wording), then resume Test"
 
 ### 2026-10-17 — main — handoff: orchestrator → compass-labs:implement (fix pass: REQ-018, REQ-014 wording)
 - **Input:** Reword init's injected item 4 (REQ-018) and soften the implement standard's plug-in wording to name the marketplace/README listing (REQ-014). Code only — tasks.md is frozen. One commit per fix. tests/run.sh green. No push.
+- **Output:** done; skills/init/SKILL.md, skills/doc-maintainer/SKILL.md, skills/implement/SKILL.md (0be7ff6, 3d8630f). tests/run.sh: 21 passed, 0 failed.
+
+### 2026-10-17 — compass-labs:implement — attempt: REQ-018 fix — agents no longer register constructs after implementing
+- Item 4 of init's injected Agent Navigation Protocol now says not to write construct files while implementing; the Close phase registers a session's constructs (ADR-004 D8). Init still seeds the registry from existing code. The grep also found doc-maintainer step 4 ("typically already written by task-executor"), now pointing at Close. post-hook-validator's status updates on registered construct files were left alone. Commit 0be7ff6.
+
+### 2026-10-17 — compass-labs:implement — attempt: REQ-014 fix — marketplace listing named as the one outside edit
+- skills/implement/SKILL.md section 4 now says a layer plugs in with no edit to the standard; the only edit outside the layer's folder is listing it in marketplace.json (and the README), which is plugin registration. Commit 3d8630f.
