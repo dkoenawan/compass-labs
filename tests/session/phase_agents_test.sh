@@ -111,6 +111,16 @@ assert_contains "$foldback" "the frozen \`design/\` folder (or the root \`design
 assert_contains "$foldback" "## Folding back \`design/\`" "close-foldback.md should map design/ sections"
 assert_contains "$foldback" "Decisions flagged \"ADR\"" "close-foldback.md should turn flagged decisions into ADRs"
 
+# Close reads implement/ (or a past session's root tasks.md) and folds it
+# under Diátaxis with its own table (#28 DES-006).
+assert_contains "$foldback" "the frozen \`implement/\` folder (or the root \`tasks.md\` in a past session)" \
+  "close-foldback.md step 1 should read implement/ or a past session's tasks.md"
+assert_contains "$foldback" "## Folding back \`implement/\`" "close-foldback.md should map implement/ sections"
+assert_contains "$foldback" "| Implement doc and section | Destination | Diátaxis |" \
+  "the implement/ fold-back table should have a Diátaxis column"
+assert_contains "$foldback" "the built result, not the design it varied from" \
+  "accepted variations should fold back as the built result"
+
 # Deploy must refuse to ship an incomplete product (release-completeness check),
 # and the Deploy gate + release.md template must carry it through.
 assert_contains "$(cat "$REPO_ROOT/agents/deploy.md")" "Never ship an incomplete product" \

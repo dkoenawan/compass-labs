@@ -1,7 +1,7 @@
 ---
 issue: 28
 branch: feat/28-implement-phase-skills
-status: in-progress
+status: complete
 test_command: bash tests/run.sh
 last_skill_commit: null
 retry_counts:
@@ -25,7 +25,7 @@ Each task names the `DES-*` item it implements. This session uses the legacy roo
 - [x] `task-executor`: Phase 4 resolves `design/index.md` then root `design.md`, plan file `implement/tasks.md` or legacy root; Phase 5 links the standard's task rule; registry writes removed [DES-007] (depends on: 3, 5) — check: no `overview.md`, no registry-write instruction; fixture sessions in both design layouts resolve
 - [x] Close fold-back of `implement/` in `close-foldback.md`: step 1 reads `implement/`, new Implement Diátaxis table, legacy root `tasks.md` as before [DES-006] (depends on: 3, 8) — check: new table with a Diátaxis column; `phase_agents_test.sh` fold-back assertions pass
 - [x] Construct registration owned by Close alone (`close-foldback.md` registry bullet) and `post-hook-validator` triggered by name, reading the construct directly, lockfile only into a live session [DES-008] (depends on: 9) — check: registration instructions only in Close's procedure; a named run reads the construct
-- [ ] Harness content tests: new `tests/session/implement_standard_test.sh` and `phase_agents_test.sh` updates covering the standard, the backend home, task-executor, the templates and `marketplace.json` [DES-010] (depends on: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) — check: `tests/run.sh` exits 0
+- [x] Harness content tests: new `tests/session/implement_standard_test.sh` and `phase_agents_test.sh` updates covering the standard, the backend home, task-executor, the templates and `marketplace.json` [DES-010] (depends on: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) — check: `tests/run.sh` exits 0
 
 ## Deviations from design
 
