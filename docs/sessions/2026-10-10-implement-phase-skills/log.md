@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: test
-active_agent: main
-next_step: "Hand off to compass-labs:deploy"
+active_agent: compass-labs:deploy
+next_step: "Deploy: run the repo's release steps, write release.md"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -214,3 +214,10 @@ next_step: "Hand off to compass-labs:deploy"
 
 ### 2026-10-17 — main — milestone: ✅ Test complete
 - The user approved verification.md: 24 VER rows (VER-001 to VER-024), every REQ-001 to REQ-020 with a passing Test-owned check. check-traceability.sh: ok. tests/run.sh: 21 passed, 0 failed. REQ-018 fixed in 0be7ff6; REQ-001 "built with variation" and REQ-014 listing accepted by the user.
+
+---
+
+## Phase: Deploy
+
+### 2026-10-17 — main — handoff: orchestrator → compass-labs:deploy (release #28)
+- **Input:** Run this repo's deploy steps for #28 and write release.md, including its Completeness section (the manifest lists only complete components, none left out). Ask before any outward-facing step (PR, merge, tag, GitHub release); never push to main. One commit for release.md (plus any version bump it needs, committed separately). No log.md.
