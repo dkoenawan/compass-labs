@@ -2,7 +2,7 @@
 session: 2026-10-10-implement-phase-skills
 type: feature
 issue: 28
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
+milestone: implement
 active_agent: main
-next_step: "Implement gate: user reviews tasks.md and the deviations"
+next_step: "Hand off to compass-labs:test"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -27,6 +27,7 @@ next_step: "Implement gate: user reviews tasks.md and the deviations"
 
 ## Key decisions
 
+- **2026-10-17**: ✅ Implement complete — 12 tasks cover DES-001 to DES-011; tests/run.sh 21/21; deviations recorded in tasks.md.
 - **2026-10-17**: Follow-ups filed from Implement — #64 stale task-executor scripts/run.sh, #65 log.md template Artifacts line.
 - **2026-10-12**: ✅ Design complete — DES-001 to DES-011 cover all 20 live REQs; D1-B `implement/` folder; follow-ups #47 (spec-first), #63 (D4-B).
 - **2026-10-12**: D1 revised to B — Implement artifact is the `implement/` folder (`tasks.md` + `as-built.md`), folded under Diátaxis at Close; new DES-011 (schema); larger appetite accepted. D2–D7 confirmed; spec-first → #47; D4-B revisit → #63.
@@ -175,3 +176,6 @@ next_step: "Implement gate: user reviews tasks.md and the deviations"
 ### 2026-10-17 — main — decision: Follow-ups filed from Implement
 - #64: remove or rewrite the stale `skills/task-executor/scripts/run.sh` (hard-coded paths, points at a missing `overview.md`, nothing calls it).
 - #65: `skills/session/templates/log.md`'s Artifacts line links root `design.md` and `tasks.md`; it should link `design/index.md` and `implement/`.
+
+### 2026-10-17 — main — milestone: ✅ Implement complete
+- The user approved the build: 12 tasks in tasks.md cover DES-001 to DES-011, committed one per task (3e97bea to df8a676). tests/run.sh: 21 passed, 0 failed. Deviations from design are recorded in tasks.md. Follow-ups: #64, #65.
