@@ -66,25 +66,37 @@ Resolve the session directory by globbing for an existing session, not by constr
 ls -d docs/sessions/*-<feature-name>/ 2>/dev/null
 ```
 
-- **Exactly one match** → that is `SESSION_DIR`. Read `$SESSION_DIR/overview.md` and summarise the Implementation Order section to the user.
-- **No match** → there is no design to decompose. Stop and point the user to `/compass-labs:session`, which designs the feature in its Define and Design phases. Its Implement phase writes `tasks.md` from the design. Don't write a spec yourself.
+- **Exactly one match** → that is `SESSION_DIR`.
+- **No match** → there is no design to decompose. Stop and point the user to `/compass-labs:session`, which designs the feature in its Define and Design phases. Its Implement phase writes the plan from the design. Don't write a design yourself.
 - **Multiple matches** → ask the user which session directory to use, then set `SESSION_DIR` to their choice.
 
-Every later phase in Plan Mode refers to `$SESSION_DIR` (or "the session dir") rather than re-deriving `docs/sessions/<date>-<feature-name>/`.
+Then resolve the session's design, in this order:
+
+1. **`$SESSION_DIR/design/index.md`** → read its Components (DES) table and its Implementation order, and the `design/solution.md` or layer files it links.
+2. **`$SESSION_DIR/design.md`** (a past session's root design) → read its components and implementation order.
+3. **Neither** → there is no design to decompose. Stop as for "No match" above.
+
+Summarise the Implementation order to the user. Then resolve the plan file:
+
+```bash
+if [ -f "$SESSION_DIR/tasks.md" ]; then PLAN_FILE="$SESSION_DIR/tasks.md"   # a past session's root plan
+else PLAN_FILE="$SESSION_DIR/implement/tasks.md"; fi                      # the implement/ folder
+```
+
+Every later phase in Plan Mode refers to `$SESSION_DIR` and `$PLAN_FILE` rather than re-deriving `docs/sessions/<date>-<feature-name>/`.
 
 ### Phase 5 — Hour-Sized Decomposition
 
-Read `$SESSION_DIR/overview.md` Implementation Order. Decompose each item into hour-sized tasks (≈ one focused commit, ~30–90 min agent work). Apply dependency annotations using 1-based task indices.
+Decompose the design's `DES-*` items by the Implement standard's task rule (`${CLAUDE_PLUGIN_ROOT}/skills/implement/SKILL.md`, part 1, Tasks), in its Implementation order. Make each task hour-sized (≈ one focused commit, ~30–90 min agent work), and keep the standard's testing boundary (part 2): unit and component tests only. Apply dependency annotations using 1-based task indices.
 
 Present as a numbered checklist with dependencies annotated. Example:
 
 ```
-1. Add `User.role` field to Prisma schema
-2. Generate and apply migration (depends on: 1)
-3. Implement `AssignRoleCommand` with validation (depends on: 2)
-4. Wire up `/admin/users` route (depends on: 3)
-5. Add role badge to user list (depends on: 4)
-6. Write integration test for role assignment (depends on: 3)
+1. Add `User.role` field to the schema [DES-001]
+2. Generate and apply the migration [DES-001] (depends on: 1) — check: the migration applies to a copy of the database
+3. Implement `AssignRoleCommand` with validation, with its unit test [DES-002] (depends on: 2)
+4. Wire up the `/admin/users` route, with its component test [DES-002] (depends on: 3) — check: assigning a role returns 200
+5. Add role badge to user list, with its component test [DES-003] (depends on: 4)
 ```
 
 Ask: "Does this decomposition look right? Adjust any tasks before we continue."
@@ -110,7 +122,7 @@ Warn if crontab clash detected in Phase 1.
 Show summary:
 ```
 Branch:       feat/<feature-name>
-Plan file:    $SESSION_DIR/tasks.md
+Plan file:    $PLAN_FILE
 Tasks:        <N> tasks, <M> with dependencies
 Test command: <cmd>
 Schedule:     every 6h (cron: 0 */6 * * *)
@@ -123,15 +135,15 @@ On `adjust`: re-enter the relevant phase. On `rethink`: start over from Phase 2.
 
 ### Phase 9 — Commit
 
-1. Write `$SESSION_DIR/tasks.md` (see **Plan File Format** below)
+1. Write `$PLAN_FILE` (see **Plan File Format** below)
 2. Create branch: `git checkout -b feat/<feature-name>`
-3. Commit: `git add $SESSION_DIR/tasks.md && git commit -m "feat(<feature-name>): initialise task-executor plan"`
+3. Commit: `git add $PLAN_FILE && git commit -m "feat(<feature-name>): initialise task-executor plan"`
 4. Push: `git push -u origin feat/<feature-name>`
 5. Install cron: `scripts/install-schedule.sh <repo> [--every Nh]`
 6. Comment on issue:
 
 ```bash
-scripts/comment-on-issue.sh <N> "🤖 Task automation started — runs every 6h via \`/compass:task-executor\`. Plan: \`$SESSION_DIR/tasks.md\`."
+scripts/comment-on-issue.sh <N> "🤖 Task automation started — runs every 6h via \`/compass:task-executor\`. Plan: \`$PLAN_FILE\`."
 ```
 
 ---
@@ -170,10 +182,11 @@ On `error:concurrency_conflict` → E14.
 
 Read `status` from plan frontmatter. If `complete` → exit clean (cron already uninstalled; this is a no-op).
 
-**Validation block check** (runs before task selection). The session directory is `$(dirname <plan-file>)`, where `<plan-file>` is the path resolved by Phase 1's `find-active-plan.sh`:
+**Validation block check** (runs before task selection). The session directory is the folder holding `<plan-file>`, the path resolved by Phase 1's `find-active-plan.sh`, or that folder's parent when the plan is `implement/tasks.md`:
 
 ```bash
 SESSION_DIR="$(dirname "<plan-file>")"
+[ "$(basename "$SESSION_DIR")" = "implement" ] && SESSION_DIR="$(dirname "$SESSION_DIR")"
 [ -f "$SESSION_DIR/.validation-blocked" ] && cat "$SESSION_DIR/.validation-blocked"
 ```
 
@@ -222,10 +235,10 @@ Check whether `docs/registry/index.md` exists in the repository root.
 
 6. **Registry context use**: Before starting implementation, incorporate what was found:
    - If a `built`/`verified` construct covers the task area → extend or reuse it; do not create a duplicate.
-   - If a `planned` construct matches → the task is implementing that planned construct; update its status to `built` as part of the task.
+   - If a `planned` construct matches → the task is implementing that planned construct. Build to it, and leave its status alone: Close flips it to `built` (Step 5).
    - If nothing matches → note "no registry match for this task domain" and proceed without constraint.
 
-Log the registry check result as one line in the commit body (see Step 5).
+Log the registry check result as one line in the commit body (see Step 4).
 
 #### Step 1 — Implement
 
@@ -257,110 +270,9 @@ Include a registry check summary in the commit body:
 - `registry: no match — task domain not in registry` — if no match
 - `registry: not found — skipped` — if docs/registry/index.md does not exist
 
-#### Step 5 — Post-Task Registry Write (mandatory after every successful commit)
+#### Step 5 — No registry write
 
-Check whether `docs/registry/index.md` exists.
-
-**If it does NOT exist**: Skip this step, proceed to Step 6.
-
-**If it exists**:
-
-Determine what was built or modified in the task. Use the task description and the files changed in the commit to derive construct names and types.
-
-**Case A — Task matched a `planned` construct in Step 0:**
-
-Update the construct file at `docs/reference/constructs/<Name>.md`:
-
-1. Change `status: planned` → `status: built`
-2. Set `last_verified: null` (verification is the post-hook validator's job)
-3. Fill in the `## Interface` section with the actual implemented interface (class/function signatures, API shape) from the just-committed code — read the committed file(s) to extract it.
-4. Fill in `## Dependencies` — list constructs it calls and constructs that call it, derived from the committed code.
-5. Note cross-domain dependencies in `## Key Decisions`: for each dependency that crosses a layer boundary (e.g., Backend → Database, Frontend → Backend), add an entry: `cross-domain dependency: <ThisConstruct> → <OtherConstruct> (doc-maintainer: reconcile)`.
-
-Then update `docs/registry/index.md`:
-- Change the row's `Status` column from `planned` to `built`.
-- Increment `verified` count only if a test was run and passed; otherwise leave as-is.
-- Update `last_updated` to today's date.
-
-**Case B — Task created a new construct not previously in the registry:**
-
-Determine: type (Service | Component | Repository | Model | Resource | Utility | Middleware | Hook), layer (Backend | Frontend | Database | Infra | Shared), PascalCase name, file path.
-
-Write `docs/reference/constructs/<Name>.md` with `status: built`:
-
-```markdown
----
-name: <Name>
-type: <type>
-layer: <layer>
-file: <path>
-status: built
-planned_in: null
-last_verified: null
----
-
-## Does
-
-<one or two sentences describing what this construct does, derived from the task description and committed code>
-
-## Functional Requirements
-
-<extract FRs from the task description — make each testable and user-facing>
-
-## Proof
-
-- method: null
-- verified_by: null
-- checklist_result: null
-- test_file: null
-
-## Interface
-
-```<language>
-<actual interface from committed code — class/function signatures or API shape>
-```
-
-## Dependencies
-
-- Calls: <other construct names or "none">
-- Called by: <other construct names or "none">
-- Reads: <data sources or "none">
-- Writes: <data sources or "none">
-
-## Patterns Applied
-
-- (none)
-
-## Key Decisions
-
-- <cross-domain dependency entries if applicable>
-```
-
-Then update `docs/registry/index.md`:
-- Append a row to the Constructs table: `| <Name> | <type> | <Does one-line> | <layer> | constructs/<Name>.md | built |`
-- Append a row to Feature Cross-Reference if the feature isn't already there, or add the construct name to the existing row.
-- Increment `construct_count` and update `last_updated`.
-
-**Case C — Task modified an existing `built` or `verified` construct:**
-
-Update the construct file:
-- Update the `## Interface` section to reflect any signature changes.
-- Add a note to `## Key Decisions`: `updated by task-executor on <date>: <one-line description of what changed>`.
-- Do NOT change `status` — leave `built`/`verified` as-is.
-
-Update `docs/registry/index.md`: update `last_updated`.
-
-**Case D — Task touched code unrelated to any registered construct (tooling, config, tests):**
-
-Skip the registry write. Log "registry write skipped — task is tooling/config, no construct boundary crossed" in the next commit body.
-
-**Hard limit**: Write or update at most 3 construct files per task. If more were touched, note the remainder as "registry write deferred — exceeded 3-construct limit per task."
-
-Commit the registry update separately:
-```bash
-git add docs/registry/ && git commit -m "chore(<feature-name>): update registry after task <index>"
-git push origin feat/<feature-name>
-```
+Close registers the constructs a session built, once its variations are decided (ADR-004 D8). This skill only reads the registry (Step 0).
 
 #### Step 6 — Next Task
 
@@ -469,7 +381,7 @@ PLAN="$(scripts/find-active-plan.sh <repo>)"  # also matches status: paused
 
 ## Plan File Format
 
-`$SESSION_DIR/tasks.md` (written in Plan Mode Phase 9, e.g. `docs/sessions/<date>-<feature-name>/tasks.md`):
+`$PLAN_FILE` (written in Plan Mode Phase 9): `docs/sessions/<date>-<feature-name>/implement/tasks.md`, or the root `docs/sessions/<date>-<feature-name>/tasks.md` in a past session that already has one. The session's Implement template is `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/implement/tasks.md`:
 
 ```yaml
 ---
@@ -486,10 +398,10 @@ budget:
   stop_on_first_failure: true
 ---
 
-- [ ] <task 1 description>
-- [ ] <task 2 description> (depends on: 1)
-- [ ] <task 3 description> (depends on: 1)
-- [ ] <task 4 description> (depends on: 2, 3)
+- [ ] <task 1 description> [DES-001]
+- [ ] <task 2 description> [DES-001] (depends on: 1) — check: <DES-001's Check>
+- [ ] <task 3 description> [DES-002] (depends on: 1)
+- [ ] <task 4 description> [DES-003] (depends on: 2, 3)
 ```
 
 State markers: `- [ ]` pending, `- [x]` complete, `- [!] <desc> (failed YYYY-MM-DD: <reason>)` failed.
@@ -519,7 +431,7 @@ State markers: `- [ ]` pending, `- [x]` complete, `- [!] <desc> (failed YYYY-MM-
 
 ## Skill Completion Gates
 
-**Plan mode exits successfully when:** `tasks.md` is committed, branch pushed, cron installed, issue commented.
+**Plan mode exits successfully when:** the plan file is committed, branch pushed, cron installed, issue commented.
 
 **Execute mode exits successfully when:** budget loop ran to completion (or was empty), branch pushed, restore-branch completed. Partial progress (some tasks done, some failed) is still a successful exit.
 
