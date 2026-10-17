@@ -395,7 +395,7 @@ Before designing or building anything in this codebase, always:
 1. Read `docs/registry/index.md` — search the "Does" column for capabilities that already exist
 2. Check the Feature Cross-Reference for related constructs across all layers
 3. If the registry has Known Gaps in the relevant area — read source only for those specific areas
-4. After any implementation: write or update the construct file in `docs/reference/constructs/`
+4. Don't write construct files in `docs/reference/constructs/` while implementing. The Close phase registers the constructs a session built, once their variations are decided (ADR-004 D8)
 
 This prevents duplicate work and keeps the registry as the single source of truth for what exists.
 
