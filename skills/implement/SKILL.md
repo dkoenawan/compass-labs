@@ -73,7 +73,7 @@ if that file exists. It supplies four things for the layer:
 3. **The layer's artifact:** what to record under Layer artifacts → `{layer}` in `as-built.md`.
 4. **The check against the design:** how to compare what was built with the layer's design. Each mismatch becomes a variation.
 
-The lookup is this path convention and nothing else. This standard keeps no list of layers: a layer plugs in by adding `skills/{layer}/SKILL.md` and `skills/{layer}/reference/implement.md`, with no edit here or anywhere else.
+The lookup is this path convention and nothing else. This standard keeps no list of layers: a layer plugs in by adding `skills/{layer}/SKILL.md` and `skills/{layer}/reference/implement.md`, with no edit to this standard. The only edit outside the layer's folder is listing the skill in `.claude-plugin/marketplace.json` (and the README), which is plugin registration rather than a change to how Implement works.
 
 ## 5. When a layer has no guidance
 
