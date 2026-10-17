@@ -129,6 +129,7 @@ compass-labs/
 │   ├── requirements/                  # Requirements standard: EARS + Given/When/Then + ISO 29148, per type, diagrams, worked example
 │   ├── verification/                  # VER-* verification table standard
 │   ├── design/                        # Design standard: solution kinds, notation catalogue, stack defaults
+│   ├── implement/                     # Implement standard: tasks, testing boundary, as-built record, layer plug-in contract
 │   ├── init/                          # Project initialization (recommended)
 │   ├── explore/                       # Token-efficient codebase investigation
 │   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
@@ -447,6 +448,15 @@ The Design standard the Design agent preloads. It is the plugin's only path to a
 - **Visual UI design:** it is handed to Claude Design through `design/ui-handoff.md`, never specified directly.
 - **Stack defaults:** the plugin's defaults are stated once, in [`stack-defaults.md`](skills/design/reference/stack-defaults.md). Design proposes them only where the repository has no established stack.
 - **The Design gate:** it shows the context view and the delta list, and `check-design.sh` refuses the milestone if either is missing, or if the classification or scope checklist is.
+
+#### `/compass-labs:implement`
+
+The Implement standard the Implement agent preloads. It turns the design's `DES-*` items into an `implement/` folder:
+
+- **`tasks.md`:** the plan, one task per piece of a `DES-*` item's Result, in the design's dependency order. Each item's Check goes on its last task.
+- **`as-built.md`:** the as-built record. Every `DES-*` item gets one status (built as designed, built with variation, or not built), and every difference from the design is a variation that you accept or send back for rework at the Implement gate. It also holds each layer's artifacts and the checks handed to Test.
+- **Testing boundary:** Implement writes unit and component tests only. Integration, UI and Playwright tests, and inspection, belong to Test.
+- **Layers:** a layer plugs in its own Implement guidance at `skills/{layer}/reference/implement.md`, found by that path alone. A layer with no guidance is built with the repository's conventions, and the gap is recorded in the as-built record.
 
 #### `/compass-labs:verification`
 
