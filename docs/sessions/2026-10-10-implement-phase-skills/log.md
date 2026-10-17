@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
-active_agent: compass-labs:test
-next_step: "Test: re-verify REQ-018, REQ-014, REQ-001 and finish verification.md"
+active_agent: main
+next_step: "Test gate: user reviews verification.md"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -207,3 +207,6 @@ next_step: "Test: re-verify REQ-018, REQ-014, REQ-001 and finish verification.md
 
 ### 2026-10-17 — compass-labs:implement — attempt: REQ-014 fix — marketplace listing named as the one outside edit
 - skills/implement/SKILL.md section 4 now says a layer plugs in with no edit to the standard; the only edit outside the layer's folder is listing it in marketplace.json (and the README), which is plugin registration. Commit 3d8630f.
+
+### 2026-10-17 — compass-labs:test — note: Verification ready for the Test gate — 24 VER rows, check-traceability ok
+- Resumed with the user's answers (same agent). Every REQ-001 to REQ-020 has a passing Test-owned check (integration or inspection); Implement tests cited only as "Supporting:". First pass at abda750; re-checks at 7bdda2f after the fix pass: VER-024 passes for REQ-018 (init rework 0be7ff6; VER-020 kept as the abda750 fail), VER-002 passes for REQ-001 as an accepted deviation, VER-016 re-checked against 3d8630f. REQ-020: 699 comparisons of gate scripts and guard hook against 4286ed9, 0 differing. tests/run.sh 21/21; check-traceability.sh exit 0. Committed in deaffec.
