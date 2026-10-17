@@ -100,8 +100,8 @@ assert_hook_stderr_contains "owned by"
 repo="$(new_fixture_repo)"
 session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active design)"
 git_commit_all "$repo" "initial fixture"
-assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/tasks.md" "$repo" agent-1 compass-labs:implement)" 0 \
-  "implement agent writing tasks.md should be allowed"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/tasks.md" "$repo" agent-1 compass-labs:implement)" 0 \
+  "implement agent writing implement/tasks.md should be allowed"
 
 # 8. log.md by a subagent is always blocked.
 repo="$(new_fixture_repo)"
@@ -243,8 +243,8 @@ assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/requirements.md" "$re
   "a legacy session editing its own root requirements.md should be allowed"
 
 # 23c. Other top-level artifacts are unaffected by the layout rule.
-assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/tasks.md" "$repo" agent-1 compass-labs:implement)" 0 \
-  "tasks.md in a legacy session should be allowed for the implement agent"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/verification.md" "$repo" agent-1 compass-labs:test)" 0 \
+  "verification.md in a legacy session should be allowed for the test agent"
 
 # 24. Unreadable workflow + a path with a / -> still blocked (unknown subdirectory).
 repo="$(new_fixture_repo)"
@@ -299,6 +299,52 @@ assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/design.md" "$repo" ag
   "a legacy session editing its own root design.md should be allowed"
 assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/design/index.md" "$repo" agent-1 compass-labs:design)" 2 \
   "a legacy session writing design/index.md should be blocked"
+assert_hook_stderr_contains "this session uses the root layout"
+
+# --- Folder artifacts: implement/ (#28 DES-011) ---------------------------
+
+# 31. The implement agent writes implement/tasks.md and implement/as-built.md
+#     in a new session, and no other file in implement/.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active design)"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/tasks.md" "$repo" agent-1 compass-labs:implement)" 0 \
+  "implement agent writing implement/tasks.md in a new session should be allowed"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/as-built.md" "$repo" agent-1 compass-labs:implement)" 0 \
+  "implement agent writing implement/as-built.md in a new session should be allowed"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/notes.md" "$repo" agent-1 compass-labs:implement)" 2 \
+  "implement/notes.md is not one of implement/'s files and should be blocked"
+assert_hook_stderr_contains "not one of implement/'s files"
+
+# 32. implement/ is owned as a unit: another phase's agent can't write in it.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/as-built.md" "$repo" agent-1 compass-labs:test)" 2 \
+  "test agent writing implement/as-built.md should be blocked (wrong owner)"
+assert_hook_stderr_contains "owned by"
+
+# 33. A new session (no root tasks.md) can't create one.
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/tasks.md" "$repo" agent-1 compass-labs:implement)" 2 \
+  "a new session creating a root tasks.md should be blocked"
+assert_hook_stderr_contains "new sessions write implement/"
+
+# 34. Frozen as a unit after the implement milestone.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" test active implement)"
+mkdir -p "$session_dir/implement"
+echo "# Tasks" > "$session_dir/implement/tasks.md"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/as-built.md" "$repo" agent-1 compass-labs:implement)" 2 \
+  "a subagent writing implement/as-built.md after the implement milestone should be blocked"
+assert_hook_stderr_contains "frozen"
+
+# 35. A past session with a root tasks.md keeps it and can't start implement/.
+repo="$(new_fixture_repo)"
+session_dir="$(make_session_fixture "$repo" "2026-01-01-sess" implement active design)"
+echo "# Tasks" > "$session_dir/tasks.md"
+git_commit_all "$repo" "initial fixture"
+assert_hook_exit "$HOOK" "$(build_input Edit "$session_dir/tasks.md" "$repo" agent-1 compass-labs:implement)" 0 \
+  "a legacy session editing its own root tasks.md should be allowed"
+assert_hook_exit "$HOOK" "$(build_input Write "$session_dir/implement/tasks.md" "$repo" agent-1 compass-labs:implement)" 2 \
+  "a legacy session writing implement/tasks.md should be blocked"
 assert_hook_stderr_contains "this session uses the root layout"
 
 echo "ok: session-guard.sh validated against all D7 rules"

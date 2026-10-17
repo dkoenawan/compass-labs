@@ -113,7 +113,7 @@ compass-labs/
 │   ├── orchestrator.md                # Session orchestrator entry point
 │   ├── define.md                      # Define: frames the problem, writes define/
 │   ├── design.md                      # Design: writes design/ (context view, delta list, DES items)
-│   ├── implement.md                   # Implement: writes tasks.md and the code
+│   ├── implement.md                   # Implement: writes implement/ (tasks, as-built record) and the code
 │   ├── test.md                        # Test: writes verification.md
 │   ├── deploy.md                      # Deploy: writes release.md
 │   └── close.md                       # Close: folds the session into as-built docs
@@ -129,12 +129,14 @@ compass-labs/
 │   ├── requirements/                  # Requirements standard: EARS + Given/When/Then + ISO 29148, per type, diagrams, worked example
 │   ├── verification/                  # VER-* verification table standard
 │   ├── design/                        # Design standard: solution kinds, notation catalogue, stack defaults
+│   ├── implement/                     # Implement standard: tasks, testing boundary, as-built record, layer plug-in contract
+│   ├── backend/                       # Backend layer home: Implement guidance (stack, tests, OpenAPI as built, API check)
 │   ├── init/                          # Project initialization (recommended)
 │   ├── explore/                       # Token-efficient codebase investigation
 │   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
 │   ├── adr/                           # Architecture decision records
 │   ├── task-executor/                 # Autonomous, scheduled task execution for large issues
-│   ├── post-hook-validator/           # Post-commit functional-requirement validation
+│   ├── post-hook-validator/           # Construct functional-requirement validation, after Close registers it
 │   ├── brand-designer/                # Brand identity design through discovery
 │   └── bootstrap-new-project/         # Direct-generation project bootstrap (deprecated)
 ├── commands/                          # Slash commands (e.g. /compass-labs:hello); skills are slash commands too
@@ -326,7 +328,7 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 | Artifact | Description |
 |----------|-------------|
-| `docs/sessions/<date>-<feature-name>/tasks.md` | Plan file with frontmatter (issue, branch, test command, retry counts) + dependency-annotated checklist |
+| `docs/sessions/<date>-<feature-name>/implement/tasks.md` (a root `tasks.md` in a past session) | Plan file with frontmatter (issue, branch, test command, retry counts) + dependency-annotated checklist, decomposed from the session's `design/index.md` |
 | `feat/<feature-name>` branch | One commit per completed task, conventional-commit format |
 | GitHub PR | Opened automatically on completion, linked to the issue |
 
@@ -354,7 +356,7 @@ Runs large GitHub issues autonomously via cron over multiple days. An interactiv
 
 #### `/compass-labs:post-hook-validator`
 
-The quality gate after a `task-executor` commit that updated a construct file. It reads that construct's functional requirements, walks the developer through a pass/fail checklist, moves the construct to `verified` or `diverged`, and on divergence triggers `/compass-labs:adr` and blocks the next `task-executor` run until the ADR is written.
+The quality gate after a construct is registered or updated. The Close phase is the only one that registers a session's constructs, and its fold-back note names each one to validate. Given a name, it reads that construct's functional requirements directly, walks the developer through a pass/fail checklist, moves the construct to `verified` or `diverged`, and on divergence triggers `/compass-labs:adr`. While the session is still live, it also blocks the next `task-executor` run until the ADR is written.
 
 ```bash
 /compass-labs:post-hook-validator [construct-name]
@@ -413,7 +415,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 | `compass-labs:orchestrator` | All (main session) | `log.md`, milestone commits, GitHub sync, and the README's project anchor |
 | `compass-labs:define` | Define | `define/` (framing, problem statement, requirements) |
 | `compass-labs:design` | Design | `design/` (and rendered visuals in `assets/`) |
-| `compass-labs:implement` | Implement | `tasks.md` and the code |
+| `compass-labs:implement` | Implement | `implement/` (the plan and the as-built record) and the code |
 | `compass-labs:test` | Test | `verification.md` |
 | `compass-labs:deploy` | Deploy | `release.md` |
 | `compass-labs:close` | Close | As-built docs only; never the session folder |
@@ -447,6 +449,19 @@ The Design standard the Design agent preloads. It is the plugin's only path to a
 - **Visual UI design:** it is handed to Claude Design through `design/ui-handoff.md`, never specified directly.
 - **Stack defaults:** the plugin's defaults are stated once, in [`stack-defaults.md`](skills/design/reference/stack-defaults.md). Design proposes them only where the repository has no established stack.
 - **The Design gate:** it shows the context view and the delta list, and `check-design.sh` refuses the milestone if either is missing, or if the classification or scope checklist is.
+
+#### `/compass-labs:implement`
+
+The Implement standard the Implement agent preloads. It turns the design's `DES-*` items into an `implement/` folder:
+
+- **`tasks.md`:** the plan, one task per piece of a `DES-*` item's Result, in the design's dependency order. Each item's Check goes on its last task.
+- **`as-built.md`:** the as-built record. Every `DES-*` item gets one status (built as designed, built with variation, or not built), and every difference from the design is a variation that you accept or send back for rework at the Implement gate. It also holds each layer's artifacts and the checks handed to Test.
+- **Testing boundary:** Implement writes unit and component tests only. Integration, UI and Playwright tests, and inspection, belong to Test.
+- **Layers:** a layer plugs in its own Implement guidance at `skills/{layer}/reference/implement.md`, found by that path alone. A layer with no guidance is built with the repository's conventions, and the gap is recorded in the as-built record.
+
+#### `/compass-labs:backend`
+
+The backend layer's home, and the first layer to plug into the Implement standard. Its [Implement guidance](skills/backend/reference/implement.md) builds in the repository's established stack (linking the [stack defaults](skills/design/reference/stack-defaults.md) rather than restating them), writes a unit and a component test per backend item, commits an OpenAPI 3.x document of the API as built and renders it with Scalar, and checks every endpoint in the design's API contract against what was built. Each mismatch becomes a variation you decide at the Implement gate. The backend design standard is tracked in #47.
 
 #### `/compass-labs:verification`
 

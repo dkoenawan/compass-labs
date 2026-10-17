@@ -1,13 +1,13 @@
 ---
 name: post-hook-validator
-description: Post-commit FR validator — reads Functional Requirements from the construct file updated by the last task-executor commit, generates a human checklist, records pass/fail per FR, transitions construct status to verified or diverged, auto-triggers /adr on divergence, and blocks the next task-executor run until any required ADR is written.
+description: Construct FR validator — run after the construct owner (the Close phase) registers or updates a construct. Reads the construct's Functional Requirements, generates a human checklist, records pass/fail per FR, transitions construct status to verified or diverged, auto-triggers /adr on divergence, and blocks a live session's next task-executor run until any required ADR is written.
 ---
 
 # Post-Hook Validator Skill
 
-You are a quality gate. Your job is not to evaluate code style or test coverage — it is to verify that each Functional Requirement in the construct file is actually satisfied by what was just built. You are the bridge between "task complete" and "task verified."
+You are a quality gate. Your job is not to evaluate code style or test coverage — it is to verify that each Functional Requirement in the construct file is actually satisfied by what was just built. You are the bridge between "built" and "verified."
 
-This skill is always invoked after a task-executor commit that updated a construct file. It runs interactively: the developer reads each FR and marks it pass or fail based on their inspection of the code.
+This skill runs after the construct owner registers or updates a construct. That owner is the Close phase (ADR-004 D8), whose `done` note names each construct with "run `/compass-labs:post-hook-validator {Name}`". The skill runs interactively: the developer reads each FR and marks it pass or fail based on their inspection of the code. Marking a construct `verified` or `diverged` is verification, not registration: this skill never adds a construct or flips one to `built`.
 
 ## Invocation
 
@@ -15,13 +15,14 @@ This skill is always invoked after a task-executor commit that updated a constru
 /compass:post-hook-validator [construct-name]
 ```
 
-If `construct-name` is omitted, derive it from the most recent task-executor commit:
-1. Run `git log -1 --pretty=format:"%s"` to get the last commit subject.
-2. Extract the feature name from `feat(<feature-name>): ...`.
-3. Look for recently modified construct files: `git diff HEAD~1 --name-only | grep docs/reference/constructs/`.
-4. If exactly one construct file was modified, use it. If multiple, list them and ask the developer which to validate.
+**With a name** (the usual case, as named in Close's `done` note): read `docs/reference/constructs/<construct-name>.md` directly and go to Phase 0. No commit history is needed.
 
-If no construct file was modified in the last commit → exit with: "No construct files were updated in the last commit — nothing to validate. Run this skill manually with a construct name if needed."
+**Without a name**, derive it from the latest commit that touched a construct file, which needn't be `HEAD`:
+1. Find that commit: `git log -1 --format=%H -- docs/reference/constructs/`.
+2. List the construct files it changed: `git show --name-only --format= <sha> -- docs/reference/constructs/`.
+3. If exactly one construct file changed, use it. If several, list them and ask the developer which to validate.
+
+If no commit has ever touched `docs/reference/constructs/` → exit with: "No construct files have been registered yet — nothing to validate. Run this skill with a construct name once one is registered."
 
 ---
 
@@ -31,7 +32,7 @@ If no construct file was modified in the last commit → exit with: "No construc
 
 2. Read the construct file at `docs/reference/constructs/<Name>.md`.
    - If `status: verified`: "Construct `<Name>` is already verified. No action needed."
-   - If `status: planned`: "Construct `<Name>` has not been built yet (status: planned). Run task-executor to implement it first."
+   - If `status: planned`: "Construct `<Name>` has not been built yet (status: planned). Close registers it as `built` once its session's build is accepted; validate it after that."
    - If `status: diverged`: Note this — the developer is re-validating after a divergence. Proceed normally; a new pass will clear the diverged status.
    - If `status: built`: proceed.
 
@@ -138,11 +139,11 @@ Ask: "Confirm these results? (yes / adjust)"
    git add docs/registry/ && git commit -m "chore(<feature-name>): mark <Name> diverged — FR <N> failed"
    ```
 
-4. **Block next task-executor run** by writing a lockfile in the feature's session directory (`docs/sessions/<date>-<feature-name>/`, found via `find-active-plan.sh` or by matching `docs/sessions/*-<feature-name>/`):
+4. **Block the next task-executor run, only if the session is still live.** Find the feature's session directory (`docs/sessions/<date>-<feature-name>/`, via `find-active-plan.sh` or by matching `docs/sessions/*-<feature-name>/`). Write the lockfile only into a live session folder, never under `docs/sessions/archive/`:
    ```bash
    echo "<Name>:<date>" >> docs/sessions/<date>-<feature-name>/.validation-blocked
    ```
-   The task-executor checks for this lockfile before selecting the next task (see **Integration with Task-Executor** below).
+   The task-executor checks for this lockfile before selecting the next task (see **Integration with Task-Executor** below). If the session has already been archived (the usual case, since Close registers constructs at the end of a session), there's no run left to block: write no lockfile, and tell the developer the divergence is recorded in the construct file and goes to the ADR.
 
 5. **Auto-trigger /adr**:
 
@@ -160,7 +161,7 @@ Ask: "Confirm these results? (yes / adjust)"
    - Ask the developer to state the decision that caused the divergence
    - On completion: write the ADR, cross-link the construct file, and change `status: diverged` → `verified` with a note linking to the ADR
 
-6. After the ADR is written, clear the lockfile:
+6. After the ADR is written, clear the lockfile, if step 4 wrote one:
    ```bash
    rm docs/sessions/<date>-<feature-name>/.validation-blocked
    ```
@@ -181,6 +182,7 @@ The task-executor **checks for a validation block before selecting each task**. 
 
 ```bash
 SESSION_DIR="$(dirname "<plan-file>")"
+[ "$(basename "$SESSION_DIR")" = "implement" ] && SESSION_DIR="$(dirname "$SESSION_DIR")"
 [ -f "$SESSION_DIR/.validation-blocked" ] && cat "$SESSION_DIR/.validation-blocked"
 ```
 
@@ -199,7 +201,7 @@ The lockfile is cleared by the post-hook validator after the ADR is written (see
 
 | Situation | Action |
 |-----------|--------|
-| Construct file not found | "Construct file `docs/reference/constructs/<Name>.md` does not exist. Was the task-executor registry write step skipped?" |
+| Construct file not found | "Construct file `docs/reference/constructs/<Name>.md` does not exist. Constructs are registered by the Close phase; has this session closed?" |
 | FRs section empty | Tell developer to add FRs to the construct file before validating |
 | ADR skill unavailable | Write the divergence record, set lockfile, tell developer to run `/adr` manually |
 | Developer cancels mid-checklist | Save partial results, leave status as `built`, note "validation incomplete" in construct Key Decisions |
@@ -212,6 +214,6 @@ The lockfile is cleared by the post-hook validator after the ADR is written (see
 - [ ] Construct file `status` has been updated to `verified`, `diverged`, or left `built` (partial) — never left unchanged after a completed checklist
 - [ ] `docs/registry/index.md` Status column updated to match
 - [ ] Registry changes committed
-- [ ] If diverged: lockfile written at `docs/sessions/<date>-<feature-name>/.validation-blocked`
+- [ ] If diverged and the session is still live: lockfile written at `docs/sessions/<date>-<feature-name>/.validation-blocked` (never under `archive/`)
 - [ ] If diverged: `/compass:adr` was invoked and the developer was walked through it
 - [ ] If ADR written: lockfile cleared, construct status updated to `verified`

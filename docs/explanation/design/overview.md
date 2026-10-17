@@ -1,13 +1,13 @@
 ---
 domain: design
-last_updated: 2026-10-10
+last_updated: 2026-10-17
 source_path: skills/design
 ---
 
 # Design (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [the Design standard](../../reference/design/standard.md) | → [Session overview](../session/overview.md) | → Decision: [ADR-004](../../registry/decisions/004-design-path.md)
-> Origin: #27
+> Origin: #27 · #28
 
 ## What Is Design?
 
@@ -114,7 +114,7 @@ flowchart LR
 
 **Kinds plug in by adding files.** A new in-depth path adds `kinds/{kind}.md`, rows in the notation catalogue, and its catalogue row. The procedure, classification and all-kinds sections don't change.
 
-**Layers live in one home each.** A layer's design standard and its Implement skill share `skills/{layer}/`, so they can't drift apart. No layer home exists yet; when a layer's standard is missing, its area is covered in the all-kinds sections.
+**Layers live in one home each.** A layer's design standard and its Implement skill share `skills/{layer}/`, so they can't drift apart. The backend's home, `skills/backend/`, holds its Implement guidance (see [Implement](../implement/overview.md)); no layer has a design standard yet. When a layer's design standard is missing, its area is covered in the all-kinds sections.
 
 **The layout tells old sessions from new.** A session with a root `design.md` predates the `design/` folder. It keeps the old template, the guard treats it as before, and `check-design.sh` passes it with "legacy layout: no check".
 
@@ -137,3 +137,4 @@ flowchart LR
 ## Changelog
 
 - 2026-10-10: Initial documentation.
+- 2026-10-17: The backend layer home now exists, with Implement guidance only.

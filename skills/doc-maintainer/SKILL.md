@@ -360,7 +360,7 @@ If YES → run **Step 2.L3** for the first ⬜ domain (top of table order), then
 
 **Priority 3 — Session fold-back**
 
-Check: is there any unfolded session under `docs/sessions/*/` that is eligible to fold — i.e. its `tasks.md` is missing, or present with frontmatter `status: complete`? (An unfolded session whose `tasks.md` status is still in-progress is not eligible and does not trigger this priority.)
+Check: is there any unfolded session under `docs/sessions/*/` that is eligible to fold — i.e. its plan is missing, or present with frontmatter `status: complete`? A session's plan is `implement/tasks.md`, or a root `tasks.md` in a past session (the legacy layout). (An unfolded session whose plan status is still in-progress is not eligible and does not trigger this priority.)
 
 If YES → run **Step 2.S1**, which selects the oldest eligible session (by directory name, which sorts chronologically since sessions are named `<date>-<feature-slug>`), then done.
 
@@ -490,15 +490,15 @@ Print:
 
 Reconciles one completed `docs/sessions/<session>/` into the durable Diataxis tree (`docs/how-to/`, `docs/reference/`, `docs/explanation/`), per [ADR-001](../../docs/registry/decisions/001-diataxis-docs-restructure.md). Bounded to **one session per run**, matching the "one unit of work" discipline used everywhere else in maintain mode.
 
-1. **Select the session.** Scan directories under `docs/sessions/*/` in chronological order (by directory name, which sorts chronologically since sessions are named `<date>-<feature-slug>`), skipping any that already contain a `.folded` marker file. Select the first (oldest) one that is eligible: its `tasks.md` is missing, or its `tasks.md` frontmatter `status` is `complete`. Pass over — leave unfolded and unmarked — any candidate whose `tasks.md` status is still in-progress, and continue the scan to the next candidate. (Priority 3 in Step 2.2 already guarantees at least one eligible session exists before this step runs.)
+1. **Select the session.** Scan directories under `docs/sessions/*/` in chronological order (by directory name, which sorts chronologically since sessions are named `<date>-<feature-slug>`), skipping any that already contain a `.folded` marker file. Select the first (oldest) one that is eligible: its plan (`implement/tasks.md`, or a root `tasks.md` in a past session) is missing, or its frontmatter `status` is `complete`. Pass over — leave unfolded and unmarked — any candidate whose plan status is still in-progress, and continue the scan to the next candidate. (Priority 3 in Step 2.2 already guarantees at least one eligible session exists before this step runs.)
 
-2. **Read the session.** Read `<session>/overview.md` (the feature spec) in full. Read `<session>/tasks.md` if present — note any `- [!] ... (failed ...: <reason>)` entries, which often contain durable gotchas.
+2. **Read the session.** Read `<session>/overview.md` (the feature spec) in full. Read `<session>/implement/tasks.md` (or a past session's root `<session>/tasks.md`) if present — note any `- [!] ... (failed ...: <reason>)` entries, which often contain durable gotchas.
 
-3. **Fold back the selected session.** Because selection in step 1 already filters to eligible sessions (no `tasks.md`, or `tasks.md` status `complete`), the selected session is always safe to fold — proceed directly to step 4. (In-progress sessions were already passed over during selection, not encountered here.)
+3. **Fold back the selected session.** Because selection in step 1 already filters to eligible sessions (no plan, or a plan with status `complete`), the selected session is always safe to fold — proceed directly to step 4. (In-progress sessions were already passed over during selection, not encountered here.)
 
 4. **Extract fold-back candidates** from the session content:
    - **How-to candidate**: if the session's Implementation Order or tasks.md contains a non-obvious multi-step procedure a future contributor would need to repeat (e.g., "how to add a new X"), it's a how-to candidate.
-   - **Reference candidate**: the spec's Backend Layer (API endpoints/shapes) and Frontend Layer (pages/components) sections are reference candidates — these belong in `docs/reference/api/` and construct files respectively (construct files are typically already written by `task-executor`, so this is usually just a link, not new content).
+   - **Reference candidate**: the spec's Backend Layer (API endpoints/shapes) and Frontend Layer (pages/components) sections are reference candidates — these belong in `docs/reference/api/` and construct files respectively (construct files are registered by the Close phase, not while implementing (ADR-004 D8), so this is usually just a link, not new content).
    - **Explanation candidate**: any architectural decision embedded in the spec that isn't already captured as an ADR is an explanation candidate — note it, but do NOT write a new ADR from doc-maintainer; instead flag it for the developer (see step 7).
    - **Gotchas**: any failed-task reasons or edge cases discovered during the session are candidates for the owning domain's `docs/explanation/<domain>/overview.md` Gotchas section.
 

@@ -1,7 +1,7 @@
 # Session workflow and artifacts
 
-> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md) · → [Design standard](../design/standard.md)
-> Origin: #22 · #23 · #27
+> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md) · → [Design standard](../design/standard.md) · → [Implement standard](../implement/standard.md)
+> Origin: #22 · #23 · #27 · #28
 
 ## Feature workflow (`skills/session/workflows/feature.json`)
 
@@ -9,20 +9,20 @@
 |---|---|---|---|---|---|---|
 | 1 | `define` | `compass-labs:define` | `define/` (folder) | Define complete | `phase:define` | yes |
 | 2 | `design` | `compass-labs:design` | `design/` (folder) | Design complete | `phase:design` | yes |
-| 3 | `implement` | `compass-labs:implement` | `tasks.md` | Implement complete | `phase:implement` | no |
+| 3 | `implement` | `compass-labs:implement` | `implement/` (folder) | Implement complete | `phase:implement` | no |
 | 4 | `test` | `compass-labs:test` | `verification.md` | Test complete | `phase:test` | no |
 | 5 | `deploy` | `compass-labs:deploy` | `release.md` | Deploy complete | `phase:deploy` | no |
 | 6 | `close` | `compass-labs:close` | `null` | Closed | `phase:close` | no |
 
-Top-level keys: `workflow`, `framing` (what this session type plugs into the shared framing step; see the [framing reference](../framing/tiers-and-anchor.md#the-framing-block)), `session_level.file_allowlist` (`define/` and `design/`, their legacy root files `requirements.md` and `design.md`, the other three artifacts, `log.md`, `assets/`), `session_level.log_file`, `session_level.log_owner` (`orchestrator`), `github.type_label` (`type:feature`) and `github.type_color`. A new session type is a new `workflows/{type}.json` with the same shape. The guard hook picks the file from `log.md`'s `type`.
+Top-level keys: `workflow`, `framing` (what this session type plugs into the shared framing step; see the [framing reference](../framing/tiers-and-anchor.md#the-framing-block)), `session_level.file_allowlist` (`define/`, `design/` and `implement/`, their legacy root files `requirements.md`, `design.md` and `tasks.md`, the other two artifacts, `log.md`, `assets/`), `session_level.log_file`, `session_level.log_owner` (`orchestrator`), `github.type_label` (`type:feature`) and `github.type_color`. A new session type is a new `workflows/{type}.json` with the same shape. The guard hook picks the file from `log.md`'s `type`.
 
 Phase keys for folder artifacts:
 
 | Key | Meaning |
 |---|---|
-| `artifact` ending in `/` | A **folder artifact**: one artifact with one owner, frozen as a unit. Feature's Define phase declares `define/`, and its Design phase declares `design/`. |
-| `artifact_files` | The folder's fixed file set, one level deep. For `define/`: `index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`. For `design/`: `index.md`, `solution.md`, `frontend.md`, `backend.md`, `database.md`, `ui-handoff.md`. |
-| `legacy_artifact` | The root path sessions from before the folder use for the same phase (`requirements.md`, `design.md`). It stays in the allowlist because those sessions are never migrated. |
+| `artifact` ending in `/` | A **folder artifact**: one artifact with one owner, frozen as a unit. Feature's Define phase declares `define/`, its Design phase `design/`, and its Implement phase `implement/`. |
+| `artifact_files` | The folder's fixed file set, one level deep. For `define/`: `index.md`, `requirements.md`, `framing.md`, `problem.md`, `quality.md`, `diagrams.md`. For `design/`: `index.md`, `solution.md`, `frontend.md`, `backend.md`, `database.md`, `ui-handoff.md`. For `implement/`: `tasks.md`, `as-built.md`. |
+| `legacy_artifact` | The root path sessions from before the folder use for the same phase (`requirements.md`, `design.md`, `tasks.md`). It stays in the allowlist because those sessions are never migrated. |
 
 ## Artifacts
 
@@ -32,13 +32,14 @@ Phase keys for folder artifacts:
 | `requirements.md` (root, past sessions only) | `compass-labs:define` | `requirements` skill. Only a session that already has this file may write it, and such a session can't create `define/`. | `milestone` ≥ `define` |
 | `design/` | `compass-labs:design` | The `design` skill (see [The `design/` folder](#the-design-folder)) | `milestone` ≥ `design` (the whole folder at once) |
 | `design.md` (root, past sessions only) | `compass-labs:design` | The older template: `DES-*` items, each naming the `REQ-*` it covers. Only a session that already has this file may write it, and such a session can't create `design/`. | `milestone` ≥ `design` |
-| `tasks.md` | `compass-labs:implement` | `task-executor` tasks format; each task names the `DES-*` it implements; a Deviations section | `milestone` ≥ `implement` |
-| `verification.md` | `compass-labs:test` | `verification` skill: `\| ID \| Covers REQ \| Method \| Result \| Evidence \|`, in that exact column order | `milestone` ≥ `test` |
+| `implement/` | `compass-labs:implement` | The `implement` skill (see [The `implement/` folder](#the-implement-folder)) | `milestone` ≥ `implement` (the whole folder at once) |
+| `tasks.md` (root, past sessions only) | `compass-labs:implement` | `task-executor` tasks format; each task names the `DES-*` it implements; a "Deviations from design" section. Only a session that already has this file may write it, and such a session can't create `implement/`. | `milestone` ≥ `implement` |
+| `verification.md` | `compass-labs:test` | `verification` skill: `\| ID \| Covers REQ \| Method \| Result \| Evidence \|`, in that exact column order. Method is one of the Test-owned methods `integration`, `ui`, `playwright` or `inspection`, and every live `REQ-*` has at least one such row. Implement's unit and component tests appear only in Evidence, prefixed `Supporting:` | `milestone` ≥ `test` |
 | `release.md` | `compass-labs:deploy` | Version/target, what changed (by `REQ-*`), Completeness, deploy steps, confirmation, rollback | `milestone` ≥ `deploy` |
 | `log.md` | orchestrator (main session) only | Log format below | Never frozen; read-only once archived |
 | `assets/` | any | Non-Markdown files only | — |
 
-IDs are sequential and never reused. Dropped items are struck through, not deleted. Templates for every file are in `skills/session/templates/` (the Define templates in `templates/define/`, the Design templates in `templates/design/`; layer design templates come from each layer's home, `skills/{layer}/`). An artifact that needs more than one file is a folder artifact: the folder is the artifact, its main doc (`index.md`) sits inside it and links to the other files, and its file set is fixed in the workflow. `define/` and `design/` are the folder artifacts today; the other phases' artifacts are flat files.
+IDs are sequential and never reused. Dropped items are struck through, not deleted. Templates for every file are in `skills/session/templates/` (the Define templates in `templates/define/`, the Design templates in `templates/design/`, the Implement templates in `templates/implement/`; layer design templates come from each layer's home, `skills/{layer}/`). An artifact that needs more than one file is a folder artifact: the folder is the artifact, its main doc (`index.md`) sits inside it and links to the other files, and its file set is fixed in the workflow. `define/`, `design/` and `implement/` are the folder artifacts today; the other phases' artifacts are flat files.
 
 ## The `define/` folder
 
@@ -82,6 +83,17 @@ Design's output is one main doc plus files the solution kind and scope call for.
 Visuals follow the skill's [notation catalogue](../../../skills/design/reference/notations.md): C4 abstractions drawn as Mermaid `flowchart`s with four delta classDefs and a `[status]` label suffix, and a caption naming the notation and C4 level. A non-Mermaid source, such as BPMN, sits in `assets/` with a rendered SVG beside it.
 
 **Design gate.** The gate message shows (or links) `design/index.md#context-view` and `#delta-list`. Before the milestone, `check-design.sh {session}` requires the Classification, Scope checklist, Context view and Delta list headings, and names any that are missing. A session with only a root `design.md` gets "legacy layout: no check".
+
+## The `implement/` folder
+
+Implement's output is the plan and the record of what was built, in two files. The standard is the [`implement` skill](../../../skills/implement/SKILL.md); its rules are listed in the [Implement reference](../implement/standard.md).
+
+| File | Holds |
+|---|---|
+| `tasks.md` | The plan: a `task-executor`-format checklist, one task per `DES-*` Result, in the design's Depends-on order, each item's Check on its last task. Nothing else |
+| `as-built.md` | The as-built record, as tables only: **As-built** (one status per `DES-*` item), **Variations** (each difference from the design), **Layer artifacts** (one subsection per layer, such as the backend's OpenAPI document and API check) and **Handed to Test** (Checks that need a Test-owned test) |
+
+**Implement gate.** In a session with `implement/as-built.md`, the gate message lists every `DES-*` status and every variation above the options. The user accepts each variation as built or sends it back for rework, and one `decision` entry names every outcome. The milestone isn't approved while any rework is outstanding. A session with a root `tasks.md` is shown as before.
 
 ## Milestone gate checks
 
@@ -141,10 +153,16 @@ Close has no session artifact. It writes what is still true once the feature has
 | `design/index.md`: decisions flagged "ADR" | One ADR each in `docs/registry/decisions/`, numbered at Close |
 | `design/index.md`: context view; `design/solution.md` | The domain overview's architecture and How It Works sections, redrawn without delta styling |
 | The rest of `design/` | Stays in the archive |
+| `implement/as-built.md`: Variations (all accepted at the gate) | The built behaviour as current fact in `docs/reference/<domain>/`, replacing what the design said; the reason, where it matters, in the domain overview |
+| `implement/as-built.md`: Layer artifacts | `docs/reference/<domain>/`, as a pointer to the artifact in the code (for the backend, the OpenAPI document and its Scalar render) |
+| `implement/tasks.md`: a repeatable, non-obvious procedure | A guide in `docs/how-to/` |
+| `implement/tasks.md` checklist; `as-built.md` As-built and Handed to Test | Stay in the archive |
 
-A session with a root `requirements.md` is mapped by section: its problem statement like `problem.md`, its `REQ-*` table like `requirements.md`, the rest like `index.md`. How-to guides come from Implement's `tasks.md`, never from Define.
+A session with a root `requirements.md` is mapped by section: its problem statement like `problem.md`, its `REQ-*` table like `requirements.md`, the rest like `index.md`. A session with a root `tasks.md` folds its "Deviations from design" like accepted variations. How-to guides come from Implement's plan, never from Define.
 
-As-built docs never cite a specific session's `REQ-*`, `DES-*` or `VER-*` IDs, because those IDs only mean something inside their session, and every session numbers its own from 1. Each doc Close touches carries one `Origin: #{issue}` line instead, which is the only way back to the session.
+**Construct registration.** Close is the only phase that registers a session's constructs, once the Implement gate has decided every variation: a new construct gets `docs/reference/constructs/{Name}.md` with `status: built` and a row in `docs/registry/index.md`, a planned one is flipped to `built`, and a changed one gets its Interface and Dependencies updated. Close's `done` note names each one with `/compass-labs:post-hook-validator {Name}`, which the developer runs to validate it against its functional requirements. `task-executor` reads the registry but never writes it.
+
+As-built docs never cite a specific session's `REQ-*`, `DES-*` or `VER-*` IDs, or a variation's ID, because those IDs only mean something inside their session, and every session numbers its own from 1. Each doc Close touches carries one `Origin: #{issue}` line instead, which is the only way back to the session.
 
 ## Commit points
 
