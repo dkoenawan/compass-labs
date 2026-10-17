@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: test
-active_agent: compass-labs:deploy
-next_step: "Deploy: run the repo's release steps, write release.md"
+active_agent: main
+next_step: "Deploy gate, then Close on this branch before PR #68 is merged"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -231,3 +231,6 @@ next_step: "Deploy: run the repo's release steps, write release.md"
 - marketplace.json lists 16 skills, matching `skills/` exactly; `implement` and `backend` listed. No stubs, TODOs or empty files. 7 agents and 3 hook scripts present; 12 of 12 tasks ticked.
 - `tests/run.sh` 21/21 before and after the bump; `claude plugin tag --dry-run` OK for `compass-labs--v2.1.0`. release.md committed in b2ece0e.
 - Pending the user: push, PR, squash-merge, `claude plugin tag --push` on main, `claude plugin update compass-labs@compass-labs`, then the post-release checks.
+
+### 2026-10-17 — main — note: Branch pushed, PR #68 opened
+- With the user's go-ahead, pushed feat/28-implement-phase-skills and opened PR #68 into main (refs #28, #52, no closing keywords). As in #27 (PR #56), Deploy complete, the Close fold-back and the archive commit land on this branch before the squash-merge; the tag and plugin update follow on main.
