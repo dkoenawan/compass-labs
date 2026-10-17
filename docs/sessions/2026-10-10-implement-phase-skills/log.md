@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: design
-active_agent: compass-labs:implement
-next_step: "Implement: build DES-001 to DES-011"
+active_agent: main
+next_step: "Implement gate: user reviews tasks.md and the deviations"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -22,11 +22,12 @@ next_step: "Implement: build DES-001 to DES-011"
 
 ## Open items
 
-- Follow-ups: #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50. #63 revisit D4 option B. Spec-first OpenAPI → #47 (comment).
+- Follow-ups: #64 stale task-executor run.sh, #65 log.md template Artifacts line. #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50. #63 revisit D4 option B. Spec-first OpenAPI → #47 (comment).
 - Work is on branch `feat/28-implement-phase-skills`.
 
 ## Key decisions
 
+- **2026-10-17**: Follow-ups filed from Implement — #64 stale task-executor scripts/run.sh, #65 log.md template Artifacts line.
 - **2026-10-12**: ✅ Design complete — DES-001 to DES-011 cover all 20 live REQs; D1-B `implement/` folder; follow-ups #47 (spec-first), #63 (D4-B).
 - **2026-10-12**: D1 revised to B — Implement artifact is the `implement/` folder (`tasks.md` + `as-built.md`), folded under Diátaxis at Close; new DES-011 (schema); larger appetite accepted. D2–D7 confirmed; spec-first → #47; D4-B revisit → #63.
 - **2026-10-10**: Design choices — plugin/tooling kind; as-built sections in tasks.md (ADR at Close); agent-compared OpenAPI; no-guidance = build + record + cite; skills/implement/; Close sole construct owner; REQ-009 by instruction; "Supporting:" evidence.
@@ -154,3 +155,23 @@ next_step: "Implement: build DES-001 to DES-011"
 
 ### 2026-10-17 — main — handoff: orchestrator → compass-labs:implement (restart: plan and build DES-001 to DES-011)
 - **Input:** Same task as the 2026-10-12 handoff, restarted with a fresh agent. Write this session's root tasks.md (legacy layout) from the frozen design/index.md and execute it in the implementation order DES-011 → DES-002, DES-009 → DES-001 → DES-003, DES-004, DES-005, DES-007 → DES-006, DES-008 → DES-010. One commit per ticked task, code and tick together. No push. tests/run.sh green before done.
+- **Output:** done; tasks.md (12 tasks, all ticked) and 26 plugin files across 13 commits (3e97bea to df8a676). tests/run.sh: 21 passed, 0 failed.
+
+### 2026-10-17 — compass-labs:implement — attempt: tasks.md written and executed (12 tasks, DES-001 to DES-011)
+- Root `tasks.md` (legacy layout, per the design's Risks) holds 12 tasks in the design's implementation order. There's one commit for the plan, then one commit per ticked task with the code and the tick together. All 12 are ticked, and the plan status is `complete`.
+- What was built: the `skills/implement/` standard (six parts), the `skills/backend/` layer home, the `templates/implement/` files (`tasks.md` and `as-built.md`), the `implement/` folder artifact in `feature.json` with root `tasks.md` as its legacy file, and `find-active-plan.sh` plus `doc-maintainer` reading both layouts.
+- What was changed: the Implement gate in `session/SKILL.md`, the Close fold-back of `implement/`, Close as the only construct registrar, `post-hook-validator` running by name, `task-executor` resolving `design/index.md` or `design.md` with no registry writes, and the Test-owned verification methods with "Supporting:" evidence. `marketplace.json` and the README list `implement` and `backend`.
+- Tests: new `find_active_plan_test.sh` and `implement_standard_test.sh`. Guard cases for `implement/` were added, and `workflow_test`, `session_skill_test` and `phase_agents_test` gained assertions. `tests/run.sh`: 21 passed, 0 failed.
+
+### 2026-10-17 — compass-labs:implement — note: Deviations from design (recorded in tasks.md)
+- DES-011 is split across tasks 1 and 3, either side of DES-002. `workflow_test.sh` needs the templates before `feature.json` can declare `implement/`.
+- The DES-001 fallback says to cite "the layer's follow-up issue" (and to open one if none exists) rather than naming #57, #58 and #59. Naming them would put a list of layers in the standard.
+- The gate's staging-precondition example text now names the `implement/` folder. The staging behaviour itself is unchanged.
+- DES-007 also moves `task-executor`'s worked example to `design/index.md` plus `implement/tasks.md`. Execute Phase 2 now takes the parent of `implement/` as the session directory, so the `.validation-blocked` lockfile is still found. `scripts/run.sh` still mentions `overview.md` and was left alone.
+- DES-008's search check was read with REQ-018's wording ("a session's constructs"). `init`, `explore` and `doc-maintainer` R2/R5 still write construct stubs, but from existing code or surveys, not from a session's build.
+- The README's `task-executor` artifact row and `post-hook-validator` paragraph were updated to match the new behaviour.
+- Guard-test expectations changed: case 7 now has the Implement agent write `implement/tasks.md`; case 23c checks `verification.md` for the Test agent; case 33 checks that a new session can't create a root `tasks.md`.
+
+### 2026-10-17 — main — decision: Follow-ups filed from Implement
+- #64: remove or rewrite the stale `skills/task-executor/scripts/run.sh` (hard-coded paths, points at a missing `overview.md`, nothing calls it).
+- #65: `skills/session/templates/log.md`'s Artifacts line links root `design.md` and `tasks.md`; it should link `design/index.md` and `implement/`.
