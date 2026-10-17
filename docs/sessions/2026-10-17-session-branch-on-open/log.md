@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
 active_agent: compass-labs:define
-next_step: "Define agent writing framing, problem and requirements for #37 (short tier)"
+next_step: "User reviews draft REQ-001..010 and answers the PR timing, existing-branch and block-width questions"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Define agent writing framing, problem and requirements for #37 (shor
 
 ## Key decisions
 
+- **2026-10-17**: Short tier and problem agreed for #37 — need: session work reaches the default branch only via PR; hook-enforced; OUT-01 zero direct commits over the next 3 sessions; anchor aligns, no update.
 - **2026-10-17**: Follow-up filed — #70 branch guard with no remote or a failed push (out of #37's scope).
 ---
 
@@ -50,3 +51,16 @@ next_step: "Define agent writing framing, problem and requirements for #37 (shor
 ### 2026-10-17 — main — decision: Follow-up filed — #70 no remote or failed push
 - The user left "repos with no remote, or where the push fails" out of #37's scope. Filed as #70 (parent #37).
 - Answers relayed to Define: tier short; need = session work reaches the default branch only through a PR; stakeholders = compass-labs maintainers and teams using the plugin in other repos; guarantee = blocked by a hook; in scope: already on a branch, resume on the default branch, opening the PR; OUT-01 target zero, watched over the next 3 sessions.
+
+### 2026-10-17 — compass-labs:define — decision: Short tier and problem agreed for #37
+- The user confirmed tier short.
+- Need (a): session work reaches the default branch only through a PR. Branching at open is a candidate solution.
+- Stakeholders: compass-labs maintainers (NEED-01) and teams using the plugin in other repos (NEED-02).
+- In scope: opening on a non-default branch, resuming with the default branch checked out, and opening the PR as an explicit step. Out of scope: no remote or a failed push, a non-goal tracked by #70.
+- Constraint: the guarantee must be enforced by a hook, not prompt instructions alone (ADR-002).
+- OUT-01: 0 session commits on the default branch except through a PR merge. Checked at Test in a throwaway repo, then over the next 3 sessions.
+- Anchor: complete, verdict aligns, update none. Overlaps: none, apart from #22's design D5 (branch at Implement), which this work changes.
+
+### 2026-10-17 — compass-labs:define — attempt: Draft requirements REQ-001 to REQ-010 for review
+- requirements.md has 10 live rows (8 Must, 2 Should) and no deferred rows. OUT-01 is covered.
+- Open questions in index.md: when the PR opens (REQ-008), whether to ask about an existing branch (REQ-002), and how wide the block is (REQ-005).
