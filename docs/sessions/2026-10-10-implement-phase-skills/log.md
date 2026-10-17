@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: design
-active_agent: main
-next_step: "Hand off to compass-labs:implement"
+active_agent: compass-labs:implement
+next_step: "Implement: build DES-001 to DES-011"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -143,3 +143,14 @@ next_step: "Hand off to compass-labs:implement"
 
 ### 2026-10-12 — main — milestone: ✅ Design complete
 - The user approved design/index.md: plugin/tooling kind, DES-001 to DES-011 covering all 20 live REQs, and D1 (B), D2 to D7 (A). check-design.sh: ok. The ADR flagged under D1 is written at Close. Follow-ups: #47 (spec-first OpenAPI), #63 (D4 option B).
+
+---
+
+## Phase: Implement
+
+### 2026-10-12 — main — handoff: orchestrator → compass-labs:implement (plan and build DES-001 to DES-011)
+- **Input:** Turn the frozen design/index.md into this session's root tasks.md (legacy layout: this session runs on the old agent and template, see Risks) and execute it in the implementation order DES-011 → DES-002, DES-009 → DES-001 → DES-003, DES-004, DES-005, DES-007 → DES-006, DES-008 → DES-010. One commit per ticked task, code and tick together. No push. tests/run.sh green before done.
+- **Output:** no return; the agent never reported back and wrote nothing (no tasks.md, no commits). Replaced by a fresh agent below.
+
+### 2026-10-17 — main — handoff: orchestrator → compass-labs:implement (restart: plan and build DES-001 to DES-011)
+- **Input:** Same task as the 2026-10-12 handoff, restarted with a fresh agent. Write this session's root tasks.md (legacy layout) from the frozen design/index.md and execute it in the implementation order DES-011 → DES-002, DES-009 → DES-001 → DES-003, DES-004, DES-005, DES-007 → DES-006, DES-008 → DES-010. One commit per ticked task, code and tick together. No push. tests/run.sh green before done.
