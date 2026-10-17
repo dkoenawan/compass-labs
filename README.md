@@ -130,6 +130,7 @@ compass-labs/
 │   ├── verification/                  # VER-* verification table standard
 │   ├── design/                        # Design standard: solution kinds, notation catalogue, stack defaults
 │   ├── implement/                     # Implement standard: tasks, testing boundary, as-built record, layer plug-in contract
+│   ├── backend/                       # Backend layer home: Implement guidance (stack, tests, OpenAPI as built, API check)
 │   ├── init/                          # Project initialization (recommended)
 │   ├── explore/                       # Token-efficient codebase investigation
 │   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
@@ -457,6 +458,10 @@ The Implement standard the Implement agent preloads. It turns the design's `DES-
 - **`as-built.md`:** the as-built record. Every `DES-*` item gets one status (built as designed, built with variation, or not built), and every difference from the design is a variation that you accept or send back for rework at the Implement gate. It also holds each layer's artifacts and the checks handed to Test.
 - **Testing boundary:** Implement writes unit and component tests only. Integration, UI and Playwright tests, and inspection, belong to Test.
 - **Layers:** a layer plugs in its own Implement guidance at `skills/{layer}/reference/implement.md`, found by that path alone. A layer with no guidance is built with the repository's conventions, and the gap is recorded in the as-built record.
+
+#### `/compass-labs:backend`
+
+The backend layer's home, and the first layer to plug into the Implement standard. Its [Implement guidance](skills/backend/reference/implement.md) builds in the repository's established stack (linking the [stack defaults](skills/design/reference/stack-defaults.md) rather than restating them), writes a unit and a component test per backend item, commits an OpenAPI 3.x document of the API as built and renders it with Scalar, and checks every endpoint in the design's API contract against what was built. Each mismatch becomes a variation you decide at the Implement gate. The backend design standard is tracked in #47.
 
 #### `/compass-labs:verification`
 
