@@ -2,7 +2,7 @@
 session: 2026-10-10-implement-phase-skills
 type: feature
 issue: 28
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Test gate: user reviews verification.md"
+next_step: "Hand off to compass-labs:deploy"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -27,6 +27,7 @@ next_step: "Test gate: user reviews verification.md"
 
 ## Key decisions
 
+- **2026-10-17**: ✅ Test complete — 24 VER rows; every REQ-001 to REQ-020 has a passing Test-owned check; check-traceability ok; tests/run.sh 21/21.
 - **2026-10-17**: Test findings — REQ-018: rework init's injected item 4 (Close registers constructs); REQ-001: "built with variation" accepted as the "deviated" status; REQ-014: marketplace.json/README listing is registration, not an edit — soften the standard's wording.
 - **2026-10-17**: ✅ Implement complete — 12 tasks cover DES-001 to DES-011; tests/run.sh 21/21; deviations recorded in tasks.md.
 - **2026-10-17**: Follow-ups filed from Implement — #64 stale task-executor scripts/run.sh, #65 log.md template Artifacts line.
@@ -210,3 +211,6 @@ next_step: "Test gate: user reviews verification.md"
 
 ### 2026-10-17 — compass-labs:test — note: Verification ready for the Test gate — 24 VER rows, check-traceability ok
 - Resumed with the user's answers (same agent). Every REQ-001 to REQ-020 has a passing Test-owned check (integration or inspection); Implement tests cited only as "Supporting:". First pass at abda750; re-checks at 7bdda2f after the fix pass: VER-024 passes for REQ-018 (init rework 0be7ff6; VER-020 kept as the abda750 fail), VER-002 passes for REQ-001 as an accepted deviation, VER-016 re-checked against 3d8630f. REQ-020: 699 comparisons of gate scripts and guard hook against 4286ed9, 0 differing. tests/run.sh 21/21; check-traceability.sh exit 0. Committed in deaffec.
+
+### 2026-10-17 — main — milestone: ✅ Test complete
+- The user approved verification.md: 24 VER rows (VER-001 to VER-024), every REQ-001 to REQ-020 with a passing Test-owned check. check-traceability.sh: ok. tests/run.sh: 21 passed, 0 failed. REQ-018 fixed in 0be7ff6; REQ-001 "built with variation" and REQ-014 listing accepted by the user.
