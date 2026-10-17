@@ -89,6 +89,20 @@ implement_agent="$(cat "$REPO_ROOT/agents/implement.md")"
 assert_contains "$implement_agent" "design/index.md" "agents/implement.md should read design/index.md"
 assert_contains "$implement_agent" "the root \`design.md\`" "agents/implement.md should still read a past session's design.md"
 
+# The Implement agent (#28 DES-003): preloads the implement standard, keeps
+# the read-it-yourself fallback, owns implement/ (a past session's root
+# tasks.md), and the near-empty domain skills paragraph is gone.
+implement_frontmatter="$(awk 'NR==1{next} /^---$/{exit} {print}' "$REPO_ROOT/agents/implement.md")"
+assert_contains "$implement_frontmatter" "  - compass-labs:implement" \
+  "agents/implement.md should preload compass-labs:implement"
+assert_contains "$implement_agent" "skills/implement/SKILL.md" \
+  "agents/implement.md should keep the read-SKILL.md-yourself fallback"
+assert_contains "$implement_agent" "\`implement/\` folder" "agents/implement.md should own the implement/ folder"
+assert_contains "$implement_agent" "root \`tasks.md\`" "agents/implement.md should keep a past session's root tasks.md"
+assert_contains "$implement_agent" "every \`DES-*\` item" \
+  "agents/implement.md should return done only once as-built.md covers every DES item"
+assert_not_contains "$implement_agent" "near-empty" "agents/implement.md should drop the near-empty domain skills paragraph"
+
 # Close reads design/ (or a past session's design.md) and folds flagged
 # decisions into ADRs (#27 DES-017).
 foldback="$(cat "$REPO_ROOT/skills/session/reference/close-foldback.md")"

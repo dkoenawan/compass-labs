@@ -113,7 +113,7 @@ compass-labs/
 │   ├── orchestrator.md                # Session orchestrator entry point
 │   ├── define.md                      # Define: frames the problem, writes define/
 │   ├── design.md                      # Design: writes design/ (context view, delta list, DES items)
-│   ├── implement.md                   # Implement: writes tasks.md and the code
+│   ├── implement.md                   # Implement: writes implement/ (tasks, as-built record) and the code
 │   ├── test.md                        # Test: writes verification.md
 │   ├── deploy.md                      # Deploy: writes release.md
 │   └── close.md                       # Close: folds the session into as-built docs
@@ -414,7 +414,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 | `compass-labs:orchestrator` | All (main session) | `log.md`, milestone commits, GitHub sync, and the README's project anchor |
 | `compass-labs:define` | Define | `define/` (framing, problem statement, requirements) |
 | `compass-labs:design` | Design | `design/` (and rendered visuals in `assets/`) |
-| `compass-labs:implement` | Implement | `tasks.md` and the code |
+| `compass-labs:implement` | Implement | `implement/` (the plan and the as-built record) and the code |
 | `compass-labs:test` | Test | `verification.md` |
 | `compass-labs:deploy` | Deploy | `release.md` |
 | `compass-labs:close` | Close | As-built docs only; never the session folder |
