@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: main
-next_step: "Hand off to compass-labs:define to frame #37 and propose a tier"
+active_agent: compass-labs:define
+next_step: "Define agent framing #37; relay its questions"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -32,3 +32,6 @@ next_step: "Hand off to compass-labs:define to frame #37 and propose a tier"
 
 ### 2026-10-17 — main — note: Session opened
 - Issue #37 picked by the user. Branch `feat/37-session-branch-on-open` created from main (b1c2bcc) before the first commit, done by hand since this is the gap the session fixes.
+
+### 2026-10-17 — main — handoff: orchestrator → compass-labs:define (frame #37)
+- **Input:** Frame issue #37 (new session flow must branch before its first commit/push), propose a depth tier, and draft requirements once the problem is agreed. Context: #23 pushed d38c99c to main and had to revert it (912634c); this session's branch was created by hand.
