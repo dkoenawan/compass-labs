@@ -2,7 +2,7 @@
 session: 2026-10-10-implement-phase-skills
 type: feature
 issue: 28
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
-active_agent: main
-next_step: "Deploy gate, then Close on this branch before PR #68 is merged"
+milestone: deploy
+active_agent: compass-labs:close
+next_step: "Close: fold back into docs, write the D1 ADR, archive — before PR #68 merges"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -27,6 +27,7 @@ next_step: "Deploy gate, then Close on this branch before PR #68 is merged"
 
 ## Key decisions
 
+- **2026-10-17**: ✅ Deploy complete — v2.1.0 prepared on the branch, completeness no gaps, PR #68 open; tag and plugin update follow the merge.
 - **2026-10-17**: v2.1.0 (MINOR) for #28 — adds implement and backend skills; nothing removed or re-invoked; legacy layouts still work (REQ-020).
 - **2026-10-17**: ✅ Test complete — 24 VER rows; every REQ-001 to REQ-020 has a passing Test-owned check; check-traceability ok; tests/run.sh 21/21.
 - **2026-10-17**: Test findings — REQ-018: rework init's injected item 4 (Close registers constructs); REQ-001: "built with variation" accepted as the "deviated" status; REQ-014: marketplace.json/README listing is registration, not an edit — soften the standard's wording.
@@ -234,3 +235,13 @@ next_step: "Deploy gate, then Close on this branch before PR #68 is merged"
 
 ### 2026-10-17 — main — note: Branch pushed, PR #68 opened
 - With the user's go-ahead, pushed feat/28-implement-phase-skills and opened PR #68 into main (refs #28, #52, no closing keywords). As in #27 (PR #56), Deploy complete, the Close fold-back and the archive commit land on this branch before the squash-merge; the tag and plugin update follow on main.
+
+### 2026-10-17 — main — milestone: ✅ Deploy complete
+- The user approved Deploy ("close it off"): release.md's Completeness has no gaps, v2.1.0 bump in 9b7ff8e, tests/run.sh 21/21, PR #68 open. Pending after the squash-merge, on main: `claude plugin tag --push` (compass-labs--v2.1.0), `claude plugin update compass-labs@compass-labs`, post-release checks.
+
+---
+
+## Phase: Close
+
+### 2026-10-17 — main — handoff: orchestrator → compass-labs:close (fold back #28)
+- **Input:** Fold the session back into as-built docs (docs/reference/, docs/explanation/, docs/registry/), including the implement/ folder under Diátaxis and Close as sole construct registrar; write the ADR flagged under D1 (refining ADR-002 and ADR-004 D7: implement/ artifact, testing boundary, variation path); register the session's constructs. One Origin line per doc, no session narrative. Never write the session folder.
