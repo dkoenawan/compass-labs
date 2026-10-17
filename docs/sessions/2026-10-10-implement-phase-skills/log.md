@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
-active_agent: main
-next_step: "Hand off to compass-labs:test"
+active_agent: compass-labs:test
+next_step: "Test: verify REQ-001 to REQ-020 in verification.md"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -179,3 +179,10 @@ next_step: "Hand off to compass-labs:test"
 
 ### 2026-10-17 — main — milestone: ✅ Implement complete
 - The user approved the build: 12 tasks in tasks.md cover DES-001 to DES-011, committed one per task (3e97bea to df8a676). tests/run.sh: 21 passed, 0 failed. Deviations from design are recorded in tasks.md. Follow-ups: #64, #65.
+
+---
+
+## Phase: Test
+
+### 2026-10-17 — main — handoff: orchestrator → compass-labs:test (verify REQ-001 to REQ-020)
+- **Input:** Write this session's root verification.md (legacy layout) with Test-owned VER-* rows (integration, harness tests running real hooks/scripts, or inspection for document requirements; no unit-only verification, REQ-009) covering every live REQ in define/requirements.md. Implement's own tests may appear only as "Supporting:" evidence. check-traceability.sh must exit 0 before done. One commit for verification.md when done. No push.
