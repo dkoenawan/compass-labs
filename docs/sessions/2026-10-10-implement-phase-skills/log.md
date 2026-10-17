@@ -27,6 +27,7 @@ next_step: "Deploy: run the repo's release steps, write release.md"
 
 ## Key decisions
 
+- **2026-10-17**: v2.1.0 (MINOR) for #28 — adds implement and backend skills; nothing removed or re-invoked; legacy layouts still work (REQ-020).
 - **2026-10-17**: ✅ Test complete — 24 VER rows; every REQ-001 to REQ-020 has a passing Test-owned check; check-traceability ok; tests/run.sh 21/21.
 - **2026-10-17**: Test findings — REQ-018: rework init's injected item 4 (Close registers constructs); REQ-001: "built with variation" accepted as the "deviated" status; REQ-014: marketplace.json/README listing is registration, not an edit — soften the standard's wording.
 - **2026-10-17**: ✅ Implement complete — 12 tasks cover DES-001 to DES-011; tests/run.sh 21/21; deviations recorded in tasks.md.
@@ -221,3 +222,12 @@ next_step: "Deploy: run the repo's release steps, write release.md"
 
 ### 2026-10-17 — main — handoff: orchestrator → compass-labs:deploy (release #28)
 - **Input:** Run this repo's deploy steps for #28 and write release.md, including its Completeness section (the manifest lists only complete components, none left out). Ask before any outward-facing step (PR, merge, tag, GitHub release); never push to main. One commit for release.md (plus any version bump it needs, committed separately). No log.md.
+- **Output:** needs_input; .claude-plugin/plugin.json (9b7ff8e), release.md (b2ece0e)
+
+### 2026-10-17 — compass-labs:deploy — decision: v2.1.0 (MINOR) for #28
+- Adds the `implement` and `backend` skills. Nothing is removed and no skill is invoked differently. Legacy root `tasks.md` and `design.md` still work (REQ-020), so MINOR under CLAUDE.md's rules. `.claude-plugin/plugin.json` goes from 2.0.0 to 2.1.0 in 9b7ff8e; `marketplace.json` has no version field.
+
+### 2026-10-17 — compass-labs:deploy — attempt: Release prepared on the branch — completeness has no gaps, tests 21/21
+- marketplace.json lists 16 skills, matching `skills/` exactly; `implement` and `backend` listed. No stubs, TODOs or empty files. 7 agents and 3 hook scripts present; 12 of 12 tasks ticked.
+- `tests/run.sh` 21/21 before and after the bump; `claude plugin tag --dry-run` OK for `compass-labs--v2.1.0`. release.md committed in b2ece0e.
+- Pending the user: push, PR, squash-merge, `claude plugin tag --push` on main, `claude plugin update compass-labs@compass-labs`, then the post-release checks.
