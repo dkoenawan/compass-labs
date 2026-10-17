@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
-active_agent: compass-labs:test
-next_step: "Test: verify REQ-001 to REQ-020 in verification.md"
+active_agent: compass-labs:implement
+next_step: "Implement fix pass (REQ-018, REQ-014 wording), then resume Test"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -27,6 +27,7 @@ next_step: "Test: verify REQ-001 to REQ-020 in verification.md"
 
 ## Key decisions
 
+- **2026-10-17**: Test findings — REQ-018: rework init's injected item 4 (Close registers constructs); REQ-001: "built with variation" accepted as the "deviated" status; REQ-014: marketplace.json/README listing is registration, not an edit — soften the standard's wording.
 - **2026-10-17**: ✅ Implement complete — 12 tasks cover DES-001 to DES-011; tests/run.sh 21/21; deviations recorded in tasks.md.
 - **2026-10-17**: Follow-ups filed from Implement — #64 stale task-executor scripts/run.sh, #65 log.md template Artifacts line.
 - **2026-10-12**: ✅ Design complete — DES-001 to DES-011 cover all 20 live REQs; D1-B `implement/` folder; follow-ups #47 (spec-first), #63 (D4-B).
@@ -186,3 +187,16 @@ next_step: "Test: verify REQ-001 to REQ-020 in verification.md"
 
 ### 2026-10-17 — main — handoff: orchestrator → compass-labs:test (verify REQ-001 to REQ-020)
 - **Input:** Write this session's root verification.md (legacy layout) with Test-owned VER-* rows (integration, harness tests running real hooks/scripts, or inspection for document requirements; no unit-only verification, REQ-009) covering every live REQ in define/requirements.md. Implement's own tests may appear only as "Supporting:" evidence. check-traceability.sh must exit 0 before done. One commit for verification.md when done. No push.
+- **Output:** needs_input; verification.md (draft, uncommitted)
+
+### 2026-10-17 — compass-labs:test — attempt: verification.md drafted — 23 VER rows for REQ-001 to REQ-020; REQ-018 fails
+- Checked against abda750, tests/run.sh 21/21. Every REQ has a Test-owned row (integration or inspection); Implement tests cited only as "Supporting:". REQ-020: 699 comparisons of gate scripts and guard hook against 4286ed9 on the #22/#23/#27 archives, 0 differing.
+- Fails: VER-020 (REQ-018: init's injected CLAUDE.md protocol, item 4, tells agents to write construct files after any implementation) and VER-002 (REQ-001 says "deviated", the standard says "built with variation"). Noted on VER-016 (REQ-014): a new layer must be listed in marketplace.json for tests/run.sh to pass. check-traceability.sh exits 1 (REQ-018).
+
+### 2026-10-17 — main — decision: Test findings resolved by the user
+- REQ-018: rework. Implement rewords `skills/init/SKILL.md` Step 6's injected item 4 so it says Close registers a session's constructs, not the agent after any implementation.
+- REQ-001: "built with variation" is accepted as REQ-001's "deviated" status (an accepted deviation; VER-002 becomes a pass).
+- REQ-014: listing a new layer in marketplace.json and the README is plugin registration, not an edit outside the layer. VER-016 stands as a pass; Implement softens the standard's "no edit here or anywhere else" to name the listing as the one exception.
+
+### 2026-10-17 — main — handoff: orchestrator → compass-labs:implement (fix pass: REQ-018, REQ-014 wording)
+- **Input:** Reword init's injected item 4 (REQ-018) and soften the implement standard's plug-in wording to name the marketplace/README listing (REQ-014). Code only — tasks.md is frozen. One commit per fix. tests/run.sh green. No push.
