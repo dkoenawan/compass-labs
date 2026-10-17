@@ -66,10 +66,11 @@ while IFS=$'\t' read -r phase artifact; do
   fi
 done < <(jq -r '.phases[] | [.phase, (.artifact // "null")] | @tsv' "$WORKFLOW")
 
-# 4. Session-level file allowlist includes the five artifacts (define/ and
-#    design/ plus their legacy root files, D6) + log.md + assets/.
+# 4. Session-level file allowlist includes the five artifacts (define/,
+#    design/ and implement/ plus their legacy root files, D6) + log.md +
+#    assets/.
 allowlist_str="$(jq -r '.session_level.file_allowlist[]' "$WORKFLOW")"
-for entry in "define/" requirements.md "design/" design.md tasks.md verification.md release.md log.md "assets/"; do
+for entry in "define/" requirements.md "design/" design.md "implement/" tasks.md verification.md release.md log.md "assets/"; do
   grep -qxF "$entry" <<<"$allowlist_str" || fail "file_allowlist missing $entry"
 done
 assert_eq "requirements.md" "$(jq -r '.phases[] | select(.phase == "define") | .legacy_artifact' "$WORKFLOW")" \
@@ -81,6 +82,13 @@ assert_eq "design.md" "$(jq -r '.phases[] | select(.phase == "design") | .legacy
 assert_eq "index.md solution.md frontend.md backend.md database.md ui-handoff.md" \
   "$(jq -r '.phases[] | select(.phase == "design") | .artifact_files | join(" ")' "$WORKFLOW")" \
   "design/'s fixed file set"
+assert_eq "implement/" "$(jq -r '.phases[] | select(.phase == "implement") | .artifact' "$WORKFLOW")" \
+  "implement's artifact should be the implement/ folder (#28 DES-011)"
+assert_eq "tasks.md" "$(jq -r '.phases[] | select(.phase == "implement") | .legacy_artifact' "$WORKFLOW")" \
+  "implement's legacy_artifact should be the root tasks.md"
+assert_eq "tasks.md as-built.md" \
+  "$(jq -r '.phases[] | select(.phase == "implement") | .artifact_files | join(" ")' "$WORKFLOW")" \
+  "implement/'s fixed file set"
 assert_eq "define/" "$(jq -r '.framing.produces' "$WORKFLOW")" \
   "framing.produces should be the define phase's artifact"
 
