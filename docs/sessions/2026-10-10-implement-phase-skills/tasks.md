@@ -1,0 +1,32 @@
+---
+issue: 28
+branch: feat/28-implement-phase-skills
+status: in-progress
+test_command: bash tests/run.sh
+last_skill_commit: null
+retry_counts:
+schedule: null
+budget:
+  max_tasks_per_run: 12
+  max_wall_clock_minutes: 240
+  stop_on_first_failure: true
+---
+
+Each task names the `DES-*` item it implements. This session uses the legacy root layout (design/index.md Risks): it runs on the old Implement agent and template, so it has a root `tasks.md` with a "Deviations from design" section, not an `implement/` folder.
+
+- [ ] Plan lookups read both layouts: `find-active-plan.sh` searches `docs/sessions/*/implement/tasks.md` and `docs/sessions/*/tasks.md`; `doc-maintainer`'s fold-back eligibility reads `implement/tasks.md` or a root `tasks.md`; a fixture repo with one in-progress plan in each layout is found [DES-011]
+- [ ] Implement templates `skills/session/templates/implement/tasks.md` and `implement/as-built.md` (four table-only sections, no "Deviations from design"); root `templates/tasks.md` unchanged [DES-002] (depends on: 1) — check: `select-next-task.sh` on a filled-in `implement/tasks.md` returns only checklist tasks; `as-built.md` has the four headings and no `- [ ]` lines; neither has "Deviations from design"
+- [ ] `feature.json` Implement phase: `artifact: "implement/"`, `artifact_files`, `legacy_artifact: "tasks.md"`, `implement/` in the allowlist; guard cases for `implement/` in `session_guard_test.sh`; `workflow_test.sh` asserts the entry [DES-011] (depends on: 2) — check: guard cases pass, `workflow_test.sh` passes, `check_traceability_test.sh` and `check_design_test.sh` pass unchanged
+- [ ] Test boundary: Test-owned methods (`integration`, `ui`, `playwright`, `inspection`), at least one Test-owned row per live REQ, "Supporting:" evidence, Handed to Test read, in `agents/test.md`, `skills/verification/SKILL.md` and `templates/verification.md` [DES-009] (depends on: 3) — check: `requirements_verification_skills_test.sh` and `check_traceability_test.sh` pass unchanged
+- [ ] Implement standard `skills/implement/SKILL.md` (six parts), listed in `marketplace.json` and the README [DES-001] (depends on: 2, 3) — check: each part present; lookup by `skills/{layer}/` path convention with no layer list; `tests/run.sh` passes
+- [ ] `agents/implement.md` as a thin wrapper preloading `compass-labs:implement`, owning `implement/` (root `tasks.md` in a past session); "near-empty" paragraph removed; `phase_agents_test.sh` assertions [DES-003] (depends on: 5) — check: `phase_agents_test.sh` passes with the new assertions; no "near-empty" text remains
+- [ ] Backend layer home `skills/backend/SKILL.md` and `skills/backend/reference/implement.md` (stack, tests, OpenAPI, API check), listed in `marketplace.json` and the README [DES-004] (depends on: 5) — check: (a) to (d) present; links `stack-defaults.md`, names no default stack; `stack_defaults_test.sh` passes; no `skills/frontend/` or `skills/database/`
+- [ ] Orchestrator Implement gate bullet in `skills/session/SKILL.md`: statuses and variations above the options, accept or rework per variation, one `decision` entry, no approval while rework is outstanding [DES-005] (depends on: 2) — check: `session_skill_test.sh` passes with a new assertion
+- [ ] `task-executor`: Phase 4 resolves `design/index.md` then root `design.md`, plan file `implement/tasks.md` or legacy root; Phase 5 links the standard's task rule; registry writes removed [DES-007] (depends on: 3, 5) — check: no `overview.md`, no registry-write instruction; fixture sessions in both design layouts resolve
+- [ ] Close fold-back of `implement/` in `close-foldback.md`: step 1 reads `implement/`, new Implement Diátaxis table, legacy root `tasks.md` as before [DES-006] (depends on: 3, 8) — check: new table with a Diátaxis column; `phase_agents_test.sh` fold-back assertions pass
+- [ ] Construct registration owned by Close alone (`close-foldback.md` registry bullet) and `post-hook-validator` triggered by name, reading the construct directly, lockfile only into a live session [DES-008] (depends on: 9) — check: registration instructions only in Close's procedure; a named run reads the construct
+- [ ] Harness content tests: new `tests/session/implement_standard_test.sh` and `phase_agents_test.sh` updates covering the standard, the backend home, task-executor, the templates and `marketplace.json` [DES-010] (depends on: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) — check: `tests/run.sh` exits 0
+
+## Deviations from design
+
+- **DES-011 is split across tasks 1 and 3, around DES-002.** `workflow_test.sh` requires a template for every file of a folder artifact, so `feature.json`'s new `implement/` entry can't land green before DES-002's templates exist. Task 1 does the plan lookups (no dependency on the templates), and task 3 lands `feature.json` with its guard and workflow tests once task 2 has added the templates. The design's implementation order is otherwise kept.
