@@ -1,7 +1,7 @@
 # Session hooks and scripts
 
 > → Concepts: [Session overview](../../explanation/session/overview.md) · → [Workflow and artifacts](workflow-and-artifacts.md)
-> Origin: #22 · #23 · #27
+> Origin: #22 · #23 · #27 · #28
 
 All hooks are registered in `hooks/hooks.json` and run as `bash $CLAUDE_PLUGIN_ROOT/hooks/<name>.sh`. Every hook and script needs `jq`, and every one **fails open** when a dependency is missing, so the plugin never hard-blocks a repo that isn't fully set up. Paths under `docs/sessions/` are resolved against the project's git root.
 
@@ -31,10 +31,10 @@ Acts only on paths under `docs/sessions/`. The file path is normalized lexically
 | 5 | Workflow file (`skills/session/workflows/{type}.json`) unreadable | Block a path inside a subfolder (unknown subdirectory); allow a top-level file, with a warning (fail open) |
 | 6 | `log.md` written by a subagent (`agent_id` set) | Block (orchestrator only) |
 | 7 | `dir/file` where `dir/` isn't in the allowlist or isn't some phase's folder `artifact` | Block (unknown subdirectory) |
-| 7a | `dir/file` where `file` isn't in that phase's `artifact_files` | Block ("not one of define/'s files", or design/'s) |
+| 7a | `dir/file` where `file` isn't in that phase's `artifact_files` | Block ("not one of define/'s files", or design/'s or implement/'s) |
 | 7b | Top-level file not in the workflow's `session_level.file_allowlist` | Block |
 | 8 | No phase owns the artifact (matched by `artifact` or `legacy_artifact`) | Block |
-| 9 | The file is a phase's `legacy_artifact` (root `requirements.md` or `design.md`) and doesn't already exist in the session | Block (new sessions write `define/` or `design/`) |
+| 9 | The file is a phase's `legacy_artifact` (root `requirements.md`, `design.md` or `tasks.md`) and doesn't already exist in the session | Block (new sessions write `define/`, `design/` or `implement/`) |
 | 9a | The file is in a folder artifact and that phase's `legacy_artifact` already exists in the session | Block (this session uses the root layout) |
 | 10 | Subagent whose `agent_type` isn't the artifact's `owner_agent` | Block |
 | 11 | Artifact frozen (its phase `order` ≤ the `order` of `log.md`'s `milestone` key), written by a subagent | Block |
@@ -42,7 +42,7 @@ Acts only on paths under `docs/sessions/`. The file path is normalized lexically
 
 The main session (no `agent_id`) may write any allowlisted artifact that isn't frozen.
 
-**Folder artifacts.** Every file inside a folder artifact resolves to the folder's key (`define/` or `design/`), so the whole folder has one owner (`compass-labs:define` or `compass-labs:design`) and one freeze point. Rules 9 and 9a keep each session to one layout: a past session keeps editing its root `requirements.md` or `design.md`, and a new session can only use the folder. The block messages keep their wording ("not in this workflow's session file set", "owned by", "frozen", "unknown subdirectory").
+**Folder artifacts.** Every file inside a folder artifact resolves to the folder's key (`define/`, `design/` or `implement/`), so the whole folder has one owner (`compass-labs:define`, `compass-labs:design` or `compass-labs:implement`) and one freeze point. Rules 9 and 9a keep each session to one layout: a past session keeps editing its root `requirements.md`, `design.md` or `tasks.md`, and a new session can only use the folder. The hook's code knows no folder by name: a new folder artifact is data in the workflow file. The block messages keep their wording ("not in this workflow's session file set", "owned by", "frozen", "unknown subdirectory").
 
 ### `session-commit-guard.sh`
 
@@ -64,6 +64,10 @@ All scripts are in `skills/session/scripts/`, called as `bash ${CLAUDE_PLUGIN_RO
 | `check-traceability.sh` | `<session-dir>` | Reads `define/requirements.md`, or the root `requirements.md` in a session from before the folder (if both exist, `define/` wins). Exit 0 when every `REQ-*` row has a `VER-*` row in `verification.md` whose Result contains "pass". Otherwise exit 1 and list the missing IDs. Exit 1 naming both paths when neither requirements file exists. Only the first column of `\| REQ-nnn \|` rows is read, so extra columns (Priority, Serves), struck-through rows and `## Deferred` rows are ignored. |
 | `check-design.sh` | `<session-dir>` | Design gate (a4). With `design/index.md`: exit 0 when it has the `## Classification`, `## Scope checklist`, `## Context view` and `## Delta list` headings; otherwise exit 1, printing each missing one (e.g. "delta list missing"). With only a root `design.md` (a session from before the folder): print "legacy layout: no check" and exit 0. With neither: exit 1. |
 | `archive-session.sh` | `<session-dir>` | `git mv` to `docs/sessions/archive/{slug}/`. Refuses (exit 1) unless `log.md` has `status: archived`, the working tree is clean, the folder isn't already archived, and the destination doesn't exist. It doesn't commit or push. |
+
+## Plan lookup
+
+`skills/task-executor/scripts/find-active-plan.sh <repo-path>` finds an in-progress plan (frontmatter `status: in-progress`) in either layout, `docs/sessions/*/implement/tasks.md` or a past session's root `docs/sessions/*/tasks.md`. It prints the path, `none`, or `multiple:<path1>:<path2>…`. `doc-maintainer`'s session fold-back reads the same two paths to decide whether a session is finished.
 
 ## Tests
 

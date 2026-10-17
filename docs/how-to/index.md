@@ -1,9 +1,11 @@
 ---
-last_updated: 2026-08-15
+last_updated: 2026-10-17
 folded_sessions: 0
 ---
 
 # How-To Guides
+
+> Origin: #28
 
 > Task-oriented guides. Populated primarily by session fold-back — see
 > `doc-maintainer`'s fold-back pass, which reads `docs/sessions/<session>/`
@@ -11,7 +13,9 @@ folded_sessions: 0
 
 ## Guides
 
-(none yet — add entries as sessions are folded back)
+| Guide | Use it when |
+|---|---|
+| [Add a layer's Implement guidance](add-layer-implement-guidance.md) | A layer (frontend, database, AI-agent …) needs its own Implement guidance and artifact |
 
 See [ADR-001](../registry/decisions/001-diataxis-docs-restructure.md) for how
 this folder fits into the docs/ structure.

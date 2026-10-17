@@ -3,7 +3,7 @@
 > These are non-negotiable conventions. Before implementing anything,
 > check if a pattern applies. If you need to deviate, write an ADR first.
 >
-> Origin: #22 · #23 · #27
+> Origin: #22 · #23 · #27 · #28
 
 <!-- Pattern format:
 ## Pattern Name
@@ -19,15 +19,15 @@ One sentence: what the convention is.
 
 ## Atomic commit points
 
-Each `decision` or `milestone` entry in a session's `log.md` gets exactly one commit, containing the entry and the artifact changes it describes. Each ticked `tasks.md` task gets one commit (code plus tick). Drafts still under discussion stay uncommitted.
+Each `decision` or `milestone` entry in a session's `log.md` gets exactly one commit, containing the entry and the artifact changes it describes. Each ticked task in the plan (`implement/tasks.md`, or a past session's root `tasks.md`) gets one commit (code, tests and tick). Drafts still under discussion stay uncommitted.
 - Implements: `hooks/session-commit-guard.sh` (Stop: blocks a turn from ending with an uncommitted decision/milestone heading), `skills/session/templates/rules/compass-sessions.md` (guidance, copied to `.claude/rules/`)
 - ADR: [ADR-002](decisions/002-session-lifecycle.md)
 
 ## Phase-artifact ownership
 
-Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone. A folder artifact (`define/`, `design/`) is one artifact: only its fixed files, one level deep, can be written, and the whole folder has one owner and one freeze point. Each session uses one layout for a phase, the folder or its legacy root file, never both, and past sessions are never migrated.
+Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone. A folder artifact (`define/`, `design/`, `implement/`) is one artifact: only its fixed files, one level deep, can be written, and the whole folder has one owner and one freeze point. Each session uses one layout for a phase, the folder or its legacy root file, never both, and past sessions are never migrated.
 - Implements: `hooks/session-guard.sh` (PreToolUse), `skills/session/workflows/feature.json` (`file_allowlist`, `owner_agent`, `order`, `artifact_files`, `legacy_artifact`), `skills/session/scripts/check-traceability.sh` (reads `define/requirements.md`, falls back to the root file), `skills/session/scripts/check-design.sh` (passes a root `design.md` as legacy)
-- ADR: [ADR-002](decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md), [ADR-004](decisions/004-design-path.md)
+- ADR: [ADR-002](decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md), [ADR-004](decisions/004-design-path.md), [ADR-005](decisions/005-implement-as-built-record.md)
 
 ## Never ship an incomplete product
 
@@ -75,9 +75,27 @@ The plugin's default stack per area is stated once, in `skills/design/reference/
 
 ## Extend by adding files, not by editing the procedure
 
-A solution kind gains an in-depth path by adding `kinds/{kind}.md`, notation catalogue rows and its catalogue row; a layer gains a design standard by adding `skills/{layer}/reference/design.md`. Neither changes the Design procedure, the classification step, the scope checklist or the all-kinds sections.
-- Implements: `skills/design/SKILL.md` ("What a kind supplies"), `skills/design/kinds/three-tier.md` (layer contract)
-- ADR: [ADR-004](decisions/004-design-path.md)
+A solution kind gains an in-depth path by adding `kinds/{kind}.md`, notation catalogue rows and its catalogue row; a layer gains a design standard by adding `skills/{layer}/reference/design.md`, and Implement guidance by adding `skills/{layer}/reference/implement.md`. None of these changes the Design procedure, the classification step, the scope checklist, the all-kinds sections or the Implement standard, which keeps no list of layers. The only edit outside the layer's folder is listing its skill in the marketplace manifest and README.
+- Implements: `skills/design/SKILL.md` ("What a kind supplies"), `skills/design/kinds/three-tier.md` (layer contract), `skills/implement/SKILL.md` (layer plug-in contract), `skills/backend/`
+- ADR: [ADR-004](decisions/004-design-path.md), [ADR-005](decisions/005-implement-as-built-record.md)
+
+## Variations go forward, never upstream
+
+A frozen `define/` or `design/` is never edited to match the build. Implement records each difference as a variation in `implement/as-built.md`; the user accepts it or sends it back for rework at the Implement gate (rework changes the code); Close folds every accepted variation into the as-built docs as the built behaviour.
+- Implements: `skills/implement/SKILL.md` (as-built record), `skills/session/SKILL.md` (Implement gate), `skills/session/reference/close-foldback.md` (Folding back `implement/`)
+- ADR: [ADR-005](decisions/005-implement-as-built-record.md)
+
+## Each test kind has one owning phase
+
+Implement writes unit and component tests only. Test owns integration (including harness tests running real hooks and scripts), UI, Playwright and inspection, and every live requirement needs at least one Test-owned `VER-*` row. An Implement test is cited only as `Supporting:` evidence inside such a row.
+- Implements: `skills/implement/SKILL.md` (testing boundary), `skills/backend/reference/implement.md` (b), `skills/verification/SKILL.md`, `agents/test.md`, `skills/session/templates/verification.md`
+- ADR: [ADR-005](decisions/005-implement-as-built-record.md)
+
+## One construct registrar
+
+Only Close registers the constructs a session built, once the Implement gate has decided every variation. Other skills read the registry; `init`, `explore` and `doc-maintainer`'s registry passes may write stubs for existing code, never a session's build. `post-hook-validator` verifies a registered construct by name.
+- Implements: `skills/session/reference/close-foldback.md`, `skills/task-executor/SKILL.md` (Execute Step 5: no registry write), `skills/post-hook-validator/SKILL.md`, `skills/init/SKILL.md` (injected Agent Navigation Protocol)
+- ADR: [ADR-004](decisions/004-design-path.md) (D8), [ADR-005](decisions/005-implement-as-built-record.md)
 
 ## Anti-Patterns
 
@@ -85,4 +103,6 @@ A solution kind gains an in-depth path by adding `kinds/{kind}.md`, notation cat
 - ❌ `git commit -a` at a milestone: a new artifact is untracked until it's staged by name.
 - ❌ A `commands/<name>.md` with the same name as a skill: it shadows the skill for the Skill tool and for `skills:` preload.
 - ❌ Bare `skills/…` paths in skill prose: they resolve only while developing inside this repo.
+- ❌ Editing a frozen design to match what was built: the design is the record of what was approved. Record a variation instead.
+- ❌ Writing a construct file while implementing: the registry would record a build before its variations are decided. Close registers it.
 - ❌ Writing an ADR during Design: it records decisions that may still change and breaks one-artifact ownership. Flag it "ADR"; Close writes it.

@@ -3,7 +3,7 @@ session: 2026-10-10-implement-phase-skills
 type: feature
 issue: 28
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
-active_agent: compass-labs:close
-next_step: "Close: fold back into docs, write the D1 ADR, archive — before PR #68 merges"
+milestone: close
+active_agent: main
+next_step: "After PR #68 squash-merge: claude plugin tag --push, plugin update, close #28 and #52"
 ---
 # Session Log: Implement phase — layer skills (#28)
 
@@ -22,11 +22,13 @@ next_step: "Close: fold back into docs, write the D1 ADR, archive — before PR 
 
 ## Open items
 
-- Follow-ups: #64 stale task-executor run.sh, #65 log.md template Artifacts line. #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50. #63 revisit D4 option B. Spec-first OpenAPI → #47 (comment).
+- Follow-ups: #69 implement_standard_test layer discovery, #64 stale task-executor run.sh, #65 log.md template Artifacts line. #57 frontend, #58 database, #59 AI-agent, #60 non-OpenAPI. #61 Define visual standard. Infra Implement guidance → #50. #63 revisit D4 option B. Spec-first OpenAPI → #47 (comment).
 - Work is on branch `feat/28-implement-phase-skills`.
 
 ## Key decisions
 
+- **2026-10-17**: ✅ Session closed — folded back into as-built docs; ADR-005 (implement/ as-built record, testing boundary, variation path); ImplementStandard and BackendImplementGuidance registered.
+- **2026-10-17**: Follow-up filed — #69 implement_standard_test.sh should discover layer folders.
 - **2026-10-17**: ✅ Deploy complete — v2.1.0 prepared on the branch, completeness no gaps, PR #68 open; tag and plugin update follow the merge.
 - **2026-10-17**: v2.1.0 (MINOR) for #28 — adds implement and backend skills; nothing removed or re-invoked; legacy layouts still work (REQ-020).
 - **2026-10-17**: ✅ Test complete — 24 VER rows; every REQ-001 to REQ-020 has a passing Test-owned check; check-traceability ok; tests/run.sh 21/21.
@@ -245,3 +247,19 @@ next_step: "Close: fold back into docs, write the D1 ADR, archive — before PR 
 
 ### 2026-10-17 — main — handoff: orchestrator → compass-labs:close (fold back #28)
 - **Input:** Fold the session back into as-built docs (docs/reference/, docs/explanation/, docs/registry/), including the implement/ folder under Diátaxis and Close as sole construct registrar; write the ADR flagged under D1 (refining ADR-002 and ADR-004 D7: implement/ artifact, testing boundary, variation path); register the session's constructs. One Origin line per doc, no session narrative. Never write the session folder.
+- **Output:** done; ADR-005, decisions/index.md, registry/index.md, patterns.md, 2 construct files, reference/implement/standard.md, explanation/implement/overview.md, how-to/add-layer-implement-guidance.md, how-to/index.md and 5 updated session/design docs. tests/run.sh: 21 passed, 0 failed.
+
+### 2026-10-17 — compass-labs:close — note: Fold-back ready — #28 folded into the as-built docs, ADR-005 written, 2 constructs registered
+- ADR-005 (docs/registry/decisions/005-implement-as-built-record.md, flagged under design D1): Implement's artifact is the implement/ folder (tasks.md + as-built.md), root tasks.md legacy; testing boundary (Implement: unit and component; Test: integration, UI, Playwright, inspection; "Supporting:" evidence); variation path; layer plug-in contract; no-guidance fallback; backend as the first layer. Refines ADR-002 and ADR-004 D7. D5 recorded there as unchanged ADR-004 D8 (Close is the only construct registrar).
+- New docs: reference/implement/standard.md, explanation/implement/overview.md, how-to/add-layer-implement-guidance.md. Updated: reference/session/workflow-and-artifacts.md, reference/session/hooks-and-scripts.md, explanation/session/overview.md, explanation/solution-design.md, explanation/design/overview.md, registry/patterns.md, how-to/index.md.
+- Constructs registered (status built): ImplementStandard (skills/implement/SKILL.md), BackendImplementGuidance (skills/backend/reference/implement.md) — run `/compass-labs:post-hook-validator <name>` for each. Registry construct_count 0 → 2.
+
+### 2026-10-17 — compass-labs:close — note: Fold-back judgement calls and items left alone
+- Constructs typed Component, layer Shared (the template has no "skill" type). Changed skills that weren't in the registry weren't registered. Implement folded as its own domain, matching Design for #27.
+- Left alone: docs/sessions/README.md still describes the retired plan/overview.md layout; docs/index.html not regenerated. Three pre-existing broken links (two to containers.md, one in patterns.md's commented template).
+
+### 2026-10-17 — main — decision: Follow-up filed — #69
+- tests/session/implement_standard_test.sh fails if a not-yet-built layer's folder exists, so adding a layer also means editing the test. #69: make it discover layer folders.
+
+### 2026-10-17 — main — milestone: ✅ Session closed
+- The user asked to close the session before PR #68 merges. Fold-back committed with this entry; ADR-005 written; two constructs registered. Follow-ups: #47, #50, #57–#61, #63, #64, #65, #69. Pending after the squash-merge, on main: `claude plugin tag --push` (compass-labs--v2.1.0), `claude plugin update compass-labs@compass-labs`, post-release checks, close #28 and #52.
