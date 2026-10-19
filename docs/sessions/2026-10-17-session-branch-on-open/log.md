@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
-active_agent: main
-next_step: "Hand off Design for #37"
+active_agent: compass-labs:design
+next_step: "Design agent classifies the solution and drafts design/ for #37"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -77,3 +77,10 @@ next_step: "Hand off Design for #37"
 - The user approved define/requirements.md: REQ-001 to REQ-010 (8 Must, 2 Should), none deferred. Open questions: all resolved.
 - Anchor check (a3): action none, nothing to write.
 - Carried into Design: REQ-008 asks once, at the first push; if the user declines, no later prompt is required. #22's D5 (branch at Implement) is superseded and Close folds the change into `docs/explanation/session/overview.md`.
+
+---
+
+## Phase: Design
+
+### 2026-10-19 — main — handoff: orchestrator → compass-labs:design (design #37)
+- **Input:** Turn the frozen REQ-001 to REQ-010 into design/ (classification, scope check, context view, delta list, DES items, decisions, principles check). Carried from Define: REQ-005's block must be a hook (ADR-002) covering session commits only; the default branch is read from the repo (REQ-006); REQ-008 asks once at the first push to open a draft PR; #22's D5 (branch at Implement) is superseded.
