@@ -1,6 +1,6 @@
 # Define: Session opens on a feature branch
 
-> Phase: Define | Started: 2026-10-17 | Status: Draft
+> Phase: Define | Started: 2026-10-17 | Status: Approved 2026-10-19
 > Relates to: Issue #37 · Session history: [`log.md`](../log.md)
 
 ## Contents

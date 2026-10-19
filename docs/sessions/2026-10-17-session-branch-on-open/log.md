@@ -2,7 +2,7 @@
 session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
-active_agent: compass-labs:define
-next_step: "User approves REQ-001..010 to reach the Define milestone"
+milestone: define
+active_agent: main
+next_step: "Hand off Design for #37"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "User approves REQ-001..010 to reach the Define milestone"
 
 ## Key decisions
 
+- **2026-10-19**: ✅ Define complete — REQ-001 to REQ-010 approved (8 Must, 2 Should); no open questions.
 - **2026-10-17**: Short tier and problem agreed for #37 — need: session work reaches the default branch only via PR; hook-enforced; OUT-01 zero direct commits over the next 3 sessions; anchor aligns, no update.
 - **2026-10-19**: Open questions answered — PR opens as a draft at the first push (REQ-008); ask about an existing branch (REQ-002); block session commits only (REQ-005).
 - **2026-10-17**: Follow-up filed — #70 branch guard with no remote or a failed push (out of #37's scope).
@@ -71,3 +72,8 @@ next_step: "User approves REQ-001..010 to reach the Define milestone"
 - REQ-002: kept. The orchestrator asks each time, because asking is cheap.
 - REQ-005: kept. The block covers session commits only.
 - index.md: open questions moved to a Decisions section; none remain.
+
+### 2026-10-19 — main — milestone: ✅ Define complete
+- The user approved define/requirements.md: REQ-001 to REQ-010 (8 Must, 2 Should), none deferred. Open questions: all resolved.
+- Anchor check (a3): action none, nothing to write.
+- Carried into Design: REQ-008 asks once, at the first push; if the user declines, no later prompt is required. #22's D5 (branch at Implement) is superseded and Close folds the change into `docs/explanation/session/overview.md`.
