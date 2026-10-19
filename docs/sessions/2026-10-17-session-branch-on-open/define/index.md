@@ -23,7 +23,7 @@ Session work can reach the default branch without a pull request. The New sessio
 - Making the first session commit on a session branch, whether the session opens on the default branch or on an existing non-default branch: [REQ-001, REQ-002, REQ-003, REQ-007, REQ-010](requirements.md).
 - Resuming a session on its own branch: [REQ-004](requirements.md).
 - Blocking session commits and pushes that target the default branch, whatever its name: [REQ-005, REQ-006](requirements.md).
-- Opening the pull request as an explicit step, with merging left to the user: [REQ-008, REQ-009](requirements.md).
+- Opening a draft pull request as soon as the session branch is first pushed, after asking the user, with merging left to the user: [REQ-008, REQ-009](requirements.md).
 
 ### Non-goals
 
@@ -39,8 +39,12 @@ Session work can reach the default branch without a pull request. The New sessio
 - Opening and merging the pull request stay the user's decisions (project anchor, Non-goal "Replacing user approval at milestones").
 - Commit, then push, then the `gh` update, at every milestone (`docs/registry/patterns.md`).
 
+## Decisions
+
+- **REQ-008, when the pull request opens:** as soon as the session branch is first pushed, as a draft, after asking the user. This replaces "before the Deploy milestone" and the #22 design's D5 timing (user, 2026-10-19).
+- **REQ-002, an existing non-default branch:** the orchestrator asks each time, because asking is cheap (user, 2026-10-19).
+- **REQ-005, how wide the block is:** session commits only. The user's own git work is left alone (user, 2026-10-19).
+
 ## Open questions
 
-- **REQ-008, when the pull request opens:** the draft says "before the Deploy milestone is approved", which matches what past sessions did (PRs #44, #56, #68). Should it open earlier, for example at the Implement milestone, as the #22 design's D5 table had it?
-- **REQ-002, an existing non-default branch:** the draft asks the user each time. Should the orchestrator use the checked-out branch without asking?
-- **REQ-005, how wide the block is:** the draft blocks session commits only, and leaves the user's own git work alone (see Non-goals). Should it block every commit to the default branch while a session is active?
+None.

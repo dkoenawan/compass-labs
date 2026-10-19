@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
 active_agent: compass-labs:define
-next_step: "User reviews draft REQ-001..010 and answers the PR timing, existing-branch and block-width questions"
+next_step: "User approves REQ-001..010 to reach the Define milestone"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -28,6 +28,7 @@ next_step: "User reviews draft REQ-001..010 and answers the PR timing, existing-
 ## Key decisions
 
 - **2026-10-17**: Short tier and problem agreed for #37 — need: session work reaches the default branch only via PR; hook-enforced; OUT-01 zero direct commits over the next 3 sessions; anchor aligns, no update.
+- **2026-10-19**: Open questions answered — PR opens as a draft at the first push (REQ-008); ask about an existing branch (REQ-002); block session commits only (REQ-005).
 - **2026-10-17**: Follow-up filed — #70 branch guard with no remote or a failed push (out of #37's scope).
 ---
 
@@ -64,3 +65,9 @@ next_step: "User reviews draft REQ-001..010 and answers the PR timing, existing-
 ### 2026-10-17 — compass-labs:define — attempt: Draft requirements REQ-001 to REQ-010 for review
 - requirements.md has 10 live rows (8 Must, 2 Should) and no deferred rows. OUT-01 is covered.
 - Open questions in index.md: when the PR opens (REQ-008), whether to ask about an existing branch (REQ-002), and how wide the block is (REQ-005).
+
+### 2026-10-19 — main — decision: Open questions answered for #37
+- REQ-008: the pull request opens as a draft as soon as the session branch is first pushed, after asking the user. REQ-008 is rewritten in place (still a draft); the Deploy-gate timing and the #22 D5 timing are dropped.
+- REQ-002: kept. The orchestrator asks each time, because asking is cheap.
+- REQ-005: kept. The block covers session commits only.
+- index.md: open questions moved to a Decisions section; none remain.
