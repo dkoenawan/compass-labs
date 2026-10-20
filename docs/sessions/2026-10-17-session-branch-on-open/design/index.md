@@ -1,6 +1,6 @@
 # Design: Session opens on a feature branch
 
-> Phase: Design | Started: 2026-10-19 | Status: Draft (D1 to D6 await the user)
+> Phase: Design | Started: 2026-10-19 | Status: Ready for the Design gate
 > Requirements: [`define/index.md`](../define/index.md) · Session history: [`log.md`](../log.md)
 
 ## Contents
@@ -40,7 +40,7 @@ This design has no in-depth file: its primary kind has no in-depth path yet (see
 
 ## Context view
 
-The design follows the recommended option in each of D1 to D6 below. Those choices are still the user's, and the views change if a different option is picked.
+The design follows the options the user chose in D1 to D6 below (2026-10-20).
 
 *Notation: C4 component view of the `compass-labs` plugin inside a consuming repository, drawn as a Mermaid `flowchart` with delta styling. The classDefs add `color:#0F172A` so labels stay readable in dark mode, ahead of the standard (#66).*
 
@@ -168,51 +168,65 @@ Each item names the `REQ-*` it covers, the result Implement must produce, the ch
 
 ## Decisions
 
-All six are **awaiting the user's choice**. Each shows the recommendation; nothing below is decided yet.
+The user chose all six on 2026-10-20, in each case the option recommended in the draft.
 
-**D1: How the REQ-005 block is enforced ([ADR-002](../../../registry/decisions/002-session-lifecycle.md); ADR, since it adds a new enforcement point).**
+**D1: How the REQ-005 block is enforced ([ADR-002](../../../registry/decisions/002-session-lifecycle.md); ADR candidate for Close, since it adds a new enforcement point).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **Claude Code `PreToolUse` hook on `Bash` that inspects `git commit` and `git push` (recommended)** | Same mechanism as the other guards; ships with the plugin, so nothing is installed into the consuming repo; sees only commands Claude runs, so the user's own terminal git is untouched (Define's "session commits only") | Reads command text, so an unusual form (`sh -c "git commit"`, a git alias) can get past it |
+| **Claude Code `PreToolUse` hook on `Bash` that inspects `git commit` and `git push` (chosen)** | Same mechanism as the other guards; ships with the plugin, so nothing is installed into the consuming repo; sees only commands Claude runs, so the user's own terminal git is untouched (Define's "session commits only") | Reads command text, so an unusual form (`sh -c "git commit"`, a git alias) can get past it |
 | Git `pre-commit` and `pre-push` hooks installed into the consuming repo | Catches every commit however it's made | Also blocks the user's own git work unless it can tell Claude apart; writes into `.git/hooks` or `core.hooksPath`, which clashes with husky, lefthook and team setups; needs an install step |
+
+The user chose the `PreToolUse` hook: it ships with the plugin, touches nothing in the consuming repo's git setup, and leaves the user's own git alone, as Define's REQ-005 decision requires. The command-text gap is accepted and listed under Risks.
 
 **D2: When the hook treats a commit or push as a session commit.**
 
 | Option | Pros | Cons |
 |---|---|---|
 | A. An active or paused session in the working tree, or staged paths under `docs/sessions/` | Simplest; no branch scan | Misses Implement's code commits on the default branch when the session folder only exists on its own branch (the resume case REQ-004 fixes by prompt alone) |
-| **B. A, plus an active or paused session at the tip of any local branch (recommended)** | Closes A's gap mechanically, per ADR-002; reuses DES-002, which Resume needs anyway | One `git grep` per local branch on each `git commit` or `git push`; while any session is open, Claude's non-session commits to the default branch are blocked too (which matches Define's definition of a session commit) |
+| **B. A, plus an active or paused session at the tip of any local branch (chosen)** | Closes A's gap mechanically, per ADR-002; reuses DES-002, which Resume needs anyway | One `git grep` per local branch on each `git commit` or `git push`; while any session is open, Claude's non-session commits to the default branch are blocked too (which matches Define's definition of a session commit) |
 | C. Every Claude-run commit or push to the default branch in a repo that has `docs/sessions/` | Simplest rule of all | Blocks Claude's commits outside any session, wider than Define's "session commits only" |
+
+The user chose B: it closes A's resume gap mechanically (ADR-002) and reuses DES-002, while staying within Define's definition of a session commit.
 
 **D3: Where the session branch is recorded (REQ-003).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **A `branch:` field in `log.md`'s frontmatter (recommended)** | Machine-readable, beside `issue:` and `phase:`; Resume and scripts read it with `sed`; matches `implement/tasks.md`'s existing `branch:` | Changes the template; sessions opened before it have no field |
+| **A `branch:` field in `log.md`'s frontmatter (chosen)** | Machine-readable, beside `issue:` and `phase:`; Resume and scripts read it with `sed`; matches `implement/tasks.md`'s existing `branch:` | Changes the template; sessions opened before it have no field |
 | A line under Open items | No template change | Free text, so scripts can't read it reliably; Open items get edited and pruned |
+
+The user chose the frontmatter field, so Resume and the scripts can read the branch reliably.
 
 **D4: How Resume finds a session whose folder isn't in the current checkout (REQ-004).** With the session on its own branch, a `main` checkout has no copy of its folder.
 
 | Option | Pros | Cons |
 |---|---|---|
-| **Scan local branches, read-only, with `list-sessions.sh`, and list those sessions too (recommended)** | REQ-004 works with no help from the user; the start-up list shows every open session | A new script, and `session-start.sh` changes |
+| **Scan local branches, read-only, with `list-sessions.sh`, and list those sessions too (chosen)** | REQ-004 works with no help from the user; the start-up list shows every open session | A new script, and `session-start.sh` changes |
 | List the working tree only; when `resume {slug}` isn't found, ask the user which branch it's on | No new script | The default list on `main` shows no sessions, so a user may open a duplicate; relies on the user knowing the branch |
+
+The user chose the branch scan: REQ-004 then works without the user's help, and every open session shows in the list.
 
 **D5: Where a new branch starts when the session opens on a non-default branch and the user picks "new branch" (REQ-002).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **The local default branch's tip (recommended)** | The session's PR into the default branch carries only session work | Leaves the current branch's commits out, which may surprise a user who wanted to build on them (they can choose "use this branch" instead) |
+| **The local default branch's tip (chosen)** | The session's PR into the default branch carries only session work | Leaves the current branch's commits out, which may surprise a user who wanted to build on them (they can choose "use this branch" instead) |
 | The current `HEAD` | No surprise about what's in the working tree | The PR carries the other branch's commits too |
+
+The user chose the default branch's tip, so the session's PR carries only session work. A user who wants to build on the current branch picks "use this branch".
 
 **D6: How the default branch is read (REQ-006).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **`origin/HEAD` symbolic ref, then `git ls-remote --symref origin HEAD` (recommended)** | Plain git, any host; the first source is local and instant; the fallback asks the remote itself | The fallback needs the network; a repo whose remote isn't called `origin` gets no answer (fail open) |
+| **`origin/HEAD` symbolic ref, then `git ls-remote --symref origin HEAD` (chosen)** | Plain git, any host; the first source is local and instant; the fallback asks the remote itself | The fallback needs the network; a repo whose remote isn't called `origin` gets no answer (fail open) |
 | `gh repo view --json defaultBranchRef` | Authoritative on GitHub | GitHub only, needs `gh` auth and the network on every commit check |
 | `git config init.defaultBranch` | Local, instant | It's the user's preference for new repos, not this repo's default branch, so it can be wrong |
+
+The user chose plain git: it works with any host, and the first source is local and instant.
+
+**Follow-up:** Close step 6 runs `gh issue close` and cites "Closed = PR merged", but under DES-009 the PR may still be open when Close is approved. No live REQ covers this, so it's deferred to #72 (parent #37).
 
 ## Principles check
 
@@ -248,7 +262,7 @@ No principle is marked *traded off*.
 
 | Risk | Mitigation |
 |---|---|
-| The hook reads command text, so `sh -c`, `eval`, a git alias or a script that commits can get past it | Splits compound commands and honours `git -C`; the skill runs plain `git` commands; the gap is listed in the hook's header comment. D1's alternative is there if the user wants a stronger guarantee |
+| The hook reads command text, so `sh -c`, `eval`, a git alias or a script that commits can get past it | Splits compound commands and honours `git -C`; the skill runs plain `git` commands; the gap is listed in the hook's header comment. The user accepted this gap when choosing D1 |
 | The hook fails open (no `jq`, no answer from `default-branch.sh`), so the guarantee is lost silently in that repo | Warns on stderr every time, per the "Hooks fail open" pattern; no remote is #70's |
 | `git ls-remote` stalls on a slow network on every commit when `origin/HEAD` isn't set | The fallback runs only when `origin/HEAD` is missing, and `git clone` always sets it; `ls-remote` gets a short timeout and then fails open |
 | The branch scan in DES-002 slows commits in a repo with many local branches | `git grep` at each branch tip is read-only and fast; the scan runs only for `git commit` and `git push`, not every Bash call |
@@ -257,6 +271,4 @@ No principle is marked *traded off*.
 
 ## Open questions
 
-- **D1 to D6** await the user's choice (see Decisions).
-- **Closing the issue at Close.** Close step 6 runs `gh issue close` and cites "Closed = PR merged", but with DES-009 the PR may still be open when Close is approved. No live REQ covers this. Should it stay as is, or be a follow-up issue?
 - Plugin/tooling has no in-depth design path yet: dkoenawan/compass-labs#51. Process/workflow has none either: dkoenawan/compass-labs#49. This design covers both in the all-kinds sections.

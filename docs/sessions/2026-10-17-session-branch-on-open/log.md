@@ -2,7 +2,7 @@
 session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
-active_agent: compass-labs:design
-next_step: "Design agent classifies the solution and drafts design/ for #37"
+milestone: design
+active_agent: compass-labs:implement
+next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 
 ## Key decisions
 
+- **2026-10-20**: ✅ Design complete — DES-001 to DES-009 cover REQ-001 to REQ-010; D1–D6 recommended options; #72 deferred.
 - **2026-10-20**: D1–D6 take the recommended options; Close's issue-closing gap filed as #72.
 - **2026-10-19**: ✅ Define complete — REQ-001 to REQ-010 approved (8 Must, 2 Should); no open questions.
 - **2026-10-17**: Short tier and problem agreed for #37 — need: session work reaches the default branch only via PR; hook-enforced; OUT-01 zero direct commits over the next 3 sessions; anchor aligns, no update.
@@ -110,3 +111,23 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 ### 2026-10-20 — main — decision: D1 to D6 take the recommended options; Close gap filed as #72
 - The user approved the design draft ("looks good"), which takes the recommended option in each decision: D1 (a) PreToolUse Bash hook, D2 (B) a working-tree session, staged docs/sessions/ files or an active session at any local branch tip, D3 (a) `branch:` in log.md frontmatter, D4 (a) read every local branch, D5 (a) new branch from the local default branch tip, D6 (a) origin/HEAD then git ls-remote.
 - Close step 6's issue closing while the PR may still be open is out of #37's scope: filed as #72 (parent #37).
+
+### 2026-10-20 — compass-labs:design — decision: Design decisions D1 to D6 chosen for #37
+- The user chose the recommended option in each: D1 a PreToolUse hook on Bash (ADR candidate for Close); D2 B, a session counts as active if it's in the working tree, staged under docs/sessions/, or at the tip of any local branch; D3 a `branch:` field in log.md's frontmatter; D4 Resume and listing scan local branches; D5 a new branch starts from the local default branch's tip; D6 `origin/HEAD`, then `git ls-remote --symref origin HEAD`.
+- Close's issue-closing step, with the PR possibly still open, is deferred to #72 (parent #37) and recorded as a follow-up in design/index.md.
+
+### 2026-10-20 — compass-labs:design — attempt: Design for #37 ready for the gate
+- design/index.md finished: Status set to ready for the gate, decisions marked chosen with reasons, and Open questions cut to the #51 and #49 no-in-depth-path note.
+- DES-001 to DES-009 cover all 10 live REQs. No principle traded off. check-design.sh passes, and both Mermaid blocks parse.
+
+### 2026-10-20 — main — milestone: ✅ Design complete
+- The user approved the design ("looks good, implement and test away and deploy"). check-design.sh: ok.
+- design/ frozen: DES-001 to DES-009, D1 to D6 (recommended options), all 10 live REQs traced. Follow-up #72.
+- The user asked to run Implement, Test and Deploy, and to be told when the PR is ready to merge.
+
+---
+
+## Phase: Implement
+
+### 2026-10-20 — main — handoff: orchestrator → compass-labs:implement (implement #37)
+- **Input:** Turn frozen design/index.md DES-001 to DES-009 into implement/tasks.md and implement/as-built.md, in the design's build order, with unit and component tests in the tests/run.sh harness; commit per task.
