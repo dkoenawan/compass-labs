@@ -10,6 +10,7 @@
 
 | DES | Status | Reason | Unit tests | Component tests |
 |---|---|---|---|---|
+| DES-001 | built as designed | | none: a two-call script with no separable units | `tests/session/default_branch_test.sh`: `trunk` via `origin/HEAD` and via the `ls-remote` fallback, a `develop` default, from a subdirectory and from cwd, no `origin` (exit 1), unreachable `origin` (exit 1), not a repo (exit 1) |
 
 ## Variations
 
