@@ -22,11 +22,12 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 
 ## Open items
 
-- Follow-ups: #70 no remote / failed push.
+- Follow-ups: #70 no remote / failed push; #72 Close closes the issue before the PR is merged.
 - Work is on branch `feat/37-session-branch-on-open`; it reaches main through a PR.
 
 ## Key decisions
 
+- **2026-10-20**: D1–D6 take the recommended options; Close's issue-closing gap filed as #72.
 - **2026-10-19**: ✅ Define complete — REQ-001 to REQ-010 approved (8 Must, 2 Should); no open questions.
 - **2026-10-17**: Short tier and problem agreed for #37 — need: session work reaches the default branch only via PR; hook-enforced; OUT-01 zero direct commits over the next 3 sessions; anchor aligns, no update.
 - **2026-10-19**: Open questions answered — PR opens as a draft at the first push (REQ-008); ask about an existing branch (REQ-002); block session commits only (REQ-005).
@@ -105,3 +106,7 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 ### 2026-10-20 — main — note: Dark-mode text colour added to #37's design diagrams
 - The user couldn't read the diagrams in dark mode. Both flowcharts' delta classDefs now set `color:#0F172A`, ahead of the standard fix tracked in #66. This departs from `skills/design/reference/notations.md` until #66 lands.
 - Both diagrams render with mermaid-cli 12.
+
+### 2026-10-20 — main — decision: D1 to D6 take the recommended options; Close gap filed as #72
+- The user approved the design draft ("looks good"), which takes the recommended option in each decision: D1 (a) PreToolUse Bash hook, D2 (B) a working-tree session, staged docs/sessions/ files or an active session at any local branch tip, D3 (a) `branch:` in log.md frontmatter, D4 (a) read every local branch, D5 (a) new branch from the local default branch tip, D6 (a) origin/HEAD then git ls-remote.
+- Close step 6's issue closing while the PR may still be open is out of #37's scope: filed as #72 (parent #37).
