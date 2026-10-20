@@ -95,3 +95,9 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 ### 2026-10-20 — main — decision: Classification and scope confirmed for #37
 - The user confirmed the primary kind, Plugin/tooling (no in-depth path, #51), so the whole design stays in design/index.md.
 - The user confirmed the scope. In: plugin/tooling, process/workflow, gh integration, harness tests. Out: frontend, backend, database, infrastructure, visual UI and as-built docs.
+
+### 2026-10-20 — compass-labs:design — attempt: Design for #37 drafted; D1 to D6 await the user
+- design/index.md: Context view (C4 component view and a New session process flow), Delta list, DES-001 to DES-009, Decisions D1 to D6, Principles check, Risks and Open questions.
+- DES-001 default-branch.sh; DES-002 list-sessions.sh; DES-003 session-branch-guard.sh (PreToolUse Bash hook); DES-004 log.md `branch:` field; DES-005 New session branch step; DES-006 first push and one-time draft PR prompt; DES-007 Resume switches to the session branch; DES-008 session-start lists sessions on other branches; DES-009 no-merge rule.
+- Coverage: all 10 live REQs covered. No principle traded off. Mermaid blocks parse (mermaid-cli 12).
+- Asked: D1 enforcement mechanism, D2 what counts as a session commit, D3 where the branch is recorded, D4 how Resume finds a session on another branch, D5 where a new branch starts, D6 default-branch lookup, and whether Close's issue-closing step needs a follow-up issue.
