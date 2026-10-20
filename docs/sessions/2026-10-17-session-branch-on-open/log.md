@@ -84,3 +84,14 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 
 ### 2026-10-19 — main — handoff: orchestrator → compass-labs:design (design #37)
 - **Input:** Turn the frozen REQ-001 to REQ-010 into design/ (classification, scope check, context view, delta list, DES items, decisions, principles check). Carried from Define: REQ-005's block must be a hook (ADR-002) covering session commits only; the default branch is read from the repo (REQ-006); REQ-008 asks once at the first push to open a draft PR; #22's D5 (branch at Implement) is superseded.
+- **Output:** needs_input; design/index.md (Prior knowledge, Classification, Scope checklist drafted; rest pending). Asked: primary kind, scope checklist.
+
+### 2026-10-19 — compass-labs:design — note: Design classification and scope drafted for #37
+- Prior knowledge read: session overview, hooks-and-scripts reference, patterns, ADR-002, the session skill, the hooks, feature.json, the log template, the tests layout, and this session's define/ and log.md. No past session folder was read.
+- Proposed kind: Plugin/tooling (no in-depth path, dkoenawan/compass-labs#51).
+- Proposed scope, in: plugin/tooling, process/workflow, gh integration, harness tests. Out: frontend, backend, database, infrastructure, visual UI and as-built docs (Close's job).
+- Waiting for the user to confirm the kind and scope.
+
+### 2026-10-20 — main — decision: Classification and scope confirmed for #37
+- The user confirmed the primary kind, Plugin/tooling (no in-depth path, #51), so the whole design stays in design/index.md.
+- The user confirmed the scope. In: plugin/tooling, process/workflow, gh integration, harness tests. Out: frontend, backend, database, infrastructure, visual UI and as-built docs.
