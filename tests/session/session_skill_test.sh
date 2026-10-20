@@ -61,5 +61,16 @@ gate="$(awk '/\*\*Implement gate\*\*/,/A past session with a root `tasks.md` is 
 order_ok="$(awk '/every variation from the Variations table/{a=NR} /accept as built/{b=NR} /naming every variation.s outcome/{c=NR} /Relay any rework/{d=NR} /Don.t approve the Implement milestone/{e=NR} END{print (a && a<b && b<c && c<d && d<e) ? "yes" : "no"}' <<<"$gate")"
 assert_eq "yes" "$order_ok" "the Implement gate's steps should be in order"
 
+# #37 DES-004: log.md's template records the session branch in a `branch:`
+# frontmatter field right after `issue:` (comment lines aside), with its
+# one-line comment (REQ-003, D3).
+template="$REPO_ROOT/skills/session/templates/log.md"
+frontmatter="$(awk '/^---$/{n++; next} n==1' "$template")"
+assert_contains "$frontmatter" "branch: {branch-name}" "the log.md template should have a branch: field"
+assert_contains "$frontmatter" "# branch: the session branch, written once when the session opens, read by Resume." \
+  "the branch: field should carry its one-line comment"
+after_issue="$(grep -v '^#' <<<"$frontmatter" | awk 'prev ~ /^issue:/ {print; exit} {prev=$0}')"
+assert_eq "branch: {branch-name}" "$after_issue" "branch: should come right after issue:"
+
 echo "ok: session skill orchestration rules validated"
 exit 0

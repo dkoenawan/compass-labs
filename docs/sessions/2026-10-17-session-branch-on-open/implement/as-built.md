@@ -12,6 +12,7 @@
 |---|---|---|---|---|
 | DES-001 | built as designed | | none: a two-call script with no separable units | `tests/session/default_branch_test.sh`: `trunk` via `origin/HEAD` and via the `ls-remote` fallback, a `develop` default, from a subdirectory and from cwd, no `origin` (exit 1), unreachable `origin` (exit 1), not a repo (exit 1) |
 | DES-002 | built with variation | V1: adds a tie-break between branch copies and defines "found on" for working-tree sessions, both left open by the design | none: one script, its frontmatter parsing is exercised through the CLI | `tests/session/list_sessions_test.sh`: empty repo; session committed only on `feat/5-widget` listed with that branch while `main` is checked out (and no switch happens); untracked active `log.md` listed with `-` for a missing `branch:`; paused listed; `archive/` and `status: archived` never listed (working tree and branch); working tree wins over the branch copy; on two branches the recorded branch's copy wins; subdirectory and no-argument calls; non-repo and missing path exit 0 |
+| DES-004 | built as designed | | `tests/session/session_skill_test.sh` (#37 DES-004 block): the template's frontmatter has `branch: {branch-name}` right after `issue:`, with its comment | none: a template, not a component |
 
 ## Variations
 
