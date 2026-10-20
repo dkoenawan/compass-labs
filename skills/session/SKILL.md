@@ -35,9 +35,15 @@ Run once per repo, the first time `/compass-labs:session` is used in it:
 ## New session flow
 
 1. **Issue**: ask for an existing issue number, or create one (`gh issue create --title … --label type:feature`). Store the number.
-2. **Slug**: derive `{today}-{kebab-title}`. Create `docs/sessions/{slug}/`.
-3. **Folder, in order** (the guard hook requires log.md to exist before anything else — D7):
-   - `log.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`).
+2. **Slug**: derive `{today}-{kebab-title}`. Don't create the folder yet: that's step 3, after the branch.
+2b. **Branch** (REQ-001, REQ-002, REQ-007, REQ-010): the session's commits never land on the default branch, so pick and check out the session branch before anything is written.
+   - Read the default branch with `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/default-branch.sh` (never assume `main`) and the current branch with `git branch --show-current`.
+   - **On the default branch:** propose `feat/{issue}-{kebab-title}` and let the user accept it or reply with another name (REQ-007). Use the name they give exactly as given.
+   - **On any other branch:** ask the user once: **use `{branch}`** (the current branch becomes the session branch, no switch) or **create a new branch**. A new branch gets the same name proposal, and starts from the local default branch's tip `{default}`, not the current `HEAD` (D5).
+   - Then check it out: `git switch {name}` if the branch already exists, else `git switch -c {name} {default}`.
+   - **On any failure**, stop here: `default-branch.sh` exits 1, or `git switch` fails (a dirty working tree, the branch checked out in another worktree). Write nothing, commit nothing, and tell the user why, relaying git's reason (REQ-010).
+3. **Folder, in order** (the guard hook requires log.md to exist before anything else — D7). Create `docs/sessions/{slug}/`, then:
+   - `log.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `branch: {the session branch from step 2b}`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`). `branch:` is written once, here, and never changed (REQ-003).
    - `define/index.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/define/index.md` (thin — title, header and issue only). Define fills it in and creates the rest of `define/` by the tier the user confirms. Never create a root `requirements.md` in a new session: that's the layout past sessions keep (they're never migrated), and the guard blocks it.
 4. Commit + push (`docs(sessions): open session #{issue}`), **then** `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} none define {comment-file}` where the comment file says "Session opened." — this applies `phase:define` + `type:feature` and posts the opening comment (D5, order: commit → push → gh).
 5. Enter the **main loop** at `define`.
@@ -132,6 +138,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/`:
 | Script | Purpose |
 |---|---|
 | `gh-setup.sh` | One-time label creation (D5) |
+| `default-branch.sh` | Prints the repository's default branch from `origin` (`origin/HEAD`, then `git ls-remote --symref`); exits 1 with a reason when there's no answer (#37 DES-001) |
 | `gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
 | `check-traceability.sh` | REQ-011 gate: every `REQ-*` in `define/requirements.md` (or a past session's root `requirements.md`) has a passing `VER-*` |
 | `check-design.sh` | Design-gate check (a4): a `design/index.md` has the Classification, Scope checklist, Context view and Delta list sections; a past session's root `design.md` gets no check |

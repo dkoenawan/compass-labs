@@ -91,5 +91,28 @@ for f in "$REPO_ROOT/skills/session/SKILL.md" "$REPO_ROOT/agents/orchestrator.md
   done < <(grep -E 'gh pr merge|git merge' "$f" || true)
 done
 
+# #37 DES-005: the New session flow has a branch step between Slug and
+# Folder: it reads the default branch, proposes a name the user can
+# replace, asks on a non-default branch, starts a new branch from the
+# default branch, stops on failure, and step 3 fills `branch:` (REQ-001,
+# REQ-002, REQ-003, REQ-007, REQ-010).
+new_flow="$(awk '/^## New session flow/{f=1; next} /^## /{f=0} f' "$REPO_ROOT/skills/session/SKILL.md")"
+[[ -n "$new_flow" ]] || fail "could not extract the New session flow"
+assert_contains "$new_flow" "2b. **Branch**" "the New session flow should have a branch step"
+assert_contains "$new_flow" "scripts/default-branch.sh" "the branch step should read the default branch with default-branch.sh"
+assert_contains "$new_flow" 'propose `feat/{issue}-{kebab-title}`' "the branch step should propose a name"
+assert_contains "$new_flow" "let the user accept it or reply with another name" "the user should be able to replace the name"
+assert_contains "$new_flow" '**use `{branch}`**' "on a non-default branch, the user should be asked to use it"
+assert_contains "$new_flow" "**create a new branch**" "on a non-default branch, the user should be offered a new branch"
+assert_contains "$new_flow" "starts from the local default branch's tip" "a new branch should start from the default branch (D5)"
+assert_contains "$new_flow" 'git switch -c {name} {default}' "a new branch should be created from the default branch"
+assert_contains "$new_flow" "**On any failure**, stop here" "the branch step should stop on failure"
+assert_contains "$new_flow" "Write nothing, commit nothing, and tell the user why" "a failure should write and commit nothing"
+assert_contains "$new_flow" 'branch: {the session branch from step 2b}' "step 3 should fill branch: in log.md"
+assert_not_contains "$(grep '^2\. \*\*Slug' <<<"$new_flow")" 'Create `docs/sessions/{slug}/`' \
+  "the Slug step shouldn't create the folder before the branch step"
+order_ok="$(awk '/^2\. \*\*Slug/{a=NR} /^2b\. \*\*Branch/{b=NR} /^3\. \*\*Folder/{c=NR} END{print (a && a<b && b<c) ? "yes" : "no"}' <<<"$new_flow")"
+assert_eq "yes" "$order_ok" "the branch step should come after Slug and before Folder"
+
 echo "ok: session skill orchestration rules validated"
 exit 0
