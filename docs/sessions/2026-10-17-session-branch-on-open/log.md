@@ -101,3 +101,7 @@ next_step: "Design agent classifies the solution and drafts design/ for #37"
 - DES-001 default-branch.sh; DES-002 list-sessions.sh; DES-003 session-branch-guard.sh (PreToolUse Bash hook); DES-004 log.md `branch:` field; DES-005 New session branch step; DES-006 first push and one-time draft PR prompt; DES-007 Resume switches to the session branch; DES-008 session-start lists sessions on other branches; DES-009 no-merge rule.
 - Coverage: all 10 live REQs covered. No principle traded off. Mermaid blocks parse (mermaid-cli 12).
 - Asked: D1 enforcement mechanism, D2 what counts as a session commit, D3 where the branch is recorded, D4 how Resume finds a session on another branch, D5 where a new branch starts, D6 default-branch lookup, and whether Close's issue-closing step needs a follow-up issue.
+
+### 2026-10-20 — main — note: Dark-mode text colour added to #37's design diagrams
+- The user couldn't read the diagrams in dark mode. Both flowcharts' delta classDefs now set `color:#0F172A`, ahead of the standard fix tracked in #66. This departs from `skills/design/reference/notations.md` until #66 lands.
+- Both diagrams render with mermaid-cli 12.

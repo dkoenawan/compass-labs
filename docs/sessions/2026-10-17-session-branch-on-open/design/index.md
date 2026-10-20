@@ -42,14 +42,14 @@ This design has no in-depth file: its primary kind has no in-depth path yet (see
 
 The design follows the recommended option in each of D1 to D6 below. Those choices are still the user's, and the views change if a different option is picked.
 
-*Notation: C4 component view of the `compass-labs` plugin inside a consuming repository, drawn as a Mermaid `flowchart` with delta styling.*
+*Notation: C4 component view of the `compass-labs` plugin inside a consuming repository, drawn as a Mermaid `flowchart` with delta styling. The classDefs add `color:#0F172A` so labels stay readable in dark mode, ahead of the standard (#66).*
 
 ```mermaid
 flowchart LR
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-  classDef unchanged fill:#F1F5F9,stroke:#475569
+  classDef new fill:#DCFCE7,stroke:#166534,color:#0F172A
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#0F172A
+  classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#0F172A,stroke-dasharray:4 3
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
   U["Maintainer or team member (person)"]
   subgraph PLUGIN["compass-labs plugin"]
     SKILL["session skill and orchestrator agent (component: Markdown) [changed]"]:::changed
@@ -86,10 +86,10 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-  classDef unchanged fill:#F1F5F9,stroke:#475569
+  classDef new fill:#DCFCE7,stroke:#166534,color:#0F172A
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#0F172A
+  classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#0F172A,stroke-dasharray:4 3
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
   S1["1. Issue [unchanged]"]:::unchanged
   S2["2. Slug [unchanged]"]:::unchanged
   B0{"Current branch is the default branch? [new]"}:::new
