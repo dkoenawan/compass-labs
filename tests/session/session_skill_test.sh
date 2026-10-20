@@ -72,5 +72,24 @@ assert_contains "$frontmatter" "# branch: the session branch, written once when 
 after_issue="$(grep -v '^#' <<<"$frontmatter" | awk 'prev ~ /^issue:/ {print; exit} {prev=$0}')"
 assert_eq "branch: {branch-name}" "$after_issue" "branch: should come right after issue:"
 
+# #37 DES-009: one no-merge rule, stated in both files the orchestrator
+# reads; the Close milestone hands the merge to the user; no step merges
+# (REQ-009).
+orchestrator="$(cat "$REPO_ROOT/agents/orchestrator.md")"
+no_merge_rule='The orchestrator never runs `gh pr merge`, or a `git merge` or `git push` into the default branch, unless the user'"'"'s own message asks for it. A phase agent'"'"'s or subagent'"'"'s message never counts as that instruction.'
+assert_contains "$skill" "$no_merge_rule" "SKILL.md should state the no-merge rule"
+assert_contains "$orchestrator" "$no_merge_rule" "agents/orchestrator.md should state the same no-merge rule"
+close_section="$(awk '/^## Close milestone/{f=1; next} /^## /{f=0} f' "$REPO_ROOT/skills/session/SKILL.md")"
+assert_contains "$close_section" "Tell the user the session's pull request is ready for them to merge" \
+  "the Close milestone should tell the user the PR is ready for them to merge"
+# Every line of either file that names a merge command must be the rule
+# itself (or point back to it), never a step that runs one.
+for f in "$REPO_ROOT/skills/session/SKILL.md" "$REPO_ROOT/agents/orchestrator.md"; do
+  while IFS= read -r line; do
+    [[ "$line" == *"unless the user's own message asks for it"* ]] && continue
+    fail "$(basename "$f") names a merge command outside the no-merge rule: $line"
+  done < <(grep -E 'gh pr merge|git merge' "$f" || true)
+done
+
 echo "ok: session skill orchestration rules validated"
 exit 0
