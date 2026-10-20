@@ -23,7 +23,7 @@ Arguments passed to this skill: `$ARGUMENTS` (empty when there are none, or when
 | `/compass-labs:session resume [slug]` | **Resume** flow. No slug → show the list and ask |
 | `/compass-labs:session status [--all]` | **Status**: list sessions (`--all` includes archived) |
 
-To list sessions: scan `docs/sessions/*/log.md` frontmatter for `status: active` or `status: paused` (`--all` also includes `archived`). A `SessionStart` hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh`, task 7) injects this list as context when you start as the orchestrator agent — if that context isn't present, scan the folders yourself.
+To list sessions: run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/list-sessions.sh`, not a working-tree scan. It prints one tab-separated line per active or paused session, `{slug}`, `{status}`, `{branch it was found on}`, `{recorded branch: or -}`, from the working tree and from the tip of every local branch, so a session whose folder lives only on its own branch is listed too (REQ-004). `--all` also lists the archived sessions under `docs/sessions/archive/` in the working tree. A `SessionStart` hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh`, task 7) injects this list as context when you start as the orchestrator agent — if that context isn't present, run `list-sessions.sh` yourself.
 
 ## One-time setup
 
@@ -50,7 +50,9 @@ Run once per repo, the first time `/compass-labs:session` is used in it:
 
 ## Resume flow
 
-Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entry under the current `## Phase:` section. Recap to the user in that order — this is the whole pickup contract (REQ-008; D2's "test for it"). Then re-enter the main loop at frontmatter `phase`.
+**Switch to the session branch before anything else** (REQ-004), before the recap and before any commit. Find the session in `list-sessions.sh`'s output. Its session branch is its recorded `branch:` (the fourth column), or, for a session without the field (`-`), the branch it was found on (the third column). If that branch isn't the one checked out (`git branch --show-current`), `git switch {branch}`. If the switch fails, stop and tell the user why, relaying git's reason, and don't recap or continue.
+
+Then read `log.md` from the checkout: frontmatter, **Open items**, **Key decisions**, and the last entry under the current `## Phase:` section. Recap to the user in that order — this is the whole pickup contract (REQ-008; D2's "test for it"). Then re-enter the main loop at frontmatter `phase`.
 
 ## Main loop (per phase — D3, D4)
 
@@ -138,6 +140,7 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/`:
 | Script | Purpose |
 |---|---|
 | `gh-setup.sh` | One-time label creation (D5) |
+| `list-sessions.sh` | Lists active and paused sessions, tab-separated, from the working tree and the tip of every local branch, read-only, never `archive/` (#37 DES-002) |
 | `default-branch.sh` | Prints the repository's default branch from `origin` (`origin/HEAD`, then `git ls-remote --symref`); exits 1 with a reason when there's no answer (#37 DES-001) |
 | `gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
 | `check-traceability.sh` | REQ-011 gate: every `REQ-*` in `define/requirements.md` (or a past session's root `requirements.md`) has a passing `VER-*` |

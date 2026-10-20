@@ -114,5 +114,22 @@ assert_not_contains "$(grep '^2\. \*\*Slug' <<<"$new_flow")" 'Create `docs/sessi
 order_ok="$(awk '/^2\. \*\*Slug/{a=NR} /^2b\. \*\*Branch/{b=NR} /^3\. \*\*Folder/{c=NR} END{print (a && a<b && b<c) ? "yes" : "no"}' <<<"$new_flow")"
 assert_eq "yes" "$order_ok" "the branch step should come after Slug and before Folder"
 
+# #37 DES-007: listing uses list-sessions.sh, and Resume switches to the
+# session branch before anything else (REQ-004).
+dispatch="$(awk '/^## Mode dispatch/{f=1; next} /^## /{f=0} f' "$REPO_ROOT/skills/session/SKILL.md")"
+assert_contains "$dispatch" 'To list sessions: run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/list-sessions.sh`, not a working-tree scan' \
+  "Mode dispatch should list sessions with list-sessions.sh"
+assert_not_contains "$dispatch" 'To list sessions: scan `docs/sessions/*/log.md`' \
+  "Mode dispatch should no longer scan only the working tree"
+resume="$(awk '/^## Resume flow/{f=1; next} /^## /{f=0} f' "$REPO_ROOT/skills/session/SKILL.md")"
+[[ -n "$resume" ]] || fail "could not extract the Resume flow"
+assert_contains "$resume" "**Switch to the session branch before anything else**" "Resume should switch branch first"
+assert_contains "$resume" "list-sessions.sh" "Resume should find the session with list-sessions.sh"
+assert_contains "$resume" 'the branch it was found on' "Resume should fall back to the branch the session was found on"
+assert_contains "$resume" 'git switch {branch}' "Resume should switch with git switch"
+assert_contains "$resume" "If the switch fails, stop and tell the user why" "Resume should stop when the switch fails"
+order_ok="$(awk '/Switch to the session branch before anything else/{a=NR} /Then read `log.md` from the checkout/{b=NR} /Recap to the user/{c=NR} END{print (a && a<b && b<=c) ? "yes" : "no"}' <<<"$resume")"
+assert_eq "yes" "$order_ok" "Resume should switch before reading log.md and recapping"
+
 echo "ok: session skill orchestration rules validated"
 exit 0
