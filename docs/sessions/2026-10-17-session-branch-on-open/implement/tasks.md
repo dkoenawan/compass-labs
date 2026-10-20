@@ -1,7 +1,7 @@
 ---
 issue: 37
 branch: feat/37-session-branch-on-open
-status: in-progress
+status: complete
 test_command: bash tests/run.sh
 last_skill_commit: null
 retry_counts:
@@ -24,4 +24,4 @@ Each task names the `DES-*` item it implements. An item's last task carries its 
 - [x] Add the New session flow branch step between Slug and Folder in `skills/session/SKILL.md`, fill `branch:` in step 3, and assert the step's rules in `tests/session/session_skill_test.sh` [DES-005] (depends on: 1, 3) — check: `session_skill_test.sh` asserts the step's rules are stated (branch step before the folder, the ask on a non-default branch, the name proposal, stop on failure, `branch:` filled)
 - [x] Switch Mode dispatch listing to `list-sessions.sh` and add the switch-to-branch rule at the start of the Resume flow in `skills/session/SKILL.md`, asserted in `tests/session/session_skill_test.sh` [DES-007] (depends on: 2, 3) — check: `session_skill_test.sh` asserts the switch-before-anything rule and the use of `list-sessions.sh`
 - [x] Build `hooks/session-start.sh`'s "Active sessions" lines from `list-sessions.sh`, adding `on {branch}` for sessions not in the working tree, with a component case in `tests/hooks/session_start_test.sh` (stub lister) [DES-008] (depends on: 2)
-- [ ] Make New session flow step 4 push with `git push -u origin {branch}` and add the one-time draft PR prompt before `gh-milestone.sh` in `skills/session/SKILL.md`, asserted in `tests/session/session_skill_test.sh` [DES-006] (depends on: 6) — check: `session_skill_test.sh` asserts the order (commit, push, PR prompt, `gh-milestone.sh`), the one-time ask and `--draft`
+- [x] Make New session flow step 4 push with `git push -u origin {branch}` and add the one-time draft PR prompt before `gh-milestone.sh` in `skills/session/SKILL.md`, asserted in `tests/session/session_skill_test.sh` [DES-006] (depends on: 6) — check: `session_skill_test.sh` asserts the order (commit, push, PR prompt, `gh-milestone.sh`), the one-time ask and `--draft`

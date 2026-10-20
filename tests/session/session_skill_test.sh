@@ -131,5 +131,20 @@ assert_contains "$resume" "If the switch fails, stop and tell the user why" "Res
 order_ok="$(awk '/Switch to the session branch before anything else/{a=NR} /Then read `log.md` from the checkout/{b=NR} /Recap to the user/{c=NR} END{print (a && a<b && b<=c) ? "yes" : "no"}' <<<"$resume")"
 assert_eq "yes" "$order_ok" "Resume should switch before reading log.md and recapping"
 
+# #37 DES-006: step 4 commits, pushes with -u, asks once about a draft PR,
+# then runs gh-milestone.sh (REQ-008).
+step4="$(awk '/^4\. \*\*Commit, push, draft PR prompt/{f=1} /^5\. /{f=0} f' <<<"$new_flow")"
+[[ -n "$step4" ]] || fail "could not extract New session flow step 4"
+assert_contains "$step4" 'git push -u origin {branch}' "the first push should set the upstream"
+assert_contains "$step4" "asked once per session" "the draft PR prompt should be asked once"
+assert_contains "$step4" 'gh pr list --head {branch} --state open' "an existing open PR should be checked first"
+assert_contains "$step4" "don't ask" "an existing open PR should mean no prompt"
+assert_contains "$step4" 'gh pr create --draft --base {default} --head {branch}' "the PR should be opened as a draft"
+assert_contains "$step4" 'Refs #{issue}' "the PR body should reference the issue"
+assert_contains "$step4" "never ask again in this session" "a declined prompt should never be asked again"
+assert_contains "$step4" "GitHub sync pending" "a gh failure should be logged as sync pending"
+order_ok="$(awk '/Commit \(`docs\(sessions\): open session/{a=NR} /git push -u origin/{b=NR} /Draft PR prompt \(REQ-008\)/{c=NR} /scripts\/gh-milestone.sh \{issue\} none define/{d=NR} END{print (a && a<=b && b<c && c<d) ? "yes" : "no"}' <<<"$step4")"
+assert_eq "yes" "$order_ok" "step 4 should run commit, push, PR prompt, then gh-milestone.sh"
+
 echo "ok: session skill orchestration rules validated"
 exit 0
