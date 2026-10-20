@@ -11,12 +11,15 @@
 | DES | Status | Reason | Unit tests | Component tests |
 |---|---|---|---|---|
 | DES-001 | built as designed | | none: a two-call script with no separable units | `tests/session/default_branch_test.sh`: `trunk` via `origin/HEAD` and via the `ls-remote` fallback, a `develop` default, from a subdirectory and from cwd, no `origin` (exit 1), unreachable `origin` (exit 1), not a repo (exit 1) |
+| DES-002 | built with variation | V1: adds a tie-break between branch copies and defines "found on" for working-tree sessions, both left open by the design | none: one script, its frontmatter parsing is exercised through the CLI | `tests/session/list_sessions_test.sh`: empty repo; session committed only on `feat/5-widget` listed with that branch while `main` is checked out (and no switch happens); untracked active `log.md` listed with `-` for a missing `branch:`; paused listed; `archive/` and `status: archived` never listed (working tree and branch); working tree wins over the branch copy; on two branches the recorded branch's copy wins; subdirectory and no-argument calls; non-repo and missing path exit 0 |
 
 ## Variations
 
 <!-- One row per difference between the design and what was built. IDs V1, V2 … are local to this file. Every variation is decided at the Implement gate: accepted as built, or sent back for rework. Write "None." under the heading when there are none. -->
 
-None.
+| ID | DES | Designed | Built | Why |
+|---|---|---|---|---|
+| V1 | DES-002 | A slug in the working tree wins over a branch copy; the third column is "the branch it was found on". Silent on a slug found on several branches, and on what a working-tree session was "found on" | Among branch copies, the copy on the branch its own `branch:` field names wins, else the first branch in refname order. A working-tree session's third column is the checked-out branch (`HEAD` when detached) | A session branch cut from another session branch carries both copies; the recorded branch holds the live one. Using the checked-out branch lets DES-008 show `on {branch}` only when the third column differs from the current branch, with no extra column |
 
 ## Layer artifacts
 
