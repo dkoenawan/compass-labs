@@ -131,3 +131,13 @@ next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
 
 ### 2026-10-20 — main — handoff: orchestrator → compass-labs:implement (implement #37)
 - **Input:** Turn frozen design/index.md DES-001 to DES-009 into implement/tasks.md and implement/as-built.md, in the design's build order, with unit and component tests in the tests/run.sh harness; commit per task.
+- **Output:** done; implement/tasks.md, implement/as-built.md, 3 new scripts/hooks, 4 changed source files, 3 new and 2 extended test files (commits 3077870..c1e4302).
+
+### 2026-10-20 — compass-labs:implement — attempt: Implement built DES-001 to DES-009 for #37
+- Planned 9 tasks in implement/tasks.md from the design's DES table and built them in its order (DES-001, 002, 004, 009 → 003, 005, 007, 008 → 006), one commit per ticked task, each pushed to feat/37-session-branch-on-open.
+- New: default-branch.sh, list-sessions.sh, hooks/session-branch-guard.sh (PreToolUse, matcher Bash, in hooks.json). Changed: session-start.sh, templates/log.md (branch:), skills/session/SKILL.md, agents/orchestrator.md.
+- Tests: default_branch_test.sh, list_sessions_test.sh, session_branch_guard_test.sh (new); session_start_test.sh, session_skill_test.sh (extended). bash tests/run.sh: 24 passed, 0 failed.
+
+### 2026-10-20 — compass-labs:implement — note: as-built.md ready for the Implement gate
+- As-built has a row for every DES item: 6 built as designed, 3 built with variation (DES-002 V1, DES-003 V2, DES-008 V3), none not built. Each variation needs accept or rework at the gate.
+- Handed to Test: the DES-003 and DES-008 integration checks (real hook with the real scripts), and the live checks for DES-005, 006, 007 and 009.
