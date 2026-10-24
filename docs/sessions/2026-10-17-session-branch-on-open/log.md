@@ -27,6 +27,7 @@ next_step: "Deploy gate for #37"
 
 ## Key decisions
 
+- **2026-10-24**: Release as v2.2.0 (MINOR) — the default-branch block is intended behaviour, not a breaking interface change.
 - **2026-10-24**: README hook table lists session-branch-guard.sh before the merge.
 - **2026-10-24**: ✅ Test complete — VER-001 to VER-013 pass for REQ-001 to REQ-010; VER-014 (live orchestrator runs) left pending by the user's choice.
 - **2026-10-24**: Test's integration script kept in the harness as tests/integration/session_branch_integration_test.sh.
@@ -199,3 +200,6 @@ next_step: "Deploy gate for #37"
 
 ### 2026-10-24 — main — decision: README lists the session branch guard
 - The user chose to add the missing `hooks/session-branch-guard.sh` row to README.md's "What the hooks enforce" table before the merge, as Deploy proposed.
+
+### 2026-10-24 — main — decision: #37 ships as v2.2.0 (MINOR)
+- The user chose MINOR: a new hook and scripts, no skill interface change. Blocking session commits and pushes on the default branch is the intended behaviour, not a break. .claude-plugin/plugin.json bumped 2.1.0 → 2.2.0.
