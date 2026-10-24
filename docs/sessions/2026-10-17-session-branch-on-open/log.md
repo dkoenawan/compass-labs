@@ -27,6 +27,7 @@ next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
 
 ## Key decisions
 
+- **2026-10-24**: Implement gate — V1, V2 and V3 accepted as built; no rework.
 - **2026-10-20**: ✅ Design complete — DES-001 to DES-009 cover REQ-001 to REQ-010; D1–D6 recommended options; #72 deferred.
 - **2026-10-20**: D1–D6 take the recommended options; Close's issue-closing gap filed as #72.
 - **2026-10-19**: ✅ Define complete — REQ-001 to REQ-010 approved (8 Must, 2 Should); no open questions.
@@ -141,3 +142,6 @@ next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
 ### 2026-10-20 — compass-labs:implement — note: as-built.md ready for the Implement gate
 - As-built has a row for every DES item: 6 built as designed, 3 built with variation (DES-002 V1, DES-003 V2, DES-008 V3), none not built. Each variation needs accept or rework at the gate.
 - Handed to Test: the DES-003 and DES-008 integration checks (real hook with the real scripts), and the live checks for DES-005, 006, 007 and 009.
+
+### 2026-10-24 — main — decision: Implement variations V1 to V3 accepted as built
+- The user accepted every variation in implement/as-built.md ("continue away"): V1 (DES-002 branch-copy tie-break and working-tree "found on") accepted; V2 (DES-003 extra command and push forms, fail open when a collaborator is missing) accepted; V3 (DES-008 folder-name slug, silent when the lister is missing) accepted. No rework.
