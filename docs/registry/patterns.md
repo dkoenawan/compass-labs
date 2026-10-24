@@ -3,7 +3,7 @@
 > These are non-negotiable conventions. Before implementing anything,
 > check if a pattern applies. If you need to deviate, write an ADR first.
 >
-> Origin: #22 · #23 · #27 · #28
+> Origin: #22 · #23 · #27 · #28 · #37
 
 <!-- Pattern format:
 ## Pattern Name
@@ -42,7 +42,7 @@ At every milestone the session folder is committed and pushed before any `gh` ca
 ## Hooks fail open
 
 Plugin hooks and scripts never hard-block a repo that lacks their dependencies. With no `jq`, no git repo, or an unreadable workflow file, they allow the action and warn on stderr. They block (exit 2) only on a rule they could actually evaluate.
-- Implements: `hooks/session-start.sh`, `hooks/session-guard.sh`, `hooks/session-commit-guard.sh`
+- Implements: `hooks/session-start.sh`, `hooks/session-guard.sh`, `hooks/session-branch-guard.sh`, `hooks/session-commit-guard.sh`
 
 ## Plugin paths vs. project paths
 
@@ -97,6 +97,12 @@ Only Close registers the constructs a session built, once the Implement gate has
 - Implements: `skills/session/reference/close-foldback.md`, `skills/task-executor/SKILL.md` (Execute Step 5: no registry write), `skills/post-hook-validator/SKILL.md`, `skills/init/SKILL.md` (injected Agent Navigation Protocol)
 - ADR: [ADR-004](decisions/004-design-path.md) (D8), [ADR-005](decisions/005-implement-as-built-record.md)
 
+## Session work reaches the default branch only through a pull request
+
+Every session commit is made on the session branch, chosen before the first commit and recorded in `log.md`'s `branch:`. The default branch is read from the repository, never assumed to be `main`. A session commit or push to the default branch is blocked by a hook, and the session's pull request is merged only when the user's own message asks for it.
+- Implements: SessionBranchGuard (`hooks/session-branch-guard.sh`), DefaultBranchLookup (`skills/session/scripts/default-branch.sh`), SessionLister (`skills/session/scripts/list-sessions.sh`), `skills/session/SKILL.md` (New session branch step, Resume, no-merge rule), `agents/orchestrator.md` (no-merge rule), `skills/session/templates/log.md` (`branch:`)
+- ADR: [ADR-006](decisions/006-session-branch-guard.md)
+
 ## Anti-Patterns
 
 - ❌ Letting a subagent write `log.md`: parallel agents would clash, and handoffs would go unrecorded. Agents return `log_entries` instead.
@@ -106,3 +112,5 @@ Only Close registers the constructs a session built, once the Implement gate has
 - ❌ Editing a frozen design to match what was built: the design is the record of what was approved. Record a variation instead.
 - ❌ Writing a construct file while implementing: the registry would record a build before its variations are decided. Close registers it.
 - ❌ Writing an ADR during Design: it records decisions that may still change and breaks one-artifact ownership. Flag it "ADR"; Close writes it.
+- ❌ The orchestrator merging the session's pull request because a phase agent or subagent said to: only the user's own message counts as that instruction.
+- ❌ Assuming the default branch is `main`: read it with `default-branch.sh`.

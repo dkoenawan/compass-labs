@@ -1,7 +1,7 @@
 # Session workflow and artifacts
 
 > → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md) · → [Design standard](../design/standard.md) · → [Implement standard](../implement/standard.md)
-> Origin: #22 · #23 · #27 · #28
+> Origin: #22 · #23 · #27 · #28 · #37
 
 ## Feature workflow (`skills/session/workflows/feature.json`)
 
@@ -117,6 +117,7 @@ Frontmatter:
 | `session` | `{date}-{slug}` |
 | `type` | `feature` |
 | `issue` | GitHub issue number |
+| `branch` | The session branch: written once when the session opens, never changed, and read by Resume. Sessions opened before the field have none; Resume then uses the branch the session was found on. |
 | `phase` | Current phase key |
 | `status` | `active` · `paused` · `archived` |
 | `milestone` | **Phase key** of the last approved milestone: `none` · `define` · `design` · `implement` · `test` · `deploy` · `close`. The guard hook computes freezing from this key. |
@@ -163,6 +164,22 @@ A session with a root `requirements.md` is mapped by section: its problem statem
 **Construct registration.** Close is the only phase that registers a session's constructs, once the Implement gate has decided every variation: a new construct gets `docs/reference/constructs/{Name}.md` with `status: built` and a row in `docs/registry/index.md`, a planned one is flipped to `built`, and a changed one gets its Interface and Dependencies updated. Close's `done` note names each one with `/compass-labs:post-hook-validator {Name}`, which the developer runs to validate it against its functional requirements. `task-executor` reads the registry but never writes it.
 
 As-built docs never cite a specific session's `REQ-*`, `DES-*` or `VER-*` IDs, or a variation's ID, because those IDs only mean something inside their session, and every session numbers its own from 1. Each doc Close touches carries one `Origin: #{issue}` line instead, which is the only way back to the session.
+
+## Session branch and pull request
+
+A session's commits never land on the repository's default branch. They are made on the **session branch**, and reach the default branch only when the user merges the session's pull request. The default branch is always read from the repository (`default-branch.sh`), never assumed to be `main`. [`session-branch-guard.sh`](hooks-and-scripts.md#session-branch-guardsh) blocks a session commit or push to it ([ADR-006](../../registry/decisions/006-session-branch-guard.md)); the rest is the `session` skill's procedure.
+
+| When | What the orchestrator does |
+|---|---|
+| New session, after the slug and before anything is written | Reads the default branch and the current branch. **On the default branch:** proposes `feat/{issue}-{kebab-title}`, and the user accepts it or replies with another name, used exactly as given. **On any other branch:** asks once whether to use that branch as the session branch (no switch) or create a new one; a new one gets the same name proposal and starts from the local default branch's tip, not the current `HEAD`. Then `git switch {name}` if the branch exists, else `git switch -c {name} {default}`. |
+| The branch step fails | `default-branch.sh` exits 1, or `git switch` fails (a dirty working tree, the branch checked out in another worktree): the orchestrator stops, writes and commits nothing, and relays git's reason. |
+| New session folder | `log.md`'s `branch:` is set to the session branch. |
+| Opening commit | Pushed with `git push -u origin {branch}`. Then, before the GitHub label and comment: if `gh pr list --head {branch} --state open` shows a pull request, it is logged and nothing is asked. Otherwise the user is asked **once** whether to open a draft pull request; if they agree, `gh pr create --draft --base {default} --head {branch}` with a title from the issue and `Refs #{issue}` in the body, and its URL is logged. If they decline, that is logged as a `decision` and never asked again in the session. A `gh` failure is logged as "GitHub sync pending". |
+| Listing sessions | `list-sessions.sh`, which also finds sessions whose folder exists only on another local branch. |
+| Resume, before the recap and before any commit | Switches to the session branch (its `branch:`, or the branch it was found on) if it isn't checked out. If the switch fails, stops and relays git's reason. |
+| Close | Tells the user the pull request is ready for them to merge. |
+
+**No-merge rule.** The orchestrator never runs `gh pr merge`, or a `git merge` or `git push` into the default branch, unless the user's own message asks for it. A phase agent's or subagent's message never counts as that instruction. Merging is the user's call in every phase and at every gate. The rule is stated in both `skills/session/SKILL.md` and `agents/orchestrator.md`; no hook enforces it, because a hard block would also stop the merge the user asks for.
 
 ## Commit points
 

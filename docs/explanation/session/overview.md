@@ -1,13 +1,13 @@
 ---
 domain: session
-last_updated: 2026-10-17
+last_updated: 2026-10-24
 source_path: skills/session
 ---
 
 # Session (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [hooks and scripts](../../reference/session/hooks-and-scripts.md) · [workflow and artifacts](../../reference/session/workflow-and-artifacts.md) | → Framing: [overview](../framing/overview.md) | → Design: [overview](../design/overview.md) | → Implement: [overview](../implement/overview.md) | → Usage: [README, "Using Sessions in a Repo"](../../../README.md#using-sessions-in-a-repo)
-> Origin: #22 · #23 · #27 · #28
+> Origin: #22 · #23 · #27 · #28 · #37
 
 ## What Is a Session?
 
@@ -17,9 +17,9 @@ The `session` skill is the orchestrator. It runs in the main conversation, hands
 
 ## How It Works
 
-A session starts through one of three entry points (repo-default agent, `claude --agent compass-labs:orchestrator`, or `/compass-labs:session`; see the README). All three load the same `session` skill. When Claude starts as the orchestrator agent, a `SessionStart` hook lists active and paused sessions so the first reply can offer "resume or start new". The first time the skill is used in a repo, it creates the `phase:*` and `type:*` GitHub labels and copies a commit-point rule into `.claude/rules/compass-sessions.md` if that file isn't already there.
+A session starts through one of three entry points (repo-default agent, `claude --agent compass-labs:orchestrator`, or `/compass-labs:session`; see the README). All three load the same `session` skill. When Claude starts as the orchestrator agent, a `SessionStart` hook lists active and paused sessions, including those whose folder exists only on another local branch, so the first reply can offer "resume or start new". The first time the skill is used in a repo, it creates the `phase:*` and `type:*` GitHub labels and copies a commit-point rule into `.claude/rules/compass-sessions.md` if that file isn't already there.
 
-A new session gets an issue (existing or newly created) and a folder. `log.md` is created first, then a thin `define/index.md`. The opening commit is pushed, and only then is GitHub updated (label `phase:define`, an opening comment). This order (commit, push, then `gh`) applies at every milestone so that comment links always resolve.
+A new session gets an issue (existing or newly created), a **session branch** and a folder. The branch comes before anything is written: on the repository's default branch the orchestrator proposes `feat/{issue}-{title}` for the user to accept or rename; on any other branch it asks whether to use that branch or start a new one from the default branch. If the branch can't be created or switched to, the session stops before its first commit. `log.md` is created first, with the branch recorded in its `branch:` field, then a thin `define/index.md`. The opening commit is pushed to the session branch, the user is asked once whether to open a draft pull request into the default branch, and only then is GitHub updated (label `phase:define`, an opening comment). This order (commit, push, then `gh`) applies at every milestone so that comment links always resolve.
 
 **Define** runs the shared [framing](../framing/overview.md) step before anything else: it proposes a depth tier (full, short or skip) for the user to confirm, runs that tier's checks, and checks the work against the project anchor in the README. It then writes the problem statement and requirements to the tier's depth. Its output is the `define/` folder: a main doc, `define/index.md`, linking to sub-docs that exist only when the tier needs them. When framing agrees an anchor change with the user, Define only records the agreed text; the orchestrator writes it into the README, and the Define gate refuses the milestone until the README contains it.
 
@@ -33,16 +33,17 @@ Each phase runs the same loop. The orchestrator logs a `handoff` entry, then sta
 
 At the **milestone gate** the user approves, adjusts or rethinks the phase's artifact. The Implement gate shows every `DES-*` status and every variation before the options, asks the user to accept each variation as built or send it back for rework, logs the outcomes as one decision, and doesn't approve the milestone while rework is outstanding. Four gates check more than approval. Define can't complete while an agreed anchor change is missing from the README. The Design gate shows the context view and the delta list with the question, and Design can't complete while `design/index.md` lacks its Classification, Scope checklist, Context view or Delta list (`check-design.sh`). Test can't complete unless every `REQ-*` has a passing `VER-*` (`check-traceability.sh`). Deploy can't complete unless `release.md`'s *Completeness* section shows that the release manifest lists only complete components and leaves none out. On approval, the orchestrator sets `milestone` to the finished phase's key and `phase` to the next one. That freezes the artifact. It then commits the artifact and log explicitly, pushes, and runs `gh-milestone.sh` to move the issue's label and post the milestone comment. If GitHub is unreachable, the script reports `SYNC_PENDING` and exits cleanly. The session continues locally and the next gate replays the sync.
 
-A session can pause at any point (`status: paused`, `next_step` set, committed). Resuming, in any later conversation, reads only `log.md`'s frontmatter, Open items, Key decisions and the latest entry. Nothing depends on conversation memory.
+A session can pause at any point (`status: paused`, `next_step` set, committed). Resuming, in any later conversation, first switches to the session branch if another branch is checked out, then reads only `log.md`'s frontmatter, Open items, Key decisions and the latest entry. Nothing depends on conversation memory.
 
-**Close** has no artifact. The Close agent folds whatever is still true once the feature has shipped into the as-built docs: needs, outcomes, context diagrams and still-true assumptions become explanation under `docs/explanation/<domain>/`, and live requirements and NFR measures become current-fact reference under `docs/reference/<domain>/`. Accepted variations replace what the design said, so the docs describe what was built, and layer artifacts such as an OpenAPI document are linked from the reference. Decisions the design flagged "ADR" are written into `docs/registry/decisions/`. Close is also the only phase that registers the constructs a session built, once every variation has been decided, and names each one for `post-hook-validator`. Framing records, evidence, struck and deferred requirements, and anything about how the work got there stay in the archive. As-built docs never cite a session's `REQ-*`, `DES-*` or `VER-*` IDs; each doc Close touches gets one `Origin: #{issue}` line instead. The orchestrator then logs the final milestone and sets `status: archived` in the same commit as the fold-back. After that, `archive-session.sh` does a `git mv` of the folder to `docs/sessions/archive/{slug}/` as a separate commit. The orchestrator pushes, syncs GitHub and closes the issue. From then on the archived folder is read-only.
+**Close** has no artifact. The Close agent folds whatever is still true once the feature has shipped into the as-built docs: needs, outcomes, context diagrams and still-true assumptions become explanation under `docs/explanation/<domain>/`, and live requirements and NFR measures become current-fact reference under `docs/reference/<domain>/`. Accepted variations replace what the design said, so the docs describe what was built, and layer artifacts such as an OpenAPI document are linked from the reference. Decisions the design flagged "ADR" are written into `docs/registry/decisions/`. Close is also the only phase that registers the constructs a session built, once every variation has been decided, and names each one for `post-hook-validator`. Framing records, evidence, struck and deferred requirements, and anything about how the work got there stay in the archive. As-built docs never cite a session's `REQ-*`, `DES-*` or `VER-*` IDs; each doc Close touches gets one `Origin: #{issue}` line instead. The orchestrator then logs the final milestone and sets `status: archived` in the same commit as the fold-back. After that, `archive-session.sh` does a `git mv` of the folder to `docs/sessions/archive/{slug}/` as a separate commit. The orchestrator pushes, syncs GitHub, closes the issue and tells the user the pull request is ready for them to merge. It never merges the pull request itself unless the user's own message asks it to. From then on the archived folder is read-only.
 
 ## Core Objects / Entities
 
 | Object | Description |
 | ------ | ----------- |
 | Session folder | `docs/sessions/{date}-{slug}/`. Holds a fixed file set: five phase artifacts (three of them folders: `define/`, `design/` and `implement/`), `log.md`, and an optional non-Markdown `assets/`. Nothing else can be created in it. |
-| `log.md` | Session state (YAML frontmatter: `phase`, `status`, `milestone`, `active_agent`, `next_step`, `issue`), then Open items, Key decisions (newest first), then append-only entries grouped by `## Phase:`. Written only by the orchestrator. |
+| `log.md` | Session state (YAML frontmatter: `phase`, `status`, `milestone`, `active_agent`, `next_step`, `issue`, `branch`), then Open items, Key decisions (newest first), then append-only entries grouped by `## Phase:`. Written only by the orchestrator. |
+| Session branch | The branch every commit of the session is made on, never the default branch. Recorded once in `log.md`'s `branch:` when the session opens and switched back to on Resume. Its pull request into the default branch is the only way session work reaches it, and the user merges it. |
 | Phase artifact | One per phase (`define/`, `design/`, `implement/`, `verification.md`, `release.md`), each owned by one phase agent. It is frozen once its milestone is approved. |
 | Folder artifact | A phase artifact that is a folder with a fixed file set, owned and frozen as a unit. `define/` holds `index.md` (the main doc) plus `requirements.md`, `framing.md`, `problem.md`, `quality.md` and `diagrams.md` by depth tier. `design/` and `implement/` (`tasks.md` and `as-built.md`) work the same way. Sessions from before a folder keep its root file (`requirements.md`, `design.md`, `tasks.md`) instead; each session uses one layout, and past sessions are never migrated. |
 | Workflow definition | `skills/session/workflows/feature.json`. Lists phases in order, with each phase's owner agent, artifact (and, for a folder, its file set and legacy root path), milestone label and GitHub label, plus the `framing` block that plugs the type into framing. The orchestrator and the guard hook both read it. |
@@ -56,9 +57,10 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 - **Orchestration logic**: `skills/session/SKILL.md` covers mode dispatch (default / `new` / `resume` / `status`), one-time setup, the main loop, the milestone gate and the Close ordering. `skills/session/reference/phase-agent-contract.md` is the shared agent contract. `skills/session/reference/close-foldback.md` is the Close procedure.
 - **Data shape**: `skills/session/workflows/feature.json` defines the workflow. `skills/session/templates/*.md` holds thin starting versions of every artifact and the log, with the six Define templates in `templates/define/`. `skills/session/templates/rules/compass-sessions.md` is the commit-point rule copied into consuming repos.
 - **Interface**: `agents/orchestrator.md` (main-session agent) and the `/compass-labs:session` skill invocation. Phase agents live in `agents/*.md`. The Define agent preloads `framing`, `problem-statement` and `requirements` (see [framing](../framing/overview.md)); the Implement agent preloads `skills/implement/SKILL.md` (see [Implement](../implement/overview.md)); the Test agent preloads `skills/verification/SKILL.md` (VER table column order and Test-owned methods).
-- **Enforcement**: `hooks/hooks.json` wires `hooks/session-start.sh` (SessionStart), `hooks/session-guard.sh` (PreToolUse) and `hooks/session-commit-guard.sh` (Stop). `hooks/lib/session-log.sh` holds the shared "uncommitted log heading" check.
+- **Enforcement**: `hooks/hooks.json` wires `hooks/session-start.sh` (SessionStart), `hooks/session-guard.sh` (PreToolUse on file writes), `hooks/session-branch-guard.sh` (PreToolUse on `Bash`) and `hooks/session-commit-guard.sh` (Stop). `hooks/lib/session-log.sh` holds the shared "uncommitted log heading" check.
 - **GitHub and lifecycle scripts**: `skills/session/scripts/gh-setup.sh`, `gh-milestone.sh`, `check-traceability.sh`, `archive-session.sh`.
-- **Tests**: `tests/run.sh` (bash + jq) runs `tests/hooks/*_test.sh` and `tests/session/*_test.sh`. The tests are repo-only and don't ship as runtime surface.
+- **Branch scripts**: `skills/session/scripts/default-branch.sh` (the repository's default branch, from `origin`) and `list-sessions.sh` (active and paused sessions in the working tree and at every local branch tip), used by the skill, the branch guard and `session-start.sh`.
+- **Tests**: `tests/run.sh` (bash + jq) runs `tests/hooks/*_test.sh`, `tests/session/*_test.sh` and `tests/integration/*_test.sh` (real hooks and scripts together in throwaway repositories). The tests are repo-only and don't ship as runtime surface.
 
 ## Internal Architecture
 
@@ -68,12 +70,36 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 
 **Mechanical enforcement over prompt instructions.** The guard hook works out ownership from the hook input's `agent_type` and freezing from `log.md`'s `milestone` key compared with each phase's `order`. A folder artifact resolves by its folder prefix, so every file in `define/` has the same owner and freeze point, and only its fixed files, one level deep, can be written. A frozen artifact can be amended only by the main session, and only alongside a fresh, uncommitted `decision` entry in `log.md`. The Stop guard makes Claude commit each `decision` or `milestone` entry with the changes it describes. See [patterns](../../registry/patterns.md).
 
+**Session work reaches the default branch only through a pull request.** A maintainer opening or resuming a session from a default-branch checkout must never have to revert a push to it, and a team using the plugin elsewhere gets the same guarantee under its own default branch name, branch protection and naming convention. The skill handles the branch at open and resume, and `session-branch-guard.sh` blocks any session commit or push to the default branch that slips through ([ADR-006](../../registry/decisions/006-session-branch-guard.md)). Both read the default branch from the repository and the open sessions from `list-sessions.sh`, so a session is still seen while its folder exists only on its own branch:
+
+```mermaid
+flowchart LR
+  U["Maintainer or team member"]
+  SKILL["session skill and orchestrator"]
+  DEF["default-branch.sh"]
+  LIST["list-sessions.sh"]
+  BG["session-branch-guard.sh (PreToolUse on Bash)"]
+  SS["session-start.sh (SessionStart)"]
+  GIT["Git repository and its origin remote"]
+  GH["GitHub (gh)"]
+  U -->|"opens, resumes, names the branch, agrees to the draft PR, merges"| SKILL
+  SKILL -->|"creates or switches branch, commits, pushes"| GIT
+  SKILL -->|"reads the default branch"| DEF
+  SKILL -->|"finds sessions on any local branch"| LIST
+  SS -->|"lists sessions"| LIST
+  BG -->|"reads the default branch"| DEF
+  BG -->|"is a session open?"| LIST
+  BG -->|"blocks git commit and git push to the default branch"| GIT
+  DEF -->|"origin/HEAD, then ls-remote"| GIT
+  SKILL -->|"gh pr create --draft, once, if the user agrees"| GH
+```
+
 **Plugin paths vs. repo paths.** Scripts and templates resolve through `${CLAUDE_PLUGIN_ROOT}`. `docs/sessions/` always resolves against the consuming project's git root, never the plugin root, because the plugin ships its own `docs/sessions/`.
 
 ## Dependencies
 
 - **Internal**: `doc-maintainer` (preloaded by the Close agent), `framing`, `problem-statement` and `requirements` (Define), `implement` and the layer homes such as `skills/backend/` (Implement, with `task-executor`'s checklist format), and `verification` (Test).
-- **External**: `git`; `gh`, authenticated, for GitHub sync (optional: sessions keep going offline); `jq` for every hook and script (all fail open without it); Claude Code plugin hooks and subagents.
+- **External**: `git`, with an `origin` remote for the default-branch lookup; `gh`, authenticated, for GitHub sync (optional: sessions keep going offline); `jq` for every hook and script (all fail open without it); Claude Code plugin hooks and subagents.
 
 ## Gotchas
 
@@ -90,6 +116,13 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 - **Order matters at Close.** Set `status: archived` and commit it before the `git mv`. Once the folder is under `archive/`, the guard blocks every write there, the orchestrator's included.
 - **Hooks in `hooks.json` use an unquoted `$CLAUDE_PLUGIN_ROOT`**, so an install path containing a space breaks them. This is tracked in #35.
 - **Testing needs `claude --plugin-dir .`.** A conversation running the installed plugin from the cache doesn't pick up the repo's working-tree hooks.
+- **The branch guard reads command text.** `sh -c "git commit"`, `eval`, a git alias, an unquoted heredoc body or a script that commits can get past it. The skill's commands are plain `git`, which the guard does read.
+- **While any session is open, Claude can't commit to the default branch at all**, even for work unrelated to the session. "Open" means active or paused in the working tree or at the tip of any local branch, or paths staged under `docs/sessions/`. Put that work on a branch.
+- **The branch guard fails open without an `origin` remote** (and when `origin` can't be reached and `origin/HEAD` isn't set), so the guarantee silently doesn't hold there. No remote and a failed push are tracked in #70.
+- **An archived session no longer counts as open**, so once Close sets `status: archived` the guard stops covering it, and the no-merge rule has no mechanical backing after that point. Tracked in #73.
+- **Close closes the issue while the pull request may still be open**, because merging is left to the user. Tracked in #72.
+- **Only local branches are scanned.** A session whose folder exists only on a remote branch isn't listed or resumable until that branch exists locally.
+- **Sessions opened before the `branch:` field** resume on the branch their folder was found on.
 
 ## Changelog
 
@@ -97,3 +130,4 @@ A session can pause at any point (`status: paused`, `next_step` set, committed).
 - 2026-09-28: Define's output is the `define/` folder; framing, the anchor write and the Define gate check; the Close fold-back mapping.
 - 2026-10-04: The Design path: the `design` skill, the `design/` folder, the Design gate check; `plan` retired into Design.
 - 2026-10-17: Implement's `implement/` folder and as-built record, the Implement gate's variation decisions, the testing boundary between Implement and Test, and Close as the only construct registrar.
+- 2026-10-24: The session branch: chosen before the first commit, recorded in `log.md`'s `branch:`, switched back to on Resume; the one-time draft pull request prompt; the no-merge rule; `session-branch-guard.sh`, `default-branch.sh` and `list-sessions.sh`.

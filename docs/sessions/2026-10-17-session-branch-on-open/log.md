@@ -3,7 +3,7 @@ session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
-active_agent: main
-next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 to the user to merge"
+milestone: close
+active_agent: none
+next_step: "None — session closed; fold-back reaches main with the next session branch (#66)"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 
 
 ## Key decisions
 
+- **2026-10-24**: ✅ Session closed — #37 shipped in PR #71 (v2.2.0); fold-back in docs/ and ADR-006; follow-ups #70, #72, #73, #74, #75.
 - **2026-10-24**: Follow-ups filed — #74 stale README line and docs/index.html, #75 guard block message names REQ-005.
 - **2026-10-24**: ✅ Deploy complete — v2.2.0 prepared on the session branch; no manifest gaps; PR #71 marked ready. Merge, tag and cache refresh are the user's after merge.
 - **2026-10-24**: Release as v2.2.0 (MINOR) — the default-branch block is intended behaviour, not a breaking interface change.
@@ -236,3 +237,6 @@ next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 
 ### 2026-10-24 — main — decision: Follow-ups filed — #74 stale README and docs/index.html, #75 guard message names REQ-005
 - From the Close report: README.md still says the branch and PR start at Implement, and docs/index.html wasn't regenerated (#74); session-branch-guard.sh's block message names the session-local "REQ-005" (#75). Both parent #37, out of Close's scope.
 
+### 2026-10-24 — main — milestone: ✅ Session closed
+- The user asked to close the session after merging PR #71 (d828edf, v2.2.0). Fold-back committed with this entry: 11 docs under docs/, including ADR-006 and three construct docs.
+- PR #71 was merged before Close, so this commit and the archive move reach main on the next session's branch (#66, dark-mode diagram text), as the user asked. Follow-ups: #70, #72, #73, #74, #75.
