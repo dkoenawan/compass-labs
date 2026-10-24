@@ -69,3 +69,10 @@ next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.
 - Q9: each repo declares whether a release runs inside the feature session or as its own session. Non-plugin cases are tested on a fixture repo. Appetite: same as #26 to #28.
 - Non-goals: per-layer deploy depth, frontend #78, backend #79, database #80, infrastructure (Terraform) #81; cloud provider references #82; compass-labs as a deploy runner; #31; #20; #72 and #36; changing the completeness check.
 - Open for Design: whether the plugin cache refresh (local to the user's machine) stays a user step; whether the Deploy agent or the orchestrator runs the routine steps.
+
+### 2026-10-24 — compass-labs:define — note: Requirements set drafted for #30 (awaiting the user's approval)
+- define/requirements.md: REQ-001 to REQ-024 (15 Must, 7 Should, 2 Could; no live Won't). Every OUT-01 to OUT-06 is served; REQ-012, REQ-013, REQ-016 and REQ-017 serve needs directly.
+- OUT-06 has a check before the merge (REQ-019: a check run that reports the tag it would create) and checks after it (REQ-020 to REQ-024: tag and release on the merge commit with no user step, no tag without a version change, never overwrite a tag, the user's remaining steps listed, tag visible within 10 minutes).
+- Deferred: #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references.
+- define/quality.md: 25010:2023 coverage (Safety N/A with a reason), the NFR measure for REQ-024 (Goal 10 min, Tolerable 30), assumptions and dependencies. define/diagrams.md: impact map, context, traceability, as-is/to-be.
+- Assumptions to confirm: version bump chosen by the declared rule without a prompt; release-record depth follows the framing tier; tag form compass-labs--v{version}. Open for Design: local cache refresh, who runs the routine steps, what a separate release session is.

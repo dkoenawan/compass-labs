@@ -6,8 +6,11 @@
 
 ## Contents
 
+- [Requirements](requirements.md): REQ-001 to REQ-024, and the deferred per-layer and per-cloud work (#78 to #82)
 - [Framing](framing.md): problem checks, anchor verdict and overlaps
 - [Problem](problem.md): the two deploy lifecycles, context, needs, evidence, impact, success outcomes and appetite
+- [Quality](quality.md): ISO/IEC 25010:2023 coverage, the NFR measure for REQ-024, assumptions and dependencies
+- [Diagrams](diagrams.md): impact map, context diagram, traceability, and as-is/to-be for a compass-labs release
 
 ## Framing
 
@@ -64,3 +67,8 @@ Deploy is the thinnest phase. It treats every run as a release and has no notion
 - **Tagging after the merge (compass-labs): resolved.** Tagging `main` and publishing the release run as a pipeline triggered by the merge. That pipeline is compass-labs' L1 setup, and it's set up in this session (the user, 2026-10-24). See Scope and OUT-06.
 - **Refreshing the plugin cache (for Design):** the refresh (`claude plugin update`, then restarting Claude) runs on the user's own machine, against their local install. A remote pipeline triggered by the merge probably can't do it [assumed]. Design decides whether it stays a user step, written into the release record, or moves to some local trigger.
 - **Who runs the routine steps (for Design):** whether the Deploy agent or the orchestrator runs the bump, commit, push and PR-ready steps is left to Design. Today the commit and `gh` steps sit with the orchestrator.
+- **The release session (for Design):** REQ-012 says only what a feature session does when the declaration says a release runs as its own session. What that release session is, and how it collects the changes waiting for it, is left to Design. No criterion asserts a result for it.
+- **To confirm at the Define gate:** three assumptions in [quality.md](quality.md#assumptions-and-dependencies) feed criteria:
+  - The version bump is chosen by the declared rule without a prompt (REQ-005).
+  - The release record's depth follows the session's framing tier (REQ-015).
+  - The release tag form is `compass-labs--v{version}` (REQ-019 to REQ-022).
