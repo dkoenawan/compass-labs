@@ -2,7 +2,7 @@
 session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Test gate for #37"
+next_step: "Deploy agent runs the repo deploy steps for #37 into release.md"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Test gate for #37"
 
 ## Key decisions
 
+- **2026-10-24**: ✅ Test complete — VER-001 to VER-013 pass for REQ-001 to REQ-010; VER-014 (live orchestrator runs) left pending by the user's choice.
 - **2026-10-24**: Test's integration script kept in the harness as tests/integration/session_branch_integration_test.sh.
 - **2026-10-24**: Follow-up filed — #73 branch guard stops applying once a session is archived.
 - **2026-10-24**: ✅ Implement complete — DES-001 to DES-009 built (6 as designed, 3 with accepted variations); 24 tests pass.
@@ -174,3 +175,11 @@ next_step: "Test gate for #37"
 
 ### 2026-10-24 — main — decision: Test's integration script kept in tests/
 - The user chose to keep the Test agent's 70-check integration script (real guard, session-start, default-branch, list-sessions and archive-session scripts in throwaway repos). Added as tests/integration/session_branch_integration_test.sh, with the plugin path taken from the file's location and its work dir under the harness's TMPDIR. bash tests/run.sh: 25 passed, 0 failed.
+
+### 2026-10-24 — main — milestone: ✅ Test complete
+- The user approved the Test gate with VER-014 pending. check-traceability.sh: ok. VER-001 to VER-013 pass; bash tests/run.sh 25/25 including the kept integration test.
+- VER-014 (the live orchestrator checks for DES-005, 006, 007 and 009 against real GitHub) stays pending; verification.md frozen. Follow-up #73.
+
+---
+
+## Phase: Deploy
