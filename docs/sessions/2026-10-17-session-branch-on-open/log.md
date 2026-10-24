@@ -2,7 +2,7 @@
 session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
-active_agent: compass-labs:implement
-next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
+milestone: implement
+active_agent: compass-labs:test
+next_step: "Test agent verifies REQ-001 to REQ-010 in verification.md for #37"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
 
 ## Key decisions
 
+- **2026-10-24**: ✅ Implement complete — DES-001 to DES-009 built (6 as designed, 3 with accepted variations); 24 tests pass.
 - **2026-10-24**: Implement gate — V1, V2 and V3 accepted as built; no rework.
 - **2026-10-20**: ✅ Design complete — DES-001 to DES-009 cover REQ-001 to REQ-010; D1–D6 recommended options; #72 deferred.
 - **2026-10-20**: D1–D6 take the recommended options; Close's issue-closing gap filed as #72.
@@ -145,3 +146,11 @@ next_step: "Implement agent plans and builds DES-001 to DES-009 for #37"
 
 ### 2026-10-24 — main — decision: Implement variations V1 to V3 accepted as built
 - The user accepted every variation in implement/as-built.md ("continue away"): V1 (DES-002 branch-copy tie-break and working-tree "found on") accepted; V2 (DES-003 extra command and push forms, fail open when a collaborator is missing) accepted; V3 (DES-008 folder-name slug, silent when the lister is missing) accepted. No rework.
+
+### 2026-10-24 — main — milestone: ✅ Implement complete
+- The user approved the Implement gate. As-built: DES-001 to DES-009 all built; 6 as designed, V1 (DES-002), V2 (DES-003) and V3 (DES-008) accepted. bash tests/run.sh: 24 passed, 0 failed.
+- implement/ frozen. Handed to Test: integration checks for DES-003 and DES-008, live checks for DES-005, 006, 007 and 009.
+
+---
+
+## Phase: Test
