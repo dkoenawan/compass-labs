@@ -3,7 +3,7 @@ session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
-active_agent: main
-next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 to the user to merge"
+milestone: close
+active_agent: none
+next_step: "None — session closed; fold-back reaches main with the next session branch (#66)"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -22,11 +22,13 @@ next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 
 
 ## Open items
 
-- Follow-ups: #70 no remote / failed push; #72 Close closes the issue before the PR is merged; #73 branch guard stops applying once a session is archived.
+- Follow-ups: #70 no remote / failed push; #72 Close closes the issue before the PR is merged; #73 branch guard stops applying once a session is archived; #74 stale README and docs/index.html; #75 guard message names REQ-005.
 - Work is on branch `feat/37-session-branch-on-open`; it reaches main through a PR.
 
 ## Key decisions
 
+- **2026-10-24**: ✅ Session closed — #37 shipped in PR #71 (v2.2.0); fold-back in docs/ and ADR-006; follow-ups #70, #72, #73, #74, #75.
+- **2026-10-24**: Follow-ups filed — #74 stale README line and docs/index.html, #75 guard block message names REQ-005.
 - **2026-10-24**: ✅ Deploy complete — v2.2.0 prepared on the session branch; no manifest gaps; PR #71 marked ready. Merge, tag and cache refresh are the user's after merge.
 - **2026-10-24**: Release as v2.2.0 (MINOR) — the default-branch block is intended behaviour, not a breaking interface change.
 - **2026-10-24**: README hook table lists session-branch-guard.sh before the merge.
@@ -212,3 +214,29 @@ next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 
 ---
 
 ## Phase: Close
+
+### 2026-10-24 — main — note: Tag dry run passes; PR #71 ready for review
+- `claude plugin tag --dry-run` after the Deploy commit: would create `compass-labs--v2.2.0` at HEAD; only the known non-blocking warnings (root CLAUDE.md, unquoted `$CLAUDE_PLUGIN_ROOT` in 4 hook commands).
+- PR #71 retitled "feat: Session opens on a feature branch (v2.2.0) — #37" and marked ready for review. Not merged.
+
+### 2026-10-24 — main — handoff: orchestrator → compass-labs:close (fold back #37)
+- **Input:** Fold #37 back into the as-built docs (docs/reference, docs/explanation, docs/registry): default-branch.sh, list-sessions.sh, session-branch-guard.sh, the session-branch rules in the New session / Resume flows, the `branch:` log field, and the D1 PreToolUse-hook decision flagged as an ADR candidate. Follow-ups #70, #72, #73.
+- **Output:** done; 11 files under docs/ (4 explanation/reference docs, patterns, registry index, decisions index, ADR-006, 3 construct docs)
+
+### 2026-10-24 — main — note: PR #71 merged by the user during Close
+- The user squash-merged PR #71 at 2026-10-24T07:27:59Z (d828edf on main), with head 6af38ba = the Deploy-complete commit, so everything through Deploy (code, tests, README row, v2.2.0 bump, verification.md, release.md) is on main.
+- Close's fold-back and archive land after the merge, so they reach main through a second, docs-only PR.
+
+### 2026-10-24 — compass-labs:close — note: Fold-back ready — #37 folded into the session docs, the registry and ADR-006
+- Explanation: docs/explanation/session/overview.md covers the session branch (open, first push with the one-time draft PR prompt, Resume switch, Close leaving the merge to the user), the `branch` field, a "default branch only through a pull request" section with its component diagram, the `origin` dependency, and gotchas for #70, #72 and #73. docs/explanation/solution-design.md has a new key-decision bullet and an updated hooks line.
+- Reference: docs/reference/session/hooks-and-scripts.md documents session-branch-guard.sh, the new session-start.sh output, default-branch.sh and list-sessions.sh; docs/reference/session/workflow-and-artifacts.md documents the `branch` key and a "Session branch and pull request" section with the no-merge rule.
+- Decision: the PreToolUse-hook-on-Bash decision is ADR-006 (Accepted, refines ADR-002), indexed. Patterns: "Session work reaches the default branch only through a pull request", the guard added to "Hooks fail open", two anti-patterns.
+- Constructs registered (built): SessionBranchGuard, DefaultBranchLookup, SessionLister (construct_count 2 → 5). Validate with `/compass-labs:post-hook-validator {name}`.
+- One Origin line per touched doc; no session-local IDs; bash tests/run.sh 25/25. Not done: docs/index.html regeneration; the new diagram wasn't render-checked (no mermaid-cli).
+
+### 2026-10-24 — main — decision: Follow-ups filed — #74 stale README and docs/index.html, #75 guard message names REQ-005
+- From the Close report: README.md still says the branch and PR start at Implement, and docs/index.html wasn't regenerated (#74); session-branch-guard.sh's block message names the session-local "REQ-005" (#75). Both parent #37, out of Close's scope.
+
+### 2026-10-24 — main — milestone: ✅ Session closed
+- The user asked to close the session after merging PR #71 (d828edf, v2.2.0). Fold-back committed with this entry: 11 docs under docs/, including ADR-006 and three construct docs.
+- PR #71 was merged before Close, so this commit and the archive move reach main on the next session's branch (#66, dark-mode diagram text), as the user asked. Follow-ups: #70, #72, #73, #74, #75.

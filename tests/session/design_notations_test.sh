@@ -28,10 +28,10 @@ for row in "Three-tier application" "Database layer" "Frontend layer" \
 done
 
 for def in \
-  "classDef new fill:#DCFCE7,stroke:#166534" \
-  "classDef changed fill:#FEF3C7,stroke:#92400E" \
-  "classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3" \
-  "classDef unchanged fill:#F1F5F9,stroke:#475569"; do
+  "classDef new fill:#DCFCE7,stroke:#166534,color:#052E16" \
+  "classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03" \
+  "classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#450A0A,stroke-dasharray:4 3" \
+  "classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A"; do
   assert_contains "$content" "$def" "notations.md should define '$def'"
 done
 

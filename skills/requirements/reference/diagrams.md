@@ -113,9 +113,9 @@ A complicated set, as a `flowchart LR` coloured by priority:
 
 ```mermaid
 flowchart LR
-  classDef must fill:#DCFCE7,stroke:#166534
-  classDef should fill:#FEF3C7,stroke:#92400E
-  classDef could fill:#F1F5F9,stroke:#475569
+  classDef must fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef should fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef could fill:#F1F5F9,stroke:#475569,color:#0F172A
   O01["OUT-01"]
   O02["OUT-02"]
   R001["REQ-001"]:::must --> O01
@@ -133,9 +133,9 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef removed fill:#FEE2E2,stroke:#991B1B
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef removed fill:#FEE2E2,stroke:#991B1B,color:#450A0A
   subgraph ASIS["As-is"]
     A1["S1 member asks an admin"] --> A2["S2 admin resets by hand"]:::removed --> A3["S3 member logs in"]
   end

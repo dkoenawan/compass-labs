@@ -22,10 +22,10 @@
 
 ```mermaid
 flowchart LR
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-  classDef unchanged fill:#F1F5F9,stroke:#475569
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#450A0A,stroke-dasharray:4 3
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
   P["{person}"]
   SYS["{system} [changed]"]:::changed
   EXT["{external system} [unchanged]"]:::unchanged
@@ -39,10 +39,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-  classDef unchanged fill:#F1F5F9,stroke:#475569
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#450A0A,stroke-dasharray:4 3
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
   subgraph SYS["{system}"]
     WEB["{frontend} (container: {tech}) [changed]"]:::changed
     API["{backend} (container: {tech}) [changed]"]:::changed

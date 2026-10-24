@@ -43,11 +43,13 @@ Each element a design touches has exactly one status: `new`, `changed`, `depreca
 1. **A classDef**, using these four definitions exactly:
 
    ```text
-   classDef new fill:#DCFCE7,stroke:#166534
-   classDef changed fill:#FEF3C7,stroke:#92400E
-   classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-   classDef unchanged fill:#F1F5F9,stroke:#475569
+   classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+   classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+   classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#450A0A,stroke-dasharray:4 3
+   classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
    ```
+
+   Each one pins a dark text `color`, because a dark theme (GitHub dark mode, a dark VS Code preview) otherwise draws node labels in its own light text colour on these light fills, and they can't be read. Edge labels sit on the page background, so they need none.
 
 2. **A `[status]` suffix on the label**, for example `"Settings page [changed]"`.
 
@@ -71,10 +73,10 @@ Each example below renders with mermaid-cli. The plugin's tests render every Mer
 
 ```mermaid
 flowchart LR
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-  classDef unchanged fill:#F1F5F9,stroke:#475569
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#450A0A,stroke-dasharray:4 3
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
   M["Member (person)"]
   APP["Community app (software system) [changed]"]:::changed
   MAIL["Email service (external system) [unchanged]"]:::unchanged
@@ -88,10 +90,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef deprecated fill:#FEE2E2,stroke:#991B1B,stroke-dasharray:4 3
-  classDef unchanged fill:#F1F5F9,stroke:#475569
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef deprecated fill:#FEE2E2,stroke:#991B1B,color:#450A0A,stroke-dasharray:4 3
+  classDef unchanged fill:#F1F5F9,stroke:#475569,color:#0F172A
   M["Member (person)"]
   subgraph APP["Community app"]
     WEB["Web app (container: React) [changed]"]:::changed
