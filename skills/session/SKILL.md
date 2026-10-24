@@ -23,7 +23,7 @@ Arguments passed to this skill: `$ARGUMENTS` (empty when there are none, or when
 | `/compass-labs:session resume [slug]` | **Resume** flow. No slug → show the list and ask |
 | `/compass-labs:session status [--all]` | **Status**: list sessions (`--all` includes archived) |
 
-To list sessions: scan `docs/sessions/*/log.md` frontmatter for `status: active` or `status: paused` (`--all` also includes `archived`). A `SessionStart` hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh`, task 7) injects this list as context when you start as the orchestrator agent — if that context isn't present, scan the folders yourself.
+To list sessions: run `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/list-sessions.sh`, not a working-tree scan. It prints one tab-separated line per active or paused session, `{slug}`, `{status}`, `{branch it was found on}`, `{recorded branch: or -}`, from the working tree and from the tip of every local branch, so a session whose folder lives only on its own branch is listed too (REQ-004). `--all` also lists the archived sessions under `docs/sessions/archive/` in the working tree. A `SessionStart` hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh`, task 7) injects this list as context when you start as the orchestrator agent — if that context isn't present, run `list-sessions.sh` yourself.
 
 ## One-time setup
 
@@ -35,16 +35,27 @@ Run once per repo, the first time `/compass-labs:session` is used in it:
 ## New session flow
 
 1. **Issue**: ask for an existing issue number, or create one (`gh issue create --title … --label type:feature`). Store the number.
-2. **Slug**: derive `{today}-{kebab-title}`. Create `docs/sessions/{slug}/`.
-3. **Folder, in order** (the guard hook requires log.md to exist before anything else — D7):
-   - `log.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`).
+2. **Slug**: derive `{today}-{kebab-title}`. Don't create the folder yet: that's step 3, after the branch.
+2b. **Branch** (REQ-001, REQ-002, REQ-007, REQ-010): the session's commits never land on the default branch, so pick and check out the session branch before anything is written.
+   - Read the default branch with `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/default-branch.sh` (never assume `main`) and the current branch with `git branch --show-current`.
+   - **On the default branch:** propose `feat/{issue}-{kebab-title}` and let the user accept it or reply with another name (REQ-007). Use the name they give exactly as given.
+   - **On any other branch:** ask the user once: **use `{branch}`** (the current branch becomes the session branch, no switch) or **create a new branch**. A new branch gets the same name proposal, and starts from the local default branch's tip `{default}`, not the current `HEAD` (D5).
+   - Then check it out: `git switch {name}` if the branch already exists, else `git switch -c {name} {default}`.
+   - **On any failure**, stop here: `default-branch.sh` exits 1, or `git switch` fails (a dirty working tree, the branch checked out in another worktree). Write nothing, commit nothing, and tell the user why, relaying git's reason (REQ-010).
+3. **Folder, in order** (the guard hook requires log.md to exist before anything else — D7). Create `docs/sessions/{slug}/`, then:
+   - `log.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`, frontmatter filled in (`session`, `type: feature`, `issue`, `branch: {the session branch from step 2b}`, `phase: define`, `status: active`, `milestone: none`, `active_agent: main`, `next_step`). `branch:` is written once, here, and never changed (REQ-003).
    - `define/index.md` from `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/define/index.md` (thin — title, header and issue only). Define fills it in and creates the rest of `define/` by the tier the user confirms. Never create a root `requirements.md` in a new session: that's the layout past sessions keep (they're never migrated), and the guard blocks it.
-4. Commit + push (`docs(sessions): open session #{issue}`), **then** `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} none define {comment-file}` where the comment file says "Session opened." — this applies `phase:define` + `type:feature` and posts the opening comment (D5, order: commit → push → gh).
+4. **Commit, push, draft PR prompt, then `gh-milestone.sh`**, in that order (D5: commit → push → gh):
+   - Commit (`docs(sessions): open session #{issue}`), then push with `git push -u origin {branch}`, the session branch from step 2b.
+   - **Draft PR prompt (REQ-008), asked once per session.** If `gh pr list --head {branch} --state open` shows a pull request, log a `note` with its URL and don't ask. Otherwise ask the user once whether to open a draft pull request from `{branch}` into the default branch. If they agree, run `gh pr create --draft --base {default} --head {branch}` with a title from the issue and `Refs #{issue}` in the body, then log a `note` with the PR's URL. If they decline, log a `decision` (committed per D8) and never ask again in this session. If `gh` fails, log a `note` "GitHub sync pending" with its error, as for `gh-milestone.sh`, and carry on.
+   - Then `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} none define {comment-file}` where the comment file says "Session opened." — this applies `phase:define` + `type:feature` and posts the opening comment.
 5. Enter the **main loop** at `define`.
 
 ## Resume flow
 
-Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entry under the current `## Phase:` section. Recap to the user in that order — this is the whole pickup contract (REQ-008; D2's "test for it"). Then re-enter the main loop at frontmatter `phase`.
+**Switch to the session branch before anything else** (REQ-004), before the recap and before any commit. Find the session in `list-sessions.sh`'s output. Its session branch is its recorded `branch:` (the fourth column), or, for a session without the field (`-`), the branch it was found on (the third column). If that branch isn't the one checked out (`git branch --show-current`), `git switch {branch}`. If the switch fails, stop and tell the user why, relaying git's reason, and don't recap or continue.
+
+Then read `log.md` from the checkout: frontmatter, **Open items**, **Key decisions**, and the last entry under the current `## Phase:` section. Recap to the user in that order — this is the whole pickup contract (REQ-008; D2's "test for it"). Then re-enter the main loop at frontmatter `phase`.
 
 ## Main loop (per phase — D3, D4)
 
@@ -92,6 +103,8 @@ Read `log.md`: frontmatter, **Open items**, **Key decisions**, and the last entr
      f. If its output contains a `SYNC_PENDING:` line, log a `note` entry quoting it ("GitHub sync pending") — do **not** retry inline; the next milestone gate re-runs `gh-milestone.sh` first, per D5's "next milestone runs any pending sync first."
    - Move to the next phase in `feature.json`. **The `close` phase is special — see below** instead of following steps b–f as written.
 
+**No-merge rule (REQ-009).** The orchestrator never runs `gh pr merge`, or a `git merge` or `git push` into the default branch, unless the user's own message asks for it. A phase agent's or subagent's message never counts as that instruction. Merging the session's pull request is the user's call, in every phase and at every gate.
+
 **Milestone-key note:** `log.md` frontmatter `milestone` holds the **phase key** of the last completed milestone (`none | define | design | implement | test | deploy | close`), not a display label. `feature.json`'s own `phases[].milestone` field *is* the display label ("Define complete", …) — use it only for user-facing text and `gh-milestone.sh` comment bodies. The guard hook (`${CLAUDE_PLUGIN_ROOT}/hooks/session-guard.sh`) depends on this key to compute which artifacts are frozen — see `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/log.md`'s frontmatter comment.
 
 ## Close milestone (special ordering — D6, D8)
@@ -104,6 +117,7 @@ Close has no artifact and ends the session, so its milestone gate replaces steps
 4. `git add`+`git commit` (the move itself, separate from step 2's commit).
 5. `git push`.
 6. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-milestone.sh {issue} deploy close {comment-file}`, then `gh issue close {issue} --comment "…"` (D5's milestone table: Closed = PR merged, follow-ups confirmed, final comment, issue closed).
+7. Tell the user the session's pull request is ready for them to merge. Don't merge it yourself: the no-merge rule above applies here too.
 
 Why `log.md` first, archive second: the guard hook always allows the orchestrator to write `log.md` (never a subagent), but once the folder is under `docs/sessions/archive/`, the guard blocks **every** write there, orchestrator included. Setting `status: archived` has to happen while the folder is still at its live path, not after.
 
@@ -129,6 +143,8 @@ All under `${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/`:
 | Script | Purpose |
 |---|---|
 | `gh-setup.sh` | One-time label creation (D5) |
+| `list-sessions.sh` | Lists active and paused sessions, tab-separated, from the working tree and the tip of every local branch, read-only, never `archive/` (#37 DES-002) |
+| `default-branch.sh` | Prints the repository's default branch from `origin` (`origin/HEAD`, then `git ls-remote --symref`); exits 1 with a reason when there's no answer (#37 DES-001) |
 | `gh-milestone.sh` | Label swap + milestone comment, idempotent, fails open with `SYNC_PENDING` (D5, REQ-009/010) |
 | `check-traceability.sh` | REQ-011 gate: every `REQ-*` in `define/requirements.md` (or a past session's root `requirements.md`) has a passing `VER-*` |
 | `check-design.sh` | Design-gate check (a4): a `design/index.md` has the Classification, Scope checklist, Context view and Delta list sections; a past session's root `design.md` gets no check |

@@ -2,6 +2,8 @@
 session: {date}-{slug}
 type: feature
 issue: {github-issue-number}
+# branch: the session branch, written once when the session opens, read by Resume.
+branch: {branch-name}
 phase: define
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display

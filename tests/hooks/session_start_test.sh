@@ -94,5 +94,54 @@ run_hook "$HOOK" "$(PATH="$saved_path" build_input compass-labs:orchestrator "$r
 PATH="$saved_path"
 assert_eq "0" "$HOOK_EXIT" "missing jq should still exit 0 (fail open)"
 
+# 8. #37 DES-008 (component): the list is built from list-sessions.sh's
+#    output, with `on {branch}` for a session that isn't in the working
+#    tree. The lister is a test double here: the hook is copied into a
+#    scratch plugin layout whose list-sessions.sh prints $STUB_SESSIONS.
+plugin="$(mktemp -d)"
+cleanup_dirs+=("$plugin")
+mkdir -p "$plugin/hooks" "$plugin/skills/session/scripts"
+cp "$HOOK" "$plugin/hooks/"
+cat > "$plugin/skills/session/scripts/list-sessions.sh" <<'EOF'
+#!/usr/bin/env bash
+echo "$1" >> "${STUB_CALLS:-/dev/null}"
+[[ -n "${STUB_SESSIONS:-}" ]] && printf '%s\n' "$STUB_SESSIONS"
+exit 0
+EOF
+STUB_HOOK="$plugin/hooks/session-start.sh"
+
+branch_repo="$(new_fixture_repo)"
+git -C "$branch_repo" checkout -q -b main 2>/dev/null || git -C "$branch_repo" switch -q -c main
+echo seed > "$branch_repo/README"
+git_commit_all "$branch_repo" seed
+git -C "$branch_repo" switch -q -c feat/5-widget
+make_session_fixture "$branch_repo" "2026-01-05-widget" design active define >/dev/null
+git_commit_all "$branch_repo" "widget session"
+git -C "$branch_repo" switch -q main
+make_session_fixture "$branch_repo" "2026-01-06-here" define paused none >/dev/null
+
+export STUB_CALLS="$plugin/calls"
+export STUB_SESSIONS=$'2026-01-06-here\tpaused\tmain\t-\n2026-01-05-widget\tactive\tfeat/5-widget\tfeat/5-widget'
+run_hook "$STUB_HOOK" "$(build_input compass-labs:orchestrator "$branch_repo")"
+assert_eq "0" "$HOOK_EXIT" "hook should always exit 0"
+assert_contains "$HOOK_STDOUT" "- 2026-01-05-widget (#1, active) — on feat/5-widget — phase: design — next: test fixture" \
+  "a session only on another branch should be listed with its branch, read from that branch's log.md"
+assert_contains "$HOOK_STDOUT" "- 2026-01-06-here (#1, paused) — phase: define — next: test fixture" \
+  "a working-tree session should be listed without 'on {branch}'"
+assert_contains "$(cat "$STUB_CALLS")" "$branch_repo" "the hook should ask list-sessions.sh about the repo root"
+assert_eq "main" "$(git -C "$branch_repo" branch --show-current)" "the hook must not switch branches"
+
+# Empty lister output -> the "none" message.
+export STUB_SESSIONS=""
+run_hook "$STUB_HOOK" "$(build_input compass-labs:orchestrator "$branch_repo")"
+assert_contains "$HOOK_STDOUT" "Active sessions: none" "no listed session should give the none message"
+
+# No lister at all -> nothing printed, still exit 0 (never a misleading "none").
+rm "$plugin/skills/session/scripts/list-sessions.sh"
+run_hook "$STUB_HOOK" "$(build_input compass-labs:orchestrator "$branch_repo")"
+assert_eq "0" "$HOOK_EXIT" "a missing lister should still exit 0"
+assert_eq "" "$HOOK_STDOUT" "a missing lister should print nothing"
+unset STUB_SESSIONS STUB_CALLS
+
 echo "ok: session-start.sh validated"
 exit 0

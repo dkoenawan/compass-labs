@@ -395,6 +395,7 @@ Runs a **Feature session** end-to-end — Define → Design → Implement → Te
 | Hook | Event | What it does |
 |---|---|---|
 | `hooks/session-guard.sh` | `PreToolUse` (`Write\|Edit\|MultiEdit`) | Blocks writes outside a session's file set (including files outside `define/`'s or `design/`'s fixed set), writes to another phase's artifact, writes to a frozen artifact without a freshly logged decision, and anything under `docs/sessions/archive/` |
+| `hooks/session-branch-guard.sh` | `PreToolUse` (`Bash`) | Blocks Claude's session commits on the default branch and pushes to it (read from the repo, not assumed to be `main`), so session work reaches it only through a pull request |
 | `hooks/session-start.sh` | `SessionStart` | Lists active/paused sessions as context when starting as the orchestrator |
 | `hooks/session-commit-guard.sh` | `Stop` | Blocks ending a turn with an uncommitted `decision`/`milestone` log entry — one commit per entry, code and log together |
 
