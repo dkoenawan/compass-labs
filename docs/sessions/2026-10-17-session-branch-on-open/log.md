@@ -27,6 +27,7 @@ next_step: "Test gate for #37"
 
 ## Key decisions
 
+- **2026-10-24**: Test's integration script kept in the harness as tests/integration/session_branch_integration_test.sh.
 - **2026-10-24**: Follow-up filed — #73 branch guard stops applying once a session is archived.
 - **2026-10-24**: ✅ Implement complete — DES-001 to DES-009 built (6 as designed, 3 with accepted variations); 24 tests pass.
 - **2026-10-24**: Implement gate — V1, V2 and V3 accepted as built; no rework.
@@ -170,3 +171,6 @@ next_step: "Test gate for #37"
 
 ### 2026-10-24 — main — decision: Follow-up filed — #73 branch guard after archive
 - The user chose to file the Test agent's note as a follow-up: once a session is archived the branch guard no longer covers it. Filed as #73 (parent #37); out of #37's scope.
+
+### 2026-10-24 — main — decision: Test's integration script kept in tests/
+- The user chose to keep the Test agent's 70-check integration script (real guard, session-start, default-branch, list-sessions and archive-session scripts in throwaway repos). Added as tests/integration/session_branch_integration_test.sh, with the plugin path taken from the file's location and its work dir under the harness's TMPDIR. bash tests/run.sh: 25 passed, 0 failed.
