@@ -12,8 +12,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
-active_agent: compass-labs:test
-next_step: "Test agent verifies REQ-001 to REQ-010 in verification.md for #37"
+active_agent: main
+next_step: "Test gate for #37"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -22,11 +22,12 @@ next_step: "Test agent verifies REQ-001 to REQ-010 in verification.md for #37"
 
 ## Open items
 
-- Follow-ups: #70 no remote / failed push; #72 Close closes the issue before the PR is merged.
+- Follow-ups: #70 no remote / failed push; #72 Close closes the issue before the PR is merged; #73 branch guard stops applying once a session is archived.
 - Work is on branch `feat/37-session-branch-on-open`; it reaches main through a PR.
 
 ## Key decisions
 
+- **2026-10-24**: Follow-up filed — #73 branch guard stops applying once a session is archived.
 - **2026-10-24**: ✅ Implement complete — DES-001 to DES-009 built (6 as designed, 3 with accepted variations); 24 tests pass.
 - **2026-10-24**: Implement gate — V1, V2 and V3 accepted as built; no rework.
 - **2026-10-20**: ✅ Design complete — DES-001 to DES-009 cover REQ-001 to REQ-010; D1–D6 recommended options; #72 deferred.
@@ -154,3 +155,18 @@ next_step: "Test agent verifies REQ-001 to REQ-010 in verification.md for #37"
 ---
 
 ## Phase: Test
+
+### 2026-10-24 — main — handoff: orchestrator → compass-labs:test (verify #37)
+- **Input:** Verify REQ-001 to REQ-010 into verification.md (VER-* per REQ); include the integration checks for DES-003 and DES-008 (real hook with the real scripts) and the live checks for DES-005, 006, 007 and 009 handed over by Implement.
+- **Output:** done; verification.md (VER-001 to VER-014)
+
+### 2026-10-24 — compass-labs:test — attempt: Verification for #37 ready for the Test gate
+- verification.md has VER-001 to VER-014. VER-001 to VER-013 pass, covering REQ-001 to REQ-010; check-traceability.sh exit 0. `bash tests/run.sh` gave 24/24 at 031f7ac.
+- A scratch integration script (70/70) ran the real guard, session-start, default-branch, list-sessions and archive-session scripts in throwaway repos with local bare remotes and a `gh` stand-in, following SKILL.md's New session, Resume and Close procedures; every commit and push went through the real guard.
+- VER-014 (pending): the "Live" checks for DES-005, 006, 007 and 009 need the orchestrator model, real GitHub and a user answering prompts, and weren't run.
+
+### 2026-10-24 — compass-labs:test — note: Branch guard stops applying once a session is archived
+- Once Close sets `status: archived`, `list-sessions.sh` drops the session, so session-branch-guard.sh no longer blocks pushes to the default branch for it. REQ-009 is unaffected (it governs the orchestrator), but the no-merge rule has no mechanical enforcement after Close.
+
+### 2026-10-24 — main — decision: Follow-up filed — #73 branch guard after archive
+- The user chose to file the Test agent's note as a follow-up: once a session is archived the branch guard no longer covers it. Filed as #73 (parent #37); out of #37's scope.
