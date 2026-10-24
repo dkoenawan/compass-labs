@@ -4,7 +4,7 @@ type: feature
 issue: 30
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/30-deploy-phase-depth
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
-active_agent: compass-labs:define
-next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.md"
+milestone: define
+active_agent: main
+next_step: "Hand off to compass-labs:design — classify and design from the frozen define/"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.
 
 ## Key decisions
 
+- **2026-10-24**: ✅ Define complete — REQ-001 to REQ-025 approved (16 Must, 7 Should, 2 Could); two deploy lifecycles L1/L2; follow-ups #78–#82.
 - **2026-10-24**: Requirements approved — REQ-001 to REQ-025 (16 Must, 7 Should, 2 Could); Deploy proposes its own tier by release risk, confirmed at the Deploy gate; bump picked by declared rule; tag form compass-labs--v{version}.
 - **2026-10-24**: Problem agreed for #30 — full tier, scope (b) declaration + Deploy standard; two lifecycles L1 deployment setup / L2 session release; NEED-01–04, OUT-01–06; compass-labs routine release runs without prompts and a merge-triggered pipeline (its L1 setup) tags and publishes; anchor aligns, no update.
 - **2026-10-24**: Follow-ups filed — #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references (per-part and per-cloud deploy depth, a non-goal of #30).
@@ -84,3 +85,10 @@ next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.
 - Assumptions confirmed: the version bump is picked by the declared rule without a prompt and can be refused at the gate; tag form compass-labs--v{version}.
 - quality.md, diagrams.md and index.md updated to match; define/index.md status set to Approved 2026-10-24.
 - Open for Design: the Deploy tiers and their risk signals, the local plugin-cache refresh, who runs the routine steps, what a separate release session is.
+
+### 2026-10-24 — main — milestone: ✅ Define complete
+- The user approved the Define gate. REQ-001 to REQ-025 frozen in define/requirements.md, with problem.md, framing.md, quality.md and diagrams.md. Anchor update: none (a3 not applicable).
+
+---
+
+## Phase: Design
