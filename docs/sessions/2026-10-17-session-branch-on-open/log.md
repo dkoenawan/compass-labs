@@ -13,7 +13,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: test
 active_agent: main
-next_step: "Deploy agent runs the repo deploy steps for #37 into release.md"
+next_step: "Deploy gate for #37"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Deploy agent runs the repo deploy steps for #37 into release.md"
 
 ## Key decisions
 
+- **2026-10-24**: README hook table lists session-branch-guard.sh before the merge.
 - **2026-10-24**: ✅ Test complete — VER-001 to VER-013 pass for REQ-001 to REQ-010; VER-014 (live orchestrator runs) left pending by the user's choice.
 - **2026-10-24**: Test's integration script kept in the harness as tests/integration/session_branch_integration_test.sh.
 - **2026-10-24**: Follow-up filed — #73 branch guard stops applying once a session is archived.
@@ -183,3 +184,18 @@ next_step: "Deploy agent runs the repo deploy steps for #37 into release.md"
 ---
 
 ## Phase: Deploy
+
+### 2026-10-24 — main — handoff: orchestrator → compass-labs:deploy (release #37)
+- **Input:** Run the repo's deploy steps for #37 on feat/37-session-branch-on-open and record them in release.md, including the Completeness section. Merging PR #71 is the user's call and is out of Deploy's hands.
+- **Output:** done; release.md
+
+### 2026-10-24 — compass-labs:deploy — attempt: Release v2.2.0 prepared for #37; completeness has no gaps
+- Release manifest checked as it ships (`marketplace.json`'s 16 skills, `hooks/hooks.json`'s 4 hooks): everything listed is complete and nothing complete is left out. The README hook table is missing `session-branch-guard.sh`; a row is proposed.
+- `bash tests/run.sh` at `ba797ef`: 25 passed, 0 failed. `claude plugin tag --dry-run` stopped on the uncommitted `log.md`; re-run due after the bump.
+- MINOR bump to v2.2.0 proposed (new hook and scripts, no skill interface change), with the default-branch block flagged for the user. Bump, README row, push and PR update listed for the orchestrator. Merge, tag `compass-labs--v2.2.0` and cache refresh are left to the user after the merge.
+
+### 2026-10-24 — compass-labs:deploy — note: v2.1.0 tag name differs from the tool's convention
+- v2.1.0 was tagged `v2.1.0`; `claude plugin tag` and the v2.0.0-and-earlier tags use `compass-labs--v{version}`. v2.2.0 will use `compass-labs--v2.2.0`. Rollback pins with `task lock PIN=v2.1.0`.
+
+### 2026-10-24 — main — decision: README lists the session branch guard
+- The user chose to add the missing `hooks/session-branch-guard.sh` row to README.md's "What the hooks enforce" table before the merge, as Deploy proposed.
