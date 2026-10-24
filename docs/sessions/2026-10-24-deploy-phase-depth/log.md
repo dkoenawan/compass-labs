@@ -29,6 +29,7 @@ next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.
 
 ## Key decisions
 
+- **2026-10-24**: Requirements approved — REQ-001 to REQ-025 (16 Must, 7 Should, 2 Could); Deploy proposes its own tier by release risk, confirmed at the Deploy gate; bump picked by declared rule; tag form compass-labs--v{version}.
 - **2026-10-24**: Problem agreed for #30 — full tier, scope (b) declaration + Deploy standard; two lifecycles L1 deployment setup / L2 session release; NEED-01–04, OUT-01–06; compass-labs routine release runs without prompts and a merge-triggered pipeline (its L1 setup) tags and publishes; anchor aligns, no update.
 - **2026-10-24**: Follow-ups filed — #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references (per-part and per-cloud deploy depth, a non-goal of #30).
 ---
@@ -76,3 +77,10 @@ next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.
 - Deferred: #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references.
 - define/quality.md: 25010:2023 coverage (Safety N/A with a reason), the NFR measure for REQ-024 (Goal 10 min, Tolerable 30), assumptions and dependencies. define/diagrams.md: impact map, context, traceability, as-is/to-be.
 - Assumptions to confirm: version bump chosen by the declared rule without a prompt; release-record depth follows the framing tier; tag form compass-labs--v{version}. Open for Design: local cache refresh, who runs the routine steps, what a separate release session is.
+
+### 2026-10-24 — compass-labs:define — decision: Requirements set approved for #30
+- The user approved define/requirements.md at the Define gate: REQ-001 to REQ-025 (16 Must, 7 Should, 2 Could; no live Won't), serving OUT-01 to OUT-06. Deferred: #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references.
+- Change at the gate: Deploy proposes its own depth tier from the release's risk (e.g. a routine plugin bump vs a production change) and the user confirms it at the Deploy gate; it doesn't follow the session's framing tier. REQ-014 (the standard states the risk that points to each tier) and REQ-015 (the gate checks against the confirmed Deploy tier) revised; REQ-025 added (Deploy proposes and records its tier and reason; the gate asks the user to confirm).
+- Assumptions confirmed: the version bump is picked by the declared rule without a prompt and can be refused at the gate; tag form compass-labs--v{version}.
+- quality.md, diagrams.md and index.md updated to match; define/index.md status set to Approved 2026-10-24.
+- Open for Design: the Deploy tiers and their risk signals, the local plugin-cache refresh, who runs the routine steps, what a separate release session is.

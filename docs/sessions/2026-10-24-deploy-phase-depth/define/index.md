@@ -1,12 +1,12 @@
 <!-- tier: skip, short, full. The main doc (D12). Every tier has it. Summarise and link; never restate a sub-doc's content. -->
 # Define: Deploy phase depth
 
-> Phase: Define | Started: 2026-10-24 | Status: Draft
+> Phase: Define | Started: 2026-10-24 | Status: Approved 2026-10-24
 > Relates to: Issue #30 · Session history: [`log.md`](../log.md)
 
 ## Contents
 
-- [Requirements](requirements.md): REQ-001 to REQ-024, and the deferred per-layer and per-cloud work (#78 to #82)
+- [Requirements](requirements.md): REQ-001 to REQ-025, and the deferred per-layer and per-cloud work (#78 to #82)
 - [Framing](framing.md): problem checks, anchor verdict and overlaps
 - [Problem](problem.md): the two deploy lifecycles, context, needs, evidence, impact, success outcomes and appetite
 - [Quality](quality.md): ISO/IEC 25010:2023 coverage, the NFR measure for REQ-024, assumptions and dependencies
@@ -68,7 +68,8 @@ Deploy is the thinnest phase. It treats every run as a release and has no notion
 - **Refreshing the plugin cache (for Design):** the refresh (`claude plugin update`, then restarting Claude) runs on the user's own machine, against their local install. A remote pipeline triggered by the merge probably can't do it [assumed]. Design decides whether it stays a user step, written into the release record, or moves to some local trigger.
 - **Who runs the routine steps (for Design):** whether the Deploy agent or the orchestrator runs the bump, commit, push and PR-ready steps is left to Design. Today the commit and `gh` steps sit with the orchestrator.
 - **The release session (for Design):** REQ-012 says only what a feature session does when the declaration says a release runs as its own session. What that release session is, and how it collects the changes waiting for it, is left to Design. No criterion asserts a result for it.
-- **To confirm at the Define gate:** three assumptions in [quality.md](quality.md#assumptions-and-dependencies) feed criteria:
-  - The version bump is chosen by the declared rule without a prompt (REQ-005).
-  - The release record's depth follows the session's framing tier (REQ-015).
-  - The release tag form is `compass-labs--v{version}` (REQ-019 to REQ-022).
+- **Settled at the Define gate (2026-10-24):**
+  - The version bump is chosen by the declared rule without a prompt, and the user can refuse it at the gate (REQ-005). Confirmed.
+  - The release tag form is `compass-labs--v{version}` (REQ-019 to REQ-022). Confirmed.
+  - Release-record depth: Deploy proposes its own tier from the release's risk, and the user confirms it at the Deploy gate. It doesn't follow the session's framing tier (REQ-014, REQ-015, REQ-025).
+- **Deploy tiers (for Design):** which tiers Deploy has, and the risk that points to each, are set in the Deploy standard (REQ-014).

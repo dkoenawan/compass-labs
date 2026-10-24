@@ -32,6 +32,7 @@ mindmap
         Approves releases against one standard shape
           REQ-014
           REQ-015
+          REQ-025
     OUT-05 Deploy tells setup from release
       Consuming repo maintainer
         Gets deployment setup whenever the architecture changes
@@ -102,6 +103,7 @@ flowchart LR
   R013["REQ-013"]:::could --> N02
   R014["REQ-014"]:::must --> O04
   R015["REQ-015"]:::must --> O04
+  R025["REQ-025"]:::must --> O04
   R016["REQ-016"]:::should --> N03
   R017["REQ-017"]:::must --> N03
   R018["REQ-018"]:::must --> O01
@@ -127,7 +129,7 @@ flowchart LR
   R024["REQ-024"]:::could --> O06
 ```
 
-REQ-001 also serves NEED-02, REQ-006 and REQ-023 also serve NEED-01, and REQ-008 also serves NEED-03. Those needs are already reached through their outcomes, so the links aren't drawn.
+REQ-001 also serves NEED-02, REQ-006 and REQ-023 also serve NEED-01, and REQ-008 and REQ-025 also serve NEED-03. Those needs are already reached through their outcomes, so the links aren't drawn.
 
 ## As-is and to-be
 
@@ -150,7 +152,7 @@ flowchart TD
     B1["S1 Deploy reads the repo's declaration"]:::changed --> B2["S2 completeness check"]
     B2 --> B8["S8 Deploy decides whether L1 is needed and runs it first"]:::new
     B8 --> B3["S3 routine L2 steps run with no prompts"]:::changed
-    B3 --> B9["S9 declared confirmation check, record checked by the gate against the standard"]:::new
+    B3 --> B9["S9 declared confirmation check, Deploy tier proposed, record checked by the gate against that tier"]:::new
     B9 --> B5["S5 user merges"]
     B5 --> B6["S6 merge-triggered pipeline tags main and publishes"]:::changed
     B6 --> B7["S7 local install refresh, user step unless Design moves it"]
