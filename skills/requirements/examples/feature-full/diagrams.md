@@ -112,9 +112,9 @@ The same step IDs in both. Admin steps are removed; the member's steps change, a
 
 ```mermaid
 flowchart TD
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef removed fill:#FEE2E2,stroke:#991B1B
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef removed fill:#FEE2E2,stroke:#991B1B,color:#450A0A
   subgraph ASIS["As-is"]
     A1["S1 member asks an admin in chat"] --> A2["S2 admin checks who is asking"]:::removed
     A2 --> A3["S3 admin sets a temporary password"]:::removed

@@ -39,9 +39,9 @@ flowchart LR
 <!-- Only when an existing process changes. Same step IDs in both; changed, new and removed steps styled with classDef. -->
 ```mermaid
 flowchart TD
-  classDef changed fill:#FEF3C7,stroke:#92400E
-  classDef new fill:#DCFCE7,stroke:#166534
-  classDef removed fill:#FEE2E2,stroke:#991B1B
+  classDef changed fill:#FEF3C7,stroke:#92400E,color:#451A03
+  classDef new fill:#DCFCE7,stroke:#166534,color:#052E16
+  classDef removed fill:#FEE2E2,stroke:#991B1B,color:#450A0A
   subgraph ASIS["As-is"]
     A1["S1 step"] --> A2["S2 step"]
   end
