@@ -92,3 +92,12 @@ next_step: "Hand off to compass-labs:design — classify and design from the fro
 ---
 
 ## Phase: Design
+
+### 2026-10-24 — main — handoff: orchestrator → compass-labs:design (design from frozen define/)
+- **Input:** Classify the solution and produce design/ for REQ-001 to REQ-025. Open questions from Define: the Deploy tiers and their risk signals (REQ-014); whether the local plugin-cache refresh stays a user step; whether the Deploy agent or the orchestrator runs the routine steps; what a separate release session is (REQ-012); the declaration mechanism (config file, repo skill, Taskfile target, CLAUDE.md section); the merge-triggered pipeline mechanism (must not depend on Claude pushing to main, ADR-006).
+- **Output:** needs_input; design/index.md (draft)
+
+### 2026-10-24 — compass-labs:design — attempt: Classification, scope and significant choices drafted for #30
+- Prior knowledge read: docs/registry (index, patterns, ADR-002, -004, -005, -006), docs/reference/constructs/SessionBranchGuard.md, docs/explanation/session/overview.md, README anchor, and the code (agents/deploy.md, agents/orchestrator.md, skills/session/SKILL.md, feature.json, templates/release.md, phase-agent-contract.md, skills/implement/SKILL.md, hooks/session-guard.sh, Taskfile.yml, plugin.json v2.2.1, marketplace.json). No past session folder read.
+- Proposed primary kind: Plugin/tooling (no in-depth path, #51). In scope: plugin/tooling, process/workflow (#49), infrastructure narrowed to the merge-triggered pipeline (#50), tests and fixture repos. Out of scope: frontend, backend, database, visual UI design, project docs, per-cloud references.
+- Eleven significant choices drafted with options and a recommendation each (D1 to D11 in design/index.md). All are waiting for the user. Nothing is designed past classification yet.
