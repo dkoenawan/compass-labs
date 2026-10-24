@@ -2,7 +2,7 @@
 session: 2026-10-17-session-branch-on-open
 type: feature
 issue: 37
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -11,9 +11,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
+milestone: deploy
 active_agent: main
-next_step: "Deploy gate for #37"
+next_step: "Close agent folds #37 back into docs/; then archive and hand PR #71 to the user to merge"
 ---
 # Session Log: Session opens on a feature branch (#37)
 
@@ -27,6 +27,7 @@ next_step: "Deploy gate for #37"
 
 ## Key decisions
 
+- **2026-10-24**: ✅ Deploy complete — v2.2.0 prepared on the session branch; no manifest gaps; PR #71 marked ready. Merge, tag and cache refresh are the user's after merge.
 - **2026-10-24**: Release as v2.2.0 (MINOR) — the default-branch block is intended behaviour, not a breaking interface change.
 - **2026-10-24**: README hook table lists session-branch-guard.sh before the merge.
 - **2026-10-24**: ✅ Test complete — VER-001 to VER-013 pass for REQ-001 to REQ-010; VER-014 (live orchestrator runs) left pending by the user's choice.
@@ -203,3 +204,11 @@ next_step: "Deploy gate for #37"
 
 ### 2026-10-24 — main — decision: #37 ships as v2.2.0 (MINOR)
 - The user chose MINOR: a new hook and scripts, no skill interface change. Blocking session commits and pushes on the default branch is the intended behaviour, not a break. .claude-plugin/plugin.json bumped 2.1.0 → 2.2.0.
+
+### 2026-10-24 — main — milestone: ✅ Deploy complete
+- The user approved the Deploy gate. release.md Completeness: everything listed is complete, nothing left out. bash tests/run.sh: 25/25 after the README row (966cc14) and the v2.2.0 bump (0ffbfef).
+- PR #71 to be marked ready for review. Left to the user after merge (release.md steps 9–12): squash-merge #71, `claude plugin tag --push` (compass-labs--v2.2.0), `claude plugin update compass-labs@compass-labs`, restart and post-deploy checks.
+
+---
+
+## Phase: Close
