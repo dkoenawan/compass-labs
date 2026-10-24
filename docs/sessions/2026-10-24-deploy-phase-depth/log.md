@@ -14,8 +14,8 @@ status: active
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: none
-active_agent: main
-next_step: "Hand off to compass-labs:define — framing tier and scope (declaration mechanism only, or also a Deploy standard)"
+active_agent: compass-labs:define
+next_step: "compass-labs:define writes requirements.md, quality.md and diagrams.md"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:define — framing tier and scope (declarat
 
 ## Key decisions
 
+- **2026-10-24**: Problem agreed for #30 — full tier, scope (b) declaration + Deploy standard; two lifecycles L1 deployment setup / L2 session release; NEED-01–04, OUT-01–06; compass-labs routine release runs without prompts and a merge-triggered pipeline (its L1 setup) tags and publishes; anchor aligns, no update.
 - **2026-10-24**: Follow-ups filed — #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references (per-part and per-cloud deploy depth, a non-goal of #30).
 ---
 
@@ -59,3 +60,12 @@ next_step: "Hand off to compass-labs:define — framing tier and scope (declarat
 
 ### 2026-10-24 — main — decision: Follow-ups filed for per-part and per-cloud deploy depth
 - Per the user's choice of five issues: #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references. Each links back to this session.
+
+### 2026-10-24 — compass-labs:define — decision: Problem statement, constraints and non-goals agreed for #30
+- Tier full; scope (b): a per-repo deploy declaration plus a Deploy standard. Anchor verdict aligns; no anchor update.
+- Two lifecycles: L1 deployment setup (when a repo starts, and whenever its architecture changes) and L2 session release (when a session completes). Needs NEED-01 to NEED-04; outcomes OUT-01 to OUT-06 (define/problem.md).
+- compass-labs: routine release steps (bump, commit, push the session branch, mark the PR ready) run without prompts. What follows the merge (tagging main, publishing the release) runs as a pipeline triggered by the merge: compass-labs' own L1 setup, in scope for this session and its first real L1 case (OUT-06). Mechanism left to Design.
+- Constraints: PR merge and production-affecting steps only on the user's instruction; ADR-006 and the no-merge rule unchanged; one Deploy owner writing only its artifact in the session folder; the Deploy milestone still needs approval; declarations work in any repo and are optional; the standard is based on established frameworks; the completeness check is kept; past release.md files are not migrated.
+- Q9: each repo declares whether a release runs inside the feature session or as its own session. Non-plugin cases are tested on a fixture repo. Appetite: same as #26 to #28.
+- Non-goals: per-layer deploy depth, frontend #78, backend #79, database #80, infrastructure (Terraform) #81; cloud provider references #82; compass-labs as a deploy runner; #31; #20; #72 and #36; changing the completeness check.
+- Open for Design: whether the plugin cache refresh (local to the user's machine) stays a user step; whether the Deploy agent or the orchestrator runs the routine steps.
