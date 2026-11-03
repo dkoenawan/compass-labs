@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "Design agent completes design/ for Q1–Q4 answers and REQ-026–REQ-028, then the Design gate"
+next_step: "User answers design Q5–Q6 (starter), relayed to the Design agent, then the Design gate"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -123,3 +123,16 @@ next_step: "Design agent completes design/ for Q1–Q4 answers and REQ-026–REQ
 - Q3 (D9): yes. A new or changed part the declaration already covers also needs L1, and its declared setup runs.
 - Q4 (D2): the single-responsibility trade-off on the Deploy agent is accepted.
 - define/requirements.md, define/framing.md, define/quality.md and define/index.md amended. No existing requirement text changes.
+
+### 2026-11-03 — main — handoff: orchestrator → compass-labs:design (finish design/ from Q1–Q4 and REQ-026–REQ-028)
+- **Input:** Complete design/ (fresh agent). Answers relayed: Q1, two offer triggers (initiation, REQ-026; new uncovered part at Deploy, REQ-027); Q2, option B, an optional starter workflow offered at initiation or on request (REQ-028, Could); Q3, yes (recommended option); Q4, trade-off accepted.
+- **Output:** needs_input; design/index.md
+
+### 2026-11-03 — compass-labs:design — attempt: Design finished from Q1–Q4; two starter choices open
+- Applied the 2026-11-03 answers: D1a option 3 with the skip rule plus the Deploy-time offer (REQ-026, REQ-027); D2a option B, the starter (REQ-028); D9's covered-part case chosen; D2's SRP trade-off accepted.
+- New DES-014 (initiation offer: one procedure in the Deploy standard, called from init (both modes) and session one-time setup), DES-015 (install-starter.sh), DES-016 (compass-labs' pipeline installed from the starter). DES-002, 004, 005, 007, 008, 009, 011, 013 revised; the l1.new_part recipe rejected under YAGNI. Coverage: all 28 live REQs.
+- Open: Q5 (D12), whether compass-labs' pipeline is the starter's first install; Q6 (D13), whether the starter's values are fixed at copy time or read at run time. Both recommended A.
+- check-design.sh: ok. All five Mermaid blocks parse (mermaid-cli 12, output to a temp directory).
+
+### 2026-11-03 — compass-labs:design — note: Bash used outside its allowed purpose
+- Three read-only Bash calls listed the session, skill and template folders, and grepped or printed parts of skills/design/reference/notations.md, skills/session/SKILL.md (one-time setup) and skills/init/SKILL.md (headings and its commit steps). Nothing was written, no past session folder was read, and only this session's own log.md was printed. All other reading used Read. Bash was otherwise used only for check-design.sh and the Mermaid render check.
