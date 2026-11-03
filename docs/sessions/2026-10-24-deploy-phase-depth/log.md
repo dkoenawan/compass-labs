@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "User answers design Q5–Q6 (starter), relayed to the Design agent, then the Design gate"
+next_step: "Design gate: user approves, adjusts or rethinks design/index.md"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "User answers design Q5–Q6 (starter), relayed to the Design agent, 
 
 ## Key decisions
 
+- **2026-11-03**: Starter choices — compass-labs' pipeline is the starter's first install (D12); starter values fixed at install time (D13); design ready for the gate.
 - **2026-11-03**: Design Q1–Q4 answered — declaration offered at initiation and when a new part is added (REQ-026, REQ-027); optional starter GHA workflow offered, not default (REQ-028, framing revised); covered changed parts run L1; Deploy agent runs git/gh accepted.
 - **2026-10-24**: ✅ Define complete — REQ-001 to REQ-025 approved (16 Must, 7 Should, 2 Could); two deploy lifecycles L1/L2; follow-ups #78–#82.
 - **2026-10-24**: Requirements approved — REQ-001 to REQ-025 (16 Must, 7 Should, 2 Could); Deploy proposes its own tier by release risk, confirmed at the Deploy gate; bump picked by declared rule; tag form compass-labs--v{version}.
@@ -136,3 +137,13 @@ next_step: "User answers design Q5–Q6 (starter), relayed to the Design agent, 
 
 ### 2026-11-03 — compass-labs:design — note: Bash used outside its allowed purpose
 - Three read-only Bash calls listed the session, skill and template folders, and grepped or printed parts of skills/design/reference/notations.md, skills/session/SKILL.md (one-time setup) and skills/init/SKILL.md (headings and its commit steps). Nothing was written, no past session folder was read, and only this session's own log.md was printed. All other reading used Read. Bash was otherwise used only for check-design.sh and the Mermaid render check.
+
+### 2026-11-03 — compass-labs:design — decision: Starter choices D12 and D13 made; design ready for the gate
+- Q5 (D12): option A. compass-labs' own merge-triggered pipeline is the starter's first install: Implement runs install-starter.sh on this repo, so .github/workflows/release.yml and .github/scripts/release-tag.sh are filled-in copies of the starter templates (DES-016). One copy of the release logic, and the starter gets a real run on PR #77 and its merge.
+- Q6 (D13): option A. install-starter.sh writes versioning.file, versioning.field and versioning.tag into the copied script's settings block at install time (DES-008, DES-015). The copy is self-contained and owned by the repo, and CI never reads .claude/deploy.json.
+- Both chosen by the user, as recommended. D12 and D13 fall under D2's ADR flag (with D2a). Principles check: D12 and D13 rows met throughout.
+- design/index.md: Q1–Q6 resolved, status set to ready for the Design gate. Coverage unchanged: all 28 live REQs (REQ-001 to REQ-028). check-design.sh: ok. All five Mermaid blocks parse.
+- Follow-up issue still needed: the Release session type (D5).
+
+### 2026-11-03 — compass-labs:design — note: Bash used for checks only this turn
+- Bash ran check-design.sh, the mermaid-cli render check (output to a temp directory), and one grep of this session's own design/index.md to confirm no Q5/Q6 "pending" text remained. Nothing was written outside design/index.md, and no past session folder was read.

@@ -1,6 +1,6 @@
 # Design: Deploy phase depth
 
-> Phase: Design | Started: 2026-10-24 | Status: Draft (Q1 to Q4 resolved 2026-11-03; two choices inside the starter open: Q5 and Q6, see Open questions)
+> Phase: Design | Started: 2026-10-24 | Status: Ready for the Design gate (all questions resolved 2026-11-03)
 > Requirements: [`define/index.md`](../define/index.md) · Session history: [`log.md`](../log.md)
 
 ## Contents
@@ -191,7 +191,7 @@ flowchart TD
   O2 -->|"no"| Z1
 ```
 
-*Notation: C4 deployment view of the merge-triggered pipeline (infrastructure), drawn as a Mermaid `flowchart` with delta styling. Shown as Q5's recommended option: compass-labs' pipeline is the starter's first install.*
+*Notation: C4 deployment view of the merge-triggered pipeline (infrastructure), drawn as a Mermaid `flowchart` with delta styling. compass-labs' pipeline is the starter's first install (D12).*
 
 ```mermaid
 flowchart LR
@@ -234,12 +234,12 @@ Each element this design touches has exactly one status. Every visual matches th
 | `skills/session/reference/phase-agent-contract.md` | changed | DES-005 | Deploy may change repo files and run git and `gh` as declared steps, may write the declaration on the user's yes, and may return `needs_input` for the REQ-027 offer only |
 | `skills/session/scripts/check-release.sh` | new | DES-006 | Beside `check-design.sh` |
 | `skills/session/SKILL.md` (one-time setup, Deploy gate, scripts table) | changed | DES-007, DES-014 | Tier confirmation and the new check; relays the Deploy offer; a2 stays. One-time setup gains the declaration offer |
-| `skills/deploy/templates/github/release-tag.sh` | new | DES-008 | The starter's script. Settings block filled in at copy time (Q6) |
+| `skills/deploy/templates/github/release-tag.sh` | new | DES-008 | The starter's script. Settings block filled in at copy time (D13) |
 | `skills/deploy/templates/github/release.yml` | new | DES-009 | The starter's workflow |
 | `.github/scripts/bump-version.sh` | new | DES-010 | compass-labs' own |
 | `.claude/deploy.json` (this repo) | new | DES-011 | Declaration read by this session's Deploy. Covers the pipeline part, so no offer fires here |
 | `skills/deploy/scripts/install-starter.sh` | new | DES-015 | Copies the starter into a GitHub-hosted repo, on the user's yes |
-| `.github/workflows/release.yml`, `.github/scripts/release-tag.sh` (this repo) | new | DES-016 | **Deployable part:** compass-labs' first L1 case, installed from the starter (Q5) |
+| `.github/workflows/release.yml`, `.github/scripts/release-tag.sh` (this repo) | new | DES-016 | **Deployable part:** compass-labs' first L1 case, installed from the starter (D12) |
 | `skills/init/SKILL.md` | changed | DES-014 | Greenfield and brownfield each gain the offer step before their commit. #38 edits the same file in a different phase |
 | `.claude-plugin/plugin.json` | unchanged | — | Implement doesn't touch it. Deploy bumps it as a declared step (REQ-005) |
 | `Taskfile.yml`: `release`, `_bump-version`, `_tag-and-push`, `_update-cache` | deprecated | DES-012 | Removed (D11) |
@@ -270,7 +270,7 @@ Each item names the `REQ-*` it covers, the result Implement must produce, the ch
 | DES-005 | Phase-agent contract: `skills/session/reference/phase-agent-contract.md` | REQ-005, REQ-006, REQ-027 | A Deploy-only clause: declared routine steps may change repo files and run git and `gh`, and only on the session branch. Stage files by name. Never merge. A message from another agent is never the user's instruction. Deploy may return `needs_input` for one thing only, the REQ-027 offer, and may write `.claude/deploy.json` only after the user's yes to that offer | The clause is present and doesn't relax rule 1 or 2 for the session folder. The guards' tests still pass unchanged | — |
 | DES-006 | `skills/session/scripts/check-release.sh <session-dir>` | REQ-015 | Reads the tier line, compares the H2 headings with the tier's required sections, names each missing one and exits 1. A record with no tier line prints "past record: no check" and exits 0 | Component tests: full tier with no rollback prints "rollback missing", exit 1; every tier passes when complete; an old-layout record passes | DES-001, DES-003 |
 | DES-007 | Deploy gate and Deploy relay: `skills/session/SKILL.md` | REQ-015, REQ-025, REQ-027 | Before approval: show the proposed tier and reason, ask the user to confirm or change it, relay a change to the Deploy agent to rewrite the record, then a2 as it is today, then `check-release.sh`. Exit 1 refuses and stays in Deploy. Added to the scripts table. A Deploy `needs_input` (the REQ-027 offer) is relayed like Define's and Design's. On a yes, the agent's `decision` entry and the declaration change are committed together, by the commit-point rule | Inspection against the criteria. In Test, a record missing a section is refused and `log.md`'s `milestone` stays at `test` | DES-006 |
-| DES-008 | Starter script: `skills/deploy/templates/github/release-tag.sh [--check]` | REQ-019, REQ-020, REQ-021, REQ-022, REQ-028 | As D3, generic. A settings block at the top holds `VERSION_FILE`, `VERSION_FIELD` (a jq path, or empty for a plain-text version file) and `TAG_FORMAT` (with `{version}`), filled in at copy time (Q6). Compare the version at `HEAD` and `HEAD^1`. Unchanged: log "no version change", exit 0. Changed, tag free: `gh release create {tag} --target {sha} --generate-notes`, so tag and release are created in one call. Tag exists: fail, naming it. `--check` prints the tag it would create, warns if it exists, and creates nothing. No reference to compass-labs or `CLAUDE_PLUGIN_ROOT` | Component tests on a copy filled in with compass-labs' values, against a bare local repo and a stub `gh`: version changed, unchanged, tag exists (the tag doesn't move), and `--check` creates no tag and no release. One more case with a plain-text `VERSION` file | — |
+| DES-008 | Starter script: `skills/deploy/templates/github/release-tag.sh [--check]` | REQ-019, REQ-020, REQ-021, REQ-022, REQ-028 | As D3, generic. A settings block at the top holds `VERSION_FILE`, `VERSION_FIELD` (a jq path, or empty for a plain-text version file) and `TAG_FORMAT` (with `{version}`), filled in at copy time (D13). Compare the version at `HEAD` and `HEAD^1`. Unchanged: log "no version change", exit 0. Changed, tag free: `gh release create {tag} --target {sha} --generate-notes`, so tag and release are created in one call. Tag exists: fail, naming it. `--check` prints the tag it would create, warns if it exists, and creates nothing. No reference to compass-labs or `CLAUDE_PLUGIN_ROOT` | Component tests on a copy filled in with compass-labs' values, against a bare local repo and a stub `gh`: version changed, unchanged, tag exists (the tag doesn't move), and `--check` creates no tag and no release. One more case with a plain-text `VERSION` file | — |
 | DES-009 | Starter workflow: `skills/deploy/templates/github/release.yml` | REQ-019, REQ-020, REQ-021, REQ-022, REQ-024, REQ-028 | On `push` to the default branch: run the script with `contents: write` and `fetch-depth: 2`. On `pull_request`: run `--check` with `contents: read`. No secret beyond `GITHUB_TOKEN`. No push to a branch. No `uses:` reference to `dkoenawan/compass-labs`; only `actions/checkout` | A test greps the template: no `dkoenawan/compass-labs`, no `CLAUDE_PLUGIN_ROOT`, both triggers and both permission sets present | DES-008 |
 | DES-010 | `.github/scripts/bump-version.sh <patch\|minor\|major>` | REQ-005 | Sets `plugin.json`'s version and prints the new one. Doesn't commit | Component test: `2.2.1` with `minor` gives `2.3.0`; a bad level exits 1 and changes nothing | — |
 | DES-011 | compass-labs' declaration: `.claude/deploy.json` | REQ-002, REQ-005, REQ-018, REQ-023 | L2 routine: bump (DES-010), commit by name with the issue reference, `git push -u origin {branch}`, `gh pr ready`. Merge: production-affecting. L1 part `merge-triggered pipeline`, whose setup is one routine, read-only step that shows the pull-request run of `release.yml` on the branch passed (`gh run list --workflow release.yml --branch {branch} --limit 1`), so it's safe to repeat (D9). `versioning`: rule in `CLAUDE.md`, file `.claude-plugin/plugin.json`, field `.version`, tag `compass-labs--v{version}`. Confirmation: `.github/scripts/release-tag.sh --check`. Rollback: before the merge, `gh pr ready --undo` and revert the bump on the branch; after it, a revert PR with a new version, because tags are never overwritten. Release mode: in session. After the merge: the D4 commands | `check-declaration.sh` reports valid on it. A reviewer ticks REQ-001's seven items. The four steps are routine and the merge is production-affecting. The pipeline part is listed, so no REQ-027 offer fires in this session's Deploy | DES-001, DES-002, DES-010 |
@@ -278,7 +278,7 @@ Each item names the `REQ-*` it covers, the result Implement must produce, the ch
 | DES-013 | Fixtures and script tests: `tests/fixtures/deploy/{fixture-service,fixture-no-declaration,fixture-new-part,fixture-docs-only}/`, tests under `tests/session/` | REQ-003, REQ-004, REQ-006, REQ-007, REQ-008, REQ-009, REQ-010, REQ-011, REQ-012, REQ-013, REQ-026, REQ-027, REQ-028 | Each fixture has its declaration, its design delta list where the criterion needs one, and harmless steps (`./check-health.sh`, switchable between `healthy` and `unhealthy`). `fixture-service` also declares `versioning` (a JSON version file and a tag form). `fixture-new-part`'s design adds `billing-service`, which its declaration doesn't cover, for REQ-009, REQ-011 and REQ-027. Component tests for DES-002, DES-006, DES-008, DES-010 and DES-015 run from `tests/run.sh`; the DES-015 tests give a temp copy of `fixture-service` a GitHub `origin` and a non-GitHub one. Agent-level runs (the offers, REQ-026 and REQ-027) stay Test's | `tests/run.sh` passes. Test can run each criterion against a fixture with no change to it | DES-002, DES-006, DES-008, DES-010, DES-015 |
 | DES-014 | Declaration offer at initiation: the "Declaration offer" procedure in `skills/deploy/SKILL.md`, called from `skills/init/SKILL.md` (greenfield: a new step before Phase 6 Step 7 "Commit"; brownfield: before Phase 7 Step 9 "Commit") and from `skills/session/SKILL.md` one-time setup (a new step 3, run only in the same run that copies the commit-point rule, that is, the repo's first setup) | REQ-026, REQ-028 | One procedure, two callers (D1a). If `.claude/deploy.json` exists, no offer of either kind. Otherwise three answers: **later** (writes nothing, carries on), **nothing to deploy** (writes `{"deployment": "none"}`), **declare now** (walks REQ-001's seven items from the standard, writes, and runs `check-declaration.sh` until valid). After "declare now", if `origin` is on GitHub, offers the starter (DES-015) with the files it would write and the values it would use, and runs it only on a yes. `init` adds the written files to its own commit. The standard's `starter` mode (`/compass-labs:deploy starter`, or a request in words) runs the same starter offer at any time, and never the declaration walk unless no declaration exists. It never runs a setup step | Inspection: both `init` modes and one-time setup call the procedure, and the procedure has the skip rule. Test runs `fixture-no-declaration` through a first session three times (later, nothing to deploy, declare now) and once on a repo that already has a declaration | DES-001, DES-002, DES-015 |
 | DES-015 | `skills/deploy/scripts/install-starter.sh <repo-root>` | REQ-028 | Reads `versioning.file`, `versioning.field` and `versioning.tag` from the declaration (through DES-002's validation). Exits with a distinct code and writes nothing if `origin` isn't a GitHub URL, if a `versioning` field is missing (naming it), or if `.github/workflows/release.yml` or `.github/scripts/release-tag.sh` already exists (naming it; never overwrites). Otherwise copies DES-008 and DES-009 with the settings block filled in, makes the script executable, and prints both paths. Adds nothing to the declaration; the offer procedure adds the `merge-triggered pipeline` part to `l1.parts` on the same yes | Component tests: GitHub `origin` writes both files with `fixture-service`'s values and no `dkoenawan/compass-labs` in either; a non-GitHub `origin` writes nothing; an existing workflow file is left byte-for-byte unchanged; a missing `versioning.tag` is named | DES-001, DES-002, DES-008, DES-009 |
-| DES-016 | compass-labs' merge-triggered pipeline: `.github/workflows/release.yml`, `.github/scripts/release-tag.sh` | REQ-019, REQ-020, REQ-021, REQ-022, REQ-024 | Produced by running DES-015 on this repo in Implement, from DES-011's `versioning` (Q5). Not edited by hand afterwards in this session | The files match a fresh `install-starter.sh` run into a temp copy. The pull-request job runs on PR #77 and reports `compass-labs--v2.3.0`, with no new tag. After the merge: the criteria for REQ-020 and REQ-024 (see Risks on when that can be seen) | DES-011, DES-015 |
+| DES-016 | compass-labs' merge-triggered pipeline: `.github/workflows/release.yml`, `.github/scripts/release-tag.sh` | REQ-019, REQ-020, REQ-021, REQ-022, REQ-024 | Produced by running DES-015 on this repo in Implement, from DES-011's `versioning` (D12). Not edited by hand afterwards in this session | The files match a fresh `install-starter.sh` run into a temp copy. The pull-request job runs on PR #77 and reports `compass-labs--v2.3.0`, with no new tag. After the merge: the criteria for REQ-020 and REQ-024 (see Risks on when that can be seen) | DES-011, DES-015 |
 
 **Coverage:** all 28 live REQs covered. REQ-001 to REQ-028 each appear in at least one Covers cell. No deferred or struck row needs cover.
 
@@ -338,7 +338,7 @@ A session where L1 ran has at least the short tier, even if its release waits. T
 
 ## Decisions
 
-**ADRs for Close to write:** D1 (the declaration, including D1a's two offers), D2 (refines [ADR-002](../../../registry/decisions/002-session-lifecycle.md), including D2a's starter and D12, D13), D3 (relates to [ADR-006](../../../registry/decisions/006-session-branch-guard.md)). The other decisions need no ADR. D1 to D11 were chosen by the user on 2026-10-31, and D1a, D2a, D9's open case and D2's trade-off on 2026-11-03. D12 and D13 are waiting for the user (Q5, Q6).
+**ADRs for Close to write:** D1 (the declaration, including D1a's two offers), D2 (refines [ADR-002](../../../registry/decisions/002-session-lifecycle.md), including D2a's starter and D12, D13), D3 (relates to [ADR-006](../../../registry/decisions/006-session-branch-guard.md)). The other decisions need no ADR. D1 to D11 were chosen by the user on 2026-10-31, and D1a, D2a, D9's open case, D2's trade-off, D12 and D13 on 2026-11-03.
 
 **D1: How a repo declares deploy (REQ-001, REQ-003, REQ-004, REQ-018) (ADR).**
 
@@ -413,11 +413,11 @@ The user chose the recommended option, and added: "think about where this can be
 The user chose B on 2026-11-03 (REQ-028, Could; `framing.md`'s anchor note revised, verdict still "aligns"). How it's built:
 
 - **Where it lives:** `skills/deploy/templates/github/release.yml` and `release-tag.sh` (DES-008, DES-009), copied by `skills/deploy/scripts/install-starter.sh` (DES-015) to `.github/workflows/release.yml` and `.github/scripts/release-tag.sh` in the repo.
-- **How it's parameterised:** from the declaration's `versioning.file`, `versioning.field` and `versioning.tag`. Whether the values are fixed into the copy or read at run time is D13 (Q6).
+- **How it's parameterised:** from the declaration's `versioning.file`, `versioning.field` and `versioning.tag`, written into the copy's settings block at install time (D13).
 - **Its fixture and check:** a temp copy of `fixture-service` with a GitHub `origin`, and one without (DES-013, DES-015). The copied script is the one DES-008's tests cover.
 - **How "when the user asks" is invoked:** the Deploy standard is a plugin skill, so it is user-invocable. `/compass-labs:deploy starter` runs the starter offer, and a request in words loads the skill by its description. No new command (see Rejected under YAGNI).
 - **Never without a yes:** the offer shows both target paths and the values before asking. The installer refuses to overwrite and refuses a non-GitHub `origin`.
-- **compass-labs' own pipeline and the starter:** whether one is the other is D12 (Q5).
+- **compass-labs' own pipeline and the starter:** compass-labs' pipeline is the starter's first install (D12, DES-016).
 
 **D3: The merge-triggered pipeline (REQ-019 to REQ-024; ADR-006) (ADR).**
 
@@ -520,21 +520,23 @@ The user chose the recommended option on 2026-11-03 (Q3). The rule is in [L1 rul
 
 The user chose the recommended option. The declaration uses neither `_bump-version` (it commits, with a message that has no issue reference) nor `_update-cache` (D4 lists plain commands), so both go too (DES-012).
 
-**D12: How the starter relates to compass-labs' own pipeline (REQ-019 to REQ-022, REQ-028) (with D2a's ADR). Waiting for the user: Q5.**
+**D12: How the starter relates to compass-labs' own pipeline (REQ-019 to REQ-022, REQ-028) (with D2a's ADR).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **A. compass-labs' pipeline is the starter's first install: Implement runs `install-starter.sh` on this repo, so `.github/` holds a filled-in copy (DES-016) (recommended)** | One copy of the logic, tested once (DES-008). The starter gets a real run before any consuming repo uses it: the pull-request job on PR #77 and the merge. compass-labs uses its own product | compass-labs' first release depends on the generic settings handling working. A later fix is made in the template and copied again, or the copy drifts like any repo's |
+| **A. compass-labs' pipeline is the starter's first install: Implement runs `install-starter.sh` on this repo, so `.github/` holds a filled-in copy (DES-016) (chosen)** | One copy of the logic, tested once (DES-008). The starter gets a real run before any consuming repo uses it: the pull-request job on PR #77 and the merge. compass-labs uses its own product | compass-labs' first release depends on the generic settings handling working. A later fix is made in the template and copied again, or the copy drifts like any repo's |
 | B. Two separate things: compass-labs keeps D3's hand-written `.github/` files, and the starter is a second, generic copy in the skill | compass-labs' pipeline stays as simple as D3 drew it, with no settings block | The same logic twice, free to drift. The starter is covered only by component tests, with no real run |
 
-If the user picks B, DES-016 is dropped, DES-008 and DES-009 gain hand-written twins under `.github/`, and DES-011 and DES-012 depend on those instead.
+The user chose the recommended option A on 2026-11-03 (Q5): one copy of the logic, and the starter gets a real run on PR #77 and its merge.
 
-**D13: How the starter takes its values from the declaration (REQ-028) (with D2a's ADR). Waiting for the user: Q6.**
+**D13: How the starter takes its values from the declaration (REQ-028) (with D2a's ADR).**
 
 | Option | Pros | Cons |
 |---|---|---|
-| **A. Fixed at copy time: `install-starter.sh` writes `versioning.file`, `versioning.field` and `versioning.tag` into the copied script's settings block (recommended)** | The copy is self-contained and wholly the repo's, which is what "copies and owns" means. CI never reads `.claude/`. Matches REQ-028's criterion directly | Changing the tag form later means editing the copy, or deleting it and installing again |
+| **A. Fixed at copy time: `install-starter.sh` writes `versioning.file`, `versioning.field` and `versioning.tag` into the copied script's settings block (chosen)** | The copy is self-contained and wholly the repo's, which is what "copies and owns" means. CI never reads `.claude/`. Matches REQ-028's criterion directly | Changing the tag form later means editing the copy, or deleting it and installing again |
 | B. Read at run time: the copied script reads `.claude/deploy.json` with jq on each run | One source of truth for the values | The repo's CI then depends on a file shape the plugin's standard owns, so a plugin change could break a repo's release: a soft run-time tie to compass-labs. Fails if a repo keeps `.claude/` out of git |
+
+The user chose the recommended option A on 2026-11-03 (Q6): the copy is self-contained and wholly the repo's, with no run-time tie to the plugin's file shape.
 
 ## Principles check
 
@@ -557,7 +559,7 @@ SOLID is checked only where it applies. Each item here is a script, a skill, an 
 | DES-013 | met | met: only the fixtures the criteria name, plus a temp `origin` | SRP met; OCP met; ISP met; DIP met |
 | DES-014 | met: one procedure, three callers | met: REQ-026, REQ-028 | SRP met: offers and writes the declaration, nothing else; OCP met; ISP met; DIP met: callers depend on the procedure, not on each other |
 | DES-015 | met: copy and fill in, refuse otherwise | met: REQ-028 | SRP met: doesn't edit the declaration; OCP met; ISP met; DIP met |
-| DES-016 | met: no hand-written logic (if Q5 is A) | met | SRP met; OCP met; ISP met; DIP met |
+| DES-016 | met: no hand-written logic, installed from the starter (D12) | met | SRP met; OCP met; ISP met; DIP met |
 | D1 | met | met | ISP met; DIP met: the agent depends on a contract |
 | D1a | met: one procedure for both initiation points | met: REQ-026, REQ-027 | SRP met; OCP met; ISP met; DIP met |
 | D2 | met: one owner runs and records | met | **SRP traded off, accepted by the user 2026-11-03 (Q4):** the Deploy agent runs git and `gh` as well as recording, and the orchestrator no longer solely owns them. Reason: the check must follow the steps, and REQ-002 wants what really ran on record. The scripts narrow it by deciding what may run. OCP met; ISP met; DIP met |
@@ -571,8 +573,8 @@ SOLID is checked only where it applies. Each item here is a script, a skill, an 
 | D9 | met | met | SRP met; OCP met; ISP met; DIP met |
 | D10 | met | met | n/a: framework verdicts |
 | D11 | met | met | n/a: removal |
-| D12 | A: met, one copy. B: met for compass-labs, two copies overall | met either way | A: SRP met, DIP met. B: met, with a drift risk |
-| D13 | A: met. B: met | met either way | A: DIP met: the copy depends on nothing of the plugin's. B: DIP weaker: CI depends on the plugin's file shape |
+| D12 | met: one copy of the release logic | met | SRP met; OCP met; ISP met; DIP met |
+| D13 | met | met | SRP met; OCP met; ISP met; DIP met: the copy depends on nothing of the plugin's at run time |
 
 **Rejected under YAGNI:**
 - A step runner that executes declared commands itself: the agent already runs them, and a runner edges towards the deploy-runner non-goal. `--plan` gives the safety without it.
@@ -591,7 +593,7 @@ SOLID is checked only where it applies. Each item here is a script, a skill, an 
 | Risk | Mitigation |
 |---|---|
 | **REQ-020, REQ-021, REQ-022 and REQ-024 describe real merges, but this PR merges only after Close, later than the Test gate and its traceability check.** | Test verifies REQ-020 to REQ-022 on the script with a bare repo and a stub `gh`, and verifies the workflow's triggers by inspection, stating that limit. The real result is seen after the merge, against REQ-020 and REQ-024. A failure at that point needs a new fix through a new pull request |
-| The first run happens only on this PR's merge. A workflow fault shows only then. With Q5's option A, that run is also the starter's first | The pull-request job proves on PR #77 that the workflow file loads and the script runs with the filled-in settings. If the publish step fails after the merge, no tag or release exists yet, so the same `gh release create` can be re-run by the user |
+| The first run happens only on this PR's merge. A workflow fault shows only then. By D12, that run is also the starter's first | The pull-request job proves on PR #77 that the workflow file loads and the script runs with the filled-in settings. If the publish step fails after the merge, no tag or release exists yet, so the same `gh release create` can be re-run by the user |
 | Repo or account settings stop `GITHUB_TOKEN` from writing or disable Actions [assumed not, unverified] | Implement checks the settings on PR #77 before Deploy. The workflow asks for `contents: write` explicitly |
 | Tag exists but the release doesn't, after a partial failure | One `gh release create` call creates both. REQ-022's failure names the tag, so the user can see it |
 | A revert PR lowers the version to one already tagged | The run fails visibly by REQ-022 and changes nothing. DES-011's rollback says a revert PR takes a new version |
@@ -619,11 +621,10 @@ SOLID is checked only where it applies. Each item here is a script, a skill, an 
 - **Q2 (D2a):** option B, the optional starter (REQ-028). Built as DES-008, DES-009, DES-015, and in DES-014.
 - **Q3 (D9):** a new or changed covered part also needs L1, and its declared setup runs.
 - **Q4 (D2):** the single-responsibility trade-off on the Deploy agent is accepted.
+- **Q5 (D12):** A. compass-labs' own pipeline is the starter's first install (DES-016).
+- **Q6 (D13):** A. The starter's values are written into the copied script at install time (DES-008, DES-015).
 
-**Waiting for the user** (two choices inside the starter, from Q2):
-
-- **Q5 (D12):** is compass-labs' own pipeline the starter's first install (A, recommended), or kept as separate hand-written files (B)?
-- **Q6 (D13):** are the starter's values fixed into the copy at install time (A, recommended), or read from `.claude/deploy.json` at run time (B)?
+All questions resolved.
 
 **Follow-up issue the orchestrator files:** the Release session type (D5). The offers and the starter are in scope, so they need none.
 
