@@ -1,0 +1,47 @@
+{
+  "deployment": "declared",
+  "note": "compass-labs is a Claude Code plugin. A release is a version bump on the session branch, made ready for review; the merge-triggered pipeline (.github/workflows/release.yml) tags and publishes it once the user merges.",
+  "release_mode": "in_session",
+  "versioning": {
+    "rule": "CLAUDE.md, Version Management: MAJOR for breaking changes to skill interfaces, MINOR for new skills or backward-compatible enhancements, PATCH for bug fixes and documentation updates",
+    "file": ".claude-plugin/plugin.json",
+    "field": ".version",
+    "tag": "compass-labs--v{version}"
+  },
+  "l1": {
+    "parts": [
+      {
+        "name": "merge-triggered pipeline",
+        "note": "The release workflow and its script, installed from the Deploy standard's starter. Changing them is a pull request like any other, so setup only confirms the pull-request run passed.",
+        "setup": [
+          {
+            "name": "show that the pull-request run of release.yml on the branch passed",
+            "run": "gh run list --workflow release.yml --branch {branch} --limit 1",
+            "kind": "routine",
+            "note": "Read-only, so safe to repeat"
+          }
+        ]
+      }
+    ]
+  },
+  "l2": {
+    "strategy": "tagged release",
+    "steps": [
+      { "name": "bump the version", "run": "bash .github/scripts/bump-version.sh {level}", "kind": "routine" },
+      { "name": "commit the version bump", "run": "git add .claude-plugin/plugin.json && git commit -m \"chore(release): v{version} — #{issue}\"", "kind": "routine" },
+      { "name": "push the session branch", "run": "git push -u origin {branch}", "kind": "routine" },
+      { "name": "mark the PR ready", "run": "gh pr ready {pr}", "kind": "routine" },
+      { "name": "merge the pull request", "merge": true, "kind": "production_affecting", "note": "The user merges. The pipeline then tags and publishes" }
+    ]
+  },
+  "confirmation": { "run": "bash .github/scripts/release-tag.sh --check" },
+  "rollback": [
+    "Before the merge: gh pr ready {pr} --undo, then revert the version bump on the session branch (git revert the bump commit, git push), run by Deploy or the user",
+    "After the merge: open a revert pull request with a new version, run by the user. Tags and releases are never overwritten"
+  ],
+  "after_merge": [
+    { "name": "update the local checkout", "run": "git switch main && git pull" },
+    { "name": "refresh the local plugin install", "run": "claude plugin update compass-labs@compass-labs" },
+    { "name": "restart Claude Code to load the new version", "run": "exit Claude Code and start it again" }
+  ]
+}
