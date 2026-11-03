@@ -4,7 +4,7 @@ type: feature
 issue: 30
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/30-deploy-phase-depth
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: design
 active_agent: main
-next_step: "Design gate: user approves, adjusts or rethinks design/index.md"
+next_step: "Hand off to compass-labs:implement for DES-001 to DES-016"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "Design gate: user approves, adjusts or rethinks design/index.md"
 
 ## Key decisions
 
+- **2026-11-03**: ✅ Design complete — DES-001 to DES-016 cover REQ-001 to REQ-028; declaration + L1/L2, starter GHA workflow (compass-labs is its first install); follow-up #83 Release session type.
 - **2026-11-03**: Starter choices — compass-labs' pipeline is the starter's first install (D12); starter values fixed at install time (D13); design ready for the gate.
 - **2026-11-03**: Design Q1–Q4 answered — declaration offered at initiation and when a new part is added (REQ-026, REQ-027); optional starter GHA workflow offered, not default (REQ-028, framing revised); covered changed parts run L1; Deploy agent runs git/gh accepted.
 - **2026-10-24**: ✅ Define complete — REQ-001 to REQ-025 approved (16 Must, 7 Should, 2 Could); two deploy lifecycles L1/L2; follow-ups #78–#82.
@@ -147,3 +148,11 @@ next_step: "Design gate: user approves, adjusts or rethinks design/index.md"
 
 ### 2026-11-03 — compass-labs:design — note: Bash used for checks only this turn
 - Bash ran check-design.sh, the mermaid-cli render check (output to a temp directory), and one grep of this session's own design/index.md to confirm no Q5/Q6 "pending" text remained. Nothing was written outside design/index.md, and no past session folder was read.
+
+### 2026-11-03 — main — milestone: ✅ Design complete
+- The user approved the Design gate after a playback of the three cases: compass-labs' own release, other repos (any stack, e.g. n-tier or Kubernetes) through their declaration, and what runs in GitHub Actions (only post-merge steps; the starter is opt-in). design/index.md frozen: DES-001 to DES-016, covering REQ-001 to REQ-028. ADRs for Close: D1 (with D1a), D2 (with D2a, D12, D13), D3.
+- Follow-up filed: #83 Release session type (D5).
+
+---
+
+## Phase: Implement
