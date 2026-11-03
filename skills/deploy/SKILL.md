@@ -6,7 +6,7 @@ argument-hint: "[starter]"
 
 # Deploy standard
 
-This is the standard for a Feature session's Deploy phase. It says what a repo declares about deploying, what Deploy may run from that declaration, and what the release record (`release.md`) must hold. The Deploy agent preloads it. It can also be invoked on its own (see [Starter mode](#starter-mode)).
+This is the standard for a Feature session's Deploy phase. It says what a repo declares about deploying, what Deploy may run from that declaration, and what the release record (`release.md`) must hold. The Deploy agent preloads it. It can also be invoked on its own (see [Starter mode](#9-starter-mode)).
 
 **Path note.** Plugin files are resolved as `${CLAUDE_PLUGIN_ROOT}/skills/deploy/…`. The declaration and the starter's copies are repo files, resolved against the project's git root (`git rev-parse --show-toplevel`).
 
@@ -109,3 +109,33 @@ With `release_mode: own_session`, a feature session's Deploy runs no L2 step and
 ## 7. Frameworks
 
 Each release-record section draws on an established framework, with an adopt, adapt or reject verdict: see [`reference/frameworks.md`](reference/frameworks.md).
+
+## 8. Declaration offer
+
+One procedure, with two callers at project initiation: the `init` skill (greenfield and brownfield, just before its commit) and the `session` skill's one-time setup (only in the run that first sets the repo up). It sets up the declaration only; it never runs an L1 setup step, which stays Deploy's.
+
+1. **Skip rule.** If `.claude/deploy.json` exists, make no offer of either kind, and carry on.
+2. **Offer.** Say that Deploy reads a deploy declaration to know what deploy means for this repo, and that without one Deploy stops and explains how to declare it. Ask, with three answers:
+   - **later:** write nothing and carry on. "Later" is never written down.
+   - **nothing to deploy:** write `.claude/deploy.json` as `{"deployment": "none"}`.
+   - **declare now:** walk the seven items of [section 2](#2-the-deploy-declaration) with the user, one at a time: the deployable parts and each one's setup steps, the release steps in order, each step's kind (routine or production-affecting; a merge is always production-affecting), the confirmation check, the rollback, and the release mode. Ask for `versioning` (rule, and the file, field and tag form if the repo tags releases). Use the repo's own commands; never invent tooling. Write `.claude/deploy.json`, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/deploy/scripts/check-declaration.sh {repo}`, and fix what it names with the user until it reports valid.
+3. **Starter.** After "declare now" only, if `git remote get-url origin` is a GitHub URL (an SSH host alias counts when ssh resolves it to github.com), make the starter offer below. Otherwise write nothing more.
+4. **Files to commit.** Tell the caller which files were written (`.claude/deploy.json`, and the starter's two files on a yes). `init` adds them to its own commit. The `session` skill's one-time setup leaves them for the user's first commit, as it does the commit-point rule.
+
+**The starter offer.** The starter is an optional GitHub Actions workflow for the repo's merge-triggered release: on each pull request it reports the tag a merge would create, and on a merge into the default branch that changes the version it creates the tag and publishes the release. Before asking, show:
+
+- the two files it would write, `.github/workflows/release.yml` and `.github/scripts/release-tag.sh`;
+- the values it would fill in from the declaration: `versioning.file`, `versioning.field` and `versioning.tag`. If any is missing, say which, and offer to add it to the declaration first;
+- that the copies belong to the repo, need no secret beyond `GITHUB_TOKEN`, and never call compass-labs at run time.
+
+Ask yes or no. Only on a yes, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/deploy/scripts/install-starter.sh {repo}`. It refuses, and writes nothing, if `origin` isn't on GitHub, a `versioning` field is missing, or either file already exists (it never overwrites). When it succeeds, add a `merge-triggered pipeline` part to the declaration's `l1.parts`, with one routine, read-only setup step that shows the pull-request run passed (for example `gh run list --workflow release.yml --branch {branch} --limit 1`), and run `check-declaration.sh` again. On a no, write nothing.
+
+## 9. Starter mode
+
+`/compass-labs:deploy starter`, or a request in words for the starter workflow, runs the starter offer above at any time:
+
+1. If `.claude/deploy.json` doesn't exist, run the declaration offer's "declare now" walk first (the starter takes its values from the declaration). If the declaration is `none`, or the user stops the walk, write nothing more.
+2. If `origin` isn't a GitHub URL, say the starter is for GitHub-hosted repos, and write nothing.
+3. Otherwise make the starter offer, and act only on a yes.
+
+Starter mode never runs a setup or release step, and never commits: the user commits the files it wrote.
