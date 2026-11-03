@@ -31,6 +31,7 @@ Run once per repo, the first time `/compass-labs:session` is used in it:
 
 1. `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/gh-setup.sh` — creates every `phase:*` and `type:*` label (idempotent; safe to re-run).
 2. Copy the commit-point rule into the repo, **only if it isn't already there**: if `.claude/rules/compass-sessions.md` doesn't exist, copy `${CLAUDE_PLUGIN_ROOT}/skills/session/templates/rules/compass-sessions.md` to it (a repo-relative destination — rules live in the consuming repo, not the plugin). Never overwrite an existing `.claude/rules/compass-sessions.md` — the repo may have customized it.
+3. **Offer a deploy declaration**, only in the same run that copies the commit-point rule in step 2 (the repo's first setup); skip this step whenever step 2 found the rule already there. Follow the "Declaration offer" procedure in `${CLAUDE_PLUGIN_ROOT}/skills/deploy/SKILL.md` (section 8): if `.claude/deploy.json` exists, no offer is made; otherwise the user answers later (nothing is written, and the session carries on), nothing to deploy, or declare now, and after "declare now" a GitHub-hosted repo is offered the starter workflow. It never runs a setup step.
 
 ## New session flow
 
