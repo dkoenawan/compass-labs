@@ -4,7 +4,7 @@ type: feature
 issue: 30
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/30-deploy-phase-depth
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
+milestone: implement
 active_agent: main
-next_step: "Implement gate: user reviews DES status and accepts or reworks V1–V5"
+next_step: "Hand off to compass-labs:test to write verification.md (VER-* for REQ-001 to REQ-028)"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "Implement gate: user reviews DES status and accepts or reworks V1–
 
 ## Key decisions
 
+- **2026-11-03**: ✅ Implement complete — 22 tasks, DES-001 to DES-016 built (11 as designed, 5 with accepted variations); tests/run.sh 42 passed.
 - **2026-11-03**: Implement variations V1–V5 accepted as built (fixture order, release-tag.sh safety, SSH alias, two tier lines, default-branch job condition).
 - **2026-11-03**: ✅ Design complete — DES-001 to DES-016 cover REQ-001 to REQ-028; declaration + L1/L2, starter GHA workflow (compass-labs is its first install); follow-up #83 Release session type.
 - **2026-11-03**: Starter choices — compass-labs' pipeline is the starter's first install (D12); starter values fixed at install time (D13); design ready for the gate.
@@ -184,3 +185,10 @@ next_step: "Implement gate: user reviews DES status and accepts or reworks V1–
 
 ### 2026-11-03 — main — decision: Implement variations V1–V5 accepted as built
 - V1 accepted; V2 accepted; V3 accepted; V4 accepted; V5 accepted. No rework.
+
+### 2026-11-03 — main — milestone: ✅ Implement complete
+- The user approved the Implement gate. implement/ frozen: 22 tasks, all 16 DES items built (V1–V5 accepted). tests/run.sh: 42 passed, 0 failed. Handed to Test: DES-001, 004, 007, 011, 013, 014, 016.
+
+---
+
+## Phase: Test
