@@ -7,14 +7,14 @@
 
 | Characteristic | Covered by | Not applicable because |
 |---|---|---|
-| Functional suitability | REQ-001, REQ-002, REQ-005, REQ-007, REQ-009, REQ-010, REQ-014, REQ-018, REQ-020 | |
+| Functional suitability | REQ-001, REQ-002, REQ-005, REQ-007, REQ-009, REQ-010, REQ-014, REQ-018, REQ-020, REQ-027 | |
 | Performance efficiency | REQ-024 | |
 | Compatibility | REQ-001, REQ-012, REQ-013 | |
-| Interaction capability | REQ-003, REQ-004, REQ-011, REQ-023 | |
+| Interaction capability | REQ-003, REQ-004, REQ-011, REQ-023, REQ-026, REQ-027 | |
 | Reliability | REQ-008, REQ-017, REQ-021, REQ-022 | |
 | Security | REQ-006, REQ-022 | |
 | Maintainability | REQ-014, REQ-016, REQ-019, REQ-025 | |
-| Flexibility | REQ-001, REQ-012, REQ-013 | |
+| Flexibility | REQ-001, REQ-012, REQ-013, REQ-028 | |
 | Safety | | A Deploy run changes software artefacts and hosted services. It can't cause physical, health or environmental harm. The risk of harming a production service is a security and reliability concern, covered above (REQ-006, REQ-008). |
 
 Notes on the coverage:

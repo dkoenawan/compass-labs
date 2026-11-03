@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: define
 active_agent: main
-next_step: "User answers design questions Q1–Q4, relayed to the Design agent, then the Design gate"
+next_step: "Design agent completes design/ for Q1–Q4 answers and REQ-026–REQ-028, then the Design gate"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "User answers design questions Q1–Q4, relayed to the Design agent, 
 
 ## Key decisions
 
+- **2026-11-03**: Design Q1–Q4 answered — declaration offered at initiation and when a new part is added (REQ-026, REQ-027); optional starter GHA workflow offered, not default (REQ-028, framing revised); covered changed parts run L1; Deploy agent runs git/gh accepted.
 - **2026-10-24**: ✅ Define complete — REQ-001 to REQ-025 approved (16 Must, 7 Should, 2 Could); two deploy lifecycles L1/L2; follow-ups #78–#82.
 - **2026-10-24**: Requirements approved — REQ-001 to REQ-025 (16 Must, 7 Should, 2 Could); Deploy proposes its own tier by release risk, confirmed at the Deploy gate; bump picked by declared rule; tag form compass-labs--v{version}.
 - **2026-10-24**: Problem agreed for #30 — full tier, scope (b) declaration + Deploy standard; two lifecycles L1 deployment setup / L2 session release; NEED-01–04, OUT-01–06; compass-labs routine release runs without prompts and a merge-triggered pipeline (its L1 setup) tags and publishes; anchor aligns, no update.
@@ -115,3 +116,10 @@ next_step: "User answers design questions Q1–Q4, relayed to the Design agent, 
 
 ### 2026-10-31 — compass-labs:design — note: Bash used outside its allowed purpose
 - One Bash call ran `ls` on session, template and skill folders, and `gh issue view 38`. Both were read-only, nothing changed, and no past session folder was read. Later reading used Read; Bash was then used only for the Mermaid render check, with output to a temp directory.
+
+### 2026-11-03 — main — decision: Design questions Q1–Q4 answered; REQ-026–REQ-028 added to the frozen set
+- Q1 (D1a): offer the deploy declaration at project initiation **and** as a new component is added. Agreed as two triggers: (1) at initiation, in `init` and the `session` skill's one-time setup, skipped if a declaration exists (REQ-026, Should); (2) at Deploy, when the frozen design adds a deployable part the declaration doesn't cover, Deploy offers to add it before L1 runs; declining means no deploy step runs and the part is recorded as uncovered (REQ-027, Should).
+- Q2 (D2a): option B. No workflow by default; offer an optional starter GitHub Actions workflow that the repo copies and owns, at initiation or when the user asks (REQ-028, Could). framing.md's anchor reasoning revised to match. Verdict still "aligns": the starter runs on the repo's own CI and never calls compass-labs at run time.
+- Q3 (D9): yes. A new or changed part the declaration already covers also needs L1, and its declared setup runs.
+- Q4 (D2): the single-responsibility trade-off on the Deploy agent is accepted.
+- define/requirements.md, define/framing.md, define/quality.md and define/index.md amended. No existing requirement text changes.

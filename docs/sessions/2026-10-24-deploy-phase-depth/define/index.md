@@ -6,7 +6,7 @@
 
 ## Contents
 
-- [Requirements](requirements.md): REQ-001 to REQ-025, and the deferred per-layer and per-cloud work (#78 to #82)
+- [Requirements](requirements.md): REQ-001 to REQ-028 (REQ-026 to REQ-028 added at the Design gate, 2026-11-03), and the deferred per-layer and per-cloud work (#78 to #82)
 - [Framing](framing.md): problem checks, anchor verdict and overlaps
 - [Problem](problem.md): the two deploy lifecycles, context, needs, evidence, impact, success outcomes and appetite
 - [Quality](quality.md): ISO/IEC 25010:2023 coverage, the NFR measure for REQ-024, assumptions and dependencies

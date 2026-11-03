@@ -32,7 +32,7 @@
 - **Rests on:**
   - Scope: "Standards for each session artifact, by session type and depth tier." (`release.md` is a Feature artifact, and today it has a template but no standard behind it.)
   - Scope: "Works in any repository, independent of tech stack." (A repo declaring its own deploy is how Deploy meets this line. Guidance for each layer and each cloud is deferred, so this session stays independent of stack.)
-  - Non-goal: "A runtime, framework or hosted service." (The work must not turn compass-labs into a deploy runner or CD service. The repo's own tooling and pipelines run the deploy. compass-labs' merge-triggered pipeline is this repo's own release tooling, not something the plugin ships or hosts for other repos.)
+  - Non-goal: "A runtime, framework or hosted service." (The work must not turn compass-labs into a deploy runner or CD service. The repo's own tooling and pipelines run the deploy. compass-labs' merge-triggered pipeline is this repo's own release tooling, not something the plugin hosts for other repos. *Revised at the Design gate, 2026-11-03 (Q2, REQ-028):* the plugin may offer an optional starter workflow, which a repo copies and owns and which runs on the repo's own CI. It never calls compass-labs at run time, so the plugin still isn't a runner or a hosted service, and the verdict stays "aligns".)
   - Non-goal: "Replacing user approval at milestones." (The Deploy milestone and the PR merge stay the user's call. Running the declared routine steps without prompts happens before the gate and doesn't replace it.)
   - Non-goal: "Creating new methods where an established one exists." (The Deploy standard is based on established release and change practice.)
 
