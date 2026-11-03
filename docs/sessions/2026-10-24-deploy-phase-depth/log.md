@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: design
 active_agent: main
-next_step: "Hand off to compass-labs:implement for DES-001 to DES-016"
+next_step: "Implement gate: user reviews DES status and accepts or reworks V1–V5"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -169,3 +169,13 @@ next_step: "Hand off to compass-labs:implement for DES-001 to DES-016"
 
 ### 2026-11-03 — compass-labs:implement — note: The guard hooks don't stop phase agents from committing
 - session-branch-guard.sh blocks commits only on the default branch. session-commit-guard.sh only checks log.md for uncommitted decision or milestone entries. session-guard.sh only checks who writes files under docs/sessions/. A phase agent could therefore make its own commit for each task on the session branch. This wave left all committing to the orchestrator, as instructed.
+
+### 2026-11-03 — compass-labs:implement — attempt: Waves 2 to 4 built; implement/ ready for the Implement gate
+- Built DES-002, 003, 004, 006, 007, 009, 011, 012, 013, 014, 015 and 016, plus one more DES-008 task (task 20). All 22 tasks are ticked. tests/run.sh: 42 passed, 0 failed.
+- compass-labs' pipeline (.github/workflows/release.yml and .github/scripts/release-tag.sh) was installed by install-starter.sh from .claude/deploy.json and matches a fresh install byte for byte.
+- Variations for the gate: V1 (DES-013, the fixtures come first), V2 (DES-008, safety additions and the unchanged-version note), V3 (DES-015, an SSH host alias that resolves to github.com counts as GitHub), V4 (DES-002, two tier lines and five exit codes), V5 (DES-009, the default-branch job condition, checkout@v7).
+- Handed to Test: DES-001, 004, 007, 011, 013, 014, 016 (agent runs, inspections, and the PR #77 and post-merge runs).
+
+### 2026-11-03 — compass-labs:implement — note: Actions settings checked for the release pipeline
+- Read-only gh api: Actions enabled, all actions allowed, default workflow token permission read (release.yml asks for contents: write per job), no tag ruleset (protect-main ruleset disabled). Nothing in the settings blocks the merge-triggered pipeline.
+- Read-only ssh -G resolved this repo's origin alias "github" to github.com, which is why V3 was needed.
