@@ -1,0 +1,45 @@
+# release.yml
+# Tags and publishes a release when a merge into the default branch changes
+# the version, and checks the tag on every pull request first. The logic is
+# in .github/scripts/release-tag.sh; this file only runs it.
+#
+# This workflow was copied from a starter and belongs to this repository:
+# it calls nothing outside it at run time. It needs no secret beyond the
+# GITHUB_TOKEN that Actions provides.
+name: release
+
+on:
+  push:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  # On a pull request: report the tag a merge would create, create nothing.
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Check the release tag
+        run: bash .github/scripts/release-tag.sh --check
+
+  # On a push to the default branch (a merge): tag and publish if the
+  # version changed. Pushes to other branches skip this job.
+  release:
+    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Tag and publish the release
+        run: bash .github/scripts/release-tag.sh
+        env:
+          GH_TOKEN: ${{ github.token }}

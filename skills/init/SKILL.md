@@ -404,10 +404,16 @@ This prevents duplicate work and keeps the registry as the single source of trut
 See `docs/registry/index.md` for the current construct map.
 ```
 
+### Step 6b: Offer a deploy declaration
+
+Follow the "Declaration offer" procedure in `${CLAUDE_PLUGIN_ROOT}/skills/deploy/SKILL.md` (section 8) for `{target-directory}`. If `{target-directory}/.claude/deploy.json` already exists, it makes no offer. Otherwise the user answers later (nothing is written), nothing to deploy, or declare now, and after "declare now" a GitHub-hosted repo is offered the starter workflow. It never runs a setup step. Note the files it wrote, for the commit below.
+
 ### Step 7: Commit registry files
 
 ```bash
 git -C {target-directory} add docs/registry/ CLAUDE.md
+# plus, by name, each file Step 6b wrote: .claude/deploy.json, and the starter's
+# .github/workflows/release.yml and .github/scripts/release-tag.sh on a yes
 git -C {target-directory} commit -m "feat: bootstrap architecture registry with ADR-001"
 ```
 
@@ -626,10 +632,16 @@ Same as Phase 6 Step 6 — read `{target-directory}/CLAUDE.md` (or create it), p
 
 If the block is already present (check for `## Agent Navigation Protocol`), skip this step.
 
+### Step 8b: Offer a deploy declaration
+
+Follow the "Declaration offer" procedure in `${CLAUDE_PLUGIN_ROOT}/skills/deploy/SKILL.md` (section 8) for `{target-directory}`. If `{target-directory}/.claude/deploy.json` already exists, it makes no offer. Otherwise the user answers later (nothing is written), nothing to deploy, or declare now, and after "declare now" a GitHub-hosted repo is offered the starter workflow. It never runs a setup step. Note the files it wrote, for the commit below.
+
 ### Step 9: Commit
 
 ```bash
 git -C {target-directory} add docs/registry/ CLAUDE.md
+# plus, by name, each file Step 8b wrote: .claude/deploy.json, and the starter's
+# .github/workflows/release.yml and .github/scripts/release-tag.sh on a yes
 git -C {target-directory} commit -m "feat: seed architecture registry via brownfield-migrate"
 ```
 
