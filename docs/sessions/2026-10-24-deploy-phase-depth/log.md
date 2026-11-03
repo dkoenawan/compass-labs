@@ -156,3 +156,16 @@ next_step: "Hand off to compass-labs:implement for DES-001 to DES-016"
 ---
 
 ## Phase: Implement
+
+### 2026-11-03 — main — handoff: orchestrator → compass-labs:implement (build DES-001 to DES-016)
+- **Input:** Build the frozen design in implement/ (tasks.md, as-built.md), in the design's order: DES-001, 005, 008, 010 → DES-002, 003, 009 → DES-004, 006, 011, 015 → DES-007, 012, 013, 014, 016. No answers relayed.
+- **Output:** done (wave 1 of 4); implement/tasks.md, implement/as-built.md, tasks 1–6 code and tests
+
+### 2026-11-03 — compass-labs:implement — attempt: Wave 1 built (DES-001, DES-005, DES-008, DES-010)
+- implement/tasks.md has 21 tasks from DES-001 to DES-016 in the design's order. implement/as-built.md has a row for every DES item.
+- Built: the Deploy standard (skills/deploy/ with the declaration and frameworks references, listed in marketplace.json and README), the Deploy clause in the phase-agent contract, the starter release-tag.sh, and .github/scripts/bump-version.sh. Each has component or content tests.
+- Variations recorded for the gate: V1 (DES-013's fixtures are built before DES-002, so DES-002's and DES-015's Checks can run on them) and V2 (two small additions in DES-008: it refuses to run unfilled, and --check notes an unchanged version).
+- tests/run.sh: 29 passed, 0 failed. Waves 2 to 4 (tasks 7 to 21) are still to do.
+
+### 2026-11-03 — compass-labs:implement — note: The guard hooks don't stop phase agents from committing
+- session-branch-guard.sh blocks commits only on the default branch. session-commit-guard.sh only checks log.md for uncommitted decision or milestone entries. session-guard.sh only checks who writes files under docs/sessions/. A phase agent could therefore make its own commit for each task on the session branch. This wave left all committing to the orchestrator, as instructed.
