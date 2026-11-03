@@ -29,6 +29,7 @@ next_step: "Implement gate: user reviews DES status and accepts or reworks V1–
 
 ## Key decisions
 
+- **2026-11-03**: Implement variations V1–V5 accepted as built (fixture order, release-tag.sh safety, SSH alias, two tier lines, default-branch job condition).
 - **2026-11-03**: ✅ Design complete — DES-001 to DES-016 cover REQ-001 to REQ-028; declaration + L1/L2, starter GHA workflow (compass-labs is its first install); follow-up #83 Release session type.
 - **2026-11-03**: Starter choices — compass-labs' pipeline is the starter's first install (D12); starter values fixed at install time (D13); design ready for the gate.
 - **2026-11-03**: Design Q1–Q4 answered — declaration offered at initiation and when a new part is added (REQ-026, REQ-027); optional starter GHA workflow offered, not default (REQ-028, framing revised); covered changed parts run L1; Deploy agent runs git/gh accepted.
@@ -179,3 +180,7 @@ next_step: "Implement gate: user reviews DES status and accepts or reworks V1–
 ### 2026-11-03 — compass-labs:implement — note: Actions settings checked for the release pipeline
 - Read-only gh api: Actions enabled, all actions allowed, default workflow token permission read (release.yml asks for contents: write per job), no tag ruleset (protect-main ruleset disabled). Nothing in the settings blocks the merge-triggered pipeline.
 - Read-only ssh -G resolved this repo's origin alias "github" to github.com, which is why V3 was needed.
+- **Output:** done; implement/tasks.md (22 tasks), implement/as-built.md, code and tests (tasks 7–22)
+
+### 2026-11-03 — main — decision: Implement variations V1–V5 accepted as built
+- V1 accepted; V2 accepted; V3 accepted; V4 accepted; V5 accepted. No rework.
