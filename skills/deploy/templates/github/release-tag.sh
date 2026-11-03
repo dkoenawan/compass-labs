@@ -91,8 +91,7 @@ if [[ "$mode" == "check" ]]; then
   echo "release-tag: would create $tag for version $new at $sha"
   if [[ -n "$old" && "$old" == "$new" ]]; then
     echo "release-tag: note: the version is unchanged from HEAD^1 ($old), so merging this commit creates no tag"
-  fi
-  if tag_exists "$tag"; then
+  elif tag_exists "$tag"; then
     echo "release-tag: warning: tag $tag already exists on origin; a merge with this version would fail" >&2
   fi
   exit 0

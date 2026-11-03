@@ -125,6 +125,9 @@ assert_eq 0 "$STATUS" "an unchanged version should exit 0"
 assert_contains "$OUT" "no version change" "an unchanged version should be logged"
 [[ ! -s "$GH_STUB_LOG" ]] || fail "an unchanged version should make no gh call"
 assert_eq "$tags_before" "$(git --git-dir="$ORIGIN" tag | sort)" "an unchanged version should add no tag"
+run_script --check
+assert_contains "$OUT" "version is unchanged from HEAD^1" "--check should note an unchanged version"
+assert_not_contains "$OUT" "would fail" "--check shouldn't warn of a failure when the version is unchanged"
 
 # Tag exists: a second change to 2.3.0 fails, naming the tag, which stays put.
 set_json_version 2.2.1 "revert to 2.2.1"
