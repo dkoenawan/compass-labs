@@ -131,6 +131,7 @@ compass-labs/
 │   ├── design/                        # Design standard: solution kinds, notation catalogue, stack defaults
 │   ├── implement/                     # Implement standard: tasks, testing boundary, as-built record, layer plug-in contract
 │   ├── backend/                       # Backend layer home: Implement guidance (stack, tests, OpenAPI as built, API check)
+│   ├── deploy/                        # Deploy standard: the deploy declaration, L1/L2 lifecycles, tiers, release record, starter workflow
 │   ├── init/                          # Project initialization (recommended)
 │   ├── explore/                       # Token-efficient codebase investigation
 │   ├── doc-maintainer/                # C4-layered docs tree, maintained incrementally
@@ -463,6 +464,14 @@ The Implement standard the Implement agent preloads. It turns the design's `DES-
 #### `/compass-labs:backend`
 
 The backend layer's home, and the first layer to plug into the Implement standard. Its [Implement guidance](skills/backend/reference/implement.md) builds in the repository's established stack (linking the [stack defaults](skills/design/reference/stack-defaults.md) rather than restating them), writes a unit and a component test per backend item, commits an OpenAPI 3.x document of the API as built and renders it with Scalar, and checks every endpoint in the design's API contract against what was built. Each mismatch becomes a variation you decide at the Implement gate. The backend design standard is tracked in #47.
+
+#### `/compass-labs:deploy`
+
+The Deploy standard the Deploy agent preloads. It separates two lifecycles: **L1, deployment setup** (creating or updating how a deployable part gets deployed) and **L2, session release** (getting one session's change to its target).
+
+- **The deploy declaration:** each repo states what deploy means for it in `.claude/deploy.json`: its L1 setup per part, its L2 steps, which steps are routine and which are production-affecting, the confirmation check, the rollback, and whether a release runs in the session or in its own release session. The commands are the repo's own. See [`reference/declaration.md`](skills/deploy/reference/declaration.md). `check-declaration.sh` validates it and plans which steps may run.
+- **What Deploy runs:** routine steps run without a question. A production-affecting step, and the merge, wait for your own instruction.
+- **Tiers:** a release's tier (skip, short or full) comes from its risk, and sets which of the release record's seven sections are required. You confirm the tier at the Deploy gate, and `check-release.sh` refuses a record missing a required section. The frameworks behind each section are in [`reference/frameworks.md`](skills/deploy/reference/frameworks.md).
 
 #### `/compass-labs:verification`
 
