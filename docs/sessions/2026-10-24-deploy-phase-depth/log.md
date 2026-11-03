@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
 active_agent: main
-next_step: "Hand off to compass-labs:test to write verification.md (VER-* for REQ-001 to REQ-028)"
+next_step: "Test gate decisions: post-merge REQs, .claude/deploy.json write path, interactive checks"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -192,3 +192,15 @@ next_step: "Hand off to compass-labs:test to write verification.md (VER-* for RE
 ---
 
 ## Phase: Test
+
+### 2026-11-03 — main — handoff: orchestrator → compass-labs:test (verify REQ-001 to REQ-028)
+- **Input:** Write verification.md with VER-* rows for every live REQ (REQ-001 to REQ-028). Items handed to Test: DES-001, 004, 007, 011, 013, 014, 016. Post-merge criteria (REQ-020, REQ-024, OUT-06) can only be checked after the user merges PR #77.
+- **Output:** done; verification.md (check-traceability.sh exits 1: REQ-020, REQ-024 pending the merge)
+
+### 2026-11-03 — compass-labs:test — attempt: verification.md drafted (VER-001 to VER-031)
+- tests/run.sh at 1daffe6: 42 passed, 0 failed. Deploy agent run for real (claude -p --agent compass-labs:deploy) on temp copies of all four fixtures: REQ-003, 004, 006, 007, 008, 010, 011, 012, 013 and the REQ-027 "no" pass. This session's Deploy rehearsed in a local clone (bare origin, stub gh): REQ-002, 005, 023, 025 pass, and no REQ-027 offer fired. Merge simulations of release-tag.sh: REQ-021, 022 pass. Inspections: REQ-001, 014, 015, 016, 017, 018, 026.
+- Pending: REQ-020 and REQ-024 (after the merge of PR #77); REQ-019 on PR #77's real job (run 41605884680 reported compass-labs--v2.2.1 before the bump); REQ-017's TODO-body agent run (usage limit hit); the REQ-027 yes path and REQ-026's interactive writes.
+- check-traceability.sh exits 1: REQ-020, REQ-024 have no passing row yet.
+
+### 2026-11-03 — compass-labs:test — note: Claude Code refuses non-interactive writes to .claude/deploy.json
+- Even with acceptEdits or an explicit Edit(<path>) allow rule, a non-interactive agent's write to .claude/deploy.json is refused as a sensitive path. The REQ-027 yes path and REQ-026's "nothing to deploy" and "declare now" writes therefore need an interactive check, where the permission prompt can be approved (VER-009, VER-028).
