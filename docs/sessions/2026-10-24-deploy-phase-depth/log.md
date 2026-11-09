@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
 active_agent: main
-next_step: "Test gate decisions: post-merge REQs, .claude/deploy.json write path, interactive checks"
+next_step: "Finish Test: VER-016 rerun, VER-009 and VER-028 interactive, VER-020/023 on simulation"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "Test gate decisions: post-merge REQs, .claude/deploy.json write path
 
 ## Key decisions
 
+- **2026-11-09**: Verification draft approved; REQ-020 and REQ-024 pass at Test on the merge simulation and PR-job timing, with the real merge result checked in Close.
 - **2026-11-03**: ✅ Implement complete — 22 tasks, DES-001 to DES-016 built (11 as designed, 5 with accepted variations); tests/run.sh 42 passed.
 - **2026-11-03**: Implement variations V1–V5 accepted as built (fixture order, release-tag.sh safety, SSH alias, two tier lines, default-branch job condition).
 - **2026-11-03**: ✅ Design complete — DES-001 to DES-016 cover REQ-001 to REQ-028; declaration + L1/L2, starter GHA workflow (compass-labs is its first install); follow-up #83 Release session type.
@@ -204,3 +205,7 @@ next_step: "Test gate decisions: post-merge REQs, .claude/deploy.json write path
 
 ### 2026-11-03 — compass-labs:test — note: Claude Code refuses non-interactive writes to .claude/deploy.json
 - Even with acceptEdits or an explicit Edit(<path>) allow rule, a non-interactive agent's write to .claude/deploy.json is refused as a sensitive path. The REQ-027 yes path and REQ-026's "nothing to deploy" and "declare now" writes therefore need an interactive check, where the permission prompt can be approved (VER-009, VER-028).
+
+### 2026-11-09 — main — decision: Verification draft approved; post-merge REQs pass on simulation
+- The user approved the verification draft (VER-001 to VER-031) and running the remaining checks now: VER-016 rerun, VER-009 and VER-028 in this interactive session.
+- REQ-020 and REQ-024 pass at Test on evidence gathered before the merge, as the design's Risks table planned: VER-020 on the merge simulation plus the workflow inspection, VER-023 on PR #77's check job timing (6 s) as a proxy. Each row states its limit. The real tag and release are checked after the user merges PR #77 and recorded in Close; a failure becomes a follow-up issue and a fix PR.
