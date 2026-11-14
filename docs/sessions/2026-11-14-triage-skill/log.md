@@ -4,7 +4,7 @@ type: feature
 issue: 86
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/86-triage-skill
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: design
 active_agent: main
-next_step: "Hand off to compass-labs:design"
+next_step: "Hand off to compass-labs:implement"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:design"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Design complete — plugin/tooling, DES-001–009 covering all 28 live REQs; D1 flagged for an ADR at Close; approved under the user's delegation.
 - **2026-11-14**: Design choices (delegated): plugin/tooling kind; scripts own all GitHub I/O and a read-only headless model writes the report; no plugin or project hooks in the headless run; TZ-mapped cron plus guard; run log outside the repo; interactive apply via `gh` after per-group confirmation; skill `triage`.
 - **2026-11-14**: ✅ Define complete — full tier, REQ-001–025 and REQ-028–030 live, REQ-027 deferred to #88; approved under the user's delegation.
 - **2026-11-14**: Anchor update agreed (extend Scope: "backlog triage" in Supporting skills).
@@ -118,3 +119,17 @@ next_step: "Hand off to compass-labs:design"
 - D6 (a): no reuse of task-executor's comment-on-issue.sh.
 - D7 (a): report issues identified by title pattern plus the authenticated author.
 - D8 (a): skill `triage` (`compass-labs:triage`), modes stock-take, apply, install, uninstall.
+
+### 2026-11-14 — compass-labs:design — attempt: design/ written (plugin/tooling)
+- Wrote `design/index.md`: classification, scope checklist, C4 L1 context view and L3 component view, a 19-row delta list, and DES-001 to DES-009 covering all 28 live REQs.
+- D1 to D8 recorded as chosen; D1 flagged ADR for Close. The `claude` flag check is DES-005 Check 1; the cron-environment preflight and its failure logging are in DES-005 under REQ-022.
+- Mermaid blocks render with mermaid-cli. No principle traded off. Open questions: #51 and #88 only.
+
+### 2026-11-14 — main — milestone: Design complete
+- Approved by the orchestrator under the user's delegation. `check-design.sh`: ok. Context view: [design/index.md#context-view](design/index.md#context-view); delta list: [design/index.md#delta-list](design/index.md#delta-list).
+- Frozen: `design/`.
+
+## Phase: Implement
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:implement (build DES-001–009)
+- **Input:** build the frozen design in its implementation order, with unit and component tests; return needs_input to the orchestrator if anything blocks.
