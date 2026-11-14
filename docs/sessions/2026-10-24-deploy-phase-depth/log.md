@@ -5,7 +5,7 @@ issue: 30
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/30-deploy-phase-depth
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
+milestone: close
 active_agent: main
-next_step: "Close: fold back into as-built docs"
+next_step: "None — archived; PR #77 awaits the user's merge; post-merge check #84"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -25,10 +25,13 @@ next_step: "Close: fold back into as-built docs"
 ## Open items
 
 - Follow-ups: #78 frontend, #79 backend, #80 database, #81 infrastructure (Terraform), #82 cloud provider references.
-- Work is on branch `feat/30-deploy-phase-depth`; it reaches main through a PR.
+- Work is on branch `feat/30-deploy-phase-depth`; it reaches main through PR #77 (ready, the user merges).
+- #84: post-merge check of the compass-labs--v2.3.0 tag and release (REQ-020, REQ-024).
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Session closed — #30 folded into docs/ (Deploy reference and explanation, ADR-007–009, six constructs, a how-to); post-merge check filed as #84; PR #77 ready for the user to merge.
+- **2026-11-14**: Post-merge tag/release check for REQ-020 and REQ-024 deferred to #84, run after the user merges PR #77.
 - **2026-11-14**: ✅ Deploy complete — short tier confirmed; v2.3.0 bumped (ac29eb5), pushed, PR #77 ready; confirmation passed; merge is the user's.
 - **2026-11-14**: ✅ Test complete — VER-001 to VER-031, 30 pass, VER-019 pending the Deploy bump; check-traceability.sh exit 0; tests/run.sh 42 passed.
 - **2026-11-09**: Verification draft approved; REQ-020 and REQ-024 pass at Test on the merge simulation and PR-job timing, with the real merge result checked in Close.
@@ -249,3 +252,20 @@ next_step: "Close: fold back into as-built docs"
 - User confirmed the proposed short tier and approved Deploy. Completeness: no gaps. check-release.sh ok (short). v2.2.1 → v2.3.0 in ac29eb5, pushed; PR #77 ready, MERGEABLE. release-tag.sh --check would create compass-labs--v2.3.0. The merge, and the tag and release the pipeline makes from it, are the user's.
 
 ## Phase: Close
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:close (fold back into as-built docs)
+- **Input:** Fold session #30 (Deploy phase depth: deploy declaration, L1/L2 lifecycles, Deploy standard, tiers, release record, starter GitHub Actions workflow) back into the as-built docs under docs/, one Origin line per doc. The real post-merge tag/release check (REQ-020, REQ-024) can't run yet: PR #77 is unmerged and the merge is the user's.
+- **Output:** done; 12 new and 9 modified docs under docs/ (reference/deploy/standard.md, explanation/deploy/overview.md, registry/decisions/007–009, six reference/constructs/*, how-to/update-release-pipeline-from-starter.md, plus session reference/explanation, solution design, init overview, registry index/patterns, decisions index, how-to index)
+
+### 2026-11-14 — compass-labs:close — note: Fold-back ready — #30 folded into the Deploy reference, explanation, ADR-007 to ADR-009, a how-to and the registry
+- Requirements, NFR measure and accepted variations folded as current fact into docs/reference/deploy/standard.md; problem, diagrams, design views and still-true assumptions into docs/explanation/deploy/overview.md (new domain).
+- Design decisions flagged "ADR" written as ADR-007 (deploy declaration and its offers), ADR-008 (Deploy runs declared steps, refines ADR-002; scripts for what's mechanical; risk-based tiers; the starter, with compass-labs' pipeline as its first install), ADR-009 (merge-triggered release pipeline, relates to ADR-006); decisions index updated (adr_count 9).
+- How-to: docs/how-to/update-release-pipeline-from-starter.md.
+- Updated for the new Deploy behaviour: docs/reference/session/workflow-and-artifacts.md, docs/reference/session/hooks-and-scripts.md, docs/explanation/session/overview.md, docs/explanation/solution-design.md, docs/explanation/init/overview.md, docs/registry/patterns.md (new pattern "Deploy runs what the repo declares, and nothing else", two anti-patterns), docs/how-to/index.md.
+- Constructs registered (status built; construct_count 5 → 11): DeployStandard, DeclarationCheck, ReleaseRecordCheck, StarterInstaller, ReleaseTagStarter, VersionBump. Validate each with `/compass-labs:post-hook-validator {Construct}`.
+
+### 2026-11-14 — main — decision: Post-merge release check deferred to #84
+- REQ-020 and REQ-024's real check (tag resolves to the merge commit, release published, push run passes, tag within 10 minutes) needs the user's merge of PR #77. Filed as #84; a failure becomes a fix PR. tests/run.sh 42 passed after the fold-back.
+
+### 2026-11-14 — main — milestone: ✅ Session closed
+- User asked to close off the session. Fold-back into docs/ done with one Origin line per doc; follow-up #84 filed; PR #77 is ready for the user to merge. Not merged by the orchestrator.

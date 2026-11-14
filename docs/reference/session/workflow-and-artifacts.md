@@ -1,7 +1,7 @@
 # Session workflow and artifacts
 
-> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md) · → [Design standard](../design/standard.md) · → [Implement standard](../implement/standard.md)
-> Origin: #22 · #23 · #27 · #28 · #37
+> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Hooks and scripts](hooks-and-scripts.md) · → [Framing reference](../framing/tiers-and-anchor.md) · → [Design standard](../design/standard.md) · → [Implement standard](../implement/standard.md) · → [Deploy standard](../deploy/standard.md)
+> Origin: #22 · #23 · #27 · #28 · #30 · #37
 
 ## Feature workflow (`skills/session/workflows/feature.json`)
 
@@ -35,7 +35,7 @@ Phase keys for folder artifacts:
 | `implement/` | `compass-labs:implement` | The `implement` skill (see [The `implement/` folder](#the-implement-folder)) | `milestone` ≥ `implement` (the whole folder at once) |
 | `tasks.md` (root, past sessions only) | `compass-labs:implement` | `task-executor` tasks format; each task names the `DES-*` it implements; a "Deviations from design" section. Only a session that already has this file may write it, and such a session can't create `implement/`. | `milestone` ≥ `implement` |
 | `verification.md` | `compass-labs:test` | `verification` skill: `\| ID \| Covers REQ \| Method \| Result \| Evidence \|`, in that exact column order. Method is one of the Test-owned methods `integration`, `ui`, `playwright` or `inspection`, and every live `REQ-*` has at least one such row. Implement's unit and component tests appear only in Evidence, prefixed `Supporting:` | `milestone` ≥ `test` |
-| `release.md` | `compass-labs:deploy` | Version/target, what changed (by `REQ-*`), Completeness, deploy steps, confirmation, rollback | `milestone` ≥ `deploy` |
+| `release.md` | `compass-labs:deploy` | The `deploy` skill (see the [Deploy reference](../deploy/standard.md#release-record-releasemd)): a `Deploy tier: {tier}: {reason}` line and the sections that tier requires, from Lifecycles run and why, Release strategy, Completeness, Steps run, Confirmation, Rollback and Change record. A record with no tier line is a past record | `milestone` ≥ `deploy` |
 | `log.md` | orchestrator (main session) only | Log format below | Never frozen; read-only once archived |
 | `assets/` | any | Non-Markdown files only | — |
 
@@ -104,7 +104,7 @@ Approval alone completes most milestones. Four gates also check the session's co
 | Define | **a3.** If `define/index.md` records a full or short tier and `define/framing.md`'s anchor-update action is anything but `none`, the README's marked anchor section must contain that agreed text and pass the [anchor checklist](../framing/tiers-and-anchor.md#anchor-contract). A session with no `define/` folder gets no a3 check. | Refuse, show the missing or differing element, apply the anchor write, ask again |
 | Design | **a4.** `check-design.sh` exits 0: `design/index.md` has the Classification, Scope checklist, Context view and Delta list sections. A session with only a root `design.md` passes with no check. | Refuse, name the missing sections (e.g. "delta list missing"), stay in Design |
 | Test | `check-traceability.sh` exits 0: every live `REQ-*` has a passing `VER-*` | Refuse, list the missing IDs, stay in Test |
-| Deploy | `release.md`'s *Completeness* section shows the release manifest lists only complete components and leaves none out | Refuse, show the gaps, stay in Deploy |
+| Deploy | **a1.** The user confirms or changes the proposed `Deploy tier:`; a change is relayed to the Deploy agent to rewrite the record. **a2.** `release.md`'s *Completeness* section shows the release manifest lists only complete components and leaves none out. **a2b.** `check-release.sh` exits 0: the record has every section its confirmed tier requires. A past record with no tier line skips a1 and passes a2b | Refuse, show the gaps or name the missing sections (e.g. "rollback missing"), stay in Deploy |
 
 **Anchor write.** When Define returns a `decision` entry for an anchor update, the orchestrator (never a phase agent) writes the agreed text from `define/framing.md`'s anchor-update block into the root `README.md` between the anchor markers. It creates the README, or appends the whole `## Project anchor` section, if either is missing. It writes only the elements the block names and never changes wording outside them. The decision entry, `define/framing.md` and `README.md` go in one commit.
 
@@ -134,7 +134,7 @@ Every `decision` and `milestone` entry is also mirrored into Key decisions in th
 
 ## Phase agent contract
 
-Every phase agent follows [`skills/session/reference/phase-agent-contract.md`](../../../skills/session/reference/phase-agent-contract.md). The input is the session path, the phase, the task and any relayed answers. The output is `status` (`done` · `needs_input` · `blocked`), `questions` (with `needs_input` only), `log_entries` (never `milestone`) and `files_changed`. Close follows [`close-foldback.md`](../../../skills/session/reference/close-foldback.md).
+Every phase agent follows [`skills/session/reference/phase-agent-contract.md`](../../../skills/session/reference/phase-agent-contract.md). The input is the session path, the phase, the task and any relayed answers. The output is `status` (`done` · `needs_input` · `blocked`), `questions` (with `needs_input` only), `log_entries` (never `milestone`) and `files_changed`. Close follows [`close-foldback.md`](../../../skills/session/reference/close-foldback.md). The contract's **Deploy clause** lets the Deploy agent run the repo's declared routine steps (changing repo files and running `git` and `gh`) on the session branch only, staged by name, never merging, and return `needs_input` for one thing only: the offer to add a deployable part the declaration doesn't cover. The orchestrator relays that offer like Define's and Design's questions, and commits the agent's `decision` entry together with the declaration change.
 
 ## Close fold-back
 
@@ -184,3 +184,5 @@ A session's commits never land on the repository's default branch. They are made
 ## Commit points
 
 The rule template `skills/session/templates/rules/compass-sessions.md` is copied to a consuming repo's `.claude/rules/compass-sessions.md` (scoped to `docs/sessions/**`) on first use. It is never overwritten. See [Atomic commit points](../../registry/patterns.md#atomic-commit-points).
+
+In the same first run only, one-time setup also makes the Deploy standard's declaration offer (skipped if `.claude/deploy.json` exists). Any file it writes is left for the user's first commit, like the rule. See the [Deploy reference](../deploy/standard.md#declaration-offer-at-project-initiation).
