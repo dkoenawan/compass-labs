@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: deploy
 active_agent: main
-next_step: "Install the maintainer schedule, then hand off to compass-labs:close"
+next_step: "Hand off to compass-labs:close"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,7 @@ next_step: "Install the maintainer schedule, then hand off to compass-labs:close
 
 ## Key decisions
 
+- **2026-11-14**: Maintainer schedule installed (Sat 01:00 Pacific/Auckland); `claude` path pinned to the stable symlink by hand; installer bug deferred to #93.
 - **2026-11-14**: ✅ Deploy complete — v2.4.0 prepared (1918c84), PR #87 ready for review, tier short confirmed; merge left to the user.
 - **2026-11-14**: ✅ Test complete — 28/28 live REQs pass (check-traceability ok); VER-030 pending (interactive apply) alongside passing VER-017; approved under the user's delegation.
 - **2026-11-14**: Test findings deferred to #90 (report size limit), #91 (run date in header), #92 (recommend claude setup-token).
@@ -194,3 +195,11 @@ next_step: "Install the maintainer schedule, then hand off to compass-labs:close
 - Tier short confirmed by the orchestrator under the user's delegation. Completeness: no gaps. `check-release.sh`: ok. Frozen: `release.md`.
 
 ## Phase: Close
+
+### 2026-11-14 — main — decision: maintainer schedule installed; installer bug deferred to #93
+- Ran `install-schedule.sh /home/su-sentinel/private/compass-labs --day sat --time 01:00 --tz Pacific/Auckland`, as the user asked ("every 1 am on a Saturday"). It created the `triage` label and two cron lines (`0 12 * * 5` and `0 13 * * 5` UTC, guarded to Saturday 01:00 local). Next run: Sat 2026-11-21 01:00 NZDT. Crontab backed up first; the other 5 lines are unchanged.
+- Bug: the installer `realpath`s the claude binary, pinning `~/.local/share/claude/versions/2.1.325`, which an auto-update removes. Opened #93; worked around by hand by setting `TRIAGE_CLAUDE_BIN` to `~/.local/bin/claude` on both triage lines (the marker is unchanged, so uninstall still works).
+- The cron line runs the scripts from this checkout, so until #87 merges the run works only while `feat/86-triage-skill` is checked out.
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:close (fold back into docs)
+- **Input:** fold the session back into as-built docs (README already documents the skill; registry construct and ADR for D1 as flagged in design).
