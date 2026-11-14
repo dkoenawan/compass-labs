@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 
 ## Key decisions
 
+- **2026-11-14**: Framing answered by the orchestrator (delegated): full tier; scheduled run is propose-only (one report issue per run), actions only through an interactive, approved apply; local cron with a TZ guard, schedule as install parameters; grep-level checks unattended; duplicates, clusters and dependencies; anchor-less repos skip the mapping; anchor Scope gains "backlog triage".
 - **2026-11-14**: User delegated every gate to the orchestrator through to Close ("Continue all the way until close. I'll review and come back after."). Orchestrator answers phase questions and approves milestones, logging each answer as a decision; no merge.
 - **2026-11-14**: Session branch `feat/86-triage-skill`, from `main`.
 
@@ -45,7 +46,26 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:define (frame problem, propose tier)
 - **Input:** frame the problem for #86 and propose a depth tier. Reference behaviour is the 2026-11-14 manual triage. The user wants it on a schedule: Saturdays 01:00 Pacific/Auckland.
+- **Output:** needs_input; files_changed: none (tier, need, authority, report, modes, scheduler, checking depth, mapping, anchor-less repos, anchor wording)
 
 ### 2026-11-14 — main — decision: gates delegated to the orchestrator until Close
 - The user said: "Continue all the way until close. I'll review and come back after."
 - So the orchestrator answers phase agents' questions and approves each milestone itself, recording every answer as a `decision` entry for the user to review afterwards. The no-merge rule still holds: the PR stays open for the user.
+
+### 2026-11-14 — compass-labs:define — note: framing started, tier proposed
+- Proposed tier: full (a new skill plus an unattended scheduler writing to GitHub; touches the anchor scope and the "no replacing user approval" non-goal).
+- Anchor complete (README.md lines 11-44); draft verdict extends (Scope "Supporting skills" line has no triage). Registry/ADR: no overlapping construct; pattern overlap with the doc-maintainer and task-executor install-schedule scripts; ADR-006 applies only if the run commits.
+- Waiting on the user: tier, the need (XY), unattended authority, report location and approval route, modes, scheduler mechanism, checking depth, cross-issue mapping, anchor-less repos, anchor wording.
+
+### 2026-11-14 — main — decision: framing questions answered (delegated)
+- Answered by the orchestrator under the user's delegation; chose the conservative, reversible option where the user hadn't said. For the user to review.
+- **Q1 tier:** full, as proposed.
+- **Q2 need:** the need is a backlog that stays aligned with the anchor and merged work without anyone remembering to triage. The weekly schedule is also a stated requirement for this repo (Saturdays 01:00 Pacific/Auckland).
+- **Q3 authority:** (a) for the scheduled run. Its only GitHub writes are creating its own report issue and closing its own previous, unapplied report as superseded. Closing, duplicate-marking, body edits, new issues and triage comments happen only in an interactive apply the user approves, as in the reference run. Why: the anchor's non-goal "Replacing user approval at milestones", and the user wasn't present to choose. Loosening this (e.g. option (c), unattended low-risk closes) is a follow-up for the user to decide.
+- **Q4 report:** one GitHub issue per run ("Triage YYYY-MM-DD", labelled `triage`) holding the whole stock-take and proposed actions. Approval is the user running the skill interactively to apply a named report, confirming per group; GitHub replies are not approval.
+- **Q5 modes:** both: interactive (stock-take, then apply on approval, as on 2026-11-14) and scheduled (propose only).
+- **Q6 scheduler:** local cron through install-schedule.sh / uninstall-schedule.sh, like the existing skills, with a TZ guard so the local time holds across DST. Day, time and time zone are install parameters; this user's setting is Saturday 01:00 Pacific/Auckland. No cloud routine (it wouldn't have the local checkout).
+- **Q7 checking depth:** unattended: grep the code and read merged PRs, no test runs. Interactive mode may also run tests on a scratch copy.
+- **Q8 cross-issue mapping:** duplicates and clusters, plus dependencies (blocked-by, as #69 blocks the layer issues). No priority: prioritising is the user's call.
+- **Q9 no anchor:** skip the anchor mapping, say so in the report and recommend creating one; don't stop.
+- **Q10 anchor wording:** approved as drafted: "- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, backlog triage, brand design." With Q3 (a), no non-goal change is needed.
