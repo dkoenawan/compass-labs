@@ -6,7 +6,7 @@
 
 ## Contents
 
-- [Requirements](requirements.md): REQ-001 to REQ-025 and REQ-028, one struck (REQ-026), one deferred (REQ-027)
+- [Requirements](requirements.md): REQ-001 to REQ-025 and REQ-028 to REQ-030, one struck (REQ-026), one deferred (REQ-027, #88)
 - [Framing](framing.md): the XY and symptom checks, the anchor verdict (extends) and its update, overlaps
 - [Problem](problem.md): context, NEED-01 to NEED-04, evidence, impact, OUT-01 to OUT-05, appetite
 - [Quality](quality.md): ISO/IEC 25010:2023 coverage, NFR measures, assumptions and dependencies
@@ -24,14 +24,14 @@ The open backlog drifts away from the project anchor and from merged work as Fea
 ## Scope
 
 1. A stock-take of every open issue: claims checked against the code and merged PRs, one category each, the anchor mapping, duplicates, clusters and dependencies, and a proposed action per issue: [REQ-001](requirements.md#requirements) to [REQ-009](requirements.md#requirements), [REQ-025](requirements.md#requirements).
-2. Scheduled runs that only propose: a `Triage YYYY-MM-DD` report issue, the previous unapplied report closed as superseded, and no other writes and no test runs: [REQ-010](requirements.md#requirements) to [REQ-012](requirements.md#requirements), [REQ-022](requirements.md#requirements) to [REQ-024](requirements.md#requirements), [REQ-028](requirements.md#requirements).
-3. Interactive runs: a stock-take shown before any change, and an apply that changes issues only group by group on the user's confirmation, then comments on every remaining issue: [REQ-013](requirements.md#requirements) to [REQ-018](requirements.md#requirements).
-4. Installing and uninstalling the schedule at a local day, time and time zone that holds across daylight saving. This repo's setting is Saturday 01:00 Pacific/Auckland: [REQ-019](requirements.md#requirements) to [REQ-021](requirements.md#requirements).
+2. Scheduled runs that only propose: a `Triage YYYY-MM-DD` report issue, the previous unapplied report closed as superseded, and no other writes and no test runs: [REQ-010](requirements.md#requirements) to [REQ-012](requirements.md#requirements), [REQ-022](requirements.md#requirements) to [REQ-024](requirements.md#requirements), [REQ-028](requirements.md#requirements), [REQ-029](requirements.md#requirements).
+3. Interactive runs: a stock-take shown before any change and with no report issue, and an apply that changes issues only group by group on the user's confirmation, then comments on every remaining issue: [REQ-013](requirements.md#requirements) to [REQ-018](requirements.md#requirements).
+4. Installing and uninstalling the schedule at a local day, time and time zone that holds across daylight saving. This repo's setting is Saturday 01:00 Pacific/Auckland. The installer and an apply create the `triage` label when it's missing: [REQ-019](requirements.md#requirements) to [REQ-021](requirements.md#requirements), [REQ-030](requirements.md#requirements).
 
 ### Non-goals
 
 - **Proposing priorities.** Prioritising is the user's call (struck REQ-026).
-- **A scheduled run changing issues on its own**, even low-risk closes. Deferred to follow-up #{pending-1} (REQ-027).
+- **A scheduled run changing issues on its own**, even low-risk closes. Deferred to follow-up #88 (REQ-027).
 - **A cloud routine** through Claude Code's `schedule` skill. The schedule is local cron only.
 - **Triaging pull requests.** Only issues are triaged; merged PRs are read as evidence.
 - **Renaming the plugin or the skill's prefix.** Tracked in #34.
@@ -47,8 +47,10 @@ The open backlog drifts away from the project anchor and from merged work as Fea
 
 ## Open questions
 
-1. **The user's own confirmation.** The tier, the framing answers (Q1 to Q10) and the anchor text in [framing.md](framing.md#anchor-update) were given by the orchestrator under the user's delegation of every gate through Close. The user hasn't confirmed them in their own words in this phase. The unattended-authority boundary (REQ-010, REQ-015) and the Scope wording are the two that most need it before the Define milestone.
-2. **Appetite.** The user didn't set one. [problem.md](problem.md#appetite-and-no-gos) assumes this one session, with about two days for Implement.
-3. **Who creates the `triage` label** when a repository doesn't have it: the installer (interactive, with the user present) or the first scheduled run (an extra unattended write REQ-010 doesn't currently allow)? Unknown. No criterion asserts it yet.
-4. **Whether an interactive stock-take also publishes a report issue** before the apply, so that every run leaves the same record. Unknown. REQ-014 allows applying either a stock-take just made or a named report.
-5. **Follow-up issue number** for the deferred REQ-027, to replace `#{pending-1}` in the [Deferred](requirements.md#deferred) table and in Non-goals before the freeze.
+All questions resolved.
+
+- **Approval route.** The tier, the framing answers (Q1 to Q10) and the anchor text in [framing.md](framing.md#anchor-update) were approved by the orchestrator under the user's explicit delegation. The user reviews them in PR #87 before merge.
+- **Appetite:** one session, with about two days for Implement (Q2).
+- **The `triage` label:** the installer and an apply create it (REQ-030). A scheduled run never creates labels; it publishes without the label and says so (REQ-029).
+- **Interactive report issue:** an interactive stock-take publishes no report issue by default and applies directly on confirmation (REQ-013, REQ-014).
+- **Deferred REQ-027:** follow-up #88.

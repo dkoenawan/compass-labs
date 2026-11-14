@@ -16,6 +16,8 @@ mindmap
           REQ-022
           REQ-023
           REQ-024
+          REQ-029
+          REQ-030
     OUT-02 no unapproved GitHub writes by scheduled runs
       Maintainer
         Approves every change in an apply
@@ -24,6 +26,7 @@ mindmap
           REQ-012
           REQ-015
           REQ-025
+          REQ-029
     OUT-03 every open issue carries a triage comment
       Maintainer and orchestrator
         Read an issue's anchor mapping before picking it up
@@ -129,6 +132,11 @@ flowchart LR
   R024["REQ-024"]:::should --> O01
   R025["REQ-025"]:::must --> N02
   R025 --> O02
+  R029["REQ-029"]:::should --> O01
+  R029 --> O02
+  R029 --> N02
+  R030["REQ-030"]:::should --> O01
+  R030 --> N04
 ```
 
 ## As-is and to-be

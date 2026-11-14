@@ -44,5 +44,5 @@
 
 ### Appetite and no-gos
 
-- **Appetite:** this one Feature session, with Implement fitting in about two working days [assumed: the user didn't set an appetite; see [Open questions](index.md#open-questions)].
+- **Appetite:** this one Feature session, with about two working days for Implement [observed: orchestrator's framing answer Q2, under the user's delegation].
 - **No-gos:** see [Non-goals](index.md#non-goals).

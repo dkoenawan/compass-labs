@@ -12,7 +12,7 @@
 
 **Candidate solutions:**
 - A cloud routine through Claude Code's `schedule` skill. Raised in framing and not chosen: the schedule uses local cron, like the existing scheduled skills (see [Constraints](index.md#constraints)).
-- A scheduled run that applies low-risk actions itself, for example closing an issue as completed with the merged PR cited (option (c) in framing). Not chosen for this session. Deferred (see [requirements.md](requirements.md#deferred)).
+- A scheduled run that applies low-risk actions itself, for example closing an issue as completed with the merged PR cited (option (c) in framing). Not chosen for this session. Deferred to #88 (see [requirements.md](requirements.md#deferred)).
 
 ### Symptom and cause
 
@@ -35,7 +35,7 @@ Replace the Scope line "- Supporting skills: scaffolding, planning, codebase exp
 
 - Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, backlog triage, brand design.
 
-Approval: the orchestrator relayed this as approved under the user's delegation of every gate through Close (see the decision in log.md). The user's own confirmation is still open; see [Open questions](index.md#open-questions).
+Approval: approved by the orchestrator under the user's explicit delegation ("Continue all the way until close. I'll review and come back after.", as relayed by the orchestrator; see the decision in log.md). The user reviews it in PR #87 before merge.
 
 ## Overlaps
 

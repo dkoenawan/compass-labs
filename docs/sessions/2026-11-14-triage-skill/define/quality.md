@@ -11,7 +11,7 @@
 | Performance efficiency | REQ-024 | |
 | Compatibility | REQ-020, REQ-021 (the schedule coexists with other cron jobs and leaves them unchanged) | |
 | Interaction capability | REQ-013, REQ-014, REQ-017 (the user sees grouped actions and confirms group by group) | |
-| Reliability | REQ-011, REQ-022, REQ-023 (no partial or duplicate reports; a superseded report doesn't linger) | |
+| Reliability | REQ-011, REQ-022, REQ-023, REQ-029 (no partial or duplicate reports; a superseded report doesn't linger; a missing label doesn't stop the report) | |
 | Security | REQ-010, REQ-012, REQ-015, REQ-025 (an unattended run can't change issues, run repository code, be approved from outside an apply, or be steered by issue text) | |
 | Maintainability | | The skill is built and tested to the plugin's existing conventions (CLAUDE.md skill structure, `tests/run.sh`). No user-facing behaviour of this feature depends on it, so it gets no requirement of its own. |
 | Flexibility | REQ-005, REQ-019 (any repository, with or without an anchor; any day, time and time zone) | |
@@ -32,7 +32,7 @@
 - The `claude` CLI can run headless under cron, as `doc-maintainer` and `task-executor` already do.
 
 **Dependencies:**
-- GitHub and the `gh` CLI: relied on by REQ-001, REQ-002, REQ-008, REQ-010, REQ-011, REQ-014, REQ-016, REQ-022, REQ-023, REQ-028.
+- GitHub and the `gh` CLI: relied on by REQ-001, REQ-002, REQ-008, REQ-010, REQ-011, REQ-014, REQ-016, REQ-022, REQ-023, REQ-028, REQ-029, REQ-030.
 - The machine's cron and its time-zone database: relied on by REQ-019, REQ-020, REQ-021.
 - The project anchor contract (`skills/framing/reference/anchor-contract.md`): relied on by REQ-004, REQ-005.
-- The `triage` label existing in the repository: relied on by REQ-001, REQ-023, REQ-028 (who creates it is an open question in [index](index.md#open-questions)).
+- The `triage` label existing in the repository: relied on by REQ-028. Created by the installer or an apply (REQ-030); when it's missing, a scheduled run falls back to REQ-029.

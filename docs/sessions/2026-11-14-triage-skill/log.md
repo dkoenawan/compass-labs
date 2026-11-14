@@ -4,7 +4,7 @@ type: feature
 issue: 86
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/86-triage-skill
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
+milestone: define
 active_agent: main
-next_step: "Hand off to compass-labs:define to frame the problem and propose a tier"
+next_step: "Hand off to compass-labs:design"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Define complete — full tier, REQ-001–025 and REQ-028–030 live, REQ-027 deferred to #88; approved under the user's delegation.
 - **2026-11-14**: Anchor update agreed (extend Scope: "backlog triage" in Supporting skills).
 - **2026-11-14**: REQ-027 (scheduled runs close covered-by-PR issues themselves) deferred to #88.
 - **2026-11-14**: Framing answered by the orchestrator (delegated): full tier; scheduled run is propose-only (one report issue per run), actions only through an interactive, approved apply; local cron with a TZ guard, schedule as install parameters; grep-level checks unattended; duplicates, clusters and dependencies; anchor-less repos skip the mapping; anchor Scope gains "backlog triage".
@@ -86,3 +87,12 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 - `triage` label: created by the interactive installer and by an interactive apply when missing. A scheduled run never creates labels; it publishes without the label and says so.
 - An interactive stock-take publishes no report issue by default; it applies directly on confirmation.
 - Appetite: one session, about two days for Implement.
+
+### 2026-11-14 — compass-labs:define — note: define/ ready for the Define gate (full tier)
+- NEED-01 to NEED-04 and OUT-01 to OUT-05. REQ-001 to REQ-025 and REQ-028 to REQ-030 live; REQ-026 struck (never); REQ-027 deferred to #88. New REQ-029/030 cover the `triage` label. No open questions remain.
+
+### 2026-11-14 — main — milestone: Define complete
+- Approved by the orchestrator under the user's delegation ("Continue all the way until close."). a3 check: README's anchor holds the agreed Scope text.
+- Frozen: `define/`.
+
+## Phase: Design
