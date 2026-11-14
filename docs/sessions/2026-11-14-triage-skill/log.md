@@ -96,3 +96,6 @@ next_step: "Hand off to compass-labs:design"
 - Frozen: `define/`.
 
 ## Phase: Design
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:design (classify and design the triage skill)
+- **Input:** design the frozen `define/` (REQ-001–025, REQ-028–030). The user delegated every gate to the orchestrator, so return needs_input questions to the orchestrator, which answers them.
