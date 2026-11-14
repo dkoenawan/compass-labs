@@ -160,6 +160,17 @@ assert_contains "$(cat "$log_dir/2026-11-21.log")" "no entry for #92" "the valid
 assert_eq "" "$(gh_writes)" "no partial report"
 cmp -s "$T/bad.md" "$log_dir/2026-11-21.report.md" || fail "the unpublished report is kept beside the log"
 
+# #93 (DES-004): a report whose header has the model's own (UTC) date is
+# published with the local run date in both the title and the header.
+reset_logs
+sed 's/^- Run date: 2026-11-21$/- Run date: 2026-11-20/' "$T/report.md" >"$T/utc-date.md"
+CLAUDE_STUB_REPORT="$T/utc-date.md" run_at "2026-11-20 12:00Z"
+assert_eq "0" "$RC" "a run whose report has the wrong date publishes: $(cat "$log_dir"/*.log 2>/dev/null)"
+assert_eq "Triage 2026-11-21" "$(cat "$GH_STUB_DIR/created-title")" "the title is the local run date"
+assert_contains "$(cat "$GH_STUB_DIR/created-body.md")" $'## Header\n\n- Run date: 2026-11-21\n' "the header's Run date is the local run date"
+assert_not_contains "$(cat "$GH_STUB_DIR/created-body.md")" "2026-11-20" "the model's date is gone"
+assert_contains "$(cat "$log_dir/2026-11-21.log")" "set the report header's Run date to 2026-11-21" "the run log says the date was set"
+
 # #93 (DES-002): a claude update that swaps the version behind the PATH
 # symlink doesn't break an installed schedule. Each versioned stub records
 # its version, then runs the stub claude.
