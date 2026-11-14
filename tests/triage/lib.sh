@@ -17,6 +17,7 @@ TRIAGE_STUBS="$REPO_ROOT/tests/triage/stubs"
 # CRONTAB_STUB_FILE, CRONTAB_STUB_LOG, XDG_STATE_HOME, TRIAGE_GH_BIN and
 # TRIAGE_CLAUDE_BIN, and prepends the stubs to PATH. Clears forced failures.
 triage_setup() {
+  export TMPDIR="${TMPDIR:-/tmp}"
   T="$(mktemp -d)"
   export T
   export GH_STUB_DIR="$T/gh" GH_STUB_LOG="$T/gh.log"
@@ -83,5 +84,5 @@ gh_calls() { cat "$GH_STUB_LOG" 2>/dev/null; }
 # gh_writes
 # Lines of the stub gh log that would change GitHub.
 gh_writes() {
-  grep -E '^(issue (create|close|comment|edit|reopen|delete|lock|transfer|pin)|label (create|edit|delete)|pr )' "$GH_STUB_LOG" 2>/dev/null || true
+  grep -E '^(issue (create|close|comment|edit|reopen|delete|lock|transfer|pin)|label (create|edit|delete)|pr (create|merge|close|comment|edit|review|ready|reopen))' "$GH_STUB_LOG" 2>/dev/null || true
 }
