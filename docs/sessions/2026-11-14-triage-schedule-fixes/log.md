@@ -4,7 +4,7 @@ type: feature
 issue: 93
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/93-triage-schedule-fixes
-phase: design
+phase: implement
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: define
+milestone: design
 active_agent: main
-next_step: "Design: classify and write design/ for REQ-001–REQ-006"
+next_step: "Implement: build DES-001–DES-005 with tests"
 ---
 # Session Log: Triage scheduled-run fixes (#93)
 
@@ -28,6 +28,7 @@ next_step: "Design: classify and write design/ for REQ-001–REQ-006"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Design complete — DES-001–DES-005 frozen, check-design.sh passed.
 - **2026-11-14**: D1 adjusted at the Design gate: portable bash `$PWD/` prefix instead of GNU-only `realpath -s`.
 - **2026-11-14**: D2 date in run-scheduled.sh's prompt preamble (stock-take.md unchanged, ADR-010 holds); D3 publish-report.sh sets the header Run date.
 - **2026-11-14**: Design classified plugin/tooling; scope is the triage scripts, tests and docs.
@@ -90,3 +91,10 @@ next_step: "Design: classify and write design/ for REQ-001–REQ-006"
 
 ### 2026-11-14 — compass-labs:design — note: design ready for the gate
 - `design/index.md` has DES-001 to DES-005, and all 6 live REQs are covered. Order: DES-001 → DES-002; DES-003, DES-004; DES-005 last. The Mermaid context view parses (mermaid-cli 12.0.0).
+
+### 2026-11-14 — main — milestone: ✅ Design complete
+- Approved by the orchestrator under the user's "run it till close" instruction, after the D1 adjust. check-design.sh passed. DES-001–DES-005 frozen.
+
+---
+
+## Phase: Implement
