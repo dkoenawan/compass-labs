@@ -4,7 +4,7 @@ type: feature
 issue: 93
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/93-triage-schedule-fixes
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
+milestone: implement
 active_agent: main
-next_step: "Implement: build DES-001–DES-005 with tests"
+next_step: "Test: verify REQ-001–REQ-006 in verification.md"
 ---
 # Session Log: Triage scheduled-run fixes (#93)
 
@@ -28,6 +28,7 @@ next_step: "Implement: build DES-001–DES-005 with tests"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Implement complete — DES-001–DES-005 built, 52/52 tests pass.
 - **2026-11-14**: Implement variations: none; DES-001–DES-005 built as designed.
 - **2026-11-14**: ✅ Design complete — DES-001–DES-005 frozen, check-design.sh passed.
 - **2026-11-14**: D1 adjusted at the Design gate: portable bash `$PWD/` prefix instead of GNU-only `realpath -s`.
@@ -116,3 +117,10 @@ next_step: "Implement: build DES-001–DES-005 with tests"
 
 ### 2026-11-14 — main — decision: Implement variations
 - No variations: every DES item built as designed, so none to accept or rework. The orchestrator's comment-nit rework is done (fdbb47b).
+
+### 2026-11-14 — main — milestone: ✅ Implement complete
+- Approved by the orchestrator under the user's "run it till close" instruction. DES-001–DES-005 built, no variations, 52/52 tests pass.
+
+---
+
+## Phase: Test
