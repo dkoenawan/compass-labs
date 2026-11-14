@@ -135,13 +135,13 @@ flowchart TB
 - **Interactive apply needs `AskUserQuestion`.** It accepts no other confirmation, so it can't be driven from a headless `claude -p` session. It stops before the first group and makes no change.
 - **Evidence comes from the checked-out branch.** A scheduled run reads whatever the working tree has checked out, which may be a feature branch rather than the default branch. The report header records the branch and HEAD it read.
 - **Credentials must be stored, not exported.** Cron doesn't see variables exported only in a shell profile, such as `GH_TOKEN`. A `claude` sign-in that expires between runs makes the run fail at the stock-take step (see #92 for the recommended `claude setup-token`).
-- **The installer pins a versioned `claude` binary.** It resolves `claude` with `realpath`, which on a self-updating install points into `~/.local/share/claude/versions/{version}`. An auto-update removes that file and runs start failing. Until #93 is fixed, set `TRIAGE_CLAUDE_BIN` in the cron lines to the stable `~/.local/bin/claude` symlink. Keep the marker as it is, so uninstall still works.
+- **A schedule installed before 2026-11-14 holds a versioned `claude` path.** Older installers resolved symlinks, so their cron lines point into `~/.local/share/claude/versions/{version}`, which an auto-update removes, and runs then fail at preflight naming `TRIAGE_CLAUDE_BIN`. The installer now keeps the path as found (for example the `~/.local/bin/claude` symlink). To pick that up, run `uninstall-schedule.sh <repo>`, then `install-schedule.sh <repo> --day … --time … --tz …` once with the same day, time and zone.
 - **A daylight-saving gap skips a week.** A local time that doesn't exist on a spring-forward day doesn't run that week. The installer warns about it.
 - **Large reports aren't published.** If many long issues push the report past 65,536 characters, the run logs the failure and publishes nothing (#90).
-- **The header's run date is the model's own.** The title uses the run's local date, but the date in the header comes from the model's clock and can differ (#91).
 - **Reports from another account aren't recognised.** If the scheduled run and the apply use different `gh` accounts, the apply refuses `apply #N`, and the next scheduled run won't supersede that report.
-- **Open work**: #88 (scheduled runs closing issues covered by a merged PR without an apply), #89 (plugin/tooling Implement guidance), #90, #91, #92, #93.
+- **Open work**: #88 (scheduled runs closing issues covered by a merged PR without an apply), #89 (plugin/tooling Implement guidance), #90, #92.
 
 ## Changelog
 
 - 2026-11-14: Initial documentation.
+- 2026-11-14: The installer keeps symlinked binary paths unresolved, and a scheduled report's header Run date is the run's local date (#91, #93).

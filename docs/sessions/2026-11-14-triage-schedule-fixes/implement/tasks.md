@@ -1,7 +1,7 @@
 ---
 issue: 93
 branch: feat/93-triage-schedule-fixes
-status: in-progress
+status: complete
 test_command: bash tests/run.sh
 last_skill_commit: null
 retry_counts:
@@ -20,4 +20,4 @@ Each task names the `DES-*` item it implements. An item's last task carries its 
 - [x] Add the version-swap case to `tests/triage/run_scheduled_test.sh`: install with `claude` a symlink to a `versions/1.0.0` stub, delete 1.0.0, point the symlink at `versions/1.0.1`, run the installed line's environment and arguments [DES-002] (depends on: 1) — check: the day's log has `step preflight: ok`, and the recorded version is 1.0.1
 - [x] Add the local run date line to `run-scheduled.sh`'s prompt preamble, with its case in `tests/triage/run_scheduled_test.sh` [DES-003] — check: with `sat 01:00 Pacific/Auckland` and `TRIAGE_NOW="2026-11-20 12:00Z"`, `$CLAUDE_STUB_LOG.prompt` contains `2026-11-21`, and its tail after the preamble is byte-identical to `stock-take.md`
 - [x] Make `publish-report.sh` set the `## Header` section's `- Run date:` line to `<date>` (adding one if missing) while building the body, print a line when it changes it, document it in the usage comment, with cases in `tests/triage/publish_report_test.sh` and `tests/triage/run_scheduled_test.sh` [DES-004] — check: (a) a report whose header says `- Run date: 2026-11-20`, published with `2026-11-21`, gives a created body whose header says `- Run date: 2026-11-21` with the rest unchanged, and a header with no Run date line gets one; (b) end to end in `run_scheduled_test.sh` the created issue's title is `Triage 2026-11-21` and its body says `- Run date: 2026-11-21`
-- [ ] Update the triage docs (overview, reference, `TriageSchedule`, `TriageScheduledRun`, `TriageReportPublisher`) for the unresolved paths, the prompt date and the header date, drop #91 and #93 as open work, add the reinstall gotcha, with assertions in `tests/triage/docs_test.sh` [DES-005] (depends on: 1, 2, 3, 4) — check: none of the three named docs lists #91 or #93 as an open limitation or open work, the overview names `uninstall-schedule.sh` then `install-schedule.sh` for an older schedule, and `bash tests/run.sh` passes
+- [x] Update the triage docs (overview, reference, `TriageSchedule`, `TriageScheduledRun`, `TriageReportPublisher`) for the unresolved paths, the prompt date and the header date, drop #91 and #93 as open work, add the reinstall gotcha, with assertions in `tests/triage/docs_test.sh` [DES-005] (depends on: 1, 2, 3, 4) — check: none of the three named docs lists #91 or #93 as an open limitation or open work, the overview names `uninstall-schedule.sh` then `install-schedule.sh` for an older schedule, and `bash tests/run.sh` passes

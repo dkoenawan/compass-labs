@@ -23,6 +23,7 @@ Validates a stock-take report against its snapshot and publishes it as one `Tria
 - [ ] If `Triage {date}` by the authenticated user already exists in any state, it prints "already published" and creates nothing. One by another author doesn't block.
 - [ ] Without the `triage` label it publishes with no `--label`, makes no `label` call, and adds a note saying the label is missing.
 - [ ] It never calls `issue edit`, `issue comment` or `label create`. A failed create closes nothing, and a failed superseded close exits 3.
+- [ ] The published body's `## Header` `- Run date:` line is `<date>`, the title's date: a different date is replaced and a missing line is added, and nothing outside the header changes.
 
 ## Proof
 

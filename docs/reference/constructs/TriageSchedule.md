@@ -24,6 +24,7 @@ Installs and uninstalls a repository's weekly triage schedule in the user's cron
 - [ ] Install creates the `triage` label when it's missing, and not when it exists.
 - [ ] A local time in a daylight-saving gap is warned about. A bad day, time or zone, an unauthenticated `gh`, or a path holding `%`, a single quote or a newline is refused.
 - [ ] Install prints the next local run time, the run-log directory and the uninstall command.
+- [ ] The cron lines hold the `claude` and `gh` paths absolute but not symlink-resolved: a PATH symlink to a versioned binary is written as the symlink, and a relative `TRIAGE_*_BIN` override is prefixed with the current directory.
 
 ## Proof
 
@@ -54,4 +55,4 @@ cron line: {m} {h} * * {w} TRIAGE_CLAUDE_BIN='…' TRIAGE_GH_BIN='…' /bin/bash
 ## Key Decisions
 
 - Local time is mapped to UTC slots with a guard in the runner, because Debian and Ubuntu cron ignore `CRON_TZ`. See the [triage overview](../../explanation/triage/overview.md#internal-architecture).
-- `claude` is resolved with `realpath`, which pins a versioned binary that an auto-update removes (#93).
+- The binary paths are made absolute with a `$PWD/` prefix, not `realpath`, so a symlink such as `~/.local/bin/claude` is kept and a self-update that repoints it doesn't break the schedule (#93). The plain-bash prefix was chosen over `realpath -s`, which macOS and BSD lack.
