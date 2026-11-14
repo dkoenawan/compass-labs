@@ -15,7 +15,7 @@ status: active
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
 milestone: implement
 active_agent: main
-next_step: "Finish Test: VER-016 rerun, VER-009 and VER-028 interactive, VER-020/023 on simulation"
+next_step: "Test gate"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -216,3 +216,10 @@ next_step: "Finish Test: VER-016 rerun, VER-009 and VER-028 interactive, VER-020
 
 ### 2026-11-09 — main — handoff: orchestrator → compass-labs:test (finish verification.md)
 - **Input:** Record VER-009 and VER-028 as pass from the note above; rerun VER-016 (TODO-body agent run); rewrite VER-020 and VER-023 as pass on pre-merge evidence per the 2026-11-09 decision, each stating its limit; VER-019 stays pending until Deploy pushes the bump; set check-traceability.sh to exit 0.
+- **Output:** done; verification.md (check-traceability.sh exit 0; tests/run.sh 42 passed)
+
+### 2026-11-09 — compass-labs:test — attempt: VER-016 rerun; TODO-body skill blocks Deploy before any step
+- Rehearsal clone of feat/30-deploy-phase-depth at f4ae8ac (scratchpad/ver016), local bare origin, stub gh, fixture commit 53cd448 listing skills/todo-skill (body TODO) in marketplace.json. `claude -p --agent compass-labs:deploy` returned blocked naming ./skills/todo-skill; gh stub log empty, no bump, no commit, no push. The agent's release.md write was refused as a sensitive-file edit non-interactively; REQ-017's criterion doesn't depend on it.
+
+### 2026-11-09 — compass-labs:test — note: Verification ready for the Test gate
+- VER-009 and VER-028 pass on the interactive runs (artifacts re-checked read-only). VER-016 pass on the rerun. VER-020 and VER-023 pass on pre-merge evidence per the 2026-11-09 decision, each stating its limit, with the real tag/release to be checked after PR #77 merges and recorded at Close. VER-019 stays pending until Deploy pushes the bump. check-traceability.sh exit 0; tests/run.sh 42 passed, 0 failed.
