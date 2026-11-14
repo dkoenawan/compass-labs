@@ -10,7 +10,7 @@ last_verified: null
 
 # TriageScheduledRun
 
-> Origin: #86
+> Origin: #86 · #93
 
 ## Does
 
@@ -56,3 +56,4 @@ exit 0 ok, wrong slot, or lock held · 1 failure (logged) · 2 bad arguments
 ## Key Decisions
 
 - [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md): read-only headless model, `--restricted` isolation, scripts own every write.
+- The local run date reaches the model as one line of the script's preamble, not as a placeholder in `stock-take.md`, so the procedure is still sent unchanged and the interactive stock-take keeps the user's own date.

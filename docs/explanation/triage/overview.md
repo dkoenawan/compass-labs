@@ -7,7 +7,7 @@ source_path: skills/triage
 # Triage (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [modes, report, schedule and limits](../../reference/triage/stock-take-and-schedule.md) | → Decision: [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md) | → Usage: [README, Backlog Triage](../../../README.md#backlog-triage)
-> Origin: #86
+> Origin: #86 · #93
 
 ## What Is Triage?
 
@@ -21,15 +21,15 @@ Every Feature session defers a handful of follow-ups to new issues, so the backl
 
 ### Who it's for
 
-- **The compass-labs maintainer.** A report is waiting every week without them starting it, and they review and confirm each group of changes before anything on GitHub changes.
+- **The compass-labs maintainer.** A report is waiting every week without them starting it, and keeps arriving after `claude` or `gh` updates itself. They review and confirm each group of changes before anything on GitHub changes.
 - **Anyone reading an open issue**, including the orchestrator framing a new session. After an apply, every open issue carries a `**Triage (YYYY-MM-DD):**` comment that says how it maps to the anchor and what it duplicates, belongs with or is blocked by.
 - **Maintainers of other repositories using compass-labs.** They install the schedule at their own local day, time and time zone. A repository without a project anchor still gets a full stock-take, without the anchor mapping and with a recommendation to create one.
 
 ## How It Works
 
-The maintainer installs the schedule once, for example `install --day sat --time 01:00 --tz Pacific/Auckland`. The installer checks `gh` is signed in, refuses if the repository already has a schedule, and creates the `triage` label. Cron runs in UTC and can't follow a time zone, so the installer works out every UTC slot that local time falls on across a year of daylight-saving changes. It writes one marked crontab line for each, two for Auckland. Each line records the absolute paths of `claude` and `gh`, because cron's `PATH` is minimal.
+The maintainer installs the schedule once, for example `install --day sat --time 01:00 --tz Pacific/Auckland`. The installer checks `gh` is signed in, refuses if the repository already has a schedule, and creates the `triage` label. Cron runs in UTC and can't follow a time zone, so the installer works out every UTC slot that local time falls on across a year of daylight-saving changes. It writes one marked crontab line for each, two for Auckland. Each line records the absolute paths of `claude` and `gh`, because cron's `PATH` is minimal. They are kept as found, symlinks included, so a self-update that repoints `~/.local/bin/claude` doesn't break the schedule.
 
-When a line fires, `run-scheduled.sh` first checks the local weekday and time in the installed zone and quietly exits if this slot isn't the right one. Otherwise it takes a lock, logs to a per-repository folder under `~/.local/state`, outside the repository, and checks its binaries and `gh auth status`. `gather.sh` then takes a read-only snapshot into a temporary folder: open issues with comments, open reports, recent merged PRs with their changed files, the README's anchor and some metadata. A headless `claude -p` follows the stock-take procedure over the snapshot and the working tree. It can use only Read, Grep and Glob, loads no settings, plugins, hooks or MCP servers, and prints the report. `publish-report.sh` checks that the report covers every snapshot issue exactly once in the fixed format. If it does, the script creates the report issue and closes any earlier report that was never applied, as superseded. If anything fails, the log says why, nothing is published, and an invalid report is kept beside the log for inspection.
+When a line fires, `run-scheduled.sh` first checks the local weekday and time in the installed zone and quietly exits if this slot isn't the right one. Otherwise it takes a lock, logs to a per-repository folder under `~/.local/state`, outside the repository, and checks its binaries and `gh auth status`. `gather.sh` then takes a read-only snapshot into a temporary folder: open issues with comments, open reports, recent merged PRs with their changed files, the README's anchor and some metadata. A headless `claude -p` follows the stock-take procedure, after a short preamble naming the local run date, over the snapshot and the working tree. It can use only Read, Grep and Glob, loads no settings, plugins, hooks or MCP servers, and prints the report. `publish-report.sh` checks that the report covers every snapshot issue exactly once in the fixed format. If it does, the script sets the header's Run date to the title's date, creates the report issue and closes any earlier report that was never applied, as superseded. If anything fails, the log says why, nothing is published, and an invalid report is kept beside the log for inspection.
 
 The maintainer reads the report and runs `apply #N` in their own Claude Code session. The apply re-reads the report and flags every issue that changed since it was published, re-checking those before their group comes up. It then asks once per category group. A yes runs that group's `gh` actions (close, fold a cluster into its main issue, retitle, comment); a no leaves those issues untouched. At the end, each issue still open gets its triage comment, and the report is closed with the list of groups applied and declined, so the next scheduled run doesn't supersede it. The same procedure also runs interactively with no report at all: a bare `/compass-labs:triage` shows the proposed actions and changes nothing, and `apply` then carries them out.
 
@@ -116,7 +116,9 @@ flowchart TB
 
 **Validate before any write.** The report format's headings are the exact strings `publish-report.sh` checks. A report that misses an issue, adds one, or breaks the structure is never published, so there is no partial report.
 
-**One procedure for every mode.** `stock-take.md` is written to work both as the skill's reference and, unchanged, as the headless prompt, so interactive and scheduled stock-takes can't drift apart.
+**One procedure for every mode.** `stock-take.md` is written to work both as the skill's reference and, unchanged, as the headless prompt, so interactive and scheduled stock-takes can't drift apart. What only a scheduled run knows, such as its local run date, goes in a short script preamble before the procedure, never into `stock-take.md` itself.
+
+**Scripts own what must be exact.** The report's date must match its title, so `publish-report.sh` sets the header's `- Run date:` line from the same date argument it builds the title from, rather than trusting the model's clock. It corrects a wrong date instead of refusing the report, so a date slip never costs that week's report.
 
 **Time zones by mapping plus a guard.** The installer writes every UTC slot the local time can fall on, and the runner checks the local day and time. This handles any zone, including half-hour offsets, with at most two wake-ups a week.
 

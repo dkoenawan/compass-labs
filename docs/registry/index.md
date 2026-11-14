@@ -7,7 +7,7 @@ stubs: 0
 
 # System Model — Construct Registry
 
-> Origin: #22 · #23 · #28 · #30 · #37 · #86
+> Origin: #22 · #23 · #28 · #30 · #37 · #86 · #93
 
 > Before building anything: search this index.
 > Column "Does" is the capability description — search it before creating a new construct.
@@ -30,9 +30,9 @@ stubs: 0
 | [TriageSkill](../reference/constructs/TriageSkill.md) | Component | Backlog triage skill: an interactive stock-take that changes nothing, an apply that acts one `AskUserQuestion`-confirmed category group at a time, and install/uninstall of the weekly schedule | Shared | `skills/triage/SKILL.md` | built |
 | [StockTakeProcedure](../reference/constructs/StockTakeProcedure.md) | Component | Gives every open issue one of six categories with code or merged-PR evidence, anchor lines, clusters, blocked-by pairs and an action, in a fixed report format; treats issue text as data; also the headless prompt | Shared | `skills/triage/reference/stock-take.md` | built |
 | [TriageSnapshot](../reference/constructs/TriageSnapshot.md) | Utility | Read-only snapshot of open issues (reports removed), open reports, merged PRs, the README anchor and meta; with `--report N`, the issues changed since report N | Shared | `skills/triage/scripts/gather.sh` | built |
-| [TriageReportPublisher](../reference/constructs/TriageReportPublisher.md) | Utility | Validates a stock-take report against its snapshot, then creates one `Triage YYYY-MM-DD` issue and closes superseded unapplied reports; the only GitHub writer in a scheduled run; never creates a label | Shared | `skills/triage/scripts/publish-report.sh` | built |
-| [TriageScheduledRun](../reference/constructs/TriageScheduledRun.md) | Utility | Cron entry point: guards on local day and time, locks, logs outside the repo, preflights, runs `claude -p` with Read/Grep/Glob only under `--restricted`, and hands the report to the publisher | Shared | `skills/triage/scripts/run-scheduled.sh` | built |
-| [TriageSchedule](../reference/constructs/TriageSchedule.md) | Utility | Installs one marked crontab line per UTC slot a local day/time/zone maps to over a year, refusing a second schedule; uninstall removes only that repo's lines | Shared | `skills/triage/scripts/install-schedule.sh` | built |
+| [TriageReportPublisher](../reference/constructs/TriageReportPublisher.md) | Utility | Validates a stock-take report against its snapshot, then creates one `Triage YYYY-MM-DD` issue, its header Run date set to the title's date, and closes superseded unapplied reports; the only GitHub writer in a scheduled run; never creates a label | Shared | `skills/triage/scripts/publish-report.sh` | built |
+| [TriageScheduledRun](../reference/constructs/TriageScheduledRun.md) | Utility | Cron entry point: guards on local day and time, locks, logs outside the repo, preflights, runs `claude -p` with Read/Grep/Glob only under `--restricted` and the local run date in the prompt, and hands the report to the publisher | Shared | `skills/triage/scripts/run-scheduled.sh` | built |
+| [TriageSchedule](../reference/constructs/TriageSchedule.md) | Utility | Installs one marked crontab line per UTC slot a local day/time/zone maps to over a year, with absolute but symlink-unresolved `claude`/`gh` paths, refusing a second schedule; uninstall removes only that repo's lines | Shared | `skills/triage/scripts/install-schedule.sh` | built |
 | [TriageLabel](../reference/constructs/TriageLabel.md) | Utility | Creates the `triage` label if missing; called by install and apply, never by a scheduled run | Shared | `skills/triage/scripts/ensure-label.sh` | built |
 
 ## Feature Cross-Reference

@@ -10,7 +10,7 @@ last_verified: null
 
 # TriageSchedule
 
-> Origin: #86
+> Origin: #86 · #93
 
 ## Does
 

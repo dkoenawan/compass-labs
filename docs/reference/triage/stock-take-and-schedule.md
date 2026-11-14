@@ -1,7 +1,7 @@
 # Triage: modes, the stock-take report, the scheduled run and its limits
 
 > → Concepts: [Triage overview](../../explanation/triage/overview.md) · → Decision: [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md) · → Usage: [README, Backlog Triage](../../../README.md#backlog-triage)
-> Origin: #86
+> Origin: #86 · #93
 
 The skill is [`skills/triage/SKILL.md`](../../../skills/triage/SKILL.md), invoked as `/compass-labs:triage`. Its one stock-take procedure is [`skills/triage/reference/stock-take.md`](../../../skills/triage/reference/stock-take.md), which the interactive modes follow and the scheduled run sends unchanged as its prompt. This page lists the facts other docs, tools and sessions rely on.
 

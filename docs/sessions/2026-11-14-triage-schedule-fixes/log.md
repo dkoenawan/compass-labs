@@ -5,7 +5,7 @@ issue: 93
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/93-triage-schedule-fixes
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
+milestone: close
 active_agent: main
-next_step: "Close: fold the session back into the as-built docs"
+next_step: "none: session closed; user merges PR 94"
 ---
 # Session Log: Triage scheduled-run fixes (#93)
 
@@ -28,6 +28,7 @@ next_step: "Close: fold the session back into the as-built docs"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Session closed — #93 and #91 fixed in v2.4.1 (PR 94, merge is the user's).
 - **2026-11-14**: ✅ Deploy complete — v2.4.1 (PATCH), PR 94 ready, release-tag check passed; merge is the user's.
 - **2026-11-14**: Deploy tier short (routine, declared steps only).
 - **2026-11-14**: ✅ Test complete — VER-001–VER-007 pass, traceability gate passed.
@@ -158,3 +159,15 @@ next_step: "Close: fold the session back into the as-built docs"
 ---
 
 ## Phase: Close
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:close (fold back into docs)
+- **Input:** fold the session into the as-built docs (one Origin line per doc). Note Implement already updated docs/explanation/triage/overview.md, docs/reference/triage/stock-take-and-schedule.md and the three Triage* construct files as part of DES-005.
+- **Output:** done; overview.md, stock-take-and-schedule.md, TriageSchedule.md, TriageScheduledRun.md, TriageReportPublisher.md, docs/registry/index.md
+
+### 2026-11-14 — compass-labs:close — note: fold-back ready — triage overview, reference, three constructs and registry
+- Implement's doc updates checked against implement/as-built.md (no variations): already current. Added Origin #93 to the existing Origin line of the overview, the schedule reference, TriageSchedule, TriageScheduledRun, TriageReportPublisher and docs/registry/index.md.
+- D1 already in TriageSchedule's Key Decisions; D2 added to TriageScheduledRun's; D3 added to TriageReportPublisher's (and its Does) and to the overview's Internal Architecture. No new ADR.
+- Constructs updated, status unchanged (built); construct_count stays 18. Not changed: ADR-010's "sent unchanged" wording (still broadly true); docs/index.html was already stale (#74). `bash tests/run.sh`: 52 passed.
+
+### 2026-11-14 — main — milestone: ✅ Session closed
+- Approved by the orchestrator under the user's "run it till close" instruction. #93 and #91 fixed in v2.4.1 on PR 94, which waits for the user's merge.
