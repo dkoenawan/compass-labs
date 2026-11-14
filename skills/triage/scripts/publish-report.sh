@@ -22,7 +22,7 @@
 #      becomes "- Run date: <date>", the date the title uses; a header with
 #      no such line gets one as its first item. Nothing outside the header
 #      changes, and validation (step 1) runs on the report as given. When
-#      the date is changed, one line on stdout says so (#93). If the triage
+#      the date is changed, one line on stdout says so (#91). If the triage
 #      label is missing: prepend a note saying so (REQ-029).
 #   4. Create the issue in one call, labelled triage only if the label
 #      exists. This script never creates a label (REQ-028, REQ-029).

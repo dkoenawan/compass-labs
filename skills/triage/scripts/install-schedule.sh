@@ -21,8 +21,9 @@
 # TRIAGE_GH_BIN to the binaries found now, because cron's PATH is minimal. The
 # paths are absolute but not symlink-resolved: a PATH symlink such as
 # ~/.local/bin/claude stays as written, so a later update that repoints it
-# doesn't break the schedule (#93). Each line ends with the marker "# compass-labs:triage: <repo>", which
-# uninstall-schedule.sh removes by. Every other crontab line is left as is.
+# doesn't break the schedule (#93). Each line ends with the marker
+# "# compass-labs:triage: <repo>", which uninstall-schedule.sh removes by.
+# Every other crontab line is left as is.
 #
 # Before writing: validates the arguments, checks `gh auth status`, refuses a
 # second schedule for the repo, and creates the triage label (REQ-030).
@@ -51,7 +52,7 @@ while [[ $# -gt 0 ]]; do
     --day) DAY="${2:-}"; shift 2 || shift $# ;;
     --time) TIME="${2:-}"; shift 2 || shift $# ;;
     --tz) ZONE="${2:-}"; shift 2 || shift $# ;;
-    -h|--help) sed -n '2,29p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     -*) die "unknown option '$1'" ;;
     *) [[ -z "$REPO" ]] || die "unexpected argument '$1'"; REPO="$1"; shift ;;
   esac
