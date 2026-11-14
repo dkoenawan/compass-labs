@@ -4,7 +4,7 @@ type: feature
 issue: 93
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/93-triage-schedule-fixes
-phase: define
+phase: design
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: none
+milestone: define
 active_agent: main
-next_step: "Define: frame #93 and #91 and write requirements"
+next_step: "Design: classify and write design/ for REQ-001–REQ-006"
 ---
 # Session Log: Triage scheduled-run fixes (#93)
 
@@ -28,6 +28,7 @@ next_step: "Define: frame #93 and #91 and write requirements"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Define complete — short tier, REQ-001–REQ-006 frozen.
 - **2026-11-14**: REQ-001–REQ-006 agreed: unresolved absolute binary paths (claude and gh), survive version removal, local run date into the prompt and enforced in the published header, docs updated with reinstall guidance.
 - **2026-11-14**: Define framed at short tier; anchor verdict aligns, no anchor update.
 - **2026-11-14**: User runs the session end to end to Close without stopping at each gate; merging the PR stays the user's call.
@@ -62,3 +63,10 @@ next_step: "Define: frame #93 and #91 and write requirements"
 
 ### 2026-11-14 — compass-labs:define — note: Define artifact ready for the gate
 - `gh issue view` couldn't be run (no shell available to the agent). Issue evidence comes from the handoff, the code and the triage docs that already describe #91 and #93.
+
+### 2026-11-14 — main — milestone: ✅ Define complete
+- Approved by the orchestrator under the user's "run it till close" instruction. Short tier, REQ-001–REQ-006 frozen.
+
+---
+
+## Phase: Design
