@@ -4,7 +4,7 @@ type: feature
 issue: 93
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/93-triage-schedule-fixes
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
+milestone: deploy
 active_agent: main
-next_step: "Deploy: release record per .claude/deploy.json"
+next_step: "Close: fold the session back into the as-built docs"
 ---
 # Session Log: Triage scheduled-run fixes (#93)
 
@@ -28,6 +28,8 @@ next_step: "Deploy: release record per .claude/deploy.json"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Deploy complete — v2.4.1 (PATCH), PR 94 ready, release-tag check passed; merge is the user's.
+- **2026-11-14**: Deploy tier short (routine, declared steps only).
 - **2026-11-14**: ✅ Test complete — VER-001–VER-007 pass, traceability gate passed.
 - **2026-11-14**: ✅ Implement complete — DES-001–DES-005 built, 52/52 tests pass.
 - **2026-11-14**: Implement variations: none; DES-001–DES-005 built as designed.
@@ -139,3 +141,20 @@ next_step: "Deploy: release record per .claude/deploy.json"
 ---
 
 ## Phase: Deploy
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:deploy (release record)
+- **Input:** run Deploy per .claude/deploy.json and write release.md. User wants the session run to Close without stopping.
+- **Output:** done; release.md, .claude-plugin/plugin.json (v2.4.1, f2d6c62); PR 94 marked ready
+
+### 2026-11-14 — compass-labs:deploy — note: Deploy ran the declared L2 steps, release.md ready for the gate
+- Declaration valid (`check-declaration.sh --plan`, `in_session`). Completeness passed: all 18 marketplace.json skills present and complete. L1 not needed (no deployable part in the delta list; pipeline unchanged). Routine L2 steps ran: `bump-version.sh patch` (2.4.0 → 2.4.1), commit f2d6c62 "chore(release): v2.4.1 — #93", push, `gh pr ready 94`. Merge waits for the user. `release-tag.sh --check` passed: would create `compass-labs--v2.4.1`. Proposed tier: short.
+
+### 2026-11-14 — main — decision: Deploy tier short
+- Proposed tier short confirmed by the orchestrator under the user's "run it till close" instruction: every step run is routine and declared.
+
+### 2026-11-14 — main — milestone: ✅ Deploy complete
+- Completeness section lists no gaps; check-release.sh passed at the short tier. v2.4.1 is ready on PR 94; the merge is the user's.
+
+---
+
+## Phase: Close
