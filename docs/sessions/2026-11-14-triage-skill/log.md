@@ -4,7 +4,7 @@ type: feature
 issue: 86
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/86-triage-skill
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
+milestone: deploy
 active_agent: main
-next_step: "Hand off to compass-labs:deploy"
+next_step: "Install the maintainer schedule, then hand off to compass-labs:close"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:deploy"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Deploy complete — v2.4.0 prepared (1918c84), PR #87 ready for review, tier short confirmed; merge left to the user.
 - **2026-11-14**: ✅ Test complete — 28/28 live REQs pass (check-traceability ok); VER-030 pending (interactive apply) alongside passing VER-017; approved under the user's delegation.
 - **2026-11-14**: Test findings deferred to #90 (report size limit), #91 (run date in header), #92 (recommend claude setup-token).
 - **2026-11-14**: ✅ Implement complete — DES-001–009 built, 52/52 tests pass; V1–V7 accepted under the user's delegation.
@@ -181,3 +182,15 @@ next_step: "Hand off to compass-labs:deploy"
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:deploy (release the triage skill)
 - **Input:** run the declared L1/L2 routine steps for this session (new skill → MINOR), propose the tier, write release.md. Never merge.
+- **Output:** done; release.md, .claude-plugin/plugin.json (1918c84)
+
+### 2026-11-14 — compass-labs:deploy — attempt: Release v2.4.0 prepared; PR #87 ready for review
+- Declaration valid, release in session. Completeness passed (18 skills listed, `./skills/triage` complete). L1 not needed. L2 steps 1–4 ran: MINOR bump 2.3.0 → 2.4.0, commit 1918c84, push, `gh pr ready 87`. Merge waits for the user. `release-tag.sh --check`: would create compass-labs--v2.4.0. Proposed tier short; check-release.sh ok.
+
+### 2026-11-14 — compass-labs:deploy — note: Claude sign-in expiry before the first scheduled triage run (#92)
+- This machine's claude sign-in expires between 2026-11-18 and 2026-11-21, before the first scheduled run on Saturday 2026-11-21 01:00 Pacific/Auckland. Renew it (`claude setup-token`) before then.
+
+### 2026-11-14 — main — milestone: Deploy complete
+- Tier short confirmed by the orchestrator under the user's delegation. Completeness: no gaps. `check-release.sh`: ok. Frozen: `release.md`.
+
+## Phase: Close
