@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Stub claude for tests/triage. Never runs a model.
+# Logs one argv element per line to $CLAUDE_STUB_LOG, then a line "--cwd <dir>",
+# and saves stdin (the prompt) to $CLAUDE_STUB_LOG.prompt.
+# Prints $CLAUDE_STUB_REPORT's contents on stdout (the report).
+# CLAUDE_STUB_EXIT, if set, is the exit code (default 0).
+set -uo pipefail
+: "${CLAUDE_STUB_LOG:?CLAUDE_STUB_LOG not set}"
+printf '%s\n' "$@" > "$CLAUDE_STUB_LOG"
+echo "--cwd $(pwd)" >> "$CLAUDE_STUB_LOG"
+cat > "$CLAUDE_STUB_LOG.prompt"
+[[ -n "${CLAUDE_STUB_REPORT:-}" && -f "$CLAUDE_STUB_REPORT" ]] && cat "$CLAUDE_STUB_REPORT"
+exit "${CLAUDE_STUB_EXIT:-0}"
