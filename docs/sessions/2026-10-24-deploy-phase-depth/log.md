@@ -4,7 +4,7 @@ type: feature
 issue: 30
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/30-deploy-phase-depth
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Test gate"
+next_step: "Deploy: L2 release of 2.3.0"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "Test gate"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Test complete — VER-001 to VER-031, 30 pass, VER-019 pending the Deploy bump; check-traceability.sh exit 0; tests/run.sh 42 passed.
 - **2026-11-09**: Verification draft approved; REQ-020 and REQ-024 pass at Test on the merge simulation and PR-job timing, with the real merge result checked in Close.
 - **2026-11-03**: ✅ Implement complete — 22 tasks, DES-001 to DES-016 built (11 as designed, 5 with accepted variations); tests/run.sh 42 passed.
 - **2026-11-03**: Implement variations V1–V5 accepted as built (fixture order, release-tag.sh safety, SSH alias, two tier lines, default-branch job condition).
@@ -223,3 +224,8 @@ next_step: "Test gate"
 
 ### 2026-11-09 — compass-labs:test — note: Verification ready for the Test gate
 - VER-009 and VER-028 pass on the interactive runs (artifacts re-checked read-only). VER-016 pass on the rerun. VER-020 and VER-023 pass on pre-merge evidence per the 2026-11-09 decision, each stating its limit, with the real tag/release to be checked after PR #77 merges and recorded at Close. VER-019 stays pending until Deploy pushes the bump. check-traceability.sh exit 0; tests/run.sh 42 passed, 0 failed.
+
+### 2026-11-14 — main — milestone: ✅ Test complete
+- User approved the Test gate ("yeap continue and close off"). check-traceability.sh exit 0: every REQ-* has a passing VER-*. 30 of 31 VER rows pass; VER-019 stays pending until Deploy pushes the version bump. REQ-020 and REQ-024 pass on pre-merge evidence, real tag/release checked at Close.
+
+## Phase: Deploy
