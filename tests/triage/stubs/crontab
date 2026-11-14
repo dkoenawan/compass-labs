@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Stub crontab for tests/triage, backed by $CRONTAB_STUB_FILE. Never touches
+# the real crontab. Refuses (exit 99) unless the file is under $TMPDIR, so a
+# test can't write anywhere else.
+#   crontab -l    print the file (exit 1 "no crontab" if it doesn't exist)
+#   crontab -     replace the file with stdin
+#   crontab FILE  replace the file with FILE
+#   crontab -r    remove the file
+set -uo pipefail
+: "${CRONTAB_STUB_FILE:?CRONTAB_STUB_FILE not set}"
+: "${TMPDIR:?TMPDIR not set}"
+tmp_real="$(cd "$TMPDIR" && pwd -P)"
+file_dir="$(cd "$(dirname "$CRONTAB_STUB_FILE")" 2>/dev/null && pwd -P)" || {
+  echo "stub crontab: directory of $CRONTAB_STUB_FILE does not exist" >&2; exit 99; }
+case "$file_dir/" in
+  "$tmp_real"/*) ;;
+  *) echo "stub crontab: refusing to write outside TMPDIR ($CRONTAB_STUB_FILE)" >&2; exit 99 ;;
+esac
+[[ -n "${CRONTAB_STUB_LOG:-}" ]] && echo "$*" >> "$CRONTAB_STUB_LOG"
+case "${1:-}" in
+  -l)
+    if [[ -f "$CRONTAB_STUB_FILE" ]]; then cat "$CRONTAB_STUB_FILE"; else echo "no crontab for stub" >&2; exit 1; fi ;;
+  -) cat > "$CRONTAB_STUB_FILE" ;;
+  -r) rm -f "$CRONTAB_STUB_FILE" ;;
+  "") echo "stub crontab: no argument" >&2; exit 1 ;;
+  *) cp "$1" "$CRONTAB_STUB_FILE" ;;
+esac
+exit 0

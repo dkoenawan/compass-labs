@@ -1,11 +1,11 @@
 ---
 last_updated: 2026-11-14
-adr_count: 9
+adr_count: 10
 ---
 
 # Architecture Decision Record Index
 
-> Origin: #22 · #27 · #28 · #30 · #37
+> Origin: #22 · #27 · #28 · #30 · #37 · #86
 
 > Each row is one significant decision. Click the title to read the full ADR.
 > Status: Proposed | Accepted | Deprecated | Superseded
@@ -21,3 +21,4 @@ adr_count: 9
 | [007](007-deploy-declaration.md) | 2026-11-03 | Accepted | A repo declares deploy in `.claude/deploy.json` (L1 setup per part, L2 steps, step kinds, confirmation, rollback, release mode), offered at project initiation and at Deploy for a part it doesn't cover | deploy, session, init, DeployStandard, DeclarationCheck |
 | [008](008-deploy-runs-declared-steps.md) | 2026-11-03 | Accepted | The Deploy agent runs the declared routine steps itself (refines ADR-002); scripts decide what's mechanical; the tier follows release risk; an optional starter GitHub Actions workflow is copied into the repo, compass-labs' pipeline being its first install | deploy, session, DeployStandard, DeclarationCheck, ReleaseRecordCheck, StarterInstaller, ReleaseTagStarter |
 | [009](009-merge-triggered-release-pipeline.md) | 2026-11-03 | Accepted | A merge into the default branch tags and publishes the release through a GitHub Actions workflow calling one script, with a pre-merge check; tags are never overwritten (relates to ADR-006) | deploy, ReleaseTagStarter |
+| [010](010-read-only-scheduled-triage-run.md) | 2026-11-14 | Accepted | An unattended triage run is a read-only headless model (Read, Grep, Glob) in a `--restricted`, plugin-free session; deterministic scripts take the snapshot and make every GitHub write | triage, StockTakeProcedure, TriageSnapshot, TriageReportPublisher, TriageScheduledRun |

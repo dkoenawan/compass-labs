@@ -29,6 +29,7 @@
         "./skills/requirements",
         "./skills/session",
         "./skills/task-executor",
+        "./skills/triage",
         "./skills/verification"
       ]
     }
