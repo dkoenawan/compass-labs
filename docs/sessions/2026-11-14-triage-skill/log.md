@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:design"
 
 ## Key decisions
 
+- **2026-11-14**: Design choices (delegated): plugin/tooling kind; scripts own all GitHub I/O and a read-only headless model writes the report; no plugin or project hooks in the headless run; TZ-mapped cron plus guard; run log outside the repo; interactive apply via `gh` after per-group confirmation; skill `triage`.
 - **2026-11-14**: ✅ Define complete — full tier, REQ-001–025 and REQ-028–030 live, REQ-027 deferred to #88; approved under the user's delegation.
 - **2026-11-14**: Anchor update agreed (extend Scope: "backlog triage" in Supporting skills).
 - **2026-11-14**: REQ-027 (scheduled runs close covered-by-PR issues themselves) deferred to #88.
@@ -99,3 +100,21 @@ next_step: "Hand off to compass-labs:design"
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:design (classify and design the triage skill)
 - **Input:** design the frozen `define/` (REQ-001–025, REQ-028–030). The user delegated every gate to the orchestrator, so return needs_input questions to the orchestrator, which answers them.
+- **Output:** needs_input; files_changed: none (classification, scope, D1–D8)
+
+### 2026-11-14 — compass-labs:design — note: prior knowledge read, classification and scope proposed
+- Read: define/, log.md, docs/registry (index, patterns), the doc-maintainer and task-executor scripts, tests/lib.sh and run.sh, marketplace.json, deploy.json, the anchor contract. Not read: any past session folder.
+- Proposed kind: plugin/tooling (follow-up #51). Scope: plugin/tooling, tests and GitHub integration in; infrastructure, process, frontend, backend, database and visual UI out.
+- Finding: both existing headless runners use `claude -p --dangerously-skip-permissions`, which REQ-010/012/025 rule out for triage; doc-maintainer logs inside the repo, which REQ-010 rules out.
+
+### 2026-11-14 — main — decision: classification, scope and D1–D8 (delegated)
+- Answered by the orchestrator under the user's delegation; every recommended option taken.
+- Classification plugin/tooling; scope checklist as proposed (version bump left to Deploy).
+- D1 (a): deterministic `gather.sh` and `publish-report.sh` do all GitHub I/O; the headless model is limited to Read, Grep and Glob and prints the report.
+- D2 (a): the headless run loads no plugin and no project settings or hooks; Implement confirms the flags.
+- D3 (a): installer maps local day/time to every UTC slot across the year; runner guard checks local weekday and HH:MM.
+- D4 (a): run log and lock under `${XDG_STATE_HOME:-~/.local/state}/compass-labs/triage/<repo-slug>/`.
+- D5 (a): interactive apply runs `gh` in the user's session after per-group confirmation, backed by `ensure-label.sh` and `gather.sh --report N`.
+- D6 (a): no reuse of task-executor's comment-on-issue.sh.
+- D7 (a): report issues identified by title pattern plus the authenticated author.
+- D8 (a): skill `triage` (`compass-labs:triage`), modes stock-take, apply, install, uninstall.
