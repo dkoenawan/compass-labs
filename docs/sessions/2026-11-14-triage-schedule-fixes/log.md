@@ -28,6 +28,9 @@ next_step: "Design: classify and write design/ for REQ-001–REQ-006"
 
 ## Key decisions
 
+- **2026-11-14**: D1 adjusted at the Design gate: portable bash `$PWD/` prefix instead of GNU-only `realpath -s`.
+- **2026-11-14**: D2 date in run-scheduled.sh's prompt preamble (stock-take.md unchanged, ADR-010 holds); D3 publish-report.sh sets the header Run date.
+- **2026-11-14**: Design classified plugin/tooling; scope is the triage scripts, tests and docs.
 - **2026-11-14**: ✅ Define complete — short tier, REQ-001–REQ-006 frozen.
 - **2026-11-14**: REQ-001–REQ-006 agreed: unresolved absolute binary paths (claude and gh), survive version removal, local run date into the prompt and enforced in the published header, docs updated with reinstall guidance.
 - **2026-11-14**: Define framed at short tier; anchor verdict aligns, no anchor update.
@@ -70,3 +73,20 @@ next_step: "Design: classify and write design/ for REQ-001–REQ-006"
 ---
 
 ## Phase: Design
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:design (design REQ-001–REQ-006)
+- **Input:** design the fix for the frozen REQ-001–REQ-006 (define/requirements.md). User wants the session run to Close without stopping; take sensible defaults instead of asking.
+- **Output:** done; design/index.md (first pass). Gate: adjust D1, since `realpath -s` is GNU-only; use a portable bash absolute-path prefix instead.
+- **Output (after adjust):** done; design/index.md
+
+### 2026-11-14 — compass-labs:design — decision: classified plugin/tooling, scope confirmed by default
+- Primary kind: Plugin/tooling (REQ-001–REQ-005 change triage scripts and tests, REQ-006 the docs). In-depth path: none yet, dkoenawan/compass-labs#51. Scope in: triage scripts and tests, docs. Out: frontend, backend, database, infrastructure (#92), process/workflow, visual UI, `stock-take.md`, other headless runners. Taken as the default under the user's run-to-Close instruction.
+
+### 2026-11-14 — compass-labs:design — decision: D2 and D3 defaults for the fix
+- D2: the local run date goes in `run-scheduled.sh`'s prompt preamble, so `stock-take.md` stays sent unchanged (ADR-010 rechecked). D3: `publish-report.sh` sets the header's `- Run date:` from its `<date>` argument. It doesn't rewrite the report in `run-scheduled.sh` or reject a mismatch. No new ADR, and no principle traded off.
+
+### 2026-11-14 — compass-labs:design — decision: D1 adjusted at the gate to a portable bash prefix
+- The orchestrator adjusted D1 at the Design gate. `resolve_bin` makes a relative path absolute with `[[ "$found" = /* ]] || found="$PWD/$found"`, with no `realpath` call and no symlink followed. `realpath -s` is rejected because it is GNU-only (macOS and BSD `realpath` have no `-s`) and the plugin is publicly distributed.
+
+### 2026-11-14 — compass-labs:design — note: design ready for the gate
+- `design/index.md` has DES-001 to DES-005, and all 6 live REQs are covered. Order: DES-001 → DES-002; DES-003, DES-004; DES-005 last. The Mermaid context view parses (mermaid-cli 12.0.0).
