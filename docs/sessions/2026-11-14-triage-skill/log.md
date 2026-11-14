@@ -38,3 +38,9 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 ### 2026-11-14 — main — note: session opened
 - Opened from the manual triage run of 2026-11-14 (47 → 37 open issues: 5 closed, 6 merged, 1 replacement opened as #85, 3 rewritten, every remaining issue commented). That run is the reference behaviour for this skill.
 - Branch `feat/86-triage-skill` created from `main`.
+
+### 2026-11-14 — main — note: draft pull request opened
+- https://github.com/dkoenawan/compass-labs/pull/87 (draft, `feat/86-triage-skill` → `main`).
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:define (frame problem, propose tier)
+- **Input:** frame the problem for #86 and propose a depth tier. Reference behaviour is the 2026-11-14 manual triage. The user wants it on a schedule: Saturdays 01:00 Pacific/Auckland.
