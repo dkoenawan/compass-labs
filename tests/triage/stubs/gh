@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Stub gh for tests/triage. Never touches the real GitHub.
+# Every call is appended (space-joined argv, one line) to $GH_STUB_LOG.
+# Fixture JSON is served from $GH_STUB_DIR:
+#   issues.json      issue list (open)       all-issues.json  issue list --state all
+#   issue-N.json     issue view N            prs.json         pr list
+#   labels.json      label list
+# Env:
+#   GH_STUB_LOGIN       login printed by `api user` (default: maint)
+#   GH_STUB_FAIL        comma list of keywords whose calls exit 1: auth, api,
+#                       issue-list, issue-view, issue-create, issue-close,
+#                       pr-list, label-list, label-create
+#   GH_STUB_NEW_NUMBER  number in the URL `issue create` prints (default: 500)
+# `issue create --body-file F --title T` copies F to $GH_STUB_DIR/created-body.md
+# and T to $GH_STUB_DIR/created-title.
+set -uo pipefail
+: "${GH_STUB_LOG:?GH_STUB_LOG not set}"
+: "${GH_STUB_DIR:?GH_STUB_DIR not set}"
+echo "$*" >> "$GH_STUB_LOG"
+
+fail_if() {
+  if [[ ",${GH_STUB_FAIL:-}," == *",$1,"* ]]; then
+    echo "stub gh: forced failure ($1)" >&2
+    exit 1
+  fi
+}
+serve() {
+  if [[ -f "$GH_STUB_DIR/$1" ]]; then cat "$GH_STUB_DIR/$1"; else echo "${2:-[]}"; fi
+}
+
+case "${1:-} ${2:-}" in
+  "auth status") fail_if auth; echo "Logged in to github.com (stub)" >&2 ;;
+  "api user") fail_if api; echo "${GH_STUB_LOGIN:-maint}" ;;
+  "issue list")
+    fail_if issue-list
+    if [[ " $* " == *" --state all "* && -f "$GH_STUB_DIR/all-issues.json" ]]; then
+      cat "$GH_STUB_DIR/all-issues.json"
+    else
+      serve issues.json
+    fi
+    ;;
+  "issue view")
+    fail_if issue-view
+    if [[ -f "$GH_STUB_DIR/issue-${3:-}.json" ]]; then
+      cat "$GH_STUB_DIR/issue-${3:-}.json"
+    else
+      echo "stub gh: issue ${3:-} not found" >&2; exit 1
+    fi
+    ;;
+  "issue create")
+    fail_if issue-create
+    shift 2
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --body-file) cp "$2" "$GH_STUB_DIR/created-body.md"; shift 2 ;;
+        --title) printf '%s' "$2" > "$GH_STUB_DIR/created-title"; shift 2 ;;
+        *) shift ;;
+      esac
+    done
+    echo "https://github.com/stub/repo/issues/${GH_STUB_NEW_NUMBER:-500}"
+    ;;
+  "issue close") fail_if issue-close ;;
+  "pr list") fail_if pr-list; serve prs.json ;;
+  "label list") fail_if label-list; serve labels.json ;;
+  "label create") fail_if label-create ;;
+  *) : ;;
+esac
+exit 0
