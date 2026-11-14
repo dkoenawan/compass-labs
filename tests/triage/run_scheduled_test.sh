@@ -155,6 +155,31 @@ assert_contains "$(cat "$log_dir/2026-11-21.log")" "no entry for #92" "the valid
 assert_eq "" "$(gh_writes)" "no partial report"
 cmp -s "$T/bad.md" "$log_dir/2026-11-21.report.md" || fail "the unpublished report is kept beside the log"
 
+# #93 (DES-002): a claude update that swaps the version behind the PATH
+# symlink doesn't break an installed schedule. Each versioned stub records
+# its version, then runs the stub claude.
+reset_logs
+mkdir -p "$T/pathbin"
+for v in 1.0.0 1.0.1; do
+  mkdir -p "$T/versions/$v"
+  printf '#!/usr/bin/env bash\necho %s >"$T/claude-version"\nexec "%s/claude" "$@"\n' "$v" "$TRIAGE_STUBS" >"$T/versions/$v/claude"
+  chmod +x "$T/versions/$v/claude"
+done
+ln -sfn "$T/versions/1.0.0/claude" "$T/pathbin/claude"
+env -u TRIAGE_CLAUDE_BIN PATH="$T/pathbin:$PATH" \
+  bash "$TRIAGE_SCRIPTS/install-schedule.sh" "$repo" "${SCHED[@]}" >/dev/null 2>&1 || fail "install for the version swap"
+line="$(grep -F "# compass-labs:triage: $repo" "$CRONTAB_STUB_FILE" | head -1)"
+assert_contains "$line" "TRIAGE_CLAUDE_BIN='$T/pathbin/claude'" "the installed line holds the PATH symlink"
+rm -rf "$T/versions/1.0.0"
+ln -sfn "$T/versions/1.0.1/claude" "$T/pathbin/claude"
+rm -f "$T/claude-version"
+cmd="$(sed -E 's/^([^ ]+ ){5}//' <<<"$line")"
+TRIAGE_NOW="2026-11-20 12:00Z" sh -c "$cmd" >/dev/null 2>&1
+assert_eq "0" "$?" "the installed line runs after the version swap: $(cat "$log_dir"/*.log 2>/dev/null)"
+grep -qE "step preflight: ok" "$log_dir/2026-11-21.log" || fail "preflight passes after the version swap"
+assert_eq "1.0.1" "$(cat "$T/claude-version" 2>/dev/null)" "the version the symlink now points to is the one run"
+bash "$TRIAGE_SCRIPTS/uninstall-schedule.sh" "$repo" >/dev/null
+
 # The script runs no gh write itself and no apply.
 code="$(grep -vE '^[[:space:]]*#' "$RUN")"
 assert_eq "auth status" "$(grep -oE '"\$GH_BIN" [a-z]+ [a-z]+' <<<"$code" | sed 's/"$GH_BIN" //' | sort -u)" \
