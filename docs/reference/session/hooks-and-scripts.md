@@ -1,7 +1,7 @@
 # Session hooks and scripts
 
-> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Workflow and artifacts](workflow-and-artifacts.md)
-> Origin: #22 · #23 · #27 · #28 · #37
+> → Concepts: [Session overview](../../explanation/session/overview.md) · → [Workflow and artifacts](workflow-and-artifacts.md) · → [Deploy scripts](../deploy/standard.md#scripts)
+> Origin: #22 · #23 · #27 · #28 · #30 · #37
 
 All hooks are registered in `hooks/hooks.json` and run as `bash $CLAUDE_PLUGIN_ROOT/hooks/<name>.sh`. Every hook needs `jq` (`default-branch.sh` and `list-sessions.sh` need only `git`), and every hook and script **fails open** when a dependency is missing, so the plugin never hard-blocks a repo that isn't fully set up. Paths under `docs/sessions/` are resolved against the project's git root.
 
@@ -84,7 +84,7 @@ For each `docs/sessions/*/log.md` (not `archive/`), it checks for an uncommitted
 
 ## Scripts
 
-All scripts are in `skills/session/scripts/`, called as `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/<name>`. None of them writes `log.md`.
+All scripts in this table are in `skills/session/scripts/`, called as `bash ${CLAUDE_PLUGIN_ROOT}/skills/session/scripts/<name>`. None of them writes `log.md`. The Deploy standard's own scripts (`check-declaration.sh`, `install-starter.sh`) are in `skills/deploy/scripts/` and listed in the [Deploy reference](../deploy/standard.md#scripts).
 
 | Script | Usage | Exit / output |
 |---|---|---|
@@ -92,6 +92,7 @@ All scripts are in `skills/session/scripts/`, called as `bash ${CLAUDE_PLUGIN_RO
 | `gh-milestone.sh` | `<issue> <from-phase\|none> <to-phase> <comment-file>` | Leaves exactly one `phase:*` label (`phase:{to-phase}`) and removes any stale one. Posts the comment with a hidden marker `<!-- compass:milestone:{to-phase} -->` and skips it if that marker is already present. Any `gh` failure → `SYNC_PENDING: …` on stdout, exit 0. Exit 1 only if the comment file is missing. |
 | `check-traceability.sh` | `<session-dir>` | Reads `define/requirements.md`, or the root `requirements.md` in a session from before the folder (if both exist, `define/` wins). Exit 0 when every `REQ-*` row has a `VER-*` row in `verification.md` whose Result contains "pass". Otherwise exit 1 and list the missing IDs. Exit 1 naming both paths when neither requirements file exists. Only the first column of `\| REQ-nnn \|` rows is read, so extra columns (Priority, Serves), struck-through rows and `## Deferred` rows are ignored. |
 | `check-design.sh` | `<session-dir>` | Design gate (a4). With `design/index.md`: exit 0 when it has the `## Classification`, `## Scope checklist`, `## Context view` and `## Delta list` headings; otherwise exit 1, printing each missing one (e.g. "delta list missing"). With only a root `design.md` (a session from before the folder): print "legacy layout: no check" and exit 0. With neither: exit 1. |
+| `check-release.sh` | `<session-dir>` | Deploy gate (a2b). Reads `release.md`'s `Deploy tier:` line and checks its H2 headings against the sections that tier requires (the Deploy standard's tier table). Exit 0 "ok"; exit 1 naming each missing section (e.g. "rollback missing"), an unrecognised tier, or a missing `release.md`. A record with no tier line prints "past record: no check" and exits 0. |
 | `default-branch.sh` | `[repo-path]` | Prints the default branch name as `origin` reports it and exits 0. Reads `git symbolic-ref refs/remotes/origin/HEAD` (stripping `origin/`), then falls back to `git ls-remote --symref origin HEAD` under a timeout of `DEFAULT_BRANCH_LS_REMOTE_TIMEOUT` seconds (default 5), with no credential prompt. Never assumes `main`, never fetches, never sets `origin/HEAD`. Exit 1 with a reason on stderr when `repo-path` isn't a git repository, there is no `origin` remote, or neither source answers. |
 | `list-sessions.sh` | `[repo-path]` | Prints one tab-separated line per active or paused session: `{slug}`, `{status}`, `{branch it was found on}`, `{recorded branch:, or -}`. Reads `docs/sessions/*/log.md` in the working tree (untracked files included; "found on" is the checked-out branch, or `HEAD` when detached), then at the tip of every local branch (`refs/heads`) with `git grep` and `git show`: read-only, no checkout, no fetch. Never reads `archive/` and never lists `status: archived`. `{slug}` is the folder name. A working-tree copy wins over any branch copy; among branch copies, the one on the branch its own `branch:` names wins, otherwise the first branch in refname order. Always exit 0, also when nothing is listed or `repo-path` isn't a git repository (then only its working tree is read). |
 | `archive-session.sh` | `<session-dir>` | `git mv` to `docs/sessions/archive/{slug}/`. Refuses (exit 1) unless `log.md` has `status: archived`, the working tree is clean, the folder isn't already archived, and the destination doesn't exist. It doesn't commit or push. |

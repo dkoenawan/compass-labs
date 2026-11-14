@@ -1,0 +1,60 @@
+<!-- The as-built record in the implement/ folder (skills/implement/SKILL.md). Four sections, tables only: never a checklist line here, so nothing in this file can be read as a task. Frozen define/ and design/ are never edited; a difference from the design is recorded as a variation below and decided at the Implement gate. -->
+# As built: Deploy phase depth
+
+> Phase: Implement | Started: 2026-11-03 | Status: ready for the Implement gate
+> Design: [`design/index.md`](../design/index.md) · Plan: [`tasks.md`](tasks.md) · Session history: [`log.md`](../log.md)
+
+## As-built
+
+<!-- One row per DES-* item in the design, each with exactly one status: built as designed | built with variation | not built. A reason is required for any status other than built as designed. A layer with no Implement guidance records "no Implement guidance for {layer}" and its follow-up issue in the Reason. Name the unit and component tests (files or test names), or "none" with the reason. -->
+
+| DES | Status | Reason | Unit tests | Component tests |
+|---|---|---|---|---|
+| DES-001 | built as designed | `skills/deploy/SKILL.md` (sections 1 to 7), `reference/declaration.md`, `reference/frameworks.md`; listed in `marketplace.json` and `README.md`. Sections 8 and 9 (the offer and the starter mode) are DES-014's | none: a standard is a document, so its content is checked by a content test, not a unit test | `tests/session/deploy_standard_test.sh`; `tests/session/marketplace_test.sh` passes with `./skills/deploy` listed |
+| DES-002 | built with variation | V4 | none: one script tested through its interface | `tests/session/check_declaration_test.sh` (validation on the four fixtures: no declaration, "rollback" named, each other item named, routine merge, tag form without `{version}`, missing version file, none, bad JSON, no jq, nothing runs); `tests/session/check_declaration_plan_test.sh` (`--plan`: declared order, production steps never "may run", later steps wait, `own_session`, tiers per the tier table, nothing runs) |
+| DES-003 | built as designed | The headings are compared with the standard's tier table in its own test, and with `check-release.sh`'s list in DES-006's test (case 5), since that script comes later in the order | none: a template | `tests/session/release_template_test.sh`; `tests/session/check_release_test.sh` case 5 |
+| DES-004 | built as designed | `agents/deploy.md` preloads `compass-labs:deploy` and follows the Deploy process flow in nine steps. Running the agent is Test's (Handed to Test) | none: an agent prompt | `tests/session/deploy_agent_test.sh` (content and step order); `tests/session/phase_agents_test.sh` still passes |
+| DES-005 | built as designed | `## Deploy clause` at the end of the contract. The Output section's `needs_input` line also points to it | none: a contract document | `tests/session/deploy_contract_test.sh`; `tests/hooks/*_test.sh` pass unchanged |
+| DES-006 | built as designed | | none: one script tested through its interface | `tests/session/check_release_test.sh` (full with no rollback names "rollback missing", exit 1; each tier complete passes; every section against the tier table for each tier; past record; the template; bad tier; no record) |
+| DES-007 | built as designed | New gate steps a1 (tier confirmation, relaying a change to Deploy) and a2b (`check-release.sh`) around the unchanged a2; the Deploy `needs_input` relay in the main loop; `check-release.sh` in the scripts table | none: orchestrator instructions | `tests/session/deploy_gate_test.sh` (content and order); `tests/session/session_skill_test.sh` still passes |
+| DES-008 | built with variation | V2 | none: one script tested through its interface | `tests/session/release_tag_test.sh` (compass-labs' values, bare origin, stub `gh`: changed, unchanged, tag exists and doesn't move, `--check` creates nothing, `--check` on an unchanged version; plain-text `VERSION`; unfilled copy refused; template generic) |
+| DES-009 | built with variation | V5 | none: a workflow file | `tests/session/release_workflow_test.sh` (no `dkoenawan/compass-labs` or `CLAUDE_PLUGIN_ROOT`, both triggers, both permission sets, `fetch-depth: 2`, only `actions/checkout`, no extra secret, valid YAML) |
+| DES-010 | built as designed | Only the `"version"` line of `plugin.json` changes | none: one small script tested through its interface | `tests/session/bump_version_test.sh` |
+| DES-011 | built as designed | `.claude/deploy.json`. The last `after_merge` step (restart Claude Code) is an instruction, not a shell command | none: configuration | `tests/session/compass_declaration_test.sh` (valid; four routine steps that may run; merge production-affecting and waiting; pipeline part listed; versioning; confirmation; rollback; tier short) |
+| DES-012 | built as designed | The now unused `BUMP` variable went too | none: build configuration | `tests/session/taskfile_test.sh` (`task --list` has no `release`); `task check-upgrade` run by hand on 2026-11-03 and printed the new hint |
+| DES-013 | built with variation | V1 | none: fixtures | `tests/session/deploy_fixtures_test.sh`; the fixtures are read by `check_declaration_test.sh`, `check_declaration_plan_test.sh` and `install_starter_test.sh`; `tests/run.sh`: 42 passed, 0 failed |
+| DES-014 | built as designed | Procedure and starter mode in `skills/deploy/SKILL.md` sections 8 and 9; called from `skills/init/SKILL.md` as new Steps 6b and 8b (before each mode's commit, which now adds the written files by name) and from `skills/session/SKILL.md` one-time setup step 3. `README.md` describes both | none: skill instructions | `tests/session/deploy_offer_test.sh` (content: skip rule, three answers, starter after "declare now" on GitHub only, both init modes before their commit, one-time setup step 3) |
+| DES-015 | built with variation | V3 | none: one script tested through its interface | `tests/session/install_starter_test.sh` (GitHub `origin` in https and scp form writes both files with `fixture-service`'s values and no `dkoenawan/compass-labs`; the installed script runs; non-GitHub and missing `origin` write nothing; SSH alias resolved by a stub `ssh`; existing workflow byte for byte unchanged; missing `versioning.tag` named; no declaration and none write nothing; the declaration is never changed) |
+| DES-016 | built as designed | Installed by `install-starter.sh` on this repo on 2026-11-03, not edited afterwards. `release-tag.sh --check` on the branch reported `compass-labs--v2.2.1` (the version isn't bumped until Deploy). Actions settings read on 2026-11-03: Actions enabled, all actions allowed, default token permissions read (the workflow asks for `contents: write` per job), no tag ruleset (the one ruleset, `protect-main`, is disabled) | none: installed files | `tests/session/own_pipeline_test.sh` (both files match a fresh `install-starter.sh` run into a temp copy, byte for byte) |
+
+## Variations
+
+<!-- One row per difference between the design and what was built. IDs V1, V2 … are local to this file. Every variation is decided at the Implement gate: accepted as built, or sent back for rework. Write "None." under the heading when there are none. -->
+
+| ID | DES | Designed | Built | Why |
+|---|---|---|---|---|
+| V1 | DES-013 | DES-013 depends on DES-002, DES-006, DES-008, DES-010 and DES-015, so its tasks come after theirs | DES-013's fixture repos (task 7) are built before DES-002's tasks (8, 9). Its last task (22) still follows every item it depends on | DES-002's Check, and DES-015's, run their component tests on the four fixtures, so the fixtures must exist first. Building them inside DES-002's task would make one task span two items |
+| V2 | DES-008 | `release-tag.sh` compares versions, tags and publishes, or fails on an existing tag; `--check` prints the tag and warns if it exists | As designed, plus: the script refuses to run while its settings block still holds the template's placeholders, and `--check` notes when the version is unchanged from `HEAD^1` (a merge would create no tag), in which case it doesn't warn about an existing tag. Task 20 made that last change after running the installed copy here, where `--check` had warned that a merge "would fail" on an unbumped branch | The refusal stops an unfilled copy from tagging with a wrong file or tag form. The note keeps the pull-request check accurate for a PR that doesn't bump the version (REQ-021), instead of warning of a failure that wouldn't happen |
+| V3 | DES-015 | Write nothing "if `origin` isn't a GitHub URL" | A URL whose host is `github.com` counts, and so does an SSH host alias (`git@{alias}:…`, `ssh://…`) that `ssh -G` resolves to `github.com`. `ssh -G` only reads the SSH config and connects to nothing. An https host that only starts with `github.com` is refused. The offer procedure (DES-014) says the same | This repo's own `origin` is `git@github:dkoenawan/compass-labs.git`, an SSH alias for github.com, so the literal check refused it and DES-016 couldn't be installed. Other users have such aliases too |
+| V4 | DES-002 | `--plan` prints "the proposed tier with its reason"; with no jq it "exits with a distinct code" | `--plan` prints two tier lines: `tier:` (no L1 runs) and `tier if L1 runs:` (at least short, and full if an L1 setup step is production-affecting). The agent uses the second when L1 ran. Each result has its own exit code: 0 valid, 1 invalid, 2 no declaration, 3 none, 4 no jq. The jq rules are in `skills/deploy/scripts/lib/validate.jq` and `lib/plan.jq` | Whether L1 runs is the agent's judgement from the design's delta list (D9), which the script doesn't read, yet the standard says a session where L1 ran is at least short. Separate exit codes let the agent tell the five results apart without parsing text. The jq files avoid shell quoting inside long jq programs |
+| V5 | DES-009 | "On `push` to the default branch: run the script" | The workflow triggers on every `push`, and the `release` job runs only when `github.ref_name == github.event.repository.default_branch`. Pushes to other branches start a run whose jobs are all skipped. The action is pinned to `actions/checkout@v7`, its current major version | A starter can't know a repo's default branch name when it's copied, and D13 fills in only the script's settings, not the workflow. The job condition makes the same file work for `main`, `master` or any other name |
+
+## Layer artifacts
+
+<!-- One subsection per layer this session built, shaped by that layer's guidance (skills/{layer}/reference/implement.md). Delete the example subsection when no layer has an artifact. -->
+
+None. The design's primary kind is plugin/tooling, and no `DES-*` Component cell names a layer, so no `skills/{layer}/reference/implement.md` applies.
+
+## Handed to Test
+
+<!-- One row per DES-* Check that needs a Test-owned test (integration, ui, playwright or inspection). Implement never writes those tests. -->
+
+| DES | Check |
+|---|---|
+| DES-001 | Inspection: a reviewer writes `fixture-service`'s declaration from the standard alone |
+| DES-004 | Test runs the agent on each fixture against the criteria. `fixture-new-part` is run twice, answering yes then no to the offer. This session's own Deploy meets REQ-002 and REQ-005 with no question before the gate |
+| DES-007 | Inspection against the criteria. In Test, a record missing a section is refused and `log.md`'s `milestone` stays at `test` |
+| DES-011 | Inspection: a reviewer ticks REQ-001's seven items. No REQ-027 offer fires in this session's Deploy (agent run) |
+| DES-013 | Test can run each criterion against a fixture with no change to it (the agent-level runs: the offers, REQ-026 and REQ-027) |
+| DES-014 | Inspection: both `init` modes and one-time setup call the procedure, and it has the skip rule. Test runs `fixture-no-declaration` through a first session three times (later, nothing to deploy, declare now) and once on a repo that already has a declaration |
+| DES-016 | The pull-request job runs on PR #77 and reports `compass-labs--v2.3.0`, with no new tag. After the merge: the criteria for REQ-020 and REQ-024 |

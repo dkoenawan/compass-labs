@@ -1,0 +1,48 @@
+{
+  "deployment": "declared",
+  "note": "Fixture: declares web-service only. Its session design adds billing-service, which this file does not cover.",
+  "release_mode": "in_session",
+  "l1": {
+    "parts": [
+      {
+        "name": "web-service",
+        "setup": [
+          {
+            "name": "check the service's deploy targets exist",
+            "run": "./deploy.sh --check-targets",
+            "kind": "routine",
+            "note": "Read-only, so safe to repeat"
+          }
+        ]
+      }
+    ]
+  },
+  "l2": {
+    "strategy": "rolling",
+    "steps": [
+      {
+        "name": "deploy to staging",
+        "run": "./deploy.sh staging",
+        "kind": "routine"
+      },
+      {
+        "name": "deploy to production",
+        "run": "./deploy.sh production",
+        "kind": "production_affecting"
+      },
+      {
+        "name": "merge the pull request",
+        "merge": true,
+        "kind": "production_affecting"
+      }
+    ]
+  },
+  "confirmation": {
+    "run": "./check-health.sh"
+  },
+  "rollback": [
+    "Staging: ./deploy.sh staging --previous",
+    "Production: the user runs ./deploy.sh production --previous"
+  ],
+  "after_merge": []
+}

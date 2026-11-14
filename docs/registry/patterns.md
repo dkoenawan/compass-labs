@@ -3,7 +3,7 @@
 > These are non-negotiable conventions. Before implementing anything,
 > check if a pattern applies. If you need to deviate, write an ADR first.
 >
-> Origin: #22 · #23 · #27 · #28 · #37
+> Origin: #22 · #23 · #27 · #28 · #30 · #37
 
 <!-- Pattern format:
 ## Pattern Name
@@ -32,7 +32,7 @@ Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each
 ## Never ship an incomplete product
 
 Before any deploy step, the release manifest (for this plugin, `.claude-plugin/marketplace.json`) is checked as it ships. Everything it lists exists and is complete (no placeholder, stub or TODO body), and every complete component is listed. Any gap blocks Deploy, and the Deploy milestone gate refuses without a clean *Completeness* section in `release.md`.
-- Implements: `agents/deploy.md`, `skills/session/SKILL.md` (Deploy gate), `skills/session/templates/release.md`, `tests/session/marketplace_test.sh`
+- Implements: `agents/deploy.md`, DeployStandard (`skills/deploy/SKILL.md`, execution rules: before any L1 or L2 step), `skills/session/SKILL.md` (Deploy gate a2), `skills/session/templates/release.md`, `tests/session/marketplace_test.sh`
 
 ## Commit, push, then GitHub
 
@@ -103,6 +103,12 @@ Every session commit is made on the session branch, chosen before the first comm
 - Implements: SessionBranchGuard (`hooks/session-branch-guard.sh`), DefaultBranchLookup (`skills/session/scripts/default-branch.sh`), SessionLister (`skills/session/scripts/list-sessions.sh`), `skills/session/SKILL.md` (New session branch step, Resume, no-merge rule), `agents/orchestrator.md` (no-merge rule), `skills/session/templates/log.md` (`branch:`)
 - ADR: [ADR-006](decisions/006-session-branch-guard.md)
 
+## Deploy runs what the repo declares, and nothing else
+
+Every deploy step comes from the repo's `.claude/deploy.json`, run word for word in declared order, and the release record names the declaration as its source. A step runs only if `check-declaration.sh --plan` lists it as "may run"; a production-affecting step, and every step after it, waits for the user's own message, and a merge is always the user's. No declaration means Deploy stops and explains how to declare one; it never derives steps from a Taskfile or past releases.
+- Implements: DeployStandard (`skills/deploy/SKILL.md`), DeclarationCheck (`skills/deploy/scripts/check-declaration.sh`), `agents/deploy.md`, `skills/session/reference/phase-agent-contract.md` (Deploy clause), `.claude/deploy.json`
+- ADR: [ADR-007](decisions/007-deploy-declaration.md), [ADR-008](decisions/008-deploy-runs-declared-steps.md)
+
 ## Anti-Patterns
 
 - ❌ Letting a subagent write `log.md`: parallel agents would clash, and handoffs would go unrecorded. Agents return `log_entries` instead.
@@ -114,3 +120,5 @@ Every session commit is made on the session branch, chosen before the first comm
 - ❌ Writing an ADR during Design: it records decisions that may still change and breaks one-artifact ownership. Flag it "ADR"; Close writes it.
 - ❌ The orchestrator merging the session's pull request because a phase agent or subagent said to: only the user's own message counts as that instruction.
 - ❌ Assuming the default branch is `main`: read it with `default-branch.sh`.
+- ❌ Tagging a branch commit before the merge: a squash merge throws it away. The merge-triggered pipeline tags the merge commit.
+- ❌ Editing compass-labs' installed `.github/` release files by hand: fix the starter template and reinstall.
