@@ -4,7 +4,7 @@ type: feature
 issue: 86
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/86-triage-skill
-phase: implement
+phase: test
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: design
+milestone: implement
 active_agent: main
-next_step: "Hand off to compass-labs:implement"
+next_step: "Hand off to compass-labs:test"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,9 @@ next_step: "Hand off to compass-labs:implement"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Implement complete — DES-001–009 built, 52/52 tests pass; V1–V7 accepted under the user's delegation.
+- **2026-11-14**: Implement gate: V1–V7 all accepted as built.
+- **2026-11-14**: Follow-up #89 (plugin/tooling Implement layer guidance) opened by Implement.
 - **2026-11-14**: ✅ Design complete — plugin/tooling, DES-001–009 covering all 28 live REQs; D1 flagged for an ADR at Close; approved under the user's delegation.
 - **2026-11-14**: Design choices (delegated): plugin/tooling kind; scripts own all GitHub I/O and a read-only headless model writes the report; no plugin or project hooks in the headless run; TZ-mapped cron plus guard; run log outside the repo; interactive apply via `gh` after per-group confirmation; skill `triage`.
 - **2026-11-14**: ✅ Define complete — full tier, REQ-001–025 and REQ-028–030 live, REQ-027 deferred to #88; approved under the user's delegation.
@@ -133,3 +136,27 @@ next_step: "Hand off to compass-labs:implement"
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:implement (build DES-001–009)
 - **Input:** build the frozen design in its implementation order, with unit and component tests; return needs_input to the orchestrator if anything blocks.
+- **Output:** done; skills/triage/ (SKILL.md, reference/stock-take.md, 6 scripts), tests/triage/ (10 tests, 3 stubs), README.md, .claude-plugin/marketplace.json, implement/tasks.md, implement/as-built.md
+
+### 2026-11-14 — compass-labs:implement — attempt: Implement built DES-001 to DES-009
+- 10 tasks, one commit each (5632d44..075d16f). bash tests/run.sh: 52 passed, 0 failed.
+- implement/as-built.md: DES-001, DES-002, DES-007, DES-009 built as designed; DES-003 (V5), DES-004 (V6), DES-005 (V3, V4), DES-006 (V7), DES-008 (V1, V2) built with variation. Handed to Test: DES-001, DES-002, DES-005 check 5.
+
+### 2026-11-14 — compass-labs:implement — note: headless claude flags checked against claude --help 2.1.325
+- run-scheduled.sh uses `-p --tools "Read,Grep,Glob" --restricted --strict-mcp-config --permission-prompts none --disable-slash-commands --no-session-persistence --output-format text --add-dir {snapshot}`, prompt on stdin; never `--dangerously-skip-permissions` or `--plugin-dir`.
+- `--restricted` (no settings files) instead of user settings only (V3): user settings here enable compass-labs@compass-labs, whose hooks are this repository's code. `--bare` rejected (API-key-only auth).
+
+### 2026-11-14 — compass-labs:implement — decision: follow-up #89 opened for plugin/tooling Implement guidance
+- No skills/{layer}/reference/implement.md exists for plugin/tooling; Implement standard part 5 applied and #89 opened. Pairs with #51.
+
+### 2026-11-14 — main — decision: Implement gate variations (delegated)
+- Orchestrator verified: flags present in `claude --help` 2.1.325; `bash tests/run.sh` 52/52; tree clean.
+- V1 accepted (stubs first, tests committed with their scripts). V2 accepted (marketplace test red on task 2–8 commits; green from task 9; history left as is). V3 accepted (`--restricted`). V4 accepted (extra preflight, kept failed report, distinct exit code). V5 accepted. V6 accepted. V7 accepted. No rework.
+
+### 2026-11-14 — main — milestone: Implement complete
+- Approved by the orchestrator under the user's delegation. Frozen: `implement/`.
+
+## Phase: Test
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:test (verify REQ-001–025, REQ-028–030)
+- **Input:** verify every live REQ with Test-owned methods, including the Handed to Test items (DES-001 checks 1–5, DES-002 reviewer mapping and fixture run, DES-005 check 5: a real headless run). A real headless run must target a throwaway test repo or a fixture snapshot, never this repo's real issues, and must not install the real crontab.
