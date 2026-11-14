@@ -10,7 +10,7 @@ last_verified: null
 
 # TriageScheduledRun
 
-> Origin: #86
+> Origin: #86 · #93
 
 ## Does
 
@@ -24,6 +24,7 @@ The cron entry point for a weekly unattended stock-take. It guards on the instal
 - [ ] With `gh` not authenticated, the day's log names the failure and no report issue is created. The same goes for a missing binary or a non-git folder.
 - [ ] Under `env -i HOME=… PATH=/usr/bin:/bin`, with `TRIAGE_CLAUDE_BIN` and `TRIAGE_GH_BIN` set, it finds both binaries and publishes.
 - [ ] An invalid report is kept as `{date}.report.md` beside the log, and every step's outcome and duration are logged.
+- [ ] The prompt's preamble names the local run date (for example `2026-11-21` for Fri 2026-11-20 12:00 UTC at Saturday 01:00 Pacific/Auckland) as the header's Run date, and the rest of the prompt is `stock-take.md` byte for byte.
 
 ## Proof
 
@@ -55,3 +56,4 @@ exit 0 ok, wrong slot, or lock held · 1 failure (logged) · 2 bad arguments
 ## Key Decisions
 
 - [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md): read-only headless model, `--restricted` isolation, scripts own every write.
+- The local run date reaches the model as one line of the script's preamble, not as a placeholder in `stock-take.md`, so the procedure is still sent unchanged and the interactive stock-take keeps the user's own date.

@@ -128,6 +128,40 @@ jq -n '[]' >"$snap/reports.json"
 run_publish "$T/valid.md"
 assert_eq "" "$(grep '^issue close' "$GH_STUB_LOG")" "nothing to supersede, no close"
 
+# #93 (DES-004): the header's Run date is set to <date>; nothing else changes.
+meta true
+# A wrong header date, and an entry body quoting a Run date line that must stay.
+sed -e 's/^- Run date: 2026-11-21$/- Run date: 2026-11-20/' \
+    -e 's/^- Proposed action: close #90 as completed, citing PR #91$/&\n- Run date: 2026-11-20 (quoted from the issue)/' "$T/valid.md" >"$T/wrongdate.md"
+assert_contains "$(cat "$T/wrongdate.md")" "- Run date: 2026-11-20 (quoted" "fixture holds the quoted line"
+: >"$GH_STUB_LOG"
+run_publish "$T/wrongdate.md"
+assert_eq "0" "$RC" "a wrong header date still publishes: $OUT"
+sed '0,/^- Run date: 2026-11-20$/s//- Run date: 2026-11-21/' "$T/wrongdate.md" >"$T/wrongdate.expected"
+cmp -s "$T/wrongdate.expected" "$GH_STUB_DIR/created-body.md" \
+  || fail "only the header's Run date changes: $(diff "$T/wrongdate.expected" "$GH_STUB_DIR/created-body.md")"
+assert_contains "$(cat "$GH_STUB_DIR/created-body.md")" "- Run date: 2026-11-20 (quoted from the issue)" "the entry's quoted line is untouched"
+assert_contains "$OUT" "set the report header's Run date to 2026-11-21 (the report said '2026-11-20')" "says the date was changed"
+assert_eq "Triage 2026-11-21" "$(cat "$GH_STUB_DIR/created-title")" "the title uses the same date"
+# A header with no Run date line gets one as its first item.
+grep -v '^- Run date:' "$T/valid.md" | sed 's/^## Header$/## Header\n\n- Repository: r/' >"$T/nodate.md"
+: >"$GH_STUB_LOG"
+run_publish "$T/nodate.md"
+assert_eq "0" "$RC" "a header with no Run date publishes: $OUT"
+assert_eq "- Run date: 2026-11-21" "$(awk '/^- /{print; exit}' "$GH_STUB_DIR/created-body.md")" "the Run date is the header's first item"
+assert_eq "1" "$(grep -c '^- Run date:' "$GH_STUB_DIR/created-body.md")" "exactly one Run date line added"
+sed '/^- Run date: 2026-11-21$/d' "$GH_STUB_DIR/created-body.md" | cmp -s "$T/nodate.md" - || fail "nothing else changes when the line is added"
+assert_contains "$OUT" "had no Run date; added '- Run date: 2026-11-21'" "says the line was added"
+# A report with no final newline keeps that byte too.
+printf '%s' "$(cat "$T/wrongdate.md")" >"$T/nonl.md"
+: >"$GH_STUB_LOG"
+run_publish "$T/nonl.md"
+printf '%s' "$(cat "$T/wrongdate.expected")" | cmp -s - "$GH_STUB_DIR/created-body.md" || fail "no final newline is added"
+# The right date already: no message, body unchanged (checked above with cmp).
+: >"$GH_STUB_LOG"
+run_publish "$T/valid.md"
+assert_not_contains "$OUT" "Run date" "no message when the date is already right"
+
 # The stub log never held an edit, a comment on a non-report issue, or a label call.
 assert_eq "" "$(grep -E '^(issue (edit|comment)|label)' "$GH_STUB_LOG")" "never edit, comment or label"
 

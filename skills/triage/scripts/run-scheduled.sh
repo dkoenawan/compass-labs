@@ -24,7 +24,8 @@
 #             publish nothing (REQ-022).
 #   Snapshot  gather.sh into a mktemp -d directory, removed on exit.
 #   Stock-take claude -p, headless, under `timeout 50m`, with the prompt built
-#             from reference/stock-take.md. Only the Read, Grep and Glob tools;
+#             from a preamble naming the local run date, then
+#             reference/stock-take.md unchanged. Only the Read, Grep and Glob tools;
 #             --restricted (no user, project or local settings files, so no
 #             settings hooks or plugins); no MCP servers; no --plugin-dir; never
 #             --dangerously-skip-permissions (REQ-012, REQ-025). Stdout is the
@@ -169,6 +170,7 @@ You are running the triage stock-take headless, as a scheduled run with no user 
 The snapshot directory is $SNAP. It holds issues.json, reports.json, merged-prs.json, meta.json and, if the repository has a project anchor, anchor.md.
 The current directory is the repository's working tree. Read code with Read, Grep and Glob only.
 Follow the procedure below exactly. Your whole output is the report markdown, starting with "## Header", and nothing else.
+The run's local date is $LOCAL_DATE ($ZONE). Write it in the header as "- Run date: $LOCAL_DATE"; don't use a date from your own clock.
 
 EOF
   cat "$STOCK_TAKE"

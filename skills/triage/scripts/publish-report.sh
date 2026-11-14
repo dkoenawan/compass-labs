@@ -18,7 +18,12 @@
 #      with the reason, and no write (REQ-022).
 #   2. If "Triage <date>" by the viewer exists in any state: print "already
 #      published" and exit 0 (REQ-023).
-#   3. If the triage label is missing: prepend a note saying so (REQ-029).
+#   3. Build the body. The "## Header" section's first "- Run date:" line
+#      becomes "- Run date: <date>", the date the title uses; a header with
+#      no such line gets one as its first item. Nothing outside the header
+#      changes, and validation (step 1) runs on the report as given. When
+#      the date is changed, one line on stdout says so (#91). If the triage
+#      label is missing: prepend a note saying so (REQ-029).
 #   4. Create the issue in one call, labelled triage only if the label
 #      exists. This script never creates a label (REQ-028, REQ-029).
 #   5. Close every other open report in reports.json as not planned, with a
@@ -123,11 +128,37 @@ done
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 BODY="$WORK/body.md"
+DATED="$WORK/dated.md"
+# The header section runs from "## Header" to the next "## " heading (the
+# same rule as the validator; "### " lines don't end it).
+old_date="$(awk '/^## / { if (h) exit; if ($0 ~ /^## Header[[:space:]]*$/) h = 1; next }
+  h && /^- Run date:/ { sub(/^- Run date:[[:space:]]*/, ""); print; found = 1; exit }
+  END { if (!found) print "<none>" }' "$REPORT")"
+# Lines are joined with newlines and the final newline is kept only if the
+# report had one, so the rest of the report stays byte for byte.
+final_nl=0
+[[ -s "$REPORT" && -z "$(tail -c 1 "$REPORT")" ]] && final_nl=1
+awk -v d="$DATE" -v nl="$final_nl" \
+    -v has="$([[ "$old_date" == "<none>" ]] && echo 0 || echo 1)" '
+  function out(l) { printf "%s%s", sep, l; sep = "\n" }
+  /^## / { if (h) { if (!done) { out("- Run date: " d); out(""); done = 1 } h = 0 }
+           else if (!seen && $0 ~ /^## Header[[:space:]]*$/) { h = 1; seen = 1 }
+           out($0); next }
+  h && !done && /^- Run date:/ { out("- Run date: " d); done = 1; next }
+  h && !done && /^- / && !has { out("- Run date: " d); done = 1 }
+  { out($0) }
+  END { if (nl) printf "\n" }
+' "$REPORT" >"$DATED"
+if [[ "$old_date" == "<none>" ]]; then
+  echo "[$SCRIPT_NAME] the report header had no Run date; added '- Run date: $DATE'"
+elif [[ "$old_date" != "$DATE" ]]; then
+  echo "[$SCRIPT_NAME] set the report header's Run date to $DATE (the report said '$old_date')"
+fi
 {
   if [[ "$LABEL_EXISTS" != "true" ]]; then
     printf '> **Note:** the `triage` label is missing in this repository, so this report is unlabelled. A scheduled run never creates labels; installing the schedule or running an apply creates it.\n\n'
   fi
-  cat "$REPORT"
+  cat "$DATED"
 } >"$BODY"
 chars="$(LC_ALL=C.UTF-8 wc -m <"$BODY" | tr -d ' ')"
 [[ "$chars" -le $MAX_BODY ]] || invalid "the body is $chars characters, over GitHub's $MAX_BODY"

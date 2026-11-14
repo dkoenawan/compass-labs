@@ -31,4 +31,22 @@ listed="$(jq -r '.plugins[] | select(.name=="compass-labs") | .skills[]' "$REPO_
 assert_contains "$listed" "./skills/triage" "marketplace lists ./skills/triage"
 assert_eq "$(sort <<<"$listed")" "$listed" "marketplace skills stay in alphabetical order"
 
+# #93 (DES-005): #91 and #93 are no longer open limitations or open work,
+# and the overview tells an older schedule to uninstall, then reinstall.
+overview="$(cat "$REPO_ROOT/docs/explanation/triage/overview.md")"
+reference="$(cat "$REPO_ROOT/docs/reference/triage/stock-take-and-schedule.md")"
+schedule_doc="$(cat "$REPO_ROOT/docs/reference/constructs/TriageSchedule.md")"
+open_work="$(grep -F -- '- **Open work**' <<<"$overview")"
+assert_contains "$open_work" "#88" "the overview still has its Open work line"
+for n in 91 93; do
+  assert_not_contains "$open_work" "#$n" "overview Open work no longer lists #$n"
+  assert_eq "" "$(grep -E "^\| #$n \|" <<<"$reference")" "reference Open work has no #$n row"
+  assert_not_contains "$(sed -n '/^## Gotchas/,/^## /p' <<<"$overview")" "(#$n)" "no overview gotcha cites #$n as open"
+done
+assert_not_contains "$overview" "Until #93 is fixed" "the #93 workaround gotcha is gone"
+assert_not_contains "$overview" "run date is the model's own" "the #91 gotcha is gone"
+assert_not_contains "$schedule_doc" "resolved with \`realpath\`" "TriageSchedule no longer records realpath as its decision"
+assert_contains "$overview" 'run `uninstall-schedule.sh <repo>`, then `install-schedule.sh <repo>' "the overview says uninstall, then install, for an older schedule"
+assert_contains "$reference" "not symlink-resolved" "the reference says the paths keep their symlinks"
+
 exit 0

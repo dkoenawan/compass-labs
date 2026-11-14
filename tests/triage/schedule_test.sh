@@ -89,6 +89,36 @@ bash "$INSTALL" "$repo" --day 6 --time 01:00 --tz Asia/Kolkata >/dev/null 2>&1 |
 assert_eq "30 19 * * 5" "$(grep -F "$marker" "$CRONTAB_STUB_FILE" | cut -d' ' -f1-5)" "Kolkata Sat 01:00 is Fri 19:30 UTC"
 bash "$UNINSTALL" "$repo" >/dev/null
 
+# #93 (DES-001): the binary paths are absolute but not symlink-resolved.
+# (a) claude and gh found on PATH as symlinks into a versioned directory.
+mkdir -p "$T/versions/1.0.0" "$T/pathbin"
+for b in claude gh; do
+  printf '#!/usr/bin/env bash\nexec "%s/%s" "$@"\n' "$TRIAGE_STUBS" "$b" >"$T/versions/1.0.0/$b"
+  chmod +x "$T/versions/1.0.0/$b"
+  ln -s "$T/versions/1.0.0/$b" "$T/pathbin/$b"
+done
+out="$(env -u TRIAGE_CLAUDE_BIN -u TRIAGE_GH_BIN PATH="$T/pathbin:$PATH" \
+  bash "$INSTALL" "$repo" --day sat --time 01:00 --tz Pacific/Auckland 2>&1)" || fail "install with symlinked PATH binaries: $out"
+mapfile -t added < <(grep -F "$marker" "$CRONTAB_STUB_FILE")
+assert_eq "2" "${#added[@]}" "symlinked PATH: two triage lines"
+for l in "${added[@]}"; do
+  assert_contains "$l" "TRIAGE_CLAUDE_BIN='$T/pathbin/claude'" "the PATH symlink for claude is kept, not resolved"
+  assert_contains "$l" "TRIAGE_GH_BIN='$T/pathbin/gh'" "the PATH symlink for gh is kept, not resolved"
+  assert_not_contains "$l" "versions/1.0.0" "no versioned path in the cron line"
+done
+bash "$UNINSTALL" "$repo" >/dev/null
+# (b) a relative override that is a symlink is made absolute, not resolved.
+mkdir -p "$T/cwd/bin"
+ln -s "$T/versions/1.0.0/claude" "$T/cwd/bin/claude"
+out="$(cd "$T/cwd" && TRIAGE_CLAUDE_BIN=bin/claude \
+  bash "$INSTALL" "$repo" --day sat --time 01:00 --tz Pacific/Auckland 2>&1)" || fail "install with a relative override: $out"
+cwd_abs="$(cd "$T/cwd" && pwd)"
+for l in $(grep -F "$marker" "$CRONTAB_STUB_FILE" | grep -oE "TRIAGE_CLAUDE_BIN='[^']*'"); do
+  assert_eq "TRIAGE_CLAUDE_BIN='$cwd_abs/bin/claude'" "$l" "a relative override is made absolute against the current directory"
+done
+assert_eq "2" "$(grep -cF "TRIAGE_CLAUDE_BIN='$cwd_abs/bin/claude'" "$CRONTAB_STUB_FILE")" "both lines hold the absolute override"
+bash "$UNINSTALL" "$repo" >/dev/null
+
 # Validation: bad day, time, zone, unauthenticated gh: non-zero, crontab unchanged.
 cp "$CRONTAB_STUB_FILE" "$T/now" 2>/dev/null || : >"$T/now"
 for args in "--day funday --time 01:00 --tz UTC" "--day sat --time 25:00 --tz UTC" \

@@ -10,11 +10,11 @@ last_verified: null
 
 # TriageReportPublisher
 
-> Origin: #86
+> Origin: #86 · #93
 
 ## Does
 
-Validates a stock-take report against its snapshot and publishes it as one `Triage YYYY-MM-DD` report issue, then closes the authenticated user's earlier unapplied reports as superseded. It is the only code that writes on GitHub in a scheduled run. It does NOT create labels, or touch any issue other than its own reports.
+Validates a stock-take report against its snapshot and publishes it as one `Triage YYYY-MM-DD` report issue, then closes the authenticated user's earlier unapplied reports as superseded. It is the only code that writes on GitHub in a scheduled run. Before publishing it sets the report header's `- Run date:` to the title's date; it changes nothing else in the report. It does NOT create labels, or touch any issue other than its own reports.
 
 ## Functional Requirements
 
@@ -23,6 +23,7 @@ Validates a stock-take report against its snapshot and publishes it as one `Tria
 - [ ] If `Triage {date}` by the authenticated user already exists in any state, it prints "already published" and creates nothing. One by another author doesn't block.
 - [ ] Without the `triage` label it publishes with no `--label`, makes no `label` call, and adds a note saying the label is missing.
 - [ ] It never calls `issue edit`, `issue comment` or `label create`. A failed create closes nothing, and a failed superseded close exits 3.
+- [ ] The published body's `## Header` `- Run date:` line is `<date>`, the title's date: a different date is replaced and a missing line is added, and nothing outside the header changes.
 
 ## Proof
 
@@ -52,3 +53,4 @@ exit 0 published or already published · 1 invalid, or gh failure before create 
 ## Key Decisions
 
 - [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md): validate before any write, so a run never leaves a partial report.
+- The header's Run date is set here, from the same `<date>` argument as the title, so one script owns the report's date in both places. A mismatch is corrected, not refused, so a wrong model date doesn't lose the week's report; validation still runs on the report as given.

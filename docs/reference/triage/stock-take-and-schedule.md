@@ -1,7 +1,7 @@
 # Triage: modes, the stock-take report, the scheduled run and its limits
 
 > → Concepts: [Triage overview](../../explanation/triage/overview.md) · → Decision: [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md) · → Usage: [README, Backlog Triage](../../../README.md#backlog-triage)
-> Origin: #86
+> Origin: #86 · #93
 
 The skill is [`skills/triage/SKILL.md`](../../../skills/triage/SKILL.md), invoked as `/compass-labs:triage`. Its one stock-take procedure is [`skills/triage/reference/stock-take.md`](../../../skills/triage/reference/stock-take.md), which the interactive modes follow and the scheduled run sends unchanged as its prompt. This page lists the facts other docs, tools and sessions rely on.
 
@@ -62,8 +62,8 @@ The headless invocation and why it's isolated this way are in [ADR-010](../../re
 2. **Log and lock.** Log to `${XDG_STATE_HOME:-$HOME/.local/state}/compass-labs/triage/{repo-slug}/{local-date}.log`, where `{repo-slug}` is the repository's absolute path with the leading `/` dropped and the other `/` turned into `-`. A `.lock` directory sits beside the log. If the lock is held, log it and exit 0.
 3. **Preflight.** `claude` and `gh` come from `TRIAGE_CLAUDE_BIN` and `TRIAGE_GH_BIN`, then `PATH`. `jq`, `git` and `timeout` must be on `PATH`, the repository must be a git repository, and `gh auth status` must pass. On any failure the log names what failed and why, the run exits 1, and nothing is published.
 4. **Snapshot.** `gather.sh` runs into a `mktemp -d` directory, which is removed on exit.
-5. **Stock-take.** `claude -p` runs under `timeout 50m`. Exit 124 is logged as a timeout. An empty stdout is a failure.
-6. **Publish.** `publish-report.sh` runs with the local date. If the report is invalid, it's kept as `{local-date}.report.md` beside the log. If publish exits 3, the report was created but a superseded close failed, and that is logged as its own failure.
+5. **Stock-take.** `claude -p` runs under `timeout 50m`. The prompt is a short preamble, which names the local run date and zone as the header's `- Run date:`, followed by `stock-take.md` unchanged. Exit 124 is logged as a timeout. An empty stdout is a failure.
+6. **Publish.** `publish-report.sh` runs with the local date, which it uses for both the title and the header's Run date. If the report is invalid, it's kept as `{local-date}.report.md` beside the log. If publish exits 3, the report was created but a superseded close failed, and that is logged as its own failure.
 
 Every step's outcome and duration go to the log.
 
@@ -74,7 +74,7 @@ All are in `skills/triage/scripts/` and resolve through `${CLAUDE_PLUGIN_ROOT}` 
 | Script | Interface | Exit codes |
 |---|---|---|
 | `gather.sh` | `<repo> <out-dir> [--report N] [--prs N]`. Writes `issues.json` (open issues without reports), `reports.json` (open reports by the viewer), `merged-prs.json` (the last N merged PRs, default 200, with changed files), `anchor.md` (the README text between `<!-- compass:anchor -->` markers, absent if none) and `meta.json` (`repo` absolute path, `viewer`, `label_exists`, `branch`, `head`, `anchor: found\|missing`). With `--report N` it also writes `changed.json`: each issue in report N updated or closed after N was created, with its `reasons` (`updated`, `closed`) | 0 ok. Non-zero with the reason on any `gh` failure, or when #N isn't a report issue by the viewer |
-| `publish-report.sh` | `<repo> <snapshot-dir> <report.md> <date>`. Validates, skips a date that already has a report, adds the missing-label note, creates the report, then closes superseded reports | 0 published or already published. 1 invalid report, or a `gh` failure before creating. 3 published, but a superseded close failed |
+| `publish-report.sh` | `<repo> <snapshot-dir> <report.md> <date>`. Validates, skips a date that already has a report, sets the `## Header` section's `- Run date:` line to `<date>` (adding one if it's missing, and printing a line when it changes it), adds the missing-label note, creates the report, then closes superseded reports | 0 published or already published. 1 invalid report, or a `gh` failure before creating. 3 published, but a superseded close failed |
 | `run-scheduled.sh` | `<repo> --day D --time HH:MM --tz ZONE`. The cron entry point (above). `TRIAGE_NOW` (any `date -d` string) stands in for the clock in tests | 0 ok, not the scheduled slot, or lock held. 1 a failure, logged. 2 bad arguments |
 | `install-schedule.sh` | `<repo> --day D --time HH:MM --tz ZONE`. Day `sun` to `sat` (or the full name), or 0 to 6 with 0 = Sunday. Time is local `HH:MM`, 24-hour. Zone is an IANA name. `TRIAGE_NOW` works as above | 0 installed. 1 with the reason: bad argument, `gh` not authenticated, an existing schedule (its line is printed), a path cron can't hold, or a failed `crontab` |
 | `uninstall-schedule.sh` | `<repo>`. Removes every crontab line ending with the repository's marker, keeps every other line byte for byte, and says so if there was nothing to remove. Works for a repository folder that no longer exists | 0 |
@@ -91,7 +91,7 @@ Each line has this shape:
 ```
 
 - **One schedule per repository.** The marker `# compass-labs:triage: {repo-abs}` is matched at the end of the line, so `/repo` and `/repo-two` stay separate. A second install is refused, with the existing line printed and the crontab unchanged.
-- The binary paths are absolute because cron's `PATH` is minimal. A repository, binary or runner path containing `%`, a single quote or a newline is refused, because a cron line can't hold it safely.
+- The binary paths are absolute because cron's `PATH` is minimal. They are not symlink-resolved: a binary found on `PATH`, or a `TRIAGE_*_BIN` override, is written as found, and a relative path is only prefixed with the current directory. So a `~/.local/bin/claude` symlink stays in the line and still works after an update repoints it. A schedule installed before 2026-11-14 holds a resolved, versioned path; uninstall and reinstall it once. A repository, binary or runner path containing `%`, a single quote or a newline is refused, because a cron line can't hold it safely.
 - The installer warns when the local time falls in a daylight-saving gap on any of the sampled dates. That week's run is skipped, and missed runs aren't caught up.
 - The installer prints the cron lines, the next local run time, the run-log directory and the uninstall command.
 
@@ -111,6 +111,4 @@ Each line has this shape:
 | #88 | Let a scheduled run close an issue covered by a merged PR without an apply (revisits ADR-010) |
 | #89 | Plugin/tooling Implement guidance, which this skill was built without (Design path: #51) |
 | #90 | A report for many long issues can exceed the body limit and then isn't published at all |
-| #91 | The header's run date comes from the model's clock, not the run's local date |
 | #92 | Recommend `claude setup-token` for unattended runs, so the sign-in doesn't expire between runs |
-| #93 | The installer resolves `claude` with `realpath`, pinning a versioned binary that an auto-update removes |
