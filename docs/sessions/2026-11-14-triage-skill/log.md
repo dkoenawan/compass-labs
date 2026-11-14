@@ -29,6 +29,8 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 
 ## Key decisions
 
+- **2026-11-14**: Anchor update agreed (extend Scope: "backlog triage" in Supporting skills).
+- **2026-11-14**: REQ-027 (scheduled runs close covered-by-PR issues themselves) deferred to #88.
 - **2026-11-14**: Framing answered by the orchestrator (delegated): full tier; scheduled run is propose-only (one report issue per run), actions only through an interactive, approved apply; local cron with a TZ guard, schedule as install parameters; grep-level checks unattended; duplicates, clusters and dependencies; anchor-less repos skip the mapping; anchor Scope gains "backlog triage".
 - **2026-11-14**: User delegated every gate to the orchestrator through to Close ("Continue all the way until close. I'll review and come back after."). Orchestrator answers phase questions and approves milestones, logging each answer as a decision; no merge.
 - **2026-11-14**: Session branch `feat/86-triage-skill`, from `main`.
@@ -69,3 +71,18 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 - **Q8 cross-issue mapping:** duplicates and clusters, plus dependencies (blocked-by, as #69 blocks the layer issues). No priority: prioritising is the user's call.
 - **Q9 no anchor:** skip the anchor mapping, say so in the report and recommend creating one; don't stop.
 - **Q10 anchor wording:** approved as drafted: "- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, backlog triage, brand design." With Q3 (a), no non-goal change is needed.
+
+### 2026-11-14 — compass-labs:define — decision: anchor update (extend Scope)
+- Action `extend`, element Scope. Replace the Supporting skills line with: "- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, backlog triage, brand design."
+- Relayed as approved by the orchestrator under the user's stated delegation (framing answer Q10). The user reviews it in PR #87 before merge.
+- Verdict extends, resting on Scope "Supporting skills: …" and the non-goal "Replacing user approval at milestones", which scheduled runs stay inside by only proposing.
+
+### 2026-11-14 — compass-labs:define — attempt: define/ written to full tier
+- Tier full, from framing answers Q1 to Q10 relayed by the orchestrator. Needs NEED-01 to NEED-04, outcomes OUT-01 to OUT-05.
+- Requirements REQ-001 to REQ-025 and REQ-028 live. REQ-026 (proposing priorities) struck as never. REQ-027 (a scheduled run closing covered-by-merged-PR issues itself) deferred.
+
+### 2026-11-14 — main — decision: REQ-027 deferred to #88; remaining Define questions answered (delegated)
+- Opened #88 for REQ-027: scheduled runs closing issues covered by a merged PR without an apply. Needs the user's own decision.
+- `triage` label: created by the interactive installer and by an interactive apply when missing. A scheduled run never creates labels; it publishes without the label and says so.
+- An interactive stock-take publishes no report issue by default; it applies directly on confirmation.
+- Appetite: one session, about two days for Implement.

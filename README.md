@@ -32,7 +32,7 @@ compass-labs is a Claude Code plugin that structures each piece of work as a ses
 - Session types: Feature (available); Bugfix, Research and Consulting (planned).
 - Standards for each session artifact, by session type and depth tier.
 - Hooks and scripts that enforce session structure and traceability.
-- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, brand design.
+- Supporting skills: scaffolding, planning, codebase exploration, documentation, architecture decisions, task execution, backlog triage, brand design.
 - Works in any repository, independent of tech stack.
 
 ### Non-goals
