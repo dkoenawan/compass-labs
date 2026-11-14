@@ -4,7 +4,7 @@ type: feature
 issue: 93
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/93-triage-schedule-fixes
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Test: verify REQ-001–REQ-006 in verification.md"
+next_step: "Deploy: release record per .claude/deploy.json"
 ---
 # Session Log: Triage scheduled-run fixes (#93)
 
@@ -28,6 +28,7 @@ next_step: "Test: verify REQ-001–REQ-006 in verification.md"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Test complete — VER-001–VER-007 pass, traceability gate passed.
 - **2026-11-14**: ✅ Implement complete — DES-001–DES-005 built, 52/52 tests pass.
 - **2026-11-14**: Implement variations: none; DES-001–DES-005 built as designed.
 - **2026-11-14**: ✅ Design complete — DES-001–DES-005 frozen, check-design.sh passed.
@@ -124,3 +125,17 @@ next_step: "Test: verify REQ-001–REQ-006 in verification.md"
 ---
 
 ## Phase: Test
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:test (verify REQ-001–REQ-006)
+- **Input:** write verification.md with a passing VER-* per REQ-001–REQ-006, running the tests. User wants the session run to Close without stopping.
+- **Output:** done; verification.md (VER-001–VER-007, all pass)
+
+### 2026-11-14 — compass-labs:test — note: verification ready for the Test gate
+- verification.md has VER-001 to VER-007 covering REQ-001 to REQ-006, all passing at 2feba1a. VER-001–VER-005: integration rows from an end-to-end check running the real installer, a claude version swap, the installed cron line and the publish step with the suite's stubs (18 checks, 0 failed). VER-006: inspection of the three triage docs for REQ-006. VER-007: `bash tests/run.sh` (52 passed, 0 failed). check-traceability.sh passes.
+
+### 2026-11-14 — main — milestone: ✅ Test complete
+- Approved by the orchestrator under the user's "run it till close" instruction. check-traceability.sh: every REQ-* has a passing VER-*.
+
+---
+
+## Phase: Deploy
