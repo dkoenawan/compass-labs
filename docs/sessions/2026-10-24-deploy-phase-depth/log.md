@@ -4,7 +4,7 @@ type: feature
 issue: 30
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/30-deploy-phase-depth
-phase: deploy
+phase: close
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: test
+milestone: deploy
 active_agent: main
-next_step: "Deploy: L2 release of 2.3.0"
+next_step: "Close: fold back into as-built docs"
 ---
 # Session Log: Deploy phase depth (#30)
 
@@ -29,6 +29,7 @@ next_step: "Deploy: L2 release of 2.3.0"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Deploy complete — short tier confirmed; v2.3.0 bumped (ac29eb5), pushed, PR #77 ready; confirmation passed; merge is the user's.
 - **2026-11-14**: ✅ Test complete — VER-001 to VER-031, 30 pass, VER-019 pending the Deploy bump; check-traceability.sh exit 0; tests/run.sh 42 passed.
 - **2026-11-09**: Verification draft approved; REQ-020 and REQ-024 pass at Test on the merge simulation and PR-job timing, with the real merge result checked in Close.
 - **2026-11-03**: ✅ Implement complete — 22 tasks, DES-001 to DES-016 built (11 as designed, 5 with accepted variations); tests/run.sh 42 passed.
@@ -229,3 +230,22 @@ next_step: "Deploy: L2 release of 2.3.0"
 - User approved the Test gate ("yeap continue and close off"). check-traceability.sh exit 0: every REQ-* has a passing VER-*. 30 of 31 VER rows pass; VER-019 stays pending until Deploy pushes the version bump. REQ-020 and REQ-024 pass on pre-merge evidence, real tag/release checked at Close.
 
 ## Phase: Deploy
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:deploy (L2 release of compass-labs)
+- **Input:** Run Deploy for #30: validate .claude/deploy.json, completeness check, run the declared routine L2 steps (version bump, commit, push to the session branch), confirmation check, propose the Deploy tier, write release.md. The merge of PR #77 and the tag/release it triggers are the user's; do not merge.
+- **Output:** done; release.md (new), .claude-plugin/plugin.json (2.3.0, committed ac29eb5 and pushed by the declared steps)
+
+### 2026-11-14 — compass-labs:deploy — attempt: Deploy ran: L1 setup checked, v2.3.0 bumped, pushed, PR #77 ready
+- The declaration (`.claude/deploy.json`) is valid and in_session. The completeness check against `marketplace.json` as it ships found no gaps (17 listed, 17 present, `skills/deploy` listed). L1 was needed: the delta row for `.github/workflows/release.yml` and `.github/scripts/release-tag.sh` (new, DES-016) is the declared part `merge-triggered pipeline`. Its setup (`gh run list ...`) showed run 43565893739 passed. No REQ-027 offer was made. The L2 routine steps ran word for word: bump minor (MINOR: a new skill), giving 2.3.0; commit ac29eb5 "chore(release): v2.3.0 — #30"; push the session branch; `gh pr ready 77`. The merge waits for the user.
+
+### 2026-11-14 — compass-labs:deploy — note: Confirmation passed; release.md ready at the proposed short tier
+- `release-tag.sh --check` reported it would create compass-labs--v2.3.0 at ac29eb5 (exit 0). PR #77's pull_request run of release.yml (43566019362, head ac29eb5) passed and reported compass-labs--v2.3.0. No tag exists on the remote yet. Proposed Deploy tier: short (routine plugin release, no production-affecting step), for the user to confirm at the gate. check-release.sh: ok.
+
+### 2026-11-14 — main — note: VER-019 evidence after the bump push
+- VER-019 (REQ-019, pending at the Test milestone by plan) now has its evidence: PR #77's pull_request run 43566019362 of release.yml on ac29eb5 succeeded and its "Check the release tag" step reported compass-labs--v2.3.0; no tag on the remote yet. verification.md is frozen, so this is recorded here and in release.md.
+- The declared commit step in `.claude/deploy.json` carries no Co-Authored-By line, so the bump commit ac29eb5 has none.
+
+### 2026-11-14 — main — milestone: ✅ Deploy complete
+- User confirmed the proposed short tier and approved Deploy. Completeness: no gaps. check-release.sh ok (short). v2.2.1 → v2.3.0 in ac29eb5, pushed; PR #77 ready, MERGEABLE. release-tag.sh --check would create compass-labs--v2.3.0. The merge, and the tag and release the pipeline makes from it, are the user's.
+
+## Phase: Close
