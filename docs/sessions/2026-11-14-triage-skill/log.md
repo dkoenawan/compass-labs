@@ -4,7 +4,7 @@ type: feature
 issue: 86
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/86-triage-skill
-phase: test
+phase: deploy
 status: active
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: implement
+milestone: test
 active_agent: main
-next_step: "Hand off to compass-labs:test"
+next_step: "Hand off to compass-labs:deploy"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,8 @@ next_step: "Hand off to compass-labs:test"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Test complete — 28/28 live REQs pass (check-traceability ok); VER-030 pending (interactive apply) alongside passing VER-017; approved under the user's delegation.
+- **2026-11-14**: Test findings deferred to #90 (report size limit), #91 (run date in header), #92 (recommend claude setup-token).
 - **2026-11-14**: ✅ Implement complete — DES-001–009 built, 52/52 tests pass; V1–V7 accepted under the user's delegation.
 - **2026-11-14**: Implement gate: V1–V7 all accepted as built.
 - **2026-11-14**: Follow-up #89 (plugin/tooling Implement layer guidance) opened by Implement.
@@ -160,3 +162,22 @@ next_step: "Hand off to compass-labs:test"
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:test (verify REQ-001–025, REQ-028–030)
 - **Input:** verify every live REQ with Test-owned methods, including the Handed to Test items (DES-001 checks 1–5, DES-002 reviewer mapping and fixture run, DES-005 check 5: a real headless run). A real headless run must target a throwaway test repo or a fixture snapshot, never this repo's real issues, and must not install the real crontab.
+- **Output:** done; verification.md
+
+### 2026-11-14 — compass-labs:test — attempt: Test verified REQ-001–025 and REQ-028–030
+- verification.md: VER-001 to VER-030 (28 pass; VER-030 pending for REQ-014/REQ-016, which pass on inspection in VER-017). check-traceability.sh exit 0.
+- DES-005 check 5: real headless runs (claude 2.1.325, stub gh, scratch clones with marker-writing hooks and test commands): no markers, git status unchanged, one issue create. Positive control: the hook fires without --restricted. 100 issues published in 287s (goal 30 min); report 51,243 chars.
+- DES-001 check 2 not runnable headless: AskUserQuestion is unavailable under claude -p, and the skill accepts no other confirmation.
+
+### 2026-11-14 — main — decision: Test findings become follow-up issues
+- #90: report body may exceed GitHub's 65,536-character limit on long real issues (fails safe, no report).
+- #91: report header's Run date uses the model's clock, not the run's local date.
+- #92: recommend `claude setup-token` for unattended runs; this machine's sign-in expires 2026-11-18 to 2026-11-21, before the first scheduled run.
+
+### 2026-11-14 — main — milestone: Test complete
+- Approved by the orchestrator under the user's delegation. `check-traceability.sh`: ok. Frozen: `verification.md`.
+
+## Phase: Deploy
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:deploy (release the triage skill)
+- **Input:** run the declared L1/L2 routine steps for this session (new skill → MINOR), propose the tier, write release.md. Never merge.
