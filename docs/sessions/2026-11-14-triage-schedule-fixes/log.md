@@ -28,6 +28,7 @@ next_step: "Implement: build DES-001–DES-005 with tests"
 
 ## Key decisions
 
+- **2026-11-14**: Implement variations: none; DES-001–DES-005 built as designed.
 - **2026-11-14**: ✅ Design complete — DES-001–DES-005 frozen, check-design.sh passed.
 - **2026-11-14**: D1 adjusted at the Design gate: portable bash `$PWD/` prefix instead of GNU-only `realpath -s`.
 - **2026-11-14**: D2 date in run-scheduled.sh's prompt preamble (stock-take.md unchanged, ADR-010 holds); D3 publish-report.sh sets the header Run date.
@@ -98,3 +99,20 @@ next_step: "Implement: build DES-001–DES-005 with tests"
 ---
 
 ## Phase: Implement
+
+### 2026-11-14 — main — handoff: orchestrator → compass-labs:implement (build DES-001–DES-005)
+- **Input:** build the frozen DES-001–DES-005 with tests, committing per task. User wants the session run to Close without stopping.
+- **Output:** done; DES-001–DES-005 built, no variations, 52/52 tests pass (commits 1312d91, 6c32d64, 167fc44, 70e5e16, 6bd3804). Gate: rework two comment nits (#93→#91 label in publish-report.sh, long line in install-schedule.sh).
+- **Output (after rework):** done; fdbb47b, 52/52 tests pass.
+
+### 2026-11-14 — compass-labs:implement — note: Implement built DES-001 to DES-005, ready for the Implement gate
+- Five tasks in the design's order, one commit each (1312d91, 6c32d64, 167fc44, 70e5e16, 6bd3804). All five built as designed, no variations. Plugin/tooling has no Implement guidance (#89). Nothing handed to Test. `bash tests/run.sh`: 52 passed, 0 failed.
+
+### 2026-11-14 — compass-labs:implement — note: DES-004 keeps the report byte for byte apart from the header Run date
+- The header rewrite keeps a missing final newline missing, and leaves a `- Run date:` line outside `## Header` unchanged. Both tested in `publish_report_test.sh`.
+
+### 2026-11-14 — compass-labs:implement — note: Implement gate comment fixes applied
+- Commit fdbb47b: publish-report.sh step 3 cites #91; install-schedule.sh header rewrapped, `--help` range now `2,30p` (diffed against the comment block). 52 passed, 0 failed.
+
+### 2026-11-14 — main — decision: Implement variations
+- No variations: every DES item built as designed, so none to accept or rework. The orchestrator's comment-nit rework is done (fdbb47b).
