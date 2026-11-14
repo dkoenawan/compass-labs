@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 
 ## Key decisions
 
+- **2026-11-14**: User delegated every gate to the orchestrator through to Close ("Continue all the way until close. I'll review and come back after."). Orchestrator answers phase questions and approves milestones, logging each answer as a decision; no merge.
 - **2026-11-14**: Session branch `feat/86-triage-skill`, from `main`.
 
 ---
@@ -44,3 +45,7 @@ next_step: "Hand off to compass-labs:define to frame the problem and propose a t
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:define (frame problem, propose tier)
 - **Input:** frame the problem for #86 and propose a depth tier. Reference behaviour is the 2026-11-14 manual triage. The user wants it on a schedule: Saturdays 01:00 Pacific/Auckland.
+
+### 2026-11-14 — main — decision: gates delegated to the orchestrator until Close
+- The user said: "Continue all the way until close. I'll review and come back after."
+- So the orchestrator answers phase agents' questions and approves each milestone itself, recording every answer as a `decision` entry for the user to review afterwards. The no-merge rule still holds: the PR stays open for the user.
