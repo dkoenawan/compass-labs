@@ -18,8 +18,10 @@
 # weekday) they map to on 53 weekly dates over the next year (D3). One cron
 # line is written per distinct slot; run-scheduled.sh guards on the local day
 # and time, so only the right slot runs. Each line sets TRIAGE_CLAUDE_BIN and
-# TRIAGE_GH_BIN to the binaries found now, because cron's PATH is minimal, and
-# ends with the marker "# compass-labs:triage: <repo>", which
+# TRIAGE_GH_BIN to the binaries found now, because cron's PATH is minimal. The
+# paths are absolute but not symlink-resolved: a PATH symlink such as
+# ~/.local/bin/claude stays as written, so a later update that repoints it
+# doesn't break the schedule (#93). Each line ends with the marker "# compass-labs:triage: <repo>", which
 # uninstall-schedule.sh removes by. Every other crontab line is left as is.
 #
 # Before writing: validates the arguments, checks `gh auth status`, refuses a
@@ -71,7 +73,8 @@ TZ="$ZONE" date >/dev/null 2>&1 || die "time zone '$ZONE' doesn't work with date
 REPO_ABS="$(cd "$REPO" && pwd)"
 git -C "$REPO_ABS" rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "'$REPO_ABS' is not a git repository"
 
-# resolve_bin <name> <override>: an absolute path for the cron line.
+# resolve_bin <name> <override>: an absolute path for the cron line. A relative
+# path is made absolute against the current directory; no symlink is followed.
 resolve_bin() {
   local name="$1" override="$2" found
   if [[ -n "$override" ]]; then
@@ -80,7 +83,8 @@ resolve_bin() {
   else
     found="$(command -v "$name" 2>/dev/null)" || die "$name not found on PATH"
   fi
-  realpath "$found"
+  [[ "$found" = /* ]] || found="$PWD/$found"
+  echo "$found"
 }
 CLAUDE_BIN="$(resolve_bin claude "${TRIAGE_CLAUDE_BIN:-}")"
 GH_BIN="$(resolve_bin gh "${TRIAGE_GH_BIN:-}")"
