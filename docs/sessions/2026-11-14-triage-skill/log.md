@@ -5,7 +5,7 @@ issue: 86
 # branch: the session branch, written once when the session opens, read by Resume.
 branch: feat/86-triage-skill
 phase: close
-status: active
+status: archived
 # milestone: the PHASE KEY of the last completed milestone, not a display
 # label. Allowed values (feature workflow): none | define | design |
 # implement | test | deploy | close. "none" until the first milestone
@@ -13,9 +13,9 @@ status: active
 # each phase's `order` in workflows/<type>.json, to decide which
 # artifacts are frozen. Display labels (e.g. "Define complete") live only
 # in workflows/<type>.json's `milestone` field, for GitHub comments.
-milestone: deploy
+milestone: close
 active_agent: main
-next_step: "Hand off to compass-labs:close"
+next_step: "User reviews and merges PR #87"
 ---
 # Session Log: Triage skill (#86)
 
@@ -29,6 +29,7 @@ next_step: "Hand off to compass-labs:close"
 
 ## Key decisions
 
+- **2026-11-14**: ✅ Session closed — triage skill folded into docs (ADR-010, 7 constructs); issue #86 left open until PR #87 merges (#72).
 - **2026-11-14**: Maintainer schedule installed (Sat 01:00 Pacific/Auckland); `claude` path pinned to the stable symlink by hand; installer bug deferred to #93.
 - **2026-11-14**: ✅ Deploy complete — v2.4.0 prepared (1918c84), PR #87 ready for review, tier short confirmed; merge left to the user.
 - **2026-11-14**: ✅ Test complete — 28/28 live REQs pass (check-traceability ok); VER-030 pending (interactive apply) alongside passing VER-017; approved under the user's delegation.
@@ -203,3 +204,16 @@ next_step: "Hand off to compass-labs:close"
 
 ### 2026-11-14 — main — handoff: orchestrator → compass-labs:close (fold back into docs)
 - **Input:** fold the session back into as-built docs (README already documents the skill; registry construct and ADR for D1 as flagged in design).
+- **Output:** done; ADR-010, patterns.md, triage overview and reference, 7 constructs, registry and solution-design updates, implement docs (#89)
+
+### 2026-11-14 — compass-labs:close — note: fold-back ready — triage skill folded into the as-built docs
+- ADR-010 (D1 with D2's isolation as built) and its index; pattern "An unattended model run reads; scripts write" and its anti-pattern.
+- New docs/explanation/triage/overview.md and docs/reference/triage/stock-take-and-schedule.md (open work #88–#93).
+- solution-design.md: triage domain row, GitHub row, ADR-010 key decision. Implement docs: plugin/tooling has no Implement guidance (#89).
+- Constructs registered (status built): TriageSkill, StockTakeProcedure, TriageSnapshot, TriageReportPublisher, TriageScheduledRun, TriageSchedule, TriageLabel. Each still to validate with `/compass-labs:post-hook-validator`.
+- README unchanged; docs/index.html not regenerated.
+
+### 2026-11-14 — main — milestone: Session closed
+- Approved by the orchestrator under the user's delegation. `bash tests/run.sh` 52/52 after fold-back.
+- Issue #86 is deliberately left open: PR #87 isn't merged, and closing it now is the known defect #72. It closes when the user merges.
+- PR #87 is ready for the user to review and merge; the orchestrator doesn't merge.

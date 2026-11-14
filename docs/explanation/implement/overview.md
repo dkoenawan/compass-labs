@@ -1,13 +1,13 @@
 ---
 domain: implement
-last_updated: 2026-10-17
+last_updated: 2026-11-14
 source_path: skills/implement
 ---
 
 # Implement (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [the Implement standard](../../reference/implement/standard.md) | → [Session overview](../session/overview.md) · [Design overview](../design/overview.md) | → Decision: [ADR-005](../../registry/decisions/005-implement-as-built-record.md)
-> Origin: #28
+> Origin: #28 · #86
 
 ## What Is Implement?
 
@@ -123,7 +123,7 @@ flowchart TB
 
 ## Gotchas
 
-- **Only the backend has Implement guidance.** Frontend (#57), database (#58), AI-agent (#59) and infrastructure (#50) items are built by the fallback, and their As-built rows cite those issues. A non-OpenAPI backend API (GraphQL, gRPC) also uses the fallback (#60).
+- **Only the backend has Implement guidance.** Frontend (#57), database (#58), AI-agent (#59), infrastructure (#50) and plugin/tooling (#89) items are built by the fallback, and their As-built rows cite those issues. A non-OpenAPI backend API (GraphQL, gRPC) also uses the fallback (#60).
 - **The API check is agent-run, not mechanical.** One row per designed endpoint makes an omission visible at the gate, but a missed mismatch depends on the agent and the reviewer. Spec-first OpenAPI from Design is #47.
 - **Never write a checklist line in `as-built.md`.** The template is tables only for that reason.
 - **A session has one layout.** A new session can't create a root `tasks.md`, and a past one can't create `implement/`. Past sessions keep a "Deviations from design" section, which Close folds like accepted variations.
@@ -134,3 +134,4 @@ flowchart TB
 ## Changelog
 
 - 2026-10-17: Initial documentation.
+- 2026-11-14: Plugin/tooling added to the items built without Implement guidance (#89).

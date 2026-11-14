@@ -3,7 +3,7 @@
 > These are non-negotiable conventions. Before implementing anything,
 > check if a pattern applies. If you need to deviate, write an ADR first.
 >
-> Origin: #22 · #23 · #27 · #28 · #30 · #37
+> Origin: #22 · #23 · #27 · #28 · #30 · #37 · #86
 
 <!-- Pattern format:
 ## Pattern Name
@@ -109,6 +109,12 @@ Every deploy step comes from the repo's `.claude/deploy.json`, run word for word
 - Implements: DeployStandard (`skills/deploy/SKILL.md`), DeclarationCheck (`skills/deploy/scripts/check-declaration.sh`), `agents/deploy.md`, `skills/session/reference/phase-agent-contract.md` (Deploy clause), `.claude/deploy.json`
 - ADR: [ADR-007](decisions/007-deploy-declaration.md), [ADR-008](decisions/008-deploy-runs-declared-steps.md)
 
+## An unattended model run reads; scripts write
+
+A model run with nobody present gets only read tools (Read, Grep, Glob) in a session that loads no settings files, plugins, hooks or MCP servers, and prints its result. Deterministic scripts take the snapshot it reads and make every write, after validating its output. Text the model reads (issues, comments, PRs) is data, never instructions, and can't cause an action because the model has no tool that acts. Carrying out a proposed change needs an attended run and the user's own answer.
+- Implements: TriageScheduledRun (`skills/triage/scripts/run-scheduled.sh`), TriageSnapshot (`gather.sh`), TriageReportPublisher (`publish-report.sh`), StockTakeProcedure (`skills/triage/reference/stock-take.md`, rule zero), TriageSkill (`skills/triage/SKILL.md`, confirmation rule)
+- ADR: [ADR-010](decisions/010-read-only-scheduled-triage-run.md)
+
 ## Anti-Patterns
 
 - ❌ Letting a subagent write `log.md`: parallel agents would clash, and handoffs would go unrecorded. Agents return `log_entries` instead.
@@ -122,3 +128,4 @@ Every deploy step comes from the repo's `.claude/deploy.json`, run word for word
 - ❌ Assuming the default branch is `main`: read it with `default-branch.sh`.
 - ❌ Tagging a branch commit before the merge: a squash merge throws it away. The merge-triggered pipeline tags the merge commit.
 - ❌ Editing compass-labs' installed `.github/` release files by hand: fix the starter template and reinstall.
+- ❌ Running an unattended model that reads untrusted text with `--dangerously-skip-permissions`, a plugin or settings files loaded: every limit then rests on the prompt being obeyed. Give it read tools only and let scripts write.
