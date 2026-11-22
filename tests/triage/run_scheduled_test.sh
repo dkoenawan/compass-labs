@@ -53,6 +53,8 @@ assert_contains "$argv" $'\n--permission-prompts\nnone\n' "nothing can prompt fo
 assert_contains "$argv" $'\n--disable-slash-commands\n' "no skills or commands"
 assert_contains "$argv" $'\n--add-dir\n' "the snapshot is added as a readable directory"
 assert_eq "-p" "$(head -1 "$CLAUDE_STUB_LOG")" "headless print mode"
+# The model is pinned, not the account default (which may need usage credits).
+assert_contains "$argv" $'\n--model\nopus\n' "the model defaults to opus"
 for bad in --dangerously-skip-permissions --allow-dangerously-skip-permissions --plugin-dir \
            --plugin-url bypassPermissions --setting-sources --settings --mcp-config Bash Edit Write; do
   grep -qxF -- "$bad" "$CLAUDE_STUB_LOG" && fail "claude argv must not contain $bad"
@@ -115,7 +117,7 @@ env -i HOME="$T/home" PATH=/usr/bin:/bin TMPDIR="$TMPDIR" XDG_STATE_HOME="$XDG_S
 assert_eq "0" "$?" "env -i with TRIAGE_*_BIN should run: $(cat "$log_dir"/*.log 2>/dev/null)"
 [[ -f "$CLAUDE_STUB_LOG" ]] || fail "env -i: claude found through TRIAGE_CLAUDE_BIN"
 assert_eq "1" "$(grep -c '^issue create' "$GH_STUB_LOG")" "env -i: gh found through TRIAGE_GH_BIN"
-assert_contains "$(cat "$log_dir/2026-11-21.log")" "claude: $TRIAGE_CLAUDE_BIN; gh: $TRIAGE_GH_BIN" "binaries logged"
+assert_contains "$(cat "$log_dir/2026-11-21.log")" "claude: $TRIAGE_CLAUDE_BIN (model opus); gh: $TRIAGE_GH_BIN" "binaries and model logged"
 
 # A binary that can't be found: the log names which one.
 reset_logs
@@ -150,6 +152,19 @@ CLAUDE_STUB_EXIT=1 run_at "2026-11-20 12:00Z"
 [[ $RC -ne 0 ]] || fail "a failed claude exits non-zero"
 assert_contains "$(cat "$log_dir/2026-11-21.log")" "claude exited with code 1" "the claude failure is logged"
 assert_eq "" "$(gh_writes)" "nothing published after a failed claude"
+
+# claude's error goes to stdout in print mode: a failure copies it to the log.
+reset_logs
+echo "Fable 5.2 requires usage credits. Switch to another model" >"$T/err.md"
+CLAUDE_STUB_EXIT=1 CLAUDE_STUB_REPORT="$T/err.md" run_at "2026-11-20 12:00Z"
+[[ $RC -ne 0 ]] || fail "a failed claude exits non-zero"
+assert_contains "$(cat "$log_dir/2026-11-21.log")" "requires usage credits" "claude's stdout is logged on a failure"
+
+# TRIAGE_CLAUDE_MODEL overrides the model.
+reset_logs
+TRIAGE_CLAUDE_MODEL=sonnet run_at "2026-11-20 12:00Z"
+assert_eq "0" "$RC" "a run with TRIAGE_CLAUDE_MODEL succeeds"
+assert_contains "$(cat "$CLAUDE_STUB_LOG")" $'\n--model\nsonnet\n' "TRIAGE_CLAUDE_MODEL is passed as --model"
 
 # An invalid report: no write, the report is kept beside the log.
 reset_logs
