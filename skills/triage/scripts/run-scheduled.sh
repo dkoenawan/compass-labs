@@ -28,8 +28,11 @@
 #             reference/stock-take.md unchanged. Only the Read, Grep and Glob tools;
 #             --restricted (no user, project or local settings files, so no
 #             settings hooks or plugins); no MCP servers; no --plugin-dir; never
-#             --dangerously-skip-permissions (REQ-012, REQ-025). Stdout is the
-#             report.
+#             --dangerously-skip-permissions (REQ-012, REQ-025). The model is
+#             TRIAGE_CLAUDE_MODEL (default opus), never the account default,
+#             which may need usage credits an unattended run can't buy.
+#             Stdout is the report; on a failure it goes to the log, since
+#             claude prints its error there.
 #   Publish   publish-report.sh with the local date.
 #
 # This script never runs a gh write itself, never runs an apply (REQ-015),
@@ -43,6 +46,7 @@ SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
 STOCK_TAKE="$SKILL_DIR/reference/stock-take.md"
 CLAUDE_TIMEOUT="50m"
+CLAUDE_MODEL="${TRIAGE_CLAUDE_MODEL:-opus}"
 
 usage_error() { echo "[$SCRIPT_NAME] Error: $*" >&2; exit 2; }
 
@@ -148,7 +152,7 @@ if ! auth_out="$(cd "$REPO_ABS" && "$GH_BIN" auth status 2>&1)"; then
   fail preflight "$reason"
 fi
 export TRIAGE_GH_BIN="$GH_BIN"
-log "claude: $CLAUDE_BIN; gh: $GH_BIN"
+log "claude: $CLAUDE_BIN (model $CLAUDE_MODEL); gh: $GH_BIN"
 step_ok preflight
 
 # --- Snapshot -------------------------------------------------------------
@@ -179,6 +183,7 @@ EOF
 # Flags checked against `claude --help` (CLI 2.1.325): see implement/as-built.md.
 CLAUDE_ARGS=(
   -p
+  --model "$CLAUDE_MODEL"
   --tools "Read,Grep,Glob"
   --restricted
   --strict-mcp-config
@@ -190,6 +195,10 @@ CLAUDE_ARGS=(
 )
 (cd "$REPO_ABS" && timeout "$CLAUDE_TIMEOUT" "$CLAUDE_BIN" "${CLAUDE_ARGS[@]}" <"$PROMPT" >"$REPORT" 2>>"$LOG")
 rc=$?
+if [[ $rc -ne 0 && -s "$REPORT" ]]; then
+  log "claude stdout (last 20 lines):"
+  tail -n 20 "$REPORT" >>"$LOG"
+fi
 if [[ $rc -eq 124 ]]; then
   fail stock-take "claude timed out after $CLAUDE_TIMEOUT"
 elif [[ $rc -ne 0 ]]; then
