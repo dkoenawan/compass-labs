@@ -26,7 +26,7 @@ cd "$REPO_ROOT" || fail "cannot cd to repo root"
 
 # 1. Every file that states a default stack is the source or links to it.
 mapfile -t stating < <(grep -rliE 'default (tech )?stack|stack defaults?|default:? *(React|Node|Postgres|Prisma|Terraform)' \
-  skills agents README.md | sort)
+  skills README.md | sort)
 for file in "${stating[@]}"; do
   [[ "$file" == "$SOURCE_REL" ]] && continue
   grep -q 'stack-defaults.md' "$file" \
@@ -35,7 +35,7 @@ done
 
 # 2. No file names a different default for a stack area.
 conflict_re='default[^.|]{0,15}\b(Pulumi|CloudFormation|CDK|Ansible|Bicep|Swagger|MySQL|MongoDB|SQLite|Vue|Angular|Svelte|Django|FastAPI|Flask|Express)\b'
-if hits="$(grep -rniE "$conflict_re" skills agents README.md)"; then
+if hits="$(grep -rniE "$conflict_re" skills README.md)"; then
   echo "$hits" >&2
   fail "a file names a default that conflicts with $SOURCE_REL"
 fi

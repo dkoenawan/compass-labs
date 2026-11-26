@@ -54,4 +54,4 @@ exit 0 written · 1 declaration not valid · 3 origin not GitHub · 4 versioning
 
 ## Key Decisions
 
-- [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md): the starter is optional, copied and owned by the repo, with values fixed at copy time.
+- [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md): the starter is optional, copied and owned by the repo, with values fixed at copy time.

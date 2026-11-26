@@ -1,6 +1,6 @@
 # Implement: the standard, the as-built record and the testing boundary
 
-> → Concepts: [Implement overview](../../explanation/implement/overview.md) · → [Session workflow and artifacts](../session/workflow-and-artifacts.md#the-implement-folder) · → Decision: [ADR-005](../../registry/decisions/005-implement-as-built-record.md)
+> → Concepts: [Implement overview](../../explanation/implement/overview.md) · → [Session workflow and artifacts](../session/workflow-and-artifacts.md#the-implement-folder) · → Decision: [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 > Origin: #28 · #86
 
 The standard itself is [`skills/implement/SKILL.md`](../../../skills/implement/SKILL.md), preloaded by the Implement agent (`agents/implement.md`). This page lists the facts other docs, tools and sessions rely on. The `implement/` folder's place in the session schema is in the [session reference](../session/workflow-and-artifacts.md#the-implement-folder).

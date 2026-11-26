@@ -167,7 +167,7 @@ As-built docs never cite a specific session's `REQ-*`, `DES-*` or `VER-*` IDs, o
 
 ## Session branch and pull request
 
-A session's commits never land on the repository's default branch. They are made on the **session branch**, and reach the default branch only when the user merges the session's pull request. The default branch is always read from the repository (`default-branch.sh`), never assumed to be `main`. [`session-branch-guard.sh`](hooks-and-scripts.md#session-branch-guardsh) blocks a session commit or push to it ([ADR-006](../../registry/decisions/006-session-branch-guard.md)); the rest is the `session` skill's procedure.
+A session's commits never land on the repository's default branch. They are made on the **session branch**, and reach the default branch only when the user merges the session's pull request. The default branch is always read from the repository (`default-branch.sh`), never assumed to be `main`. [`session-branch-guard.sh`](hooks-and-scripts.md#session-branch-guardsh) blocks a session commit or push to it ([ADR-006](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/006-session-branch-guard.md)); the rest is the `session` skill's procedure.
 
 | When | What the orchestrator does |
 |---|---|

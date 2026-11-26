@@ -64,5 +64,5 @@ Templates:     skills/session/templates/implement/{tasks.md,as-built.md}
 
 ## Key Decisions
 
-- [ADR-005](../../registry/decisions/005-implement-as-built-record.md): the `implement/` folder, the testing boundary and the variation path.
-- [ADR-004](../../registry/decisions/004-design-path.md) D7: one home per layer; D8: Close registers constructs.
+- [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md): the `implement/` folder, the testing boundary and the variation path.
+- [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md) D7: one home per layer; D8: Close registers constructs.

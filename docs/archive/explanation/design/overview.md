@@ -6,7 +6,7 @@ source_path: skills/design
 
 # Design (L3)
 
-> → [System overview](../solution-design.md) | → Reference: [the Design standard](../../reference/design/standard.md) | → [Session overview](../session/overview.md) | → Decision: [ADR-004](../../registry/decisions/004-design-path.md)
+> → [System overview](../solution-design.md) | → Reference: [the Design standard](../../reference/design/standard.md) | → [Session overview](../session/overview.md) | → Decision: [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md)
 > Origin: #27 · #28
 
 ## What Is Design?
@@ -118,7 +118,7 @@ flowchart LR
 
 **The layout tells old sessions from new.** A session with a root `design.md` predates the `design/` folder. It keeps the old template, the guard treats it as before, and `check-design.sh` passes it with "legacy layout: no check".
 
-**ADRs are written at Close, not during Design.** Design flags architecture-level decisions "ADR" and keeps them in its own artifact. Close writes them into `docs/registry/decisions/` once the session has shipped. See [ADR-004](../../registry/decisions/004-design-path.md).
+**ADRs are written at Close, not during Design.** Design flags architecture-level decisions "ADR" and keeps them in its own artifact. Close writes them into `docs/registry/decisions/` once the session has shipped. See [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md).
 
 ## Dependencies
 

@@ -48,4 +48,4 @@ bump-version.sh <patch|minor|major>   # prints the new version; exit 1 on a bad 
 
 ## Key Decisions
 
-- [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md): version arithmetic is a script; the level is the agent's choice by the declared rule.
+- [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md): version arithmetic is a script; the level is the agent's choice by the declared rule.

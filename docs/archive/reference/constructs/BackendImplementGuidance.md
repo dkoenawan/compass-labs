@@ -58,5 +58,5 @@ Render:     npx @scalar/cli document validate {path}   (not added to the repo's 
 
 ## Key Decisions
 
-- [ADR-005](../../registry/decisions/005-implement-as-built-record.md) D7: the backend as the first layer with Implement guidance; the API check is agent-run, one row per designed endpoint.
-- [ADR-004](../../registry/decisions/004-design-path.md) D10: an established stack always wins over a default.
+- [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md) D7: the backend as the first layer with Implement guidance; the API check is agent-run, one row per designed endpoint.
+- [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md) D10: an established stack always wins over a default.

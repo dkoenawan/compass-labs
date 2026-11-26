@@ -58,4 +58,4 @@ jq rules: skills/deploy/scripts/lib/validate.jq, lib/plan.jq
 ## Key Decisions
 
 - [ADR-007](../../registry/decisions/007-deploy-declaration.md): the declaration's shape.
-- [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md): what may run is decided by a script, not only a prompt.
+- [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md): what may run is decided by a script, not only a prompt.

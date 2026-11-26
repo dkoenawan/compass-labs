@@ -59,4 +59,4 @@ Session:  open when SessionLister prints any session, or the index has staged do
 
 ## Key Decisions
 
-- [ADR-006](../../registry/decisions/006-session-branch-guard.md): a `PreToolUse` hook on `Bash`, not git hooks in the consuming repo; it reads command text, so `sh -c`, `eval`, aliases and scripts can get past it.
+- [ADR-006](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/006-session-branch-guard.md): a `PreToolUse` hook on `Bash`, not git hooks in the consuming repo; it reads command text, so `sh -c`, `eval`, aliases and scripts can get past it.

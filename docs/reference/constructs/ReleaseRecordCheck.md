@@ -51,4 +51,4 @@ exit 0 ok, or past record · 1 a section missing (each named), bad tier, or no r
 
 ## Key Decisions
 
-- [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md): risk-based tiers, confirmed by the user before the sections are checked.
+- [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md): risk-based tiers, confirmed by the user before the sections are checked.

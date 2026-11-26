@@ -55,4 +55,4 @@ Exit:   always 0
 
 ## Key Decisions
 
-- [ADR-006](../../registry/decisions/006-session-branch-guard.md): a session counts as open for the branch guard while it is active or paused at any local branch tip, not only in the working tree.
+- [ADR-006](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/006-session-branch-guard.md): a session counts as open for the branch guard while it is active or paused at any local branch tip, not only in the working tree.

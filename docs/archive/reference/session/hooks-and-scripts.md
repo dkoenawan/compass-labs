@@ -54,7 +54,7 @@ The main session (no `agent_id`) may write any allowlisted artifact that isn't f
 
 ### `session-branch-guard.sh`
 
-Keeps session work off the default branch, so it reaches it only through a pull request ([ADR-006](../../registry/decisions/006-session-branch-guard.md)). It sees only Bash calls Claude makes; the user's own terminal git never passes through it.
+Keeps session work off the default branch, so it reaches it only through a pull request ([ADR-006](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/006-session-branch-guard.md)). It sees only Bash calls Claude makes; the user's own terminal git never passes through it.
 
 **Fast exit.** A Bash call whose input doesn't mention `git` together with `commit` or `push` exits 0 at once, before `jq` is even checked.
 

@@ -1,6 +1,6 @@
 # Deploy: the declaration, the tiers, the release record and the release pipeline
 
-> → Concepts: [Deploy overview](../../explanation/deploy/overview.md) · → [Session workflow and artifacts](../session/workflow-and-artifacts.md#milestone-gate-checks) · → Decisions: [ADR-007](../../registry/decisions/007-deploy-declaration.md) · [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md) · [ADR-009](../../registry/decisions/009-merge-triggered-release-pipeline.md)
+> → Concepts: [Deploy overview](../../explanation/deploy/overview.md) · → [Session workflow and artifacts](../session/workflow-and-artifacts.md#milestone-gate-checks) · → Decisions: [ADR-007](../../registry/decisions/007-deploy-declaration.md) · [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md) · [ADR-009](../../registry/decisions/009-merge-triggered-release-pipeline.md)
 > Origin: #30
 
 The standard itself is [`skills/deploy/SKILL.md`](../../../skills/deploy/SKILL.md), preloaded by the Deploy agent (`agents/deploy.md`) and also user-invocable as `/compass-labs:deploy` (`starter` argument). The full field list, `run` placeholders and an example per mode are in [`skills/deploy/reference/declaration.md`](../../../skills/deploy/reference/declaration.md); the framework verdicts are in [`skills/deploy/reference/frameworks.md`](../../../skills/deploy/reference/frameworks.md). This page lists the facts other docs, tools and sessions rely on.

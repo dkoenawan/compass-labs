@@ -6,7 +6,7 @@ source_path: skills/implement
 
 # Implement (L3)
 
-> → [System overview](../solution-design.md) | → Reference: [the Implement standard](../../reference/implement/standard.md) | → [Session overview](../session/overview.md) · [Design overview](../design/overview.md) | → Decision: [ADR-005](../../registry/decisions/005-implement-as-built-record.md)
+> → [System overview](../solution-design.md) | → Reference: [the Implement standard](../../reference/implement/standard.md) | → [Session overview](../session/overview.md) · [Design overview](../design/overview.md) | → Decision: [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 > Origin: #28 · #86
 
 ## What Is Implement?
