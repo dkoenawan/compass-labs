@@ -12,6 +12,8 @@
 #      the pstack run (/pstack:poteto-mode + reference/run-rule.md), which
 #      pushes the branch and opens the PR. Then /compass-labs:close folds it
 #      into docs and findings and adds the PR's drill-down.
+#   0. On brief_day, the first slot publishes the weekly brief
+#      (skills/brief), with no model call.
 #   5. One JSON line per outcome in $RUNS_LOG (date, role, repo, issue, PR,
 #      exit codes, output tokens, minutes), read by the weekly brief.
 #
@@ -51,6 +53,17 @@ log_event() { # status, then key=value pairs (values are strings or numbers)
 # 1. Slot and daily limit.
 if [[ $force -eq 0 ]]; then
   jq -r '.slots[]' "$CONTROLLER_CONFIG" | cut -d: -f1 | grep -qx "$hour" || exit 0
+  # The weekly brief: on brief_day, once, before any run (no model call).
+  if [[ "$(now_local +%a | tr '[:upper:]' '[:lower:]')" == "$(cfg .brief_day)" ]] && ! grep -q "\"date\":\"$today\",[^}]*\"status\":\"brief\"" "$RUNS_LOG" 2>/dev/null; then
+    snap="$CONTROLLER_STATE/brief-$today"
+    if bash "$PLUGIN_ROOT/skills/brief/scripts/gather.sh" "$snap" "$today" >/dev/null \
+       && bash "$PLUGIN_ROOT/skills/brief/scripts/render.sh" "$snap" > "$snap/brief.md" \
+       && url="$(bash "$PLUGIN_ROOT/skills/brief/scripts/publish.sh" "$snap/brief.md" "$today")"; then
+      log_event brief url="$url"
+    else
+      log_event failed reason="weekly brief"
+    fi
+  fi
   done_today="$(grep -c "\"date\":\"$today\",[^}]*\"status\":\"\(ran\|failed\)\"" "$RUNS_LOG" 2>/dev/null || true)"
   if (( ${done_today:-0} >= $(cfg .runs_per_day) )); then
     log_event skipped reason="daily limit reached"; exit 0

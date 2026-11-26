@@ -30,7 +30,7 @@ Scripts run through `${CLAUDE_PLUGIN_ROOT}/skills/controller/scripts/`:
 | `label` | The issue label that means "ready for Claude" (default `compass:ready`) |
 | `projects` | `[{repo, role: "side"}]`: side projects, rotated by day |
 | `compass_repo` | Where the compass week works: compass-labs, picking up the month's `compass` findings once you've turned them into labelled issues |
-| `brief_repo` | Where the weekly brief is published (`/compass-labs:brief`) |
+| `brief_repo`, `brief_day` | Where and on which day (`mon`…`sun`) the weekly brief is published. The first slot that day publishes it, with no model call |
 
 Runs are logged to `~/.local/state/compass/runs.jsonl`, with each run's transcripts under `runs/`. The weekly brief reads this log.
 

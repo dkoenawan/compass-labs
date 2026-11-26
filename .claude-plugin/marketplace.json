@@ -17,6 +17,7 @@
       "strict": true,
       "skills": [
         "./skills/adr",
+        "./skills/brief",
         "./skills/close",
         "./skills/controller",
         "./skills/deploy",
