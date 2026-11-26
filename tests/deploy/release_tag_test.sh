@@ -2,11 +2,11 @@
 # release_tag_test.sh
 # Component tests for the starter script
 # skills/deploy/templates/github/release-tag.sh (#30 DES-008, REQ-019 to
-# REQ-022, REQ-028), on a copy filled in with compass-labs' values, against
+# REQ-022, REQ-028), on a copy filled in with trellis' values, against
 # a bare local repo as origin and a stub gh: version changed, unchanged,
 # tag exists (the tag doesn't move), --check creates nothing, and a
 # plain-text VERSION file. Also: an unfilled copy refuses to run, and the
-# template names neither compass-labs' repo nor CLAUDE_PLUGIN_ROOT.
+# template names neither trellis' repo nor CLAUDE_PLUGIN_ROOT.
 
 set -uo pipefail
 
@@ -23,9 +23,9 @@ trap 'rm -rf "$work"' EXIT
 
 # --- The template is generic --------------------------------------------
 tpl="$(cat "$TEMPLATE")"
-assert_not_contains "$tpl" "dkoenawan/compass-labs" "the starter script should not name compass-labs' repo"
+assert_not_contains "$tpl" "dkoenawan/trellis" "the starter script should not name trellis' repo"
 assert_not_contains "$tpl" "CLAUDE_PLUGIN_ROOT" "the starter script should not depend on the plugin"
-assert_not_contains "$tpl" "compass-labs" "the starter script should not mention compass-labs"
+assert_not_contains "$tpl" "trellis" "the starter script should not mention trellis"
 for setting in VERSION_FILE VERSION_FIELD TAG_FORMAT; do
   grep -qE "^${setting}='__${setting}__'$" "$TEMPLATE" || fail "the settings block should hold $setting as a placeholder"
 done
@@ -85,9 +85,9 @@ run_script() {
 
 tag_sha() { git --git-dir="$ORIGIN" rev-parse -q --verify "refs/tags/$1^{commit}" 2>/dev/null; }
 
-# --- 1. compass-labs' values: changed, unchanged, tag exists, --check ----
+# --- 1. trellis' values: changed, unchanged, tag exists, --check ----
 new_repo compass
-fill "$REPO/.github/scripts/release-tag.sh" ".claude-plugin/plugin.json" ".version" "compass-labs--v{version}"
+fill "$REPO/.github/scripts/release-tag.sh" ".claude-plugin/plugin.json" ".version" "trellis--v{version}"
 git -C "$REPO" add .github && git -C "$REPO" commit -q -m "add script"
 set_json_version 2.2.1
 
@@ -96,17 +96,17 @@ set_json_version 2.3.0 "bump to 2.3.0"
 bump_sha="$(git -C "$REPO" rev-parse HEAD)"
 run_script --check
 assert_eq 0 "$STATUS" "--check should exit 0 ($OUT)"
-assert_contains "$OUT" "would create compass-labs--v2.3.0" "--check should report the tag it would create"
-[[ -z "$(tag_sha compass-labs--v2.3.0)" ]] || fail "--check should create no tag"
+assert_contains "$OUT" "would create trellis--v2.3.0" "--check should report the tag it would create"
+[[ -z "$(tag_sha trellis--v2.3.0)" ]] || fail "--check should create no tag"
 [[ ! -s "$GH_STUB_LOG" ]] || fail "--check should make no gh call (got: $(cat "$GH_STUB_LOG"))"
 
 # Version changed, tag free: one gh release create, tag on HEAD.
 run_script
 assert_eq 0 "$STATUS" "a changed version should release ($OUT)"
-assert_contains "$(cat "$GH_STUB_LOG")" "release create compass-labs--v2.3.0 --target $bump_sha" \
+assert_contains "$(cat "$GH_STUB_LOG")" "release create trellis--v2.3.0 --target $bump_sha" \
   "the release should be created on HEAD in one gh call"
 assert_contains "$(cat "$GH_STUB_LOG")" "--generate-notes" "the release should generate its notes"
-assert_eq "$bump_sha" "$(tag_sha compass-labs--v2.3.0)" "the tag should point at the merge commit"
+assert_eq "$bump_sha" "$(tag_sha trellis--v2.3.0)" "the tag should point at the merge commit"
 
 # --check now warns that the tag exists, and still creates nothing.
 : >"$GH_STUB_LOG"
@@ -134,8 +134,8 @@ set_json_version 2.2.1 "revert to 2.2.1"
 set_json_version 2.3.0 "second 2.3.0"
 run_script
 assert_eq 1 "$STATUS" "an existing tag should fail the run"
-assert_contains "$OUT" "compass-labs--v2.3.0 already exists" "the failure should name the existing tag"
-assert_eq "$bump_sha" "$(tag_sha compass-labs--v2.3.0)" "the existing tag should not move"
+assert_contains "$OUT" "trellis--v2.3.0 already exists" "the failure should name the existing tag"
+assert_eq "$bump_sha" "$(tag_sha trellis--v2.3.0)" "the existing tag should not move"
 [[ ! -s "$GH_STUB_LOG" ]] || fail "an existing tag should make no gh call"
 
 # --- 2. A plain-text VERSION file --------------------------------------

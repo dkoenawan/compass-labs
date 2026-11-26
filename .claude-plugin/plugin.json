@@ -1,11 +1,11 @@
 {
-  "name": "compass-labs",
-  "description": "Keeps side projects moving on a Claude subscription: pstack does the work, Compass schedules runs within your usage budget, keeps docs and findings indexed, guards the merge, and sends one visual weekly brief",
-  "version": "3.0.0",
+  "name": "trellis",
+  "description": "Keeps side projects moving on a Claude subscription: pstack does the work, Trellis schedules runs within your usage budget, keeps docs and findings indexed, guards the merge, and sends one visual weekly brief",
+  "version": "4.0.0",
   "author": {
     "name": "Daniel Koenawan"
   },
-  "repository": "https://github.com/dkoenawan/compass-labs",
+  "repository": "https://github.com/dkoenawan/trellis",
   "license": "MIT",
   "dependencies": [
     {

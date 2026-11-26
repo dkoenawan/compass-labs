@@ -1,6 +1,6 @@
 ---
 date: {YYYY-MM-DD}
-type: {decision | risk | learning | compass}
+type: {decision | risk | learning | trellis}
 title: {one line, plain words}
 pr: {#N or none}
 issue: {#N or none}

@@ -139,7 +139,7 @@ flowchart TD
 ```mermaid
 flowchart LR
   subgraph GH["GitHub"]
-    REPO["dkoenawan/compass-labs: main, tags, releases"]
+    REPO["dkoenawan/trellis: main, tags, releases"]
     subgraph RUNNER["GitHub Actions runner"]
       WF[".github/workflows/release.yml"]
       SCRIPT[".github/scripts/release-tag.sh"]

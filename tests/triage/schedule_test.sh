@@ -9,7 +9,7 @@ triage_setup
 INSTALL="$TRIAGE_SCRIPTS/install-schedule.sh"
 UNINSTALL="$TRIAGE_SCRIPTS/uninstall-schedule.sh"
 repo="$(make_triage_repo)"
-marker="# compass-labs:triage: $repo"
+marker="# trellis:triage: $repo"
 export TRIAGE_NOW="2026-11-14 00:00Z"
 
 # The maintainer's existing crontab: a doc-maintainer job and the midnight job.
@@ -58,13 +58,13 @@ assert_eq "" "$(grep '^label create' "$GH_STUB_LOG")" "a refused install creates
 other="${repo}-two"
 mkdir -p "$other" && git -C "$other" init -q
 bash "$INSTALL" "$other" --day mon --time 09:30 --tz UTC >/dev/null 2>&1 || fail "another repo can be scheduled"
-assert_eq "30 9 * * 1" "$(grep -F "# compass-labs:triage: $other" "$CRONTAB_STUB_FILE" | cut -d' ' -f1-5)" "UTC: one slot"
+assert_eq "30 9 * * 1" "$(grep -F "# trellis:triage: $other" "$CRONTAB_STUB_FILE" | cut -d' ' -f1-5)" "UTC: one slot"
 
 # Uninstall: only this repo's lines go, the others are identical (cmp).
 out="$(bash "$UNINSTALL" "$repo" 2>&1)" || fail "uninstall should succeed: $out"
-assert_eq "" "$(grep -E "# compass-labs:triage: $repo\$" "$CRONTAB_STUB_FILE")" "this repo's lines are gone"
+assert_eq "" "$(grep -E "# trellis:triage: $repo\$" "$CRONTAB_STUB_FILE")" "this repo's lines are gone"
 cmp -s "$T/before" <(head -2 "$CRONTAB_STUB_FILE") || fail "the other two lines are identical after uninstall"
-assert_eq "1" "$(grep -c "# compass-labs:triage: $other" "$CRONTAB_STUB_FILE")" "the other repo's schedule stays"
+assert_eq "1" "$(grep -c "# trellis:triage: $other" "$CRONTAB_STUB_FILE")" "the other repo's schedule stays"
 bash "$UNINSTALL" "$other" >/dev/null || fail "uninstall the other repo"
 cmp -s "$T/before" "$CRONTAB_STUB_FILE" || fail "after both uninstalls the crontab is byte-for-byte the original"
 

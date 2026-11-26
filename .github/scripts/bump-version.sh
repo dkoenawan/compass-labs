@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bump-version.sh <patch|minor|major>
-# compass-labs' version bump (#30 DES-010): sets .claude-plugin/plugin.json's
+# trellis' version bump (#30 DES-010): sets .claude-plugin/plugin.json's
 # "version" to the next patch, minor or major version and prints the new
 # version. It doesn't commit: the commit is its own declared step in
 # .claude/deploy.json. Only the version line changes; the rest of the file

@@ -1,0 +1,10 @@
+step	decision	why
+1	Scripted perl sweep over live files (skills, hooks, tests, .claude, .github, .claude-plugin, commands, Taskfile, CONTRIBUTING, CLAUDE.md, README)	one lever, rerunnable, instead of hand edits
+2	Kept compass:anchor, compass-scaffolding, /opt/compass fixture, the local path private/compass-labs in CLAUDE.md	issue says keep anchor; others are different things
+3	Kept internal role value "compass" (runs.jsonl, cadence.sh output, compass_repo config key)	not in the issue's rename table; renaming would break existing run logs and configs
+4	Finding type renamed to trellis, but findings-index and brief still read old type compass	existing findings files in other repos would otherwise be dropped
+5	Triage gather accepts both compass:anchor and trellis:anchor	issue scope item 3
+6	Also swept /compass-labs: prefix and log path in docs/how-to, docs/explanation, docs/reference	live docs; a test checks the how-to; sessions, archive and ADR files untouched
+7	Added Upgrading and Credits sections to README; one line in ADR index	issue scope 5 and out-of-scope note
+8	Did not rename the GitHub repo or touch settings	out of scope; maintainer does it after merge
+9	Left dkoenawan/compass-labs links pinned to commit SHAs in the ADR index	history, and GitHub redirects

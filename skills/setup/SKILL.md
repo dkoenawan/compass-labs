@@ -1,11 +1,11 @@
 ---
 name: setup
-description: One-time setup after installing compass-labs. Installs pstack's subscription-safe model settings (Claude models only, nothing above high reasoning) at ~/.claude/rules/pstack-models.md, checks them, and flags a second pstack plugin. Use for /compass-labs:setup, after the session-start warning about pstack's model settings, or after running pstack's own /pstack:setup-pstack.
+description: One-time setup after installing trellis. Installs pstack's subscription-safe model settings (Claude models only, nothing above high reasoning) at ~/.claude/rules/pstack-models.md, checks them, and flags a second pstack plugin. Use for /trellis:setup, after the session-start warning about pstack's model settings, or after running pstack's own /pstack:setup-pstack.
 ---
 
 # Setup
 
-compass-labs uses the official pstack (`pstack@cursor-plugins`) as its work layer (ADR-011). Installing compass-labs installs pstack as a dependency, but not pstack's model settings. pstack's defaults name Fable, which needs usage credits, and Gemini, which needs another account. On a Claude subscription those roles fail or cost extra. This skill installs Compass's safe settings.
+trellis uses the official pstack (`pstack@cursor-plugins`) as its work layer (ADR-011). Installing trellis installs pstack as a dependency, but not pstack's model settings. pstack's defaults name Fable, which needs usage credits, and Gemini, which needs another account. On a Claude subscription those roles fail or cost extra. This skill installs Trellis's safe settings.
 
 All mechanics go through one script. Run it through `${CLAUDE_PLUGIN_ROOT}`, never by a path relative to the working directory:
 

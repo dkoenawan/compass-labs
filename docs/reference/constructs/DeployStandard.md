@@ -42,7 +42,7 @@ Defines what a repo's deploy declaration (`.claude/deploy.json`) states, which d
 
 ```text
 Preloaded by:  agents/deploy.md   (skills: compass-labs:deploy)
-Invoked as:    /compass-labs:deploy starter   (or a request in words for the starter)
+Invoked as:    /trellis:deploy starter   (or a request in words for the starter)
 Sections:      1 lifecycles · 2 declaration · 3 execution rules · 4 L1 rule · 5 tiers
                6 release session · 7 frameworks · 8 declaration offer · 9 starter mode
 Reference:     skills/deploy/reference/declaration.md (fields, placeholders, examples)

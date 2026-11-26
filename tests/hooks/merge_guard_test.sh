@@ -2,7 +2,7 @@
 # merge_guard_test.sh
 # hooks/merge-guard.sh (ADR-012): blocks gh pr merge, merge API calls and
 # pushes to the default branch in every session; allows feature-branch
-# pushes (force included); COMPASS_ALLOW_MERGE=1 opts out; fails open
+# pushes (force included); TRELLIS_ALLOW_MERGE=1 opts out; fails open
 # without an origin. Runs against throwaway repos with a bare origin.
 
 set -uo pipefail
@@ -18,7 +18,7 @@ grep -q 'merge-guard.sh' "$REPO_ROOT/hooks/hooks.json" || fail "hooks.json shoul
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
-unset COMPASS_ALLOW_MERGE
+unset TRELLIS_ALLOW_MERGE
 
 git init -q --bare -b main "$work/origin.git"
 repo="$work/repo"
@@ -66,8 +66,8 @@ expect 2 "git -C $repo push origin main" "git -C … push main should be blocked
 expect 0 'git merge main' "a local merge (no push) should be allowed"
 
 # 3. The user's opt-out.
-COMPASS_ALLOW_MERGE=1 run_hook "$HOOK" "$(jq -n --arg d "$repo" '{tool_name:"Bash", tool_input:{command:"gh pr merge 1"}, cwd:$d}')"
-assert_eq 0 "$HOOK_EXIT" "COMPASS_ALLOW_MERGE=1 should allow a merge"
+TRELLIS_ALLOW_MERGE=1 run_hook "$HOOK" "$(jq -n --arg d "$repo" '{tool_name:"Bash", tool_input:{command:"gh pr merge 1"}, cwd:$d}')"
+assert_eq 0 "$HOOK_EXIT" "TRELLIS_ALLOW_MERGE=1 should allow a merge"
 
 # 4. Fail open without an origin; other tools pass.
 lone="$work/lone"; git init -q -b main "$lone"

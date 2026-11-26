@@ -15,8 +15,8 @@ assert_eq "name: triage" "$(sed -n 2p "$skill")" "frontmatter name"
 grep -q '^description: .\+' "$skill" || fail "frontmatter description"
 
 # Mode dispatch.
-for inv in '`/compass-labs:triage`' '`/compass-labs:triage apply`' '`/compass-labs:triage apply #N`' \
-           '`/compass-labs:triage install --day D --time HH:MM --tz ZONE`' '`/compass-labs:triage uninstall`'; do
+for inv in '`/trellis:triage`' '`/trellis:triage apply`' '`/trellis:triage apply #N`' \
+           '`/trellis:triage install --day D --time HH:MM --tz ZONE`' '`/trellis:triage uninstall`'; do
   assert_contains "$body" "| $inv |" "dispatch row $inv"
 done
 assert_contains "$body" "**stock-take** (default)" "stock-take is the default"

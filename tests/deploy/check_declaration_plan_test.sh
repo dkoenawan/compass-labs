@@ -72,7 +72,7 @@ grep -E "^plan: L2 step .*may run" <<<"$OUT" && fail "no L2 step should run with
 assert_contains "$OUT" "plan: tier: skip: the release waits for a release session"
 assert_contains "$OUT" "plan: tier if L1 runs: short"
 
-# 4. A compass-labs-like release: routine steps and a merge only -> short.
+# 4. A trellis-like release: routine steps and a merge only -> short.
 jq '.l2.steps = [
       {"name":"bump the version","run":"echo bump {level}","kind":"routine"},
       {"name":"push the session branch","run":"echo push {branch}","kind":"routine"},

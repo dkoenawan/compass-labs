@@ -1,6 +1,6 @@
 ---
 name: close
-description: Fold one finished run into the repo after a pstack run or a manual change on a feature branch. It updates the as-built docs the change touched and the docs index by layer, writes the run's important findings (decisions, risks, learnings, compass problems), each with one visual and a few lines, commits the brief and decision trail for drill-down, and adds a short Drill down section to the PR. The controller runs it after every run; by hand, run /compass-labs:close [branch or PR].
+description: Fold one finished run into the repo after a pstack run or a manual change on a feature branch. It updates the as-built docs the change touched and the docs index by layer, writes the run's important findings (decisions, risks, learnings, compass problems), each with one visual and a few lines, commits the brief and decision trail for drill-down, and adds a short Drill down section to the PR. The controller runs it after every run; by hand, run /trellis:close [branch or PR].
 argument-hint: "[branch or PR number]"
 ---
 
@@ -13,7 +13,7 @@ Scripts run through `${CLAUDE_PLUGIN_ROOT}`:
 | Script | Does |
 |---|---|
 | `bash ${CLAUDE_PLUGIN_ROOT}/skills/close/scripts/findings-index.sh <repo>` | Rebuilds `docs/findings/index.md` from each finding's frontmatter, newest first, with counts by type |
-| `bash ${CLAUDE_PLUGIN_ROOT}/skills/close/scripts/pr-drilldown.sh <pr> <repo>` | Replaces the PR body's `<!-- compass:drilldown -->` section with links to the files `close` committed, or appends it |
+| `bash ${CLAUDE_PLUGIN_ROOT}/skills/close/scripts/pr-drilldown.sh <pr> <repo>` | Replaces the PR body's `<!-- trellis:drilldown -->` section with links to the files `close` committed, or appends it |
 
 ## Inputs
 
@@ -31,7 +31,7 @@ Scripts run through `${CLAUDE_PLUGIN_ROOT}`:
      - `decision`: a choice that shapes later work
      - `risk`: something that could break or cost later
      - `learning`: something non-obvious about the code or domain
-     - `compass`: a problem with compass-labs or pstack itself. These feed the monthly compass week
+     - `trellis`: a problem with trellis or pstack itself. These feed the monthly trellis week
    - one visual: a Mermaid diagram, or a two-column table when a diagram adds nothing
    - three bullets at most
    - evidence links (`file:line`, commit, PR, trail row)

@@ -2,7 +2,7 @@
 # release_workflow_test.sh
 # The starter workflow, skills/deploy/templates/github/release.yml (#30
 # DES-009, REQ-019 to REQ-022, REQ-024, REQ-028): no reference to
-# dkoenawan/compass-labs or CLAUDE_PLUGIN_ROOT; both triggers; the pull-
+# dkoenawan/trellis or CLAUDE_PLUGIN_ROOT; both triggers; the pull-
 # request job runs --check with contents: read, the push job runs the
 # script with contents: write on the default branch only, both with
 # fetch-depth 2; no secret beyond GITHUB_TOKEN; no push to a branch; the
@@ -19,7 +19,7 @@ WF="$REPO_ROOT/skills/deploy/templates/github/release.yml"
 [[ -f "$WF" ]] || fail "release.yml template not found"
 w="$(cat "$WF")"
 
-assert_not_contains "$w" "dkoenawan/compass-labs" "the starter workflow should not name compass-labs' repo"
+assert_not_contains "$w" "dkoenawan/trellis" "the starter workflow should not name trellis' repo"
 assert_not_contains "$w" "CLAUDE_PLUGIN_ROOT" "the starter workflow should not depend on the plugin"
 
 # Both triggers.

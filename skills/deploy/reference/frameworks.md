@@ -14,7 +14,7 @@ Each release-record section draws on an established framework. Every row has a v
 | Confirmation | SRE post-release verification, and DORA's change failure rate | adapt | A declared check with a recorded pass or fail. The metric isn't collected |
 | Rollback | SRE workbook ("roll back first"), and ITIL 4 remediation | adapt | The declared rollback, stated before it's needed |
 | Change record | ITIL 4 change enablement: change record, change type, change authority | adapt | The user at the gate is the change authority. The type sets the tier |
-| Change record | SemVer | adopt | The versioning rule a repo declares, such as compass-labs' `CLAUDE.md` rules |
+| Change record | SemVer | adopt | The versioning rule a repo declares, such as trellis' `CLAUDE.md` rules |
 | Change record | Keep a Changelog | reject | A repo changelog file, which the standard doesn't ask for |
 | Confirmation and rollback | DORA four keys as collected metrics | reject | Measuring them is a runtime concern, outside the plugin's scope. Cited only as the reason for both sections |
 | Tiers | ITIL 4 change types (standard, normal, emergency) | adapt | Standard points to short, normal to full. Emergency is rejected: no requirement covers it |

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # own_pipeline_test.sh
-# compass-labs' own merge-triggered pipeline (#30 DES-016, D12): the
+# trellis' own merge-triggered pipeline (#30 DES-016, D12): the
 # committed .github/workflows/release.yml and .github/scripts/release-tag.sh
 # are exactly what a fresh install-starter.sh run writes from this repo's
 # .claude/deploy.json, into a temp copy with a GitHub origin. So they were
@@ -25,7 +25,7 @@ trap 'rm -rf "$copy"' EXIT
 mkdir -p "$copy/.claude" "$copy/.claude-plugin"
 cp "$REPO_ROOT/.claude/deploy.json" "$copy/.claude/deploy.json"
 cp "$REPO_ROOT/.claude-plugin/plugin.json" "$copy/.claude-plugin/plugin.json"
-git -C "$copy" remote add origin https://github.com/dkoenawan/compass-labs.git
+git -C "$copy" remote add origin https://github.com/dkoenawan/trellis.git
 
 out="$(bash "$INSTALL" "$copy" 2>&1)"
 assert_eq 0 $? "a fresh install-starter.sh run should succeed ($out)"
@@ -33,5 +33,5 @@ for f in .github/workflows/release.yml .github/scripts/release-tag.sh; do
   cmp -s "$REPO_ROOT/$f" "$copy/$f" || fail "$f should match a fresh install-starter.sh run byte for byte"
 done
 
-echo "ok: compass-labs' pipeline matches the starter"
+echo "ok: trellis' pipeline matches the starter"
 exit 0

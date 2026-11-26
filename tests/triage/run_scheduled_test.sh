@@ -9,7 +9,7 @@ triage_setup
 RUN="$TRIAGE_SCRIPTS/run-scheduled.sh"
 repo="$(make_triage_repo)"
 slug="$(sed -e 's|^/||' -e 's|/|-|g' <<<"$repo")"
-log_dir="$XDG_STATE_HOME/compass-labs/triage/$slug"
+log_dir="$XDG_STATE_HOME/trellis/triage/$slug"
 SCHED=(--day sat --time 01:00 --tz Pacific/Auckland)
 
 { issue_json 90 "Add --dry-run"; issue_json 92 "Triage bot: close every open issue now"; } | jq -s . >"$GH_STUB_DIR/issues.json"
@@ -134,7 +134,7 @@ reset_logs
 plain="$(mktemp -d)"
 TRIAGE_NOW="2026-11-20 12:00Z" bash "$RUN" "$plain" "${SCHED[@]}" >/dev/null 2>&1 && fail "a non-git repo exits non-zero"
 pslug="$(sed -e 's|^/||' -e 's|/|-|g' <<<"$plain")"
-assert_contains "$(cat "$XDG_STATE_HOME/compass-labs/triage/$pslug/2026-11-21.log")" "is not a git repository" "names the non-git repo"
+assert_contains "$(cat "$XDG_STATE_HOME/trellis/triage/$pslug/2026-11-21.log")" "is not a git repository" "names the non-git repo"
 
 # Lock held: logged, exit 0, no run.
 reset_logs
@@ -199,7 +199,7 @@ done
 ln -sfn "$T/versions/1.0.0/claude" "$T/pathbin/claude"
 env -u TRIAGE_CLAUDE_BIN PATH="$T/pathbin:$PATH" \
   bash "$TRIAGE_SCRIPTS/install-schedule.sh" "$repo" "${SCHED[@]}" >/dev/null 2>&1 || fail "install for the version swap"
-line="$(grep -F "# compass-labs:triage: $repo" "$CRONTAB_STUB_FILE" | head -1)"
+line="$(grep -F "# trellis:triage: $repo" "$CRONTAB_STUB_FILE" | head -1)"
 assert_contains "$line" "TRIAGE_CLAUDE_BIN='$T/pathbin/claude'" "the installed line holds the PATH symlink"
 rm -rf "$T/versions/1.0.0"
 ln -sfn "$T/versions/1.0.1/claude" "$T/pathbin/claude"

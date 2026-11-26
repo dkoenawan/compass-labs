@@ -20,11 +20,11 @@ Takes stock of a repository's open issues and proposes what to do with each. The
 
 | Invocation | Mode |
 |---|---|
-| `/compass-labs:triage` | **stock-take** (default) |
-| `/compass-labs:triage apply` | **apply** the stock-take just made in this conversation |
-| `/compass-labs:triage apply #N` | **apply** report issue #N |
-| `/compass-labs:triage install --day D --time HH:MM --tz ZONE` | **install** the weekly schedule, for example `--day sat --time 01:00 --tz Pacific/Auckland` |
-| `/compass-labs:triage uninstall` | **uninstall** the schedule |
+| `/trellis:triage` | **stock-take** (default) |
+| `/trellis:triage apply` | **apply** the stock-take just made in this conversation |
+| `/trellis:triage apply #N` | **apply** report issue #N |
+| `/trellis:triage install --day D --time HH:MM --tz ZONE` | **install** the weekly schedule, for example `--day sat --time 01:00 --tz Pacific/Auckland` |
+| `/trellis:triage uninstall` | **uninstall** the schedule |
 
 Anything else: show this table and ask which mode was meant.
 
@@ -80,7 +80,7 @@ A scheduled run never runs tests or any repository code.
 2. Run `install-schedule.sh <repo> --day D --time HH:MM --tz ZONE`. It checks `gh auth status`, refuses if the repository already has a schedule (and prints the existing line), creates the `triage` label, converts the local day and time to every UTC slot it maps to over a year (daylight saving included), and writes one marked cron line per slot.
 3. Relay its output: the cron lines, any daylight-saving warning, the next local run time, and where the run log is.
 
-A scheduled run (`scripts/run-scheduled.sh`, started by cron) may only create its `Triage YYYY-MM-DD` report issue and close its own earlier unapplied report as superseded. It runs the stock-take headless with only the Read, Grep and Glob tools, loads no settings files, hooks, plugins or MCP servers, runs no tests or repository code, never applies anything, writes nothing in the repository, and logs to `${XDG_STATE_HOME:-$HOME/.local/state}/compass-labs/triage/{repo-slug}/{date}.log`. `gh` and `claude` need stored credentials (`gh auth login`, `claude` logged in), not variables exported only in a shell profile.
+A scheduled run (`scripts/run-scheduled.sh`, started by cron) may only create its `Triage YYYY-MM-DD` report issue and close its own earlier unapplied report as superseded. It runs the stock-take headless with only the Read, Grep and Glob tools, loads no settings files, hooks, plugins or MCP servers, runs no tests or repository code, never applies anything, writes nothing in the repository, and logs to `${XDG_STATE_HOME:-$HOME/.local/state}/trellis/triage/{repo-slug}/{date}.log`. `gh` and `claude` need stored credentials (`gh auth login`, `claude` logged in), not variables exported only in a shell profile.
 
 ## Uninstall
 

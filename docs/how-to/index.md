@@ -7,7 +7,7 @@ folded_sessions: 0
 
 > Origin: #28 · #30
 
-> Task-oriented guides. `/compass-labs:close` adds or updates one when a
+> Task-oriented guides. `/trellis:close` adds or updates one when a
 > change creates a task someone will repeat.
 
 ## Guides

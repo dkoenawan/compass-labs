@@ -23,7 +23,7 @@ What installing the official pstack adds to a machine, what it can do, and what 
 
 ## Install
 
-Installing compass-labs installs pstack as a plugin dependency (`"dependencies"` in `.claude-plugin/plugin.json`, with `cursor-plugins` allowlisted in `marketplace.json`). The user has to add pstack's marketplace first, because Claude Code never resolves a dependency from a marketplace the user hasn't added. Then `/compass-labs:setup` installs the model settings. See the README's Installation section.
+Installing compass-labs installs pstack as a plugin dependency (`"dependencies"` in `.claude-plugin/plugin.json`, with `cursor-plugins` allowlisted in `marketplace.json`). The user has to add pstack's marketplace first, because Claude Code never resolves a dependency from a marketplace the user hasn't added. Then `/trellis:setup` installs the model settings. See the README's Installation section.
 
 Claude Code leaves auto-update off for third-party marketplaces. pstack has no release tags, so the dependency can't pin a version: it stays on whatever version the user installed until they update on purpose. Re-run this audit before recommending an update.
 
@@ -47,7 +47,7 @@ Claude Code leaves auto-update off for third-party marketplaces. pstack has no r
 
 | pstack behaviour | Where | Compass response |
 |---|---|---|
-| Default role models include `claude-fable-5-2-high` and `gemini-4-neon-xhigh`, and most roles run at `xhigh` | `setup-pstack` step 5 | Install [`pstack-models.md`](../../../skills/setup/templates/pstack-models.md): Claude only, `high` at most. `/compass-labs:setup` installs it and the session-start hook warns when it is missing or unsafe |
+| Default role models include `claude-fable-5-2-high` and `gemini-4-neon-xhigh`, and most roles run at `xhigh` | `setup-pstack` step 5 | Install [`pstack-models.md`](../../../skills/setup/templates/pstack-models.md): Claude only, `high` at most. `/trellis:setup` installs it and the session-start hook warns when it is missing or unsafe |
 | `shipping` and `autopilot-full` run `gh pr merge` | `poteto-mode/playbooks/` | Unattended runs use `autopilot-stack` ("do not merge") or `autonomous-run`. A `PreToolUse` guard against `gh pr merge` and pushes to the default branch is a follow-up |
 | "Just do it": external actions such as team chat and ticket updates proceed without asking | `poteto-mode` Autonomy | Unattended runs post nothing outside the repo's branch and PR. This goes in the Compass controller's run rule (follow-up) |
 | `automate-me` reads recent session transcripts with parallel subagents | `automate-me` | Leave it out. It's usage-heavy and reads private history |

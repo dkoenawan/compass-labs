@@ -56,7 +56,7 @@ A clean `CLAUDE_CONFIG_DIR`, standing in for a user who has never installed anyt
 |---|---|
 | Install compass-labs **without** pstack's marketplace | Install "succeeds", but compass-labs is `✘ failed to load: Dependency "pstack@cursor-plugins" is not installed`. The README covers this case |
 | `marketplace add cursor/plugins`, `marketplace add <compass-labs>`, `plugin install compass-labs@compass-labs` | ✅ `(+ 1 dependency: pstack)`. compass-labs 2.5.0 and pstack 0.15.48 both `✔ enabled` |
-| Session start before setup | One line: `pstack's model settings aren't subscription-safe yet (missing: …). Tell the user to run /compass-labs:setup.` |
-| `pstack-models.sh install`, the script `/compass-labs:setup` runs | ✅ `installed: <config>/rules/pstack-models.md`, `check` exit 0 |
+| Session start before setup | One line: `pstack's model settings aren't subscription-safe yet (missing: …). Tell the user to run /trellis:setup.` |
+| `pstack-models.sh install`, the script `/trellis:setup` runs | ✅ `installed: <config>/rules/pstack-models.md`, `check` exit 0 |
 | Session start after setup | ✅ Silent |
 | Anything written outside the config dir | None (nothing under `~/.cursor/`) |

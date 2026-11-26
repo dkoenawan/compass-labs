@@ -1,12 +1,12 @@
 ---
 name: deploy
-description: The Deploy standard. Defines a repo's deploy declaration (.claude/deploy.json), the two deploy lifecycles (L1 deployment setup, L2 release), which steps Deploy may run, the Deploy tiers and the release record's sections, and the frameworks behind them. Run it on demand (/compass-labs:deploy) to deploy a merged or ready change and write its release record in docs/releases/. Also offers the optional starter GitHub Actions workflow for a repo's merge-triggered release (/compass-labs:deploy starter, or ask for "the starter workflow" in words).
+description: The Deploy standard. Defines a repo's deploy declaration (.claude/deploy.json), the two deploy lifecycles (L1 deployment setup, L2 release), which steps Deploy may run, the Deploy tiers and the release record's sections, and the frameworks behind them. Run it on demand (/trellis:deploy) to deploy a merged or ready change and write its release record in docs/releases/. Also offers the optional starter GitHub Actions workflow for a repo's merge-triggered release (/trellis:deploy starter, or ask for "the starter workflow" in words).
 argument-hint: "[starter]"
 ---
 
 # Deploy standard
 
-This is the standard for deploying a change. Run it on demand with `/compass-labs:deploy` for a pull request that's ready or merged: since ADR-012 there is no Deploy phase, and the pstack run that built the change doesn't deploy it. It says what a repo declares about deploying, what Deploy may run from that declaration, and what the release record must hold. Release records live in the repo at `docs/releases/{YYYY-MM-DD}-{slug}.md`, one per release, linked from the PR. It can also be invoked for the starter workflow alone (see [Starter mode](#9-starter-mode)).
+This is the standard for deploying a change. Run it on demand with `/trellis:deploy` for a pull request that's ready or merged: since ADR-012 there is no Deploy phase, and the pstack run that built the change doesn't deploy it. It says what a repo declares about deploying, what Deploy may run from that declaration, and what the release record must hold. Release records live in the repo at `docs/releases/{YYYY-MM-DD}-{slug}.md`, one per release, linked from the PR. It can also be invoked for the starter workflow alone (see [Starter mode](#9-starter-mode)).
 
 **Path note.** Plugin files are resolved as `${CLAUDE_PLUGIN_ROOT}/skills/deploy/…`. The declaration and the starter's copies are repo files, resolved against the project's git root (`git rev-parse --show-toplevel`).
 
@@ -104,7 +104,7 @@ What each section contains:
 
 ## 6. Release run
 
-With `release_mode: own_session` (the value keeps its old name), a change's Deploy runs no L2 step and records "release: waits for a release run", with its Completeness section still present. A **release run** is a later `/compass-labs:deploy` run that carries out the declared L2 steps for every change since the last release, found from release records in `docs/releases/` that say "waits for a release run" (or, in past records, "waits for a release session").
+With `release_mode: own_session` (the value keeps its old name), a change's Deploy runs no L2 step and records "release: waits for a release run", with its Completeness section still present. A **release run** is a later `/trellis:deploy` run that carries out the declared L2 steps for every change since the last release, found from release records in `docs/releases/` that say "waits for a release run" (or, in past records, "waits for a release session").
 
 ## 7. Frameworks
 
@@ -112,7 +112,7 @@ Each release-record section draws on an established framework, with an adopt, ad
 
 ## 8. Declaration offer
 
-One procedure, with two callers: the `init` skill (greenfield and brownfield, just before its commit), and a `/compass-labs:deploy` run that finds no declaration. It sets up the declaration only; it never runs an L1 setup step, which stays Deploy's.
+One procedure, with two callers: the `init` skill (greenfield and brownfield, just before its commit), and a `/trellis:deploy` run that finds no declaration. It sets up the declaration only; it never runs an L1 setup step, which stays Deploy's.
 
 1. **Skip rule.** If `.claude/deploy.json` exists, make no offer of either kind, and carry on.
 2. **Offer.** Say that Deploy reads a deploy declaration to know what deploy means for this repo, and that without one Deploy stops and explains how to declare it. Ask, with three answers:
@@ -126,13 +126,13 @@ One procedure, with two callers: the `init` skill (greenfield and brownfield, ju
 
 - the two files it would write, `.github/workflows/release.yml` and `.github/scripts/release-tag.sh`;
 - the values it would fill in from the declaration: `versioning.file`, `versioning.field` and `versioning.tag`. If any is missing, say which, and offer to add it to the declaration first;
-- that the copies belong to the repo, need no secret beyond `GITHUB_TOKEN`, and never call compass-labs at run time.
+- that the copies belong to the repo, need no secret beyond `GITHUB_TOKEN`, and never call trellis at run time.
 
 Ask yes or no. Only on a yes, run `bash ${CLAUDE_PLUGIN_ROOT}/skills/deploy/scripts/install-starter.sh {repo}`. It refuses, and writes nothing, if `origin` isn't on GitHub, a `versioning` field is missing, or either file already exists (it never overwrites). When it succeeds, add a `merge-triggered pipeline` part to the declaration's `l1.parts`, with one routine, read-only setup step that shows the pull-request run passed (for example `gh run list --workflow release.yml --branch {branch} --limit 1`), and run `check-declaration.sh` again. On a no, write nothing.
 
 ## 9. Starter mode
 
-`/compass-labs:deploy starter`, or a request in words for the starter workflow, runs the starter offer above at any time:
+`/trellis:deploy starter`, or a request in words for the starter workflow, runs the starter offer above at any time:
 
 1. If `.claude/deploy.json` doesn't exist, run the declaration offer's "declare now" walk first (the starter takes its values from the declaration). If the declaration is `none`, or the user stops the walk, write nothing more.
 2. If `origin` isn't a GitHub URL, say the starter is for GitHub-hosted repos, and write nothing.

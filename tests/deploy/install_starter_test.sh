@@ -3,7 +3,7 @@
 # Component tests for skills/deploy/scripts/install-starter.sh (#30
 # DES-015, REQ-028), on temp copies of tests/fixtures/deploy/
 # fixture-service: a GitHub origin writes both files with fixture-
-# service's values and no dkoenawan/compass-labs in either; a non-GitHub
+# service's values and no dkoenawan/trellis in either; a non-GitHub
 # origin writes nothing; an existing workflow file is left byte for byte
 # unchanged; a missing versioning.tag is named; no declaration writes
 # nothing; the declaration itself is never changed.
@@ -48,7 +48,7 @@ for url in https://github.com/example/fixture-service.git git@github.com:example
   grep -qxF "VERSION_FIELD='.version'" "$d/.github/scripts/release-tag.sh" || fail "VERSION_FIELD should come from the declaration"
   grep -qxF "TAG_FORMAT='v{version}'" "$d/.github/scripts/release-tag.sh" || fail "TAG_FORMAT should come from the declaration"
   for f in "$d/.github/workflows/release.yml" "$d/.github/scripts/release-tag.sh"; do
-    assert_not_contains "$(cat "$f")" "dkoenawan/compass-labs" "${f#"$d"/} should not name compass-labs' repo"
+    assert_not_contains "$(cat "$f")" "dkoenawan/trellis" "${f#"$d"/} should not name trellis' repo"
     assert_not_contains "$(cat "$f")" "CLAUDE_PLUGIN_ROOT" "${f#"$d"/} should not depend on the plugin"
   done
   cmp -s "$TPL/release.yml" "$d/.github/workflows/release.yml" || fail "release.yml should be the template as is"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # merge-guard.sh
 # PreToolUse hook for Bash (ADR-011, ADR-012). Only the user merges. In every
-# Claude Code session with compass-labs enabled, including unattended
+# Claude Code session with trellis enabled, including unattended
 # controller runs and pstack playbooks such as `shipping` and
 # `autopilot-full` that would merge, it blocks:
 #   - `gh pr merge …`
@@ -13,7 +13,7 @@
 # allowed.
 #
 # The user can opt a session out by starting Claude Code with
-# COMPASS_ALLOW_MERGE=1 in its environment. The controller never sets it.
+# TRELLIS_ALLOW_MERGE=1 in its environment. The controller never sets it.
 #
 # Exit 2 (reason on stderr) blocks; exit 0 allows. Fails OPEN with a warning
 # when jq is missing, the directory isn't a git repository, or the default
@@ -30,7 +30,7 @@ input="$(cat)"
 
 # Fast exit for every Bash call that can't be a merge or a push.
 [[ "$input" == *merge* || "$input" == *push* ]] || exit 0
-[[ "${COMPASS_ALLOW_MERGE:-}" == "1" ]] && exit 0
+[[ "${TRELLIS_ALLOW_MERGE:-}" == "1" ]] && exit 0
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "$TAG WARNING: jq not found — allowing the command unchecked (fail open)" >&2

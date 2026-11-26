@@ -36,17 +36,17 @@ The `compass-labs:triage` skill. It dispatches four modes: **stock-take** (the d
 ## Interface
 
 ```text
-/compass-labs:triage                                         stock-take (default)
-/compass-labs:triage apply                                   apply the stock-take just made
-/compass-labs:triage apply #N                                apply report issue #N
-/compass-labs:triage install --day D --time HH:MM --tz ZONE  install the weekly schedule
-/compass-labs:triage uninstall                               remove it
+/trellis:triage                                         stock-take (default)
+/trellis:triage apply                                   apply the stock-take just made
+/trellis:triage apply #N                                apply report issue #N
+/trellis:triage install --day D --time HH:MM --tz ZONE  install the weekly schedule
+/trellis:triage uninstall                               remove it
 ```
 
 ## Dependencies
 
 - Calls: [TriageSnapshot](TriageSnapshot.md), [TriageLabel](TriageLabel.md), [TriageSchedule](TriageSchedule.md), `gh issue close/edit/comment/create/view`
-- Called by: the user (`/compass-labs:triage`)
+- Called by: the user (`/trellis:triage`)
 - Reads: [StockTakeProcedure](StockTakeProcedure.md), the snapshot, the working tree, report issue `#N`
 - Writes: GitHub issues, only for confirmed groups and the closing comments
 

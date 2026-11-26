@@ -27,15 +27,15 @@ git -C "$repo" config user.email t@e.com; git -C "$repo" config user.name T
 echo a > "$repo/README"; git -C "$repo" add . && git -C "$repo" commit -qm seed
 git -C "$repo" remote add origin "$work/origin.git"; git -C "$repo" push -q origin main; git -C "$repo" remote set-head origin main
 
-export COMPASS_STATE_DIR="$work/state" COMPASS_CONTROLLER_CONFIG="$work/controller.json"
-jq -n --arg r "$repo" '{timezone:"UTC", slots:["02:00"], runs_per_day:1, max_minutes:5, model:"sonnet", label:"compass:ready",
-  projects:[{repo:$r, role:"side"}], compass_repo:$r, brief_repo:$r}' > "$COMPASS_CONTROLLER_CONFIG"
+export TRELLIS_STATE_DIR="$work/state" TRELLIS_CONTROLLER_CONFIG="$work/controller.json"
+jq -n --arg r "$repo" '{timezone:"UTC", slots:["02:00"], runs_per_day:1, max_minutes:5, model:"sonnet", label:"trellis:ready",
+  projects:[{repo:$r, role:"side"}], compass_repo:$r, brief_repo:$r}' > "$TRELLIS_CONTROLLER_CONFIG"
 
 # stub gh: issues 4 and 7 ready; 4 already has an open compass PR; pr list --head returns PR 12 once created.
 cat > "$work/gh" <<STUB
 #!/usr/bin/env bash
 case "\$*" in
-  "pr list --state open --json headRefName"*) echo "compass/4-old-work" ;;
+  "pr list --state open --json headRefName"*) echo "trellis/4-old-work" ;;
   "issue list"*) printf '4\tOld work\n7\tPage One Skips Items!\n' ;;
   "pr list --head"*) [[ -f "$work/pr-made" ]] && echo 12 ;;
 esac
@@ -47,46 +47,46 @@ echo "\$2" | cut -c1-40 >> "$work/claude-calls"
 case "\$2" in
   /pstack:poteto-mode*) echo fix > fix.txt; git add fix.txt; git commit -qm fix; touch "$work/pr-made"
     echo '{"type":"result","modelUsage":{"claude-sonnet-5-5":{"outputTokens":100},"claude-opus-5-5":{"outputTokens":50}}}' ;;
-  /compass-labs:problem-statement*) mkdir -p docs/briefs; echo brief > docs/briefs/b.md
+  /trellis:problem-statement*) mkdir -p docs/briefs; echo brief > docs/briefs/b.md
     echo '{"type":"result","modelUsage":{"claude-sonnet-5-5":{"outputTokens":10}}}' ;;
-  /compass-labs:close*) git add -A; git commit -qm 'docs: close'; echo '{"type":"result","modelUsage":{"claude-sonnet-5-5":{"outputTokens":5}}}' ;;
+  /trellis:close*) git add -A; git commit -qm 'docs: close'; echo '{"type":"result","modelUsage":{"claude-sonnet-5-5":{"outputTokens":5}}}' ;;
 esac
 STUB
 chmod +x "$work/gh" "$work/claude"
 export GH_BIN="$work/gh" CLAUDE_BIN="$work/claude"
 
 # --- pick-task ---------------------------------------------------------------
-assert_eq $'7\tPage One Skips Items!' "$(bash "$S/pick-task.sh" "$repo" compass:ready)" "issue 4 is busy, so 7 is picked"
+assert_eq $'7\tPage One Skips Items!' "$(bash "$S/pick-task.sh" "$repo" trellis:ready)" "issue 4 is busy, so 7 is picked"
 
 # --- slot gating and dry run ----------------------------------------------------
-COMPASS_NOW="2026-11-10 05:00" bash "$S/run.sh"; assert_eq 0 $? "outside a slot should exit 0"
+TRELLIS_NOW="2026-11-10 05:00" bash "$S/run.sh"; assert_eq 0 $? "outside a slot should exit 0"
 [[ ! -f "$work/claude-calls" ]] || fail "outside a slot, claude must not run"
-plan="$(COMPASS_NOW="2026-11-10 02:00" bash "$S/run.sh" --dry-run)"
-assert_eq "compass/7-page-one-skips-items" "$(jq -r .branch <<<"$plan")" "branch from issue number and title slug"
+plan="$(TRELLIS_NOW="2026-11-10 02:00" bash "$S/run.sh" --dry-run)"
+assert_eq "trellis/7-page-one-skips-items" "$(jq -r .branch <<<"$plan")" "branch from issue number and title slug"
 assert_eq side "$(jq -r .role <<<"$plan")" "week 2 is a side week"
 assert_eq "main" "$(git -C "$repo" branch --show-current)" "a dry run changes nothing"
 
 # --- full run ------------------------------------------------------------------
-COMPASS_NOW="2026-11-10 02:00" bash "$S/run.sh"; assert_eq 0 $? "a full run should succeed"
+TRELLIS_NOW="2026-11-10 02:00" bash "$S/run.sh"; assert_eq 0 $? "a full run should succeed"
 calls="$(cat "$work/claude-calls")"
-assert_contains "$calls" "/compass-labs:problem-statement #7" "the brief should run"
+assert_contains "$calls" "/trellis:problem-statement #7" "the brief should run"
 assert_contains "$calls" "/pstack:poteto-mode" "pstack should run"
-assert_eq "/compass-labs:close compass/7-page-one-s" "$(tail -1 "$work/claude-calls")" "close should run last"
-git -C "$repo" rev-parse -q --verify refs/heads/compass/7-page-one-skips-items >/dev/null || fail "the run branch should exist"
+assert_eq "/trellis:close trellis/7-page-one-skips-" "$(tail -1 "$work/claude-calls")" "close should run last"
+git -C "$repo" rev-parse -q --verify refs/heads/trellis/7-page-one-skips-items >/dev/null || fail "the run branch should exist"
 assert_eq "main" "$(git -C "$repo" branch --show-current)" "the checkout should be restored when clean"
 assert_eq "" "$(git -C "$repo" log main --oneline -1 | grep fix)" "nothing may land on main"
-last="$(tail -1 "$COMPASS_STATE_DIR/runs.jsonl")"
+last="$(tail -1 "$TRELLIS_STATE_DIR/runs.jsonl")"
 assert_eq ran "$(jq -r .status <<<"$last")" "status ran"
 assert_eq 12 "$(jq -r .pr <<<"$last")" "the PR number is logged"
 assert_eq 165 "$(jq -r .output_tokens <<<"$last")" "output tokens across the three steps"
 assert_eq side "$(jq -r .role <<<"$last")" "the cadence role is logged"
 
 # --- daily limit and dirty tree -------------------------------------------------
-COMPASS_NOW="2026-11-10 02:00" bash "$S/run.sh"
-assert_eq "daily limit reached" "$(tail -1 "$COMPASS_STATE_DIR/runs.jsonl" | jq -r .reason)" "a second run the same day is skipped"
+TRELLIS_NOW="2026-11-10 02:00" bash "$S/run.sh"
+assert_eq "daily limit reached" "$(tail -1 "$TRELLIS_STATE_DIR/runs.jsonl" | jq -r .reason)" "a second run the same day is skipped"
 echo dirty > "$repo/x"
-COMPASS_NOW="2026-11-11 02:00" bash "$S/run.sh"
-assert_eq "working tree not clean" "$(tail -1 "$COMPASS_STATE_DIR/runs.jsonl" | jq -r .reason)" "a dirty tree is skipped"
+TRELLIS_NOW="2026-11-11 02:00" bash "$S/run.sh"
+assert_eq "working tree not clean" "$(tail -1 "$TRELLIS_STATE_DIR/runs.jsonl" | jq -r .reason)" "a dirty tree is skipped"
 rm "$repo/x"
 
 # --- schedule install / uninstall -----------------------------------------------

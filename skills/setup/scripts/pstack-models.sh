@@ -3,7 +3,7 @@
 # Checks and installs pstack's per-role model settings for a Claude
 # subscription (ADR-011, #98). pstack reads them from
 # ${CLAUDE_CONFIG_DIR:-~/.claude}/rules/pstack-models.md. Its own defaults
-# name Fable (needs usage credits) and Gemini (another account), so Compass
+# name Fable (needs usage credits) and Gemini (another account), so Trellis
 # installs a Claude-only file with nothing above `high` reasoning.
 #
 # Usage:
@@ -84,7 +84,7 @@ case "$cmd" in
     mkdir -p "$(dirname "$TARGET")"
     if [[ -f "$TARGET" ]] && ! cmp -s "$TEMPLATE" "$TARGET"; then
       if [[ "${2:-}" != "--force" ]]; then
-        echo "exists: $TARGET differs from the Compass template; re-run with --force to replace it (a backup is kept)"
+        echo "exists: $TARGET differs from the Trellis template; re-run with --force to replace it (a backup is kept)"
         exit 3
       fi
       backup="$TARGET.bak.$(date -u +%Y%m%dT%H%M%SZ)"

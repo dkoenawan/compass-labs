@@ -24,7 +24,7 @@ This repository follows the standard Claude Code plugin structure:
 
 Skills are small and brief-first: a short summary for the reader, with detail one click away (drill-down). Prefer adopting a proven tool over building a skill (ADR-011). Retired skills and their docs are in `docs/archive/`, and archived ADRs are listed in `docs/registry/decisions/index.md`.
 
-Each skill is namespaced as `/compass-labs:skill-name` when invoked.
+Each skill is namespaced as `/trellis:skill-name` when invoked.
 
 ## Key Constraints
 
@@ -48,7 +48,7 @@ Skill instructions here...
 ### Plugin Manifest
 
 The `plugin.json` must contain at minimum:
-- `name`: "compass-labs"
+- `name`: "trellis"
 - `description`: Plugin description
 - `version`: Semantic version (e.g., "1.0.0")
 - `author`: Author information

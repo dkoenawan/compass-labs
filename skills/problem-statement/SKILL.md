@@ -1,6 +1,6 @@
 ---
 name: problem-statement
-description: Write a short, visual problem brief for one piece of work — the need, who has it, one diagram of now vs after, a testable success check, what's out, and the assumptions made instead of questions asked. About 25 lines, saved to docs/briefs/. Runs alongside a pstack run (the controller starts it in parallel) or on its own with /compass-labs:problem-statement <issue or task>.
+description: Write a short, visual problem brief for one piece of work — the need, who has it, one diagram of now vs after, a testable success check, what's out, and the assumptions made instead of questions asked. About 25 lines, saved to docs/briefs/. Runs alongside a pstack run (the controller starts it in parallel) or on its own with /trellis:problem-statement <issue or task>.
 argument-hint: "<issue number, URL or task text>"
 ---
 
