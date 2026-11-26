@@ -1,11 +1,11 @@
 ---
-last_updated: 2026-11-14
-adr_count: 10
+last_updated: 2026-11-26
+adr_count: 11
 ---
 
 # Architecture Decision Record Index
 
-> Origin: #22 · #27 · #28 · #30 · #37 · #86
+> Origin: #22 · #27 · #28 · #30 · #37 · #86 · #98
 
 > Each row is one significant decision. Click the title to read the full ADR.
 > Status: Proposed | Accepted | Deprecated | Superseded
@@ -22,3 +22,4 @@ adr_count: 10
 | [008](008-deploy-runs-declared-steps.md) | 2026-11-03 | Accepted | The Deploy agent runs the declared routine steps itself (refines ADR-002); scripts decide what's mechanical; the tier follows release risk; an optional starter GitHub Actions workflow is copied into the repo, compass-labs' pipeline being its first install | deploy, session, DeployStandard, DeclarationCheck, ReleaseRecordCheck, StarterInstaller, ReleaseTagStarter |
 | [009](009-merge-triggered-release-pipeline.md) | 2026-11-03 | Accepted | A merge into the default branch tags and publishes the release through a GitHub Actions workflow calling one script, with a pre-merge check; tags are never overwritten (relates to ADR-006) | deploy, ReleaseTagStarter |
 | [010](010-read-only-scheduled-triage-run.md) | 2026-11-14 | Accepted | An unattended triage run is a read-only headless model (Read, Grep, Glob) in a `--restricted`, plugin-free session; deterministic scripts take the snapshot and make every GitHub write | triage, StockTakeProcedure, TriageSnapshot, TriageReportPublisher, TriageScheduledRun |
+| [011](011-adopt-pstack-work-layer.md) | 2026-11-26 | Accepted | The official pstack (`cursor/plugins`) is the work layer, installed unchanged and made lite through subscription-safe model settings. Karpathy's rules and pstack's principles set the behaviour. Compass narrows to the controller (schedule, next task, weekly brief) | session, orchestrator, task-executor, triage, explore, doc-maintainer, brand-designer |
