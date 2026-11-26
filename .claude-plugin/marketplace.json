@@ -1,36 +1,30 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "compass-labs",
-  "description": "Session-based workflows for software development, research and consulting, based on common established enterprise frameworks",
+  "description": "Keeps side projects moving on a Claude subscription, with pstack doing the work",
   "owner": {
     "name": "Daniel Koenawan",
     "email": "daniel.k.koenawan@gmail.com"
   },
+  "allowCrossMarketplaceDependenciesOn": [
+    "cursor-plugins"
+  ],
   "plugins": [
     {
       "name": "compass-labs",
-      "description": "Opinionated skills, agents and hooks that run software development, research and consulting work as sessions, from problem framing to a documented outcome, based on common established enterprise frameworks",
+      "description": "Keeps side projects moving on a Claude subscription: pstack does the work, Compass schedules runs within your usage budget, keeps docs and findings indexed, guards the merge, and sends one visual weekly brief",
       "source": "./",
       "strict": true,
       "skills": [
         "./skills/adr",
-        "./skills/backend",
-        "./skills/bootstrap-new-project",
-        "./skills/brand-designer",
+        "./skills/brief",
+        "./skills/close",
+        "./skills/controller",
         "./skills/deploy",
-        "./skills/design",
-        "./skills/doc-maintainer",
-        "./skills/explore",
-        "./skills/framing",
-        "./skills/implement",
         "./skills/init",
-        "./skills/post-hook-validator",
         "./skills/problem-statement",
-        "./skills/requirements",
-        "./skills/session",
-        "./skills/task-executor",
-        "./skills/triage",
-        "./skills/verification"
+        "./skills/setup",
+        "./skills/triage"
       ]
     }
   ]

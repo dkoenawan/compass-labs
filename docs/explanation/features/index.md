@@ -3,7 +3,7 @@
 > Each file here traces one named feature end-to-end: FR/NFR → Pages → API
 > specs → Technical architecture. Generated on-demand (by `doc-maintainer`),
 > not scheduled. See
-> [ADR-001](../../registry/decisions/001-diataxis-docs-restructure.md).
+> [ADR-001](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/001-diataxis-docs-restructure.md).
 
 ## Features
 

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# marketplace_test.sh
+# The marketplace entry lists skills explicitly (`strict: true`), so a skill
+# missing from that list may not ship with a marketplace install even though
+# `claude --plugin-dir` (which ignores the list) loads it. Checks that the
+# session lifecycle's skills are listed, and that the list matches
+# skills/*/SKILL.md exactly: nothing incomplete ships (no placeholder
+# folders), nothing complete is left out.
+
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# shellcheck source=../lib.sh
+source "$REPO_ROOT/tests/lib.sh"
+
+MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
+[[ -f "$MARKETPLACE" ]] || fail ".claude-plugin/marketplace.json not found"
+
+listed="$(jq -r '.plugins[] | select(.name=="compass-labs") | .skills[]' "$MARKETPLACE")" \
+  || fail "marketplace.json is not valid JSON"
+
+for skill in setup triage deploy; do
+  assert_contains "$listed" "./skills/$skill" \
+    "marketplace.json should list ./skills/$skill"
+  [[ -f "$REPO_ROOT/skills/$skill/SKILL.md" ]] || fail "skills/$skill/SKILL.md not found"
+done
+
+expected="$(cd "$REPO_ROOT" && for f in skills/*/SKILL.md; do echo "./${f%/SKILL.md}"; done | sort)"
+assert_eq "$expected" "$(sort <<<"$listed")" \
+  "marketplace.json skills should match skills/*/SKILL.md exactly"
+
+for dir in "$REPO_ROOT"/skills/*/; do
+  [[ -f "$dir/SKILL.md" ]] || fail "skills/$(basename "$dir") has no SKILL.md (placeholder folders don't ship)"
+done
+
+# The plan skill is retired into Design (#27 DES-015): nothing in the
+# plugin's runtime surface still invokes it.
+[[ -e "$REPO_ROOT/skills/plan" ]] && fail "skills/plan should be deleted (retired into Design)"
+if hits="$(grep -rnE '/compass(-labs)?:plan\b|compass-labs:plan\b|skills/plan\b' \
+  "$REPO_ROOT/skills" "$REPO_ROOT/.claude-plugin")"; then
+  echo "$hits" >&2
+  fail "no file in skills/, agents/ or .claude-plugin/ should invoke the retired plan skill"
+fi
+
+exit 0

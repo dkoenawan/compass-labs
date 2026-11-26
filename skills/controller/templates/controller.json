@@ -1,0 +1,14 @@
+{
+  "timezone": "Pacific/Auckland",
+  "slots": ["02:00"],
+  "runs_per_day": 1,
+  "brief_day": "mon",
+  "max_minutes": 60,
+  "model": "sonnet",
+  "label": "compass:ready",
+  "projects": [
+    { "repo": "/absolute/path/to/side-project", "role": "side" }
+  ],
+  "compass_repo": "/absolute/path/to/compass-labs",
+  "brief_repo": "/absolute/path/to/compass-labs"
+}

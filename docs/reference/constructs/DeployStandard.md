@@ -68,4 +68,4 @@ Record:        skills/session/templates/release.md
 ## Key Decisions
 
 - [ADR-007](../../registry/decisions/007-deploy-declaration.md): the declaration and when it's offered.
-- [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md): Deploy runs declared steps; scripts for what's mechanical; risk-based tiers; the starter.
+- [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md): Deploy runs declared steps; scripts for what's mechanical; risk-based tiers; the starter.

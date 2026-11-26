@@ -21,13 +21,13 @@ One sentence: what the convention is.
 
 Each `decision` or `milestone` entry in a session's `log.md` gets exactly one commit, containing the entry and the artifact changes it describes. Each ticked task in the plan (`implement/tasks.md`, or a past session's root `tasks.md`) gets one commit (code, tests and tick). Drafts still under discussion stay uncommitted.
 - Implements: `hooks/session-commit-guard.sh` (Stop: blocks a turn from ending with an uncommitted decision/milestone heading), `skills/session/templates/rules/compass-sessions.md` (guidance, copied to `.claude/rules/`)
-- ADR: [ADR-002](decisions/002-session-lifecycle.md)
+- ADR: [ADR-002](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/002-session-lifecycle.md)
 
 ## Phase-artifact ownership
 
 Inside `docs/sessions/{id}/`, only the workflow's fixed file set may exist. Each artifact is written only by its phase's owner agent, `log.md` only by the orchestrator (main session), and an artifact is read-only once its milestone is approved (except for a main-session amendment made alongside a fresh `decision` entry). Archived sessions are read-only for everyone. A folder artifact (`define/`, `design/`, `implement/`) is one artifact: only its fixed files, one level deep, can be written, and the whole folder has one owner and one freeze point. Each session uses one layout for a phase, the folder or its legacy root file, never both, and past sessions are never migrated.
 - Implements: `hooks/session-guard.sh` (PreToolUse), `skills/session/workflows/feature.json` (`file_allowlist`, `owner_agent`, `order`, `artifact_files`, `legacy_artifact`), `skills/session/scripts/check-traceability.sh` (reads `define/requirements.md`, falls back to the root file), `skills/session/scripts/check-design.sh` (passes a root `design.md` as legacy)
-- ADR: [ADR-002](decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md), [ADR-004](decisions/004-design-path.md), [ADR-005](decisions/005-implement-as-built-record.md)
+- ADR: [ADR-002](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/002-session-lifecycle.md), [ADR-003](decisions/003-framing-and-project-anchor.md), [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md), [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 
 ## Never ship an incomplete product
 
@@ -65,49 +65,49 @@ A project's vision, mission, scope and non-goals live in exactly one place: the 
 
 Design builds on what the project already knows only through the as-built docs (`docs/explanation/`, `docs/reference/`, `docs/registry/`), the code, and the current session's folder. It never reads another session folder, archived or live, by any tool, because those hold drafts and reversed decisions; Close's fold-back is what carries a session's still-true content into the docs.
 - Implements: `skills/design/SKILL.md` (prior-knowledge rule), `agents/design.md`, `skills/session/reference/close-foldback.md`
-- ADR: [ADR-004](decisions/004-design-path.md)
+- ADR: [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md)
 
 ## One source of stack defaults; an established stack wins
 
 The plugin's default stack per area is stated once, in `skills/design/reference/stack-defaults.md`, and every other file that names a default links to it. A repo's established stack, detected from its files, always wins over a default.
 - Implements: `skills/design/reference/stack-defaults.md`, `skills/init/SKILL.md`, `skills/bootstrap-new-project/SKILL.md`, `README.md`
-- ADR: [ADR-004](decisions/004-design-path.md)
+- ADR: [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md)
 
 ## Extend by adding files, not by editing the procedure
 
 A solution kind gains an in-depth path by adding `kinds/{kind}.md`, notation catalogue rows and its catalogue row; a layer gains a design standard by adding `skills/{layer}/reference/design.md`, and Implement guidance by adding `skills/{layer}/reference/implement.md`. None of these changes the Design procedure, the classification step, the scope checklist, the all-kinds sections or the Implement standard, which keeps no list of layers. The only edit outside the layer's folder is listing its skill in the marketplace manifest and README.
 - Implements: `skills/design/SKILL.md` ("What a kind supplies"), `skills/design/kinds/three-tier.md` (layer contract), `skills/implement/SKILL.md` (layer plug-in contract), `skills/backend/`
-- ADR: [ADR-004](decisions/004-design-path.md), [ADR-005](decisions/005-implement-as-built-record.md)
+- ADR: [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md), [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 
 ## Variations go forward, never upstream
 
 A frozen `define/` or `design/` is never edited to match the build. Implement records each difference as a variation in `implement/as-built.md`; the user accepts it or sends it back for rework at the Implement gate (rework changes the code); Close folds every accepted variation into the as-built docs as the built behaviour.
 - Implements: `skills/implement/SKILL.md` (as-built record), `skills/session/SKILL.md` (Implement gate), `skills/session/reference/close-foldback.md` (Folding back `implement/`)
-- ADR: [ADR-005](decisions/005-implement-as-built-record.md)
+- ADR: [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 
 ## Each test kind has one owning phase
 
 Implement writes unit and component tests only. Test owns integration (including harness tests running real hooks and scripts), UI, Playwright and inspection, and every live requirement needs at least one Test-owned `VER-*` row. An Implement test is cited only as `Supporting:` evidence inside such a row.
 - Implements: `skills/implement/SKILL.md` (testing boundary), `skills/backend/reference/implement.md` (b), `skills/verification/SKILL.md`, `agents/test.md`, `skills/session/templates/verification.md`
-- ADR: [ADR-005](decisions/005-implement-as-built-record.md)
+- ADR: [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 
 ## One construct registrar
 
 Only Close registers the constructs a session built, once the Implement gate has decided every variation. Other skills read the registry; `init`, `explore` and `doc-maintainer`'s registry passes may write stubs for existing code, never a session's build. `post-hook-validator` verifies a registered construct by name.
 - Implements: `skills/session/reference/close-foldback.md`, `skills/task-executor/SKILL.md` (Execute Step 5: no registry write), `skills/post-hook-validator/SKILL.md`, `skills/init/SKILL.md` (injected Agent Navigation Protocol)
-- ADR: [ADR-004](decisions/004-design-path.md) (D8), [ADR-005](decisions/005-implement-as-built-record.md)
+- ADR: [ADR-004](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/004-design-path.md) (D8), [ADR-005](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/005-implement-as-built-record.md)
 
 ## Session work reaches the default branch only through a pull request
 
 Every session commit is made on the session branch, chosen before the first commit and recorded in `log.md`'s `branch:`. The default branch is read from the repository, never assumed to be `main`. A session commit or push to the default branch is blocked by a hook, and the session's pull request is merged only when the user's own message asks for it.
 - Implements: SessionBranchGuard (`hooks/session-branch-guard.sh`), DefaultBranchLookup (`skills/session/scripts/default-branch.sh`), SessionLister (`skills/session/scripts/list-sessions.sh`), `skills/session/SKILL.md` (New session branch step, Resume, no-merge rule), `agents/orchestrator.md` (no-merge rule), `skills/session/templates/log.md` (`branch:`)
-- ADR: [ADR-006](decisions/006-session-branch-guard.md)
+- ADR: [ADR-006](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/006-session-branch-guard.md)
 
 ## Deploy runs what the repo declares, and nothing else
 
 Every deploy step comes from the repo's `.claude/deploy.json`, run word for word in declared order, and the release record names the declaration as its source. A step runs only if `check-declaration.sh --plan` lists it as "may run"; a production-affecting step, and every step after it, waits for the user's own message, and a merge is always the user's. No declaration means Deploy stops and explains how to declare one; it never derives steps from a Taskfile or past releases.
 - Implements: DeployStandard (`skills/deploy/SKILL.md`), DeclarationCheck (`skills/deploy/scripts/check-declaration.sh`), `agents/deploy.md`, `skills/session/reference/phase-agent-contract.md` (Deploy clause), `.claude/deploy.json`
-- ADR: [ADR-007](decisions/007-deploy-declaration.md), [ADR-008](decisions/008-deploy-runs-declared-steps.md)
+- ADR: [ADR-007](decisions/007-deploy-declaration.md), [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md)
 
 ## An unattended model run reads; scripts write
 

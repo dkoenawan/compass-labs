@@ -59,4 +59,4 @@ installed in compass-labs: .github/workflows/release.yml, .github/scripts/releas
 ## Key Decisions
 
 - [ADR-009](../../registry/decisions/009-merge-triggered-release-pipeline.md): workflow calling one script, triggered by the merge.
-- [ADR-008](../../registry/decisions/008-deploy-runs-declared-steps.md): compass-labs' pipeline is the starter's first install.
+- [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md): compass-labs' pipeline is the starter's first install.

@@ -13,23 +13,18 @@ This is a **Claude Code plugin repository** that runs software development, rese
 This repository follows the standard Claude Code plugin structure:
 
 - `.claude-plugin/plugin.json` - Plugin manifest (required, contains metadata only)
-- `skills/` - Agent-based skills organized by domain (infrastructure, database, backend, frontend), plus cross-cutting skills like `session` (session lifecycle orchestration)
-- `agents/` - Subagents (e.g. the session orchestrator and its Feature phase agents). A subagent's `name` frontmatter field never contains `:` — plugin-scoped invocation (`compass-labs:<name>`) is derived automatically, not part of the file itself
+- `skills/` - One folder per skill: `setup`, `controller`, `problem-statement`, `close`, `brief`, `deploy`, `triage`, `adr`, `init` (ADR-012). The work itself is done by the pstack dependency (ADR-011)
+- No `agents/` today. If one is added, its `name` frontmatter never contains `:` (plugin-scoped invocation is derived automatically)
 - `commands/` - Direct command skills that don't require AI model invocation
-- `hooks/` - Event handlers for development workflow automation
+- `hooks/` - `merge-guard.sh` (only the user merges) and `session-start.sh` (pstack settings check)
 - `tests/` - Bash + jq test harness (`tests/run.sh`) for hooks and scripts; not part of the plugin's runtime surface, but tracked in the repo like everything else
 - Root-level directories only (never nest `skills/`, `commands/`, `hooks/`, `agents/` inside `.claude-plugin/`)
 
 ### Skill Organization
 
-Skills are organized by development domain:
+Skills are small and brief-first: a short summary for the reader, with detail one click away (drill-down). Prefer adopting a proven tool over building a skill (ADR-011). Retired skills and their docs are in `docs/archive/`, and archived ADRs are listed in `docs/registry/decisions/index.md`.
 
-- **Infrastructure skills**: Server setup, deployment, containerization
-- **Database skills**: Schema design, migrations, query optimization
-- **Backend skills**: API design, business logic, authentication
-- **Frontend skills**: UI components, state management, routing
-
-Each skill is namespaced as `/compass:skill-name` when invoked.
+Each skill is namespaced as `/compass-labs:skill-name` when invoked.
 
 ## Key Constraints
 

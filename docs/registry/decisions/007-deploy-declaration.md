@@ -1,7 +1,7 @@
 ---
 id: "007"
 date: 2026-11-03
-status: Accepted
+status: Accepted (superseded in part by ADR-012)
 deciders: [Daniel Koenawan]
 affects: [deploy, session, init, DeployStandard, DeclarationCheck]
 issue: https://github.com/dkoenawan/compass-labs/issues/30

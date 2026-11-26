@@ -52,4 +52,4 @@ Sources: 1. git symbolic-ref --short refs/remotes/origin/HEAD  (leading origin/ 
 
 ## Key Decisions
 
-- [ADR-006](../../registry/decisions/006-session-branch-guard.md): the default branch is read from the repository with plain git, so it works with any host; a repository with no `origin` gets no answer and its callers fail open (#70).
+- [ADR-006](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/006-session-branch-guard.md): the default branch is read from the repository with plain git, so it works with any host; a repository with no `origin` gets no answer and its callers fail open (#70).

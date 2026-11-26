@@ -58,7 +58,7 @@ The report has exactly these second-level headings, in this order, and no others
 - Run date: YYYY-MM-DD
 - Repository: {meta.json repo}
 - Branch and HEAD read: {branch} @ {head}
-- Anchor: found | missing. {If missing: "No project anchor was found. Recommendation: create one with /compass-labs:framing."}
+- Anchor: found | missing. {If missing: "No project anchor was found. Recommendation: add a Project anchor (Vision, Mission, Scope, Non-goals) to the README."}
 - Notes: {anything the reader needs, for example a feature branch read instead of the default branch}
 
 ## Covered by merged work
@@ -66,7 +66,7 @@ The report has exactly these second-level headings, in this order, and no others
 ### #90: Add --dry-run to maintain.sh
 
 - Category: covered by merged work
-- Evidence: PR #91 added the flag; skills/doc-maintainer/scripts/maintain.sh:42
+- Evidence: PR #91 added the flag; skills/triage/scripts/run-scheduled.sh:42
 - Anchor: "{quoted anchor line}" (serves it)
 - Relations: none
 - Proposed action: close #90 as completed, citing PR #91
