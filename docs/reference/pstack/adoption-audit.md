@@ -4,7 +4,7 @@ last_updated: 2026-11-26
 
 # pstack adoption audit
 
-> Origin: #98
+> Origin: #98, #34
 
 What installing the official pstack adds to a machine, what it can do, and what Compass has to add around it. The decision is [ADR-011](../../registry/decisions/011-adopt-pstack-work-layer.md).
 

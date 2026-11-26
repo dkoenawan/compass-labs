@@ -7,7 +7,7 @@ source_path: skills/triage
 # Triage (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [modes, report, schedule and limits](../../reference/triage/stock-take-and-schedule.md) | → Decision: [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md) | → Usage: [README, Backlog Triage](../../../README.md#backlog-triage)
-> Origin: #86 · #93
+> Origin: #86 · #93, #34
 
 ## What Is Triage?
 

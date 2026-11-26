@@ -10,7 +10,7 @@ last_verified: null
 
 # TriageSkill
 
-> Origin: #86
+> Origin: #86, #34
 
 ## Does
 

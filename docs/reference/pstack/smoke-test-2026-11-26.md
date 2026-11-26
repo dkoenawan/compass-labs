@@ -4,7 +4,7 @@ last_updated: 2026-11-26
 
 # pstack smoke test, 2026-11-26
 
-> Origin: #98
+> Origin: #98, #34
 
 Two headless `poteto-mode` runs on a throwaway Python repo, after installing official pstack 0.15.48 and the subscription-safe [`pstack-models.md`](../../../skills/setup/templates/pstack-models.md). They check three things: pstack loads and routes in Claude Code, the role settings apply when it delegates, and an unattended run stays on its branch and reports honestly.
 

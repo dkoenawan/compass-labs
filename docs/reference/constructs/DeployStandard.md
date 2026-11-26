@@ -10,7 +10,7 @@ last_verified: null
 
 # DeployStandard
 
-> Origin: #30
+> Origin: #30, #34
 
 ## Does
 
