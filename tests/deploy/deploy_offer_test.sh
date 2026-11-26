@@ -3,8 +3,8 @@
 # Content assertions for the declaration offer (#30 DES-014, REQ-026,
 # REQ-028): one procedure in the Deploy standard with the skip rule, three
 # answers and the starter offer after "declare now"; the starter mode;
-# both init modes call it before their commit, and the session skill's
-# one-time setup calls it as step 3, only in its first run. Running the
+# both init modes call it before their commit, and a deploy run with no
+# declaration makes the same offer. Running the
 # offers on a fixture is Test's.
 
 set -uo pipefail
@@ -16,7 +16,6 @@ source "$REPO_ROOT/tests/lib.sh"
 
 STD="$REPO_ROOT/skills/deploy/SKILL.md"
 INIT="$REPO_ROOT/skills/init/SKILL.md"
-SESSION="$REPO_ROOT/skills/session/SKILL.md"
 
 offer="$(awk '/^## 8. Declaration offer/{on=1; next} /^## 9\./{on=0} on' "$STD")"
 [[ -n "$offer" ]] || fail "the standard should have a '## 8. Declaration offer' section"
@@ -44,11 +43,10 @@ for pair in "Step 6b|Step 7: Commit registry files" "Step 8b|Step 9: Commit"; do
 done
 [[ "$(grep -c 'skills/deploy/SKILL.md` (section 8)' "$INIT")" -eq 2 ]] || fail "both init modes should follow the Deploy standard's procedure"
 
-# session one-time setup: step 3, first run only.
-setup="$(awk '/^## One-time setup/{on=1; next} /^## /{on=0} on' "$SESSION")"
-assert_contains "$setup" "3. **Offer a deploy declaration**, only in the same run that copies the commit-point rule" \
-  "one-time setup should offer the declaration in its first run only"
-assert_contains "$setup" 'skills/deploy/SKILL.md` (section 8)' "one-time setup should follow the Deploy standard's procedure"
+# A deploy run with no declaration makes the same offer (ADR-012: the
+# session skill's one-time setup is gone).
+assert_contains "$(cat "$REPO_ROOT/skills/deploy/SKILL.md")" "a \`/compass-labs:deploy\` run that finds no declaration" \
+  "the Deploy standard should name a deploy run as the offer's second caller"
 
 echo "ok: declaration offer checked"
 exit 0

@@ -17,24 +17,11 @@
       "strict": true,
       "skills": [
         "./skills/adr",
-        "./skills/backend",
-        "./skills/bootstrap-new-project",
-        "./skills/brand-designer",
         "./skills/deploy",
-        "./skills/design",
-        "./skills/doc-maintainer",
-        "./skills/explore",
-        "./skills/framing",
-        "./skills/implement",
         "./skills/init",
-        "./skills/post-hook-validator",
         "./skills/problem-statement",
-        "./skills/requirements",
-        "./skills/session",
         "./skills/setup",
-        "./skills/task-executor",
-        "./skills/triage",
-        "./skills/verification"
+        "./skills/triage"
       ]
     }
   ]

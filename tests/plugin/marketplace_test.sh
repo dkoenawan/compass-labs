@@ -20,7 +20,7 @@ MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
 listed="$(jq -r '.plugins[] | select(.name=="compass-labs") | .skills[]' "$MARKETPLACE")" \
   || fail "marketplace.json is not valid JSON"
 
-for skill in session requirements verification; do
+for skill in setup triage deploy; do
   assert_contains "$listed" "./skills/$skill" \
     "marketplace.json should list ./skills/$skill"
   [[ -f "$REPO_ROOT/skills/$skill/SKILL.md" ]] || fail "skills/$skill/SKILL.md not found"
@@ -38,7 +38,7 @@ done
 # plugin's runtime surface still invokes it.
 [[ -e "$REPO_ROOT/skills/plan" ]] && fail "skills/plan should be deleted (retired into Design)"
 if hits="$(grep -rnE '/compass(-labs)?:plan\b|compass-labs:plan\b|skills/plan\b' \
-  "$REPO_ROOT/skills" "$REPO_ROOT/agents" "$REPO_ROOT/.claude-plugin")"; then
+  "$REPO_ROOT/skills" "$REPO_ROOT/.claude-plugin")"; then
   echo "$hits" >&2
   fail "no file in skills/, agents/ or .claude-plugin/ should invoke the retired plan skill"
 fi

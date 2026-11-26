@@ -430,8 +430,8 @@ Registry bootstrapped:
     001-initial-stack-choices.md  (stack decision captured)
   CLAUDE.md updated               (agent navigation protocol injected)
 
-Next: run /compass-labs:session to start your first feature. Its Design
-phase reads the project docs and registry before proposing anything new.
+Next: run /compass-labs:setup once, then start your first feature with
+/pstack:poteto-mode <task>, or let /compass-labs:controller schedule it.
 ```
 
 ---
@@ -674,6 +674,6 @@ Summary:
 
 Next steps:
   1. Review each stub in docs/reference/constructs/ — fix inferred descriptions
-  2. Run /compass:explore to fill Known Gaps one area at a time
-  3. Run /compass-labs:session — its Design phase will now read the registry before designing
+  2. Fill Known Gaps one area at a time (graphify helps map the codebase)
+  3. Start work with /pstack:poteto-mode <task>; /compass-labs:close keeps docs/ and the registry current after each run
 ```

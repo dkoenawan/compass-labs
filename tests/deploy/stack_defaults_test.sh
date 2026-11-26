@@ -41,7 +41,7 @@ if hits="$(grep -rniE "$conflict_re" skills agents README.md)"; then
 fi
 
 # 3. The callers named in the design link to the source.
-for file in skills/init/SKILL.md skills/bootstrap-new-project/SKILL.md README.md; do
+for file in skills/init/SKILL.md README.md; do
   grep -q 'stack-defaults.md' "$file" || fail "$file should link to $SOURCE_REL"
 done
 
