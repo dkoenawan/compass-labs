@@ -17,7 +17,7 @@ This skill creates a new full-stack project by cloning a pre-built template repo
 
 ## What the template contains
 
-The plugin's stack defaults live in one place, [`${CLAUDE_PLUGIN_ROOT}/skills/design/reference/stack-defaults.md`](../design/reference/stack-defaults.md). The template scaffolds those defaults. This table only describes what it contains:
+The plugin's stack defaults live in one place, [`${CLAUDE_PLUGIN_ROOT}/skills/init/reference/stack-defaults.md`](reference/stack-defaults.md). The template scaffolds those defaults. This table only describes what it contains:
 
 | Component | Technology |
 |-----------|------------|

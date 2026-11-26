@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # default_branch_test.sh
-# Component tests for skills/session/scripts/default-branch.sh (#37
+# Component tests for hooks/lib/default-branch.sh (#37
 # DES-001, REQ-006): the script runs for real against throwaway repos whose
 # "remote" is a local bare repository, so no network is touched. It must
 # read the default branch from the repository and never assume `main`.
@@ -12,7 +12,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=../lib.sh
 source "$REPO_ROOT/tests/lib.sh"
 
-SCRIPT="$REPO_ROOT/skills/session/scripts/default-branch.sh"
+SCRIPT="$REPO_ROOT/hooks/lib/default-branch.sh"
 [[ -x "$SCRIPT" ]] || fail "default-branch.sh not found or not executable"
 
 work="$(mktemp -d)"

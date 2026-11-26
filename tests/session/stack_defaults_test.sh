@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # stack_defaults_test.sh
 # REQ-010 (#27 DES-007): the stack defaults are stated once, in
-# skills/design/reference/stack-defaults.md. Every other file in skills/,
+# skills/init/reference/stack-defaults.md. Every other file in skills/,
 # agents/ and README.md that states a default stack links to it, and none
 # names a different default for the same stack area.
 
@@ -12,7 +12,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=../lib.sh
 source "$REPO_ROOT/tests/lib.sh"
 
-SOURCE_REL="skills/design/reference/stack-defaults.md"
+SOURCE_REL="skills/init/reference/stack-defaults.md"
 SOURCE="$REPO_ROOT/$SOURCE_REL"
 [[ -f "$SOURCE" ]] || fail "$SOURCE_REL not found"
 

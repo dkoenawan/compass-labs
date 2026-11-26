@@ -172,10 +172,10 @@ flowchart LR
 ## Code Map — Which Code Touches This
 
 - **Standard**: `skills/deploy/SKILL.md` (lifecycles, declaration, execution rules, L1 rule, tiers, release session, frameworks, declaration offer, starter mode), `reference/declaration.md`, `reference/frameworks.md`.
-- **Scripts**: `skills/deploy/scripts/check-declaration.sh` (with `lib/validate.jq` and `lib/plan.jq`), `skills/deploy/scripts/install-starter.sh`, `skills/session/scripts/check-release.sh`.
+- **Scripts**: `skills/deploy/scripts/check-declaration.sh` (with `lib/validate.jq` and `lib/plan.jq`), `skills/deploy/scripts/install-starter.sh`, `skills/deploy/scripts/check-release.sh`.
 - **Starter**: `skills/deploy/templates/github/release.yml` and `release-tag.sh`.
 - **Agent and contract**: `agents/deploy.md` (preloads `compass-labs:deploy`, nine steps); the Deploy clause of `skills/session/reference/phase-agent-contract.md`.
-- **Record and gate**: `skills/session/templates/release.md`; the Deploy gate (a1, a2, a2b), the Deploy `needs_input` relay and one-time setup step 3 in `skills/session/SKILL.md`.
+- **Record and gate**: `skills/deploy/templates/release.md`; the Deploy gate (a1, a2, a2b), the Deploy `needs_input` relay and one-time setup step 3 in `skills/session/SKILL.md`.
 - **Initiation**: `skills/init/SKILL.md` Steps 6b (greenfield) and 8b (brownfield).
 - **compass-labs' own deployment**: `.claude/deploy.json`, `.github/scripts/bump-version.sh`, `.github/workflows/release.yml`, `.github/scripts/release-tag.sh`.
 - **Tests**: `tests/fixtures/deploy/` (four fixture repos and their `README.md`), and under `tests/session/`: `check_declaration_test.sh`, `check_declaration_plan_test.sh`, `check_release_test.sh`, `release_tag_test.sh`, `release_workflow_test.sh`, `install_starter_test.sh`, `own_pipeline_test.sh`, `bump_version_test.sh`, `compass_declaration_test.sh`, `deploy_standard_test.sh`, `deploy_agent_test.sh`, `deploy_contract_test.sh`, `deploy_gate_test.sh`, `deploy_offer_test.sh`, `deploy_fixtures_test.sh`, `release_template_test.sh`, `taskfile_test.sh`.

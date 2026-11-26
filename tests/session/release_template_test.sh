@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # release_template_test.sh
-# The release template, skills/session/templates/release.md (#30 DES-003,
+# The release template, skills/deploy/templates/release.md (#30 DES-003,
 # REQ-002, REQ-014, REQ-023, REQ-025): a Deploy tier line, and its H2
 # headings are exactly the seven sections of the Deploy standard's tier
 # table, in the same order. The steps section names the declaration as
@@ -16,7 +16,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=../lib.sh
 source "$REPO_ROOT/tests/lib.sh"
 
-TEMPLATE="$REPO_ROOT/skills/session/templates/release.md"
+TEMPLATE="$REPO_ROOT/skills/deploy/templates/release.md"
 STD="$REPO_ROOT/skills/deploy/SKILL.md"
 [[ -f "$TEMPLATE" ]] || fail "release.md template not found"
 t="$(cat "$TEMPLATE")"
@@ -35,7 +35,7 @@ assert_contains "$steps" "Source: the deploy declaration, \`.claude/deploy.json\
 assert_contains "$steps" "Waiting for the user's instruction" "the steps section should have a place for waiting steps"
 assert_contains "$steps" "The user's steps after the merge" "the steps section should have a place for the user's steps"
 lifecycles="$(awk '/^## Lifecycles run and why/{on=1; next} /^## /{on=0} on' "$TEMPLATE")"
-assert_contains "$lifecycles" "Added to the declaration at this Deploy (REQ-027)" "the lifecycles section should have a place for an added entry"
+assert_contains "$lifecycles" "Added to the declaration at this Deploy" "the lifecycles section should have a place for an added entry"
 
 echo "ok: release template checked"
 exit 0

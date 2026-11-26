@@ -71,7 +71,7 @@ A session where L1 ran is at least short.
 
 ## Release record (`release.md`)
 
-Template: `skills/session/templates/release.md`. A `Deploy tier: {tier}: {reason}` line, then H2 sections with exactly these names:
+Template: `skills/deploy/templates/release.md`. A `Deploy tier: {tier}: {reason}` line, then H2 sections with exactly these names:
 
 | Section | skip | short | full |
 |---|---|---|---|
@@ -99,7 +99,7 @@ In order, in `skills/session/SKILL.md`:
 |---|---|---|
 | `skills/deploy/scripts/check-declaration.sh` | `<repo-root> [--plan]` | 0 valid · 1 invalid (one line per problem: a missing item, a merge marked routine, `versioning.file` not found, `versioning.tag` without `{version}`, bad JSON) · 2 no declaration · 3 `none` · 4 no `jq` (warns, checks nothing; fails open). `--plan` prints each step in declared order with its kind and "may run" or "waits for the user", the release mode, and two tier lines: `tier:` (no L1 runs) and `tier if L1 runs:`. Runs nothing from the repo. Its jq rules are `scripts/lib/validate.jq` and `scripts/lib/plan.jq` |
 | `skills/deploy/scripts/install-starter.sh` | `<repo-root>` | Copies the starter (below) with its settings block filled in from `versioning.file`, `.field` and `.tag`, makes the script executable, prints both paths. Writes nothing and exits 1 (declaration not valid), 3 (`origin` isn't GitHub), 4 (a `versioning` field missing, named) or 5 (a target file exists, named; never overwritten). Never edits the declaration |
-| `skills/session/scripts/check-release.sh` | `<session-dir>` | Reads the tier line and compares H2 headings with the tier's required sections. 0 "ok"; 1, naming each missing section; 0 "past record: no check" with no tier line; 1 when `release.md` is missing |
+| `skills/deploy/scripts/check-release.sh` | `<session-dir>` | Reads the tier line and compares H2 headings with the tier's required sections. 0 "ok"; 1, naming each missing section; 0 "past record: no check" with no tier line; 1 when `release.md` is missing |
 
 **GitHub `origin`.** A URL whose host is `github.com` counts, and so does an SSH host alias (`git@{alias}:…`, `ssh://…`) that `ssh -G` resolves to `github.com`. `ssh -G` only reads the SSH config. An https host that merely starts with `github.com` doesn't count.
 

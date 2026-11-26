@@ -1,16 +1,16 @@
-<!-- The release record, written by the Deploy agent from the Deploy standard (skills/deploy/SKILL.md). The Deploy tier line sets which sections are required (the standard's tier table); the Deploy gate's check-release.sh refuses a record missing one. Delete a section only if the confirmed tier doesn't require it. A record with no Deploy tier line is a past record and gets no check. -->
-# Release: {Session Title}
+<!-- The release record, written by a /compass-labs:deploy run from the Deploy standard, saved as docs/releases/{YYYY-MM-DD}-{slug}.md (skills/deploy/SKILL.md). The Deploy tier line sets which sections are required (the standard's tier table); check-release.sh refuses a record missing one. Delete a section only if the confirmed tier doesn't require it. A record with no Deploy tier line is a past record and gets no check. -->
+# Release: {Change title}
 
 > Phase: Deploy | Started: {date} | Status: Draft
-> Deploy tier: {skip | short | full}: {one-line reason, from the release's risk, not the session's framing tier}
-> Requirements: [`define/index.md`](define/index.md) · Verification: [`verification.md`](verification.md) · Declaration: `.claude/deploy.json`
+> Deploy tier: {skip | short | full}: {one-line reason, from the release's risk}
+> PR: {#N link} · Issue: {#N link} · Declaration: `.claude/deploy.json`
 
 ## Lifecycles run and why
 
 - **L1:** {needed or not needed, and why: the delta rows read from the frozen design, e.g. "L1: not needed, no deployable part changed" or "L1: needed, `{part}` has no deployment setup"}
-- **Added to the declaration at this Deploy (REQ-027):** {the part and its entry, on the user's yes; or "none"}
+- **Added to the declaration at this Deploy:** {the part and its entry, on the user's yes; or "none"}
 - **L1 setup run:** {each part's setup that ran, in order; or "none"}
-- **L2:** {release run in this session; or "release: waits for a release session"; or "nothing to deploy, per the declaration"}
+- **L2:** {release run now; or "release: waits for a release run"; or "nothing to deploy, per the declaration"}
 
 ## Release strategy
 
@@ -46,4 +46,4 @@ Source: the deploy declaration, `.claude/deploy.json`, word for word.
 
 ## Change record
 
-{What changed (linking `REQ-*`), the version and the bump level with its reason (e.g. "MINOR: a new skill"), the change type (standard or normal) and the change authority (the user at the Deploy gate).}
+{What changed (linking the PR and its issue), the version and the bump level with its reason (e.g. "MINOR: a new skill"), the change type (standard or normal) and the change authority (the user, who confirmed the tier).}

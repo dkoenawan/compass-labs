@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# check-release.sh <session-dir>
+# check-release.sh <release-record.md | session-dir>
 # Deploy-gate check (#30 DES-006, REQ-015): reads release.md's confirmed
 # "Deploy tier: {tier}: {reason}" line and checks its H2 headings against
 # the sections that tier requires, by the Deploy standard's tier table
@@ -7,13 +7,16 @@
 # "rollback missing", and exits 1; prints "ok" and exits 0 when all are
 # present. Run it after the user has confirmed (or changed) the tier.
 #
+# The argument is the record itself (docs/releases/{date}-{slug}.md, ADR-012)
+# or, for a past session, the session folder holding release.md.
+#
 # A record with no Deploy tier line is a past record: it prints "past
 # record: no check" and exits 0.
 
 set -uo pipefail
 
-session_dir="${1:?Usage: check-release.sh <session-dir>}"
-record="$session_dir/release.md"
+target="${1:?Usage: check-release.sh <release-record.md | session-dir>}"
+if [[ -d "$target" ]]; then record="$target/release.md"; else record="$target"; fi
 
 if [[ ! -f "$record" ]]; then
   echo "check-release: release record not found: $record" >&2

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # check_release_test.sh
-# Component tests for skills/session/scripts/check-release.sh (#30
+# Component tests for skills/deploy/scripts/check-release.sh (#30
 # DES-006, REQ-015): a full-tier record with no rollback prints "rollback
 # missing" and exits 1; every tier passes when complete; each tier's
 # required sections match the Deploy standard's tier table; an old-layout
@@ -13,7 +13,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # shellcheck source=../lib.sh
 source "$REPO_ROOT/tests/lib.sh"
 
-SCRIPT="$REPO_ROOT/skills/session/scripts/check-release.sh"
+SCRIPT="$REPO_ROOT/skills/deploy/scripts/check-release.sh"
 STD="$REPO_ROOT/skills/deploy/SKILL.md"
 [[ -x "$SCRIPT" ]] || fail "check-release.sh not found or not executable"
 
@@ -81,7 +81,7 @@ assert_contains "$OUT" "past record: no check"
 # 5. The template's headings match the script's list: filled in as full, it passes.
 mkdir -p "$work/template"
 sed -E 's/^> Deploy tier: \{skip \| short \| full\}:/> Deploy tier: full:/' \
-  "$REPO_ROOT/skills/session/templates/release.md" >"$work/template/release.md"
+  "$REPO_ROOT/skills/deploy/templates/release.md" >"$work/template/release.md"
 run_check "$work/template"
 assert_eq 0 "$STATUS" "the release template, as full, should pass check-release.sh ($OUT)"
 
