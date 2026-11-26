@@ -13,6 +13,13 @@ source "$REPO_ROOT/tests/lib.sh"
 
 HOOK="$REPO_ROOT/hooks/session-start.sh"
 
+# Hermetic pstack settings (ADR-011, #98): a throwaway config dir holding the
+# safe template, so the hook's pstack warning never depends on this machine.
+pstack_cfg="$(mktemp -d)"
+mkdir -p "$pstack_cfg/rules"
+cp "$REPO_ROOT/skills/setup/templates/pstack-models.md" "$pstack_cfg/rules/pstack-models.md"
+export CLAUDE_CONFIG_DIR="$pstack_cfg"
+
 build_input() {
   local agent_type="$1" cwd="$2"
   if [[ -n "$agent_type" ]]; then
@@ -142,6 +149,25 @@ run_hook "$STUB_HOOK" "$(build_input compass-labs:orchestrator "$branch_repo")"
 assert_eq "0" "$HOOK_EXIT" "a missing lister should still exit 0"
 assert_eq "" "$HOOK_STDOUT" "a missing lister should print nothing"
 unset STUB_SESSIONS STUB_CALLS
+
+# pstack model settings (ADR-011, #98): silent when safe, one warning line
+# in any session when missing or unsafe, and a warning for a second pstack.
+run_hook "$HOOK" "$(build_input "" "$repo")"
+assert_not_contains "$HOOK_STDOUT" "pstack" "safe pstack settings should print nothing"
+rm "$pstack_cfg/rules/pstack-models.md"
+run_hook "$HOOK" "$(build_input "" "$repo")"
+assert_eq "0" "$HOOK_EXIT" "missing pstack settings should still exit 0"
+assert_contains "$HOOK_STDOUT" "/compass-labs:setup" "missing pstack settings should point at /compass-labs:setup"
+assert_contains "$HOOK_STDOUT" "missing:" "the warning should give the reason"
+sed 's/^swarm workers: .*/swarm workers: fable high/' "$REPO_ROOT/skills/setup/templates/pstack-models.md" > "$pstack_cfg/rules/pstack-models.md"
+run_hook "$HOOK" "$(build_input compass-labs:implement "$repo")"
+assert_contains "$HOOK_STDOUT" "unsafe:" "an unsafe role should be warned about in any session"
+cp "$REPO_ROOT/skills/setup/templates/pstack-models.md" "$pstack_cfg/rules/pstack-models.md"
+mkdir -p "$pstack_cfg/plugins"
+echo '{"plugins":{"pstack@cursor-plugins":[],"pstack@pstack-claude":[]}}' > "$pstack_cfg/plugins/installed_plugins.json"
+run_hook "$HOOK" "$(build_input "" "$repo")"
+assert_contains "$HOOK_STDOUT" "pstack@pstack-claude" "a second pstack plugin should be named"
+rm -rf "$pstack_cfg"
 
 echo "ok: session-start.sh validated"
 exit 0

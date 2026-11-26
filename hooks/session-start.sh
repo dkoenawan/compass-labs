@@ -24,6 +24,20 @@ LIST_SESSIONS_SCRIPT="$SCRIPT_DIR/../skills/session/scripts/list-sessions.sh"
 
 input="$(cat)"
 
+# Every session (ADR-011, #98): warn once when pstack's model settings are
+# missing or unsafe on a subscription, or a second pstack plugin is
+# installed. Silent when all is well; never blocks.
+PSTACK_MODELS_SCRIPT="$SCRIPT_DIR/../skills/setup/scripts/pstack-models.sh"
+if [[ -f "$PSTACK_MODELS_SCRIPT" ]]; then
+  if ! pstack_reasons="$(bash "$PSTACK_MODELS_SCRIPT" check 2>/dev/null)"; then
+    echo "[compass-labs] pstack's model settings aren't subscription-safe yet (${pstack_reasons%%$'\n'*}). Tell the user to run /compass-labs:setup."
+  fi
+  pstack_others="$(bash "$PSTACK_MODELS_SCRIPT" conflicts 2>/dev/null | paste -sd, -)"
+  if [[ -n "$pstack_others" ]]; then
+    echo "[compass-labs] Another pstack plugin is installed ($pstack_others) next to pstack@cursor-plugins; both register /pstack: commands. Tell the user to run /compass-labs:setup."
+  fi
+fi
+
 if ! command -v jq >/dev/null 2>&1; then
   # Fail open, silently — this hook only adds context, never blocks.
   exit 0

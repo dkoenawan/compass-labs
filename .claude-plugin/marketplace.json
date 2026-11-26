@@ -6,6 +6,9 @@
     "name": "Daniel Koenawan",
     "email": "daniel.k.koenawan@gmail.com"
   },
+  "allowCrossMarketplaceDependenciesOn": [
+    "cursor-plugins"
+  ],
   "plugins": [
     {
       "name": "compass-labs",
@@ -28,6 +31,7 @@
         "./skills/problem-statement",
         "./skills/requirements",
         "./skills/session",
+        "./skills/setup",
         "./skills/task-executor",
         "./skills/triage",
         "./skills/verification"

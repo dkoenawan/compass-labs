@@ -1,10 +1,16 @@
 {
   "name": "compass-labs",
   "description": "Opinionated skills, agents and hooks that run software development, research and consulting work as sessions, from problem framing to a documented outcome, based on common established enterprise frameworks",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "author": {
     "name": "Daniel Koenawan"
   },
   "repository": "https://github.com/dkoenawan/compass-labs",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "pstack",
+      "marketplace": "cursor-plugins"
+    }
+  ]
 }

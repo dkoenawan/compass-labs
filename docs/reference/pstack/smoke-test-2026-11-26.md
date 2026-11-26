@@ -6,7 +6,7 @@ last_updated: 2026-11-26
 
 > Origin: #98
 
-Two headless `poteto-mode` runs on a throwaway Python repo, after installing official pstack 0.15.48 and the subscription-safe [`pstack-models.md`](pstack-models.md). They check three things: pstack loads and routes in Claude Code, the role settings apply when it delegates, and an unattended run stays on its branch and reports honestly.
+Two headless `poteto-mode` runs on a throwaway Python repo, after installing official pstack 0.15.48 and the subscription-safe [`pstack-models.md`](../../../skills/setup/templates/pstack-models.md). They check three things: pstack loads and routes in Claude Code, the role settings apply when it delegates, and an unattended run stays on its branch and reports honestly.
 
 ## Result
 
@@ -47,3 +47,16 @@ Evidence was taken from the `stream-json` output:
 - **It stayed within the run's limits.** It skipped "Opening a PR" because an unattended push is outward-facing.
 - **Attribution.** The worker's commit carried a `Claude Opus 5.5` trailer, and the agent pointed this out itself.
 - **Not tested here:** usage across a real multi-hour task, panel skills (`arena`, `interrogate`), and PR upkeep. Those are for the first real trial (#103).
+
+## New-user install test
+
+A clean `CLAUDE_CONFIG_DIR`, standing in for a user who has never installed anything, then the README's Installation steps:
+
+| Step | Result |
+|---|---|
+| Install compass-labs **without** pstack's marketplace | Install "succeeds", but compass-labs is `✘ failed to load: Dependency "pstack@cursor-plugins" is not installed`. The README covers this case |
+| `marketplace add cursor/plugins`, `marketplace add <compass-labs>`, `plugin install compass-labs@compass-labs` | ✅ `(+ 1 dependency: pstack)`. compass-labs 2.5.0 and pstack 0.15.48 both `✔ enabled` |
+| Session start before setup | One line: `pstack's model settings aren't subscription-safe yet (missing: …). Tell the user to run /compass-labs:setup.` |
+| `pstack-models.sh install`, the script `/compass-labs:setup` runs | ✅ `installed: <config>/rules/pstack-models.md`, `check` exit 0 |
+| Session start after setup | ✅ Silent |
+| Anything written outside the config dir | None (nothing under `~/.cursor/`) |

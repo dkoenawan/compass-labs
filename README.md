@@ -45,60 +45,60 @@ compass-labs is a Claude Code plugin that structures each piece of work as a ses
 
 ## Installation
 
-### Option 1: Permanent (Recommended)
+compass-labs needs **[pstack](https://github.com/cursor/plugins/tree/main/pstack)** (by Lauren Tan, MIT) as its work layer ([ADR-011](docs/registry/decisions/011-adopt-pstack-work-layer.md)). It's declared as a plugin dependency, so installing compass-labs installs pstack too. Claude Code only resolves a dependency from a marketplace you've added, so add pstack's marketplace first.
 
-Installs the plugin so it loads automatically on every `claude` session — no flags needed.
+Requires Claude Code v2.1.265 or later.
 
-**Step 1 — Clone the repo**
-
-```bash
-git clone https://github.com/dkoenawan/compass-labs.git
-```
-
-**Step 2 — Register as a local marketplace**
+### Option 1: Permanent (recommended)
 
 ```bash
-claude plugin marketplace add /path/to/compass-labs
-```
+# 1. Add pstack's marketplace (Cursor's official plugins repo)
+claude plugin marketplace add cursor/plugins
 
-**Step 3 — Install the plugin**
+# 2. Add compass-labs' marketplace
+claude plugin marketplace add dkoenawan/compass-labs     # or a local clone: /path/to/compass-labs
 
-```bash
+# 3. Install compass-labs (pstack installs with it as a dependency)
 claude plugin install compass-labs@compass-labs
+#   ✔ Successfully installed plugin: compass-labs@compass-labs (scope: user) (+ 1 dependency: pstack)
 ```
 
-**Step 4 — Verify**
+Then, in a Claude Code session:
+
+```text
+/compass-labs:setup
+```
+
+This writes pstack's **subscription-safe model settings** to `~/.claude/rules/pstack-models.md`: Claude models only, nothing above `high` reasoning. pstack's own defaults include Fable, which needs usage credits, and Gemini, which needs another account. On a Claude subscription those roles fail or cost extra. Until setup has run, every session starts with a one-line reminder.
+
+Check it worked:
 
 ```bash
-claude plugin list
-# compass-labs@compass-labs should show Status: ✔ enabled
+claude plugin list    # compass-labs@compass-labs and pstack@cursor-plugins: ✔ enabled
 ```
 
-All skills are now available in every `claude` session. To update later:
+Skipped step 1? The install still succeeds, but compass-labs shows `✘ failed to load: Dependency "pstack@cursor-plugins" is not installed`. Run step 1, then `claude plugin install pstack@cursor-plugins`.
 
-```bash
-claude plugin update compass-labs@compass-labs
-```
+To update: `claude plugin update compass-labs@compass-labs`. pstack stays on the version you installed, because Claude Code leaves auto-update off for third-party marketplaces. Update it on purpose with `claude plugin update pstack@cursor-plugins`.
 
----
+**Upgrading from 2.4.x:** run step 1 and `claude plugin install pstack@cursor-plugins`, then `/compass-labs:setup`.
 
 ### Option 2: Session-only (quick test)
 
-Loads the plugin for the current session only. Nothing is written to your user config.
+Loads compass-labs for one session. pstack still has to be installed (Option 1, steps 1 and 3), or loaded alongside it:
 
 ```bash
 claude --plugin-dir /path/to/compass-labs
 ```
 
----
+### pstack, Cursor and other installs
 
-### Option 3: Clone and load session-only
-
-```bash
-git clone https://github.com/dkoenawan/compass-labs.git
-cd compass-labs
-claude --plugin-dir .
-```
+| Situation | Works? | Notes |
+|---|---|---|
+| You also use **pstack in Cursor** | ✅ Yes, side by side | Claude Code's copy lives in `~/.claude/plugins/` and reads its settings from `~/.claude/rules/pstack-models.md`. Cursor's pstack is installed through Cursor and reads `~/.cursor/rules/pstack-models.mdc`. compass-labs never writes under `~/.cursor/`, so Cursor keeps its own models (including Gemini, which Cursor bills). Cursor's docs say it also loads skills from `~/.claude/skills/`, but plugin skills live elsewhere, so Cursor won't see compass-labs or Claude's pstack copy. This is based on both tools' docs and hasn't been tested in Cursor |
+| You run **`/pstack:setup-pstack` in Claude Code** | ⚠️ Overwrites Compass's settings | It rewrites `~/.claude/rules/pstack-models.md` with pstack's defaults. The next session warns you. Run `/compass-labs:setup` to restore the safe settings (a backup of yours is kept) |
+| You have the **community port** `pstack@pstack-claude` installed | ❌ Not supported together | Both register `/pstack:` commands. Uninstall the port: `claude plugin uninstall pstack@pstack-claude`. compass-labs is written and tested against the official `pstack@cursor-plugins` |
+| You use pstack in **Codex, Copilot or another tool** | ✅ Unaffected | compass-labs only touches Claude Code's config |
 
 ## Plugin Structure
 
@@ -138,6 +138,7 @@ compass-labs/
 │   ├── adr/                           # Architecture decision records
 │   ├── task-executor/                 # Autonomous, scheduled task execution for large issues
 │   ├── triage/                        # Backlog triage: stock-take of open issues, confirmed apply, weekly report
+│   ├── setup/                         # One-time setup: pstack's subscription-safe model settings (check/install)
 │   ├── post-hook-validator/           # Construct functional-requirement validation, after Close registers it
 │   ├── brand-designer/                # Brand identity design through discovery
 │   └── bootstrap-new-project/         # Direct-generation project bootstrap (deprecated)
@@ -150,6 +151,12 @@ compass-labs/
 ```
 
 ## Skills Included
+
+### Setup
+
+#### `/compass-labs:setup`
+
+Run once after installing. It installs pstack's subscription-safe model settings at `~/.claude/rules/pstack-models.md`, checks existing ones (for example after `/pstack:setup-pstack` replaced them), and flags a second pstack plugin. It never writes under `~/.cursor/`. See [Installation](#installation).
 
 ### Project Initialization
 

@@ -65,7 +65,7 @@ We will split the system into four layers:
 
 ## NFR Captured
 
-- Budget: no pstack role runs Fable (it needs usage credits) or a model from another vendor (it needs another account). No role runs above `high` reasoning by default. `tests/pstack/models_template_test.sh` enforces this.
+- Budget: no pstack role runs Fable (it needs usage credits) or a model from another vendor (it needs another account). No role runs above `high` reasoning by default. `skills/setup/scripts/pstack-models.sh check` enforces this: `/compass-labs:setup` and the session-start warning use it, and `tests/setup/pstack_models_test.sh` tests it.
 - Control: no unattended run merges or pushes to the default branch. pstack's autonomy pauses before irreversible actions. A Compass guard that blocks merges is a follow-up.
 - Portability: nothing in the plugin is specific to one project. Project needs live in that repo's `.agents/playbooks/` and config.
 
