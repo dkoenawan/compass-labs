@@ -17,6 +17,7 @@
       "strict": true,
       "skills": [
         "./skills/adr",
+        "./skills/close",
         "./skills/deploy",
         "./skills/init",
         "./skills/problem-statement",
