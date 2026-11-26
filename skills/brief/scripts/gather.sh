@@ -3,7 +3,7 @@
 # Read-only snapshot for the weekly brief, for the 7 days ending on the date
 # (default today) and the month so far:
 #   runs.json      controller log lines (week and month)
-#   prs.json       per project: open compass/* PRs, and those merged this week
+#   prs.json       per project: open trellis/* PRs, and those merged this week
 #   findings.json  per project: findings on the default branch dated this
 #                  month (docs/findings/*.md frontmatter), with type
 #   meta.json      dates, cadence role this week, projects
@@ -33,8 +33,8 @@ for r in "${repos[@]}"; do
   prs="$(cd "$r" && "$GH" pr list --state all --limit 100 --json number,title,url,state,headRefName,mergedAt,createdAt 2>/dev/null || echo '[]')"
   jq --arg n "$name" --arg role "$role" --arg s "$start" --argjson p "$prs" \
     '. + [{project:$n, role:$role,
-           open: [$p[] | select(.state=="OPEN" and (.headRefName|startswith("compass/")))],
-           merged: [$p[] | select(.state=="MERGED" and (.headRefName|startswith("compass/")) and (.mergedAt[:10] >= $s))]}]' \
+           open: [$p[] | select(.state=="OPEN" and (.headRefName|startswith("trellis/")))],
+           merged: [$p[] | select(.state=="MERGED" and (.headRefName|startswith("trellis/")) and (.mergedAt[:10] >= $s))]}]' \
     "$out/prs.json" > "$out/prs.tmp" && mv "$out/prs.tmp" "$out/prs.json"
   shopt -s nullglob
   for f in "$r"/docs/findings/*.md; do

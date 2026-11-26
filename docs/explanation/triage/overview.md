@@ -7,7 +7,7 @@ source_path: skills/triage
 # Triage (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [modes, report, schedule and limits](../../reference/triage/stock-take-and-schedule.md) | → Decision: [ADR-010](../../registry/decisions/010-read-only-scheduled-triage-run.md) | → Usage: [README, Backlog Triage](../../../README.md#backlog-triage)
-> Origin: #86 · #93
+> Origin: #86 · #93, #34
 
 ## What Is Triage?
 
@@ -31,7 +31,7 @@ The maintainer installs the schedule once, for example `install --day sat --time
 
 When a line fires, `run-scheduled.sh` first checks the local weekday and time in the installed zone and quietly exits if this slot isn't the right one. Otherwise it takes a lock, logs to a per-repository folder under `~/.local/state`, outside the repository, and checks its binaries and `gh auth status`. `gather.sh` then takes a read-only snapshot into a temporary folder: open issues with comments, open reports, recent merged PRs with their changed files, the README's anchor and some metadata. A headless `claude -p` follows the stock-take procedure, after a short preamble naming the local run date, over the snapshot and the working tree. It can use only Read, Grep and Glob, loads no settings, plugins, hooks or MCP servers, and prints the report. `publish-report.sh` checks that the report covers every snapshot issue exactly once in the fixed format. If it does, the script sets the header's Run date to the title's date, creates the report issue and closes any earlier report that was never applied, as superseded. If anything fails, the log says why, nothing is published, and an invalid report is kept beside the log for inspection.
 
-The maintainer reads the report and runs `apply #N` in their own Claude Code session. The apply re-reads the report and flags every issue that changed since it was published, re-checking those before their group comes up. It then asks once per category group. A yes runs that group's `gh` actions (close, fold a cluster into its main issue, retitle, comment); a no leaves those issues untouched. At the end, each issue still open gets its triage comment, and the report is closed with the list of groups applied and declined, so the next scheduled run doesn't supersede it. The same procedure also runs interactively with no report at all: a bare `/compass-labs:triage` shows the proposed actions and changes nothing, and `apply` then carries them out.
+The maintainer reads the report and runs `apply #N` in their own Claude Code session. The apply re-reads the report and flags every issue that changed since it was published, re-checking those before their group comes up. It then asks once per category group. A yes runs that group's `gh` actions (close, fold a cluster into its main issue, retitle, comment); a no leaves those issues untouched. At the end, each issue still open gets its triage comment, and the report is closed with the list of groups applied and declined, so the next scheduled run doesn't supersede it. The same procedure also runs interactively with no report at all: a bare `/trellis:triage` shows the proposed actions and changes nothing, and `apply` then carries them out.
 
 ### Context diagram
 
@@ -128,7 +128,7 @@ flowchart TB
 
 ## Dependencies
 
-- **Internal**: the project anchor contract (`skills/framing/reference/anchor-contract.md`) for the `<!-- compass:anchor -->` markers. `/compass-labs:framing` is what the report recommends when no anchor exists.
+- **Internal**: the project anchor contract (`skills/framing/reference/anchor-contract.md`) for the `<!-- compass:anchor -->` markers. `/trellis:framing` is what the report recommends when no anchor exists.
 - **External**: GitHub through the `gh` CLI (issues, labels, merged PRs, `api user`); the `claude` CLI and its `--restricted`, `--tools` and `--strict-mcp-config` flags; cron and the machine's time-zone database; `jq`, `git` and coreutils `timeout`.
 - **Assumptions**: the machine is on and online at the scheduled time, and a missed run isn't caught up. `gh` is signed in with permission to create, comment on and close issues and to create labels. A report for up to 100 issues fits in one issue body. `gh` and `claude` have stored credentials that cron can see.
 

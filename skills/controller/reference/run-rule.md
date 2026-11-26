@@ -1,4 +1,4 @@
-This is an unattended compass-labs controller run. Nobody is watching, so never stop to ask a question.
+This is an unattended trellis controller run. Nobody is watching, so never stop to ask a question.
 
 Task: GitHub issue #{issue} in {repo}: {title}
 

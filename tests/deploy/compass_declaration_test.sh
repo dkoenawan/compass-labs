@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # compass_declaration_test.sh
-# compass-labs' own deploy declaration, .claude/deploy.json (#30 DES-011,
+# trellis' own deploy declaration, .claude/deploy.json (#30 DES-011,
 # REQ-002, REQ-005, REQ-018, REQ-023): check-declaration.sh reports it
 # valid; the four L2 steps (bump, commit, push, PR ready) are routine and
 # may run; the merge is production-affecting and waits; the merge-
@@ -20,7 +20,7 @@ CHECK="$REPO_ROOT/skills/deploy/scripts/check-declaration.sh"
 [[ -f "$DECL" ]] || fail ".claude/deploy.json not found"
 
 out="$(bash "$CHECK" "$REPO_ROOT" --plan 2>&1)"
-assert_eq 0 $? "check-declaration.sh should report compass-labs' declaration valid ($out)"
+assert_eq 0 $? "check-declaration.sh should report trellis' declaration valid ($out)"
 assert_contains "$out" "check-declaration: valid"
 
 # The four L2 steps, in order, routine, and allowed to run.
@@ -49,18 +49,18 @@ assert_contains "$(jq -r '.l1.parts[0].setup[0].run' "$DECL")" "gh run list --wo
 assert_eq "routine" "$(jq -r '.l1.parts[0].setup[0].kind' "$DECL")" "the pipeline's setup step should be routine"
 
 # Versioning, confirmation, rollback, mode, after the merge.
-assert_eq ".claude-plugin/plugin.json|.version|compass-labs--v{version}" \
+assert_eq ".claude-plugin/plugin.json|.version|trellis--v{version}" \
   "$(jq -r '[.versioning.file, .versioning.field, .versioning.tag] | join("|")' "$DECL")" "versioning should be the starter's values"
 assert_contains "$(jq -r '.versioning.rule' "$DECL")" "CLAUDE.md" "the versioning rule should point to CLAUDE.md"
 assert_eq "bash .github/scripts/release-tag.sh --check" "$(jq -r '.confirmation.run' "$DECL")" "the confirmation should be release-tag.sh --check"
 assert_contains "$(jq -r '.rollback | join(" ")' "$DECL")" "gh pr ready {pr} --undo" "the rollback should un-ready the PR before the merge"
 assert_contains "$(jq -r '.rollback | join(" ")' "$DECL")" "never overwritten" "the rollback should say tags are never overwritten"
 assert_eq "in_session" "$(jq -r '.release_mode' "$DECL")"
-assert_contains "$(jq -r '.after_merge[].run' "$DECL")" "claude plugin update compass-labs@compass-labs" "the cache refresh should be the user's step"
+assert_contains "$(jq -r '.after_merge[].run' "$DECL")" "claude plugin update trellis@trellis" "the cache refresh should be the user's step"
 
 # Tier: short, with L1 or without.
 assert_contains "$out" "plan: tier: short"
 assert_contains "$out" "plan: tier if L1 runs: short"
 
-echo "ok: compass-labs' deploy declaration checked"
+echo "ok: trellis' deploy declaration checked"
 exit 0

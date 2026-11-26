@@ -18,15 +18,15 @@ work="$(mktemp -d)"; trap 'rm -rf "$work"' EXIT
 repo="$work/repo"; mkdir -p "$repo/docs/findings"
 mk() { printf -- '---\ndate: %s\ntype: %s\ntitle: %s\npr: %s\n---\n\n# %s\n' "$1" "$2" "$3" "$4" "$3" > "$repo/docs/findings/$1-$5.md"; }
 mk 2026-11-20 risk "Offset off by one on page 1" "#5" paging
-mk 2026-11-25 compass "pstack panel needs a second vendor" "#7" panel
+mk 2026-11-25 trellis "pstack panel needs a second vendor" "#7" panel
 mk 2026-11-22 decision "Validate page and size at the boundary" "#6" validate
 echo "no frontmatter" > "$repo/docs/findings/notes.md"
 out="$(bash "$S/findings-index.sh" "$repo")"
 assert_contains "$out" "3 findings" "three findings with frontmatter should be indexed"
 idx="$(cat "$repo/docs/findings/index.md")"
-assert_contains "$idx" "**1** decision · **1** risk · **0** learning · **1** compass" "type counts"
+assert_contains "$idx" "**1** decision · **1** risk · **0** learning · **1** trellis" "type counts"
 first="$(grep -m1 '^| 2026' "$repo/docs/findings/index.md")"
-assert_contains "$first" "2026-11-25 | compass" "newest first"
+assert_contains "$first" "2026-11-25 | trellis" "newest first"
 assert_contains "$idx" "[Offset off by one on page 1](2026-11-20-paging.md) | #5" "rows link the finding and its PR"
 bash "$S/findings-index.sh" "$repo" >/dev/null
 assert_eq "$idx" "$(cat "$repo/docs/findings/index.md")" "re-running should be idempotent"
@@ -62,6 +62,6 @@ assert_contains "$b" "[\`docs/reference/paging.md\`]" "touched docs should be li
 assert_not_contains "$b" "findings/index.md" "the generated index shouldn't be listed"
 assert_not_contains "$b" "paging.py" "code files aren't drill-down docs"
 (cd "$g" && GH_BIN="$stub" bash "$S/pr-drilldown.sh" 9 "$g") >/dev/null
-assert_eq "1" "$(grep -c '<!-- compass:drilldown -->' "$body_file")" "a re-run should replace, not duplicate, the section"
+assert_eq "1" "$(grep -c '<!-- trellis:drilldown -->' "$body_file")" "a re-run should replace, not duplicate, the section"
 
 echo "ok: close scripts validated"

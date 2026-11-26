@@ -84,7 +84,7 @@ cmp -s "$TEMPLATE" "$unsafe" || fail "install --force should write the template"
 
 # 6. conflicts lists other pstack plugins (e.g. the community port).
 mkdir -p "$CLAUDE_CONFIG_DIR/plugins"
-echo '{"plugins":{"pstack@cursor-plugins":[],"pstack@pstack-claude":[],"compass-labs@compass-labs":[]}}' > "$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json"
+echo '{"plugins":{"pstack@cursor-plugins":[],"pstack@pstack-claude":[],"trellis@trellis":[]}}' > "$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json"
 run conflicts
 assert_eq "pstack@pstack-claude" "$OUT" "conflicts should list only the other pstack plugin"
 

@@ -4,13 +4,13 @@
 # configured local time slot, at most runs_per_day times a day.
 #
 #   1. Cadence: in the last 7 days of the month the target is compass_repo
-#      (the compass week); otherwise one of the side projects, rotating by day.
+#      (the trellis week); otherwise one of the side projects, rotating by day.
 #   2. Task: the oldest open issue labelled `label` without an open
-#      compass/<n>-* PR (pick-task.sh). None: log "idle" and stop.
-#   3. Branch compass/<n>-<slug> from the default branch, in a clean tree.
-#   4. In parallel: the problem brief (/compass-labs:problem-statement) and
+#      trellis/<n>-* PR (pick-task.sh). None: log "idle" and stop.
+#   3. Branch trellis/<n>-<slug> from the default branch, in a clean tree.
+#   4. In parallel: the problem brief (/trellis:problem-statement) and
 #      the pstack run (/pstack:poteto-mode + reference/run-rule.md), which
-#      pushes the branch and opens the PR. Then /compass-labs:close folds it
+#      pushes the branch and opens the PR. Then /trellis:close folds it
 #      into docs and findings and adds the PR's drill-down.
 #   0. On brief_day, the first slot publishes the weekly brief
 #      (skills/brief), with no model call.
@@ -19,7 +19,7 @@
 #
 # --dry-run prints the plan and changes nothing. --force ignores the slot
 # and the daily limit. The merge guard (hooks/merge-guard.sh) is active in
-# every claude call, because the plugin is loaded. COMPASS_NOW stands in for
+# every claude call, because the plugin is loaded. TRELLIS_NOW stands in for
 # the clock, and CLAUDE_BIN / GH_BIN for the binaries (tests, cron).
 
 set -uo pipefail
@@ -86,7 +86,7 @@ task="$(bash "$SCRIPTS/pick-task.sh" "$repo" "$(cfg .label)")"
 if [[ -z "$task" ]]; then log_event idle role="$role" repo="$repo"; exit 0; fi
 issue="${task%%$'\t'*}"; title="${task#*$'\t'}"
 slug="$(tr '[:upper:]' '[:lower:]' <<<"$title" | tr -cs 'a-z0-9' '-' | sed 's/^-//; s/-$//' | cut -d- -f1-5)"
-branch="compass/$issue-$slug"
+branch="trellis/$issue-$slug"
 trail="docs/trails/$today-$issue-$slug.tsv"
 
 if [[ $dry -eq 1 ]]; then
@@ -118,12 +118,12 @@ flags=(--model "$(cfg .model)" --permission-mode acceptEdits
 max="$(cfg .max_minutes)"
 start=$(date +%s)
 
-(cd "$repo" && timeout 15m "$CLAUDE" -p "/compass-labs:problem-statement #$issue (branch $branch). Unattended: don't ask, write the brief file only." "${flags[@]}" </dev/null >"$run_dir/brief.jsonl" 2>"$run_dir/brief.err") &
+(cd "$repo" && timeout 15m "$CLAUDE" -p "/trellis:problem-statement #$issue (branch $branch). Unattended: don't ask, write the brief file only." "${flags[@]}" </dev/null >"$run_dir/brief.jsonl" 2>"$run_dir/brief.err") &
 brief_pid=$!
 (cd "$repo" && timeout "${max}m" "$CLAUDE" -p "/pstack:poteto-mode $rule" "${flags[@]}" </dev/null >"$run_dir/pstack.jsonl" 2>"$run_dir/pstack.err")
 pstack_exit=$?
 wait "$brief_pid"; brief_exit=$?
-(cd "$repo" && timeout 20m "$CLAUDE" -p "/compass-labs:close $branch. Unattended: don't ask." "${flags[@]}" </dev/null >"$run_dir/close.jsonl" 2>"$run_dir/close.err")
+(cd "$repo" && timeout 20m "$CLAUDE" -p "/trellis:close $branch. Unattended: don't ask." "${flags[@]}" </dev/null >"$run_dir/close.jsonl" 2>"$run_dir/close.err")
 close_exit=$?
 minutes=$(( ($(date +%s) - start + 59) / 60 ))
 

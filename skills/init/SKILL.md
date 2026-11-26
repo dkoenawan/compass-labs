@@ -29,8 +29,8 @@ The plugin's stack defaults live in one place, [`${CLAUDE_PLUGIN_ROOT}/skills/in
 ## Usage
 
 ```bash
-/compass:init                         # Greenfield: scaffold a new project
-/compass:init brownfield-migrate      # Brownfield: seed registry from existing codebase
+/trellis:init                         # Greenfield: scaffold a new project
+/trellis:init brownfield-migrate      # Brownfield: seed registry from existing codebase
 ```
 
 ## Project Structure Created
@@ -211,7 +211,7 @@ mv README.md.template README.md 2>/dev/null || true
 ```bash
 git init
 git add .
-git commit -m "feat: initialize project with compass-labs"
+git commit -m "feat: initialize project with trellis"
 ```
 
 #### Step 8: Install Dependencies (if requested)
@@ -350,7 +350,7 @@ affects: [all]
 
 ## Context
 
-New project {project-name} initialized via compass-labs init.
+New project {project-name} initialized via trellis init.
 Stack selected during initialization.
 
 ## Decision
@@ -430,8 +430,8 @@ Registry bootstrapped:
     001-initial-stack-choices.md  (stack decision captured)
   CLAUDE.md updated               (agent navigation protocol injected)
 
-Next: run /compass-labs:setup once, then start your first feature with
-/pstack:poteto-mode <task>, or let /compass-labs:controller schedule it.
+Next: run /trellis:setup once, then start your first feature with
+/pstack:poteto-mode <task>, or let /trellis:controller schedule it.
 ```
 
 ---
@@ -603,7 +603,7 @@ affects: [all]
 
 This project already existed when the architecture registry was introduced.
 The registry was seeded automatically from up to 5 source reads using
-`/compass:init brownfield-migrate`.
+`/trellis:init brownfield-migrate`.
 
 ## Decision
 
@@ -675,5 +675,5 @@ Summary:
 Next steps:
   1. Review each stub in docs/reference/constructs/ — fix inferred descriptions
   2. Fill Known Gaps one area at a time (graphify helps map the codebase)
-  3. Start work with /pstack:poteto-mode <task>; /compass-labs:close keeps docs/ and the registry current after each run
+  3. Start work with /pstack:poteto-mode <task>; /trellis:close keeps docs/ and the registry current after each run
 ```

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # cadence.sh [YYYY-MM-DD]
-# Prints "compass" in the last 7 days of the month (the compass week) and
+# Prints "compass" in the last 7 days of the month (the trellis week) and
 # "side" otherwise (weeks 1-3, side-project work). Default: today.
 set -euo pipefail
 d="${1:-$(date +%F)}"

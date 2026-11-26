@@ -1,12 +1,12 @@
 {
   "deployment": "declared",
-  "note": "compass-labs is a Claude Code plugin. A release is a version bump on the session branch, made ready for review; the merge-triggered pipeline (.github/workflows/release.yml) tags and publishes it once the user merges.",
+  "note": "trellis is a Claude Code plugin. A release is a version bump on the session branch, made ready for review; the merge-triggered pipeline (.github/workflows/release.yml) tags and publishes it once the user merges.",
   "release_mode": "in_session",
   "versioning": {
     "rule": "CLAUDE.md, Version Management: MAJOR for breaking changes to skill interfaces, MINOR for new skills or backward-compatible enhancements, PATCH for bug fixes and documentation updates",
     "file": ".claude-plugin/plugin.json",
     "field": ".version",
-    "tag": "compass-labs--v{version}"
+    "tag": "trellis--v{version}"
   },
   "l1": {
     "parts": [
@@ -41,7 +41,7 @@
   ],
   "after_merge": [
     { "name": "update the local checkout", "run": "git switch main && git pull" },
-    { "name": "refresh the local plugin install", "run": "claude plugin update compass-labs@compass-labs" },
+    { "name": "refresh the local plugin install", "run": "claude plugin update trellis@trellis" },
     { "name": "restart Claude Code to load the new version", "run": "exit Claude Code and start it again" }
   ]
 }

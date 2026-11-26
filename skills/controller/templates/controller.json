@@ -5,10 +5,10 @@
   "brief_day": "mon",
   "max_minutes": 60,
   "model": "sonnet",
-  "label": "compass:ready",
+  "label": "trellis:ready",
   "projects": [
     { "repo": "/absolute/path/to/side-project", "role": "side" }
   ],
-  "compass_repo": "/absolute/path/to/compass-labs",
-  "brief_repo": "/absolute/path/to/compass-labs"
+  "compass_repo": "/absolute/path/to/trellis",
+  "brief_repo": "/absolute/path/to/trellis"
 }

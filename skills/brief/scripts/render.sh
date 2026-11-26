@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # render.sh <snapshot-dir>
 # Prints the weekly brief as GitHub markdown: your call first, then the
-# month's side/compass split (target 3:1) as a Mermaid pie, a table per
+# month's side/trellis split (target 3:1) as a Mermaid pie, a table per
 # project, usage, findings, and the run log in a collapsed appendix.
 set -euo pipefail
 d="${1:?Usage: render.sh <snapshot-dir>}"
@@ -15,7 +15,7 @@ total=$((ran_side + ran_comp))
 if (( total > 0 )); then share=$(( 100 * ran_side / total )); else share=0; fi
 if (( total == 0 )); then verdict="no runs yet"; elif (( share >= 70 )); then verdict="on target"; else verdict="below target"; fi
 
-echo "# Compass brief · $start → $end"
+echo "# Trellis brief · $start → $end"
 echo
 echo "**Your call:** $open_n PR(s) to review."
 jq -r '.[] | .project as $n | .open[] | "- [\($n) #\(.number)](\(.url)) \(.title)"' "$p"
@@ -24,12 +24,12 @@ risk_n="$(jq '[.[] | select(.type=="risk" and .date >= "'"$start"'")] | length' 
 echo
 echo "This week is a **$(jq -r .role "$m")** week. Next week is **$(jq -r .next_role "$m")**."
 echo
-echo "## Month so far: side projects vs compass-labs (target 3:1)"
+echo "## Month so far: side projects vs trellis (target 3:1)"
 echo
 echo '```mermaid'
 echo 'pie showData'
 echo "  \"Side projects\" : $ran_side"
-echo "  \"compass-labs\" : $ran_comp"
+echo "  \"trellis\" : $ran_comp"
 echo '```'
 echo
 echo "**$share%** of this month's runs went to side projects ($verdict; the target is 75%)."
@@ -46,7 +46,7 @@ echo "**Usage this week:** $tokens output tokens over $mins run-minutes."
 echo
 echo "## Findings this month"
 echo
-echo "$(jq '[.[]|select(.type=="decision")]|length' "$f") decision · $(jq '[.[]|select(.type=="risk")]|length' "$f") risk · $(jq '[.[]|select(.type=="learning")]|length' "$f") learning · **$(jq '[.[]|select(.type=="compass")]|length' "$f") compass** (for the compass week)"
+echo "$(jq '[.[]|select(.type=="decision")]|length' "$f") decision · $(jq '[.[]|select(.type=="risk")]|length' "$f") risk · $(jq '[.[]|select(.type=="learning")]|length' "$f") learning · **$(jq '[.[]|select(.type=="trellis" or .type=="compass")]|length' "$f") trellis** (for the trellis week)"
 echo
 jq -r 'sort_by(.date) | reverse | .[:10][] | "- \(.date) · **\(.type)** · \(.project): \(.title) (`\(.file)`)"' "$f"
 echo

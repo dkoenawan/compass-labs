@@ -88,12 +88,15 @@ LABEL_EXISTS="$(jq 'any(.[]; .name == "triage")' <<<"$LABELS")"
 # The anchor: the README text strictly between the two markers.
 ANCHOR=missing
 rm -f "$OUT/anchor.md"
-if [[ -f "$REPO_ABS/README.md" ]] && grep -qx '<!-- compass:anchor -->' "$REPO_ABS/README.md" \
-  && grep -qx '<!-- /compass:anchor -->' "$REPO_ABS/README.md"; then
-  awk '/^<!-- \/compass:anchor -->$/ {exit} inside {print} /^<!-- compass:anchor -->$/ {inside=1}' \
-    "$REPO_ABS/README.md" >"$OUT/anchor.md"
-  if [[ -s "$OUT/anchor.md" ]]; then ANCHOR=found; else rm -f "$OUT/anchor.md"; fi
-fi
+# Both marker names are accepted: `compass:anchor` (kept, other repos use it) and `trellis:anchor`.
+for NAME in compass trellis; do
+  if [[ -f "$REPO_ABS/README.md" ]] && grep -qx "<!-- $NAME:anchor -->" "$REPO_ABS/README.md" \
+    && grep -qx "<!-- /$NAME:anchor -->" "$REPO_ABS/README.md"; then
+    awk -v o="<!-- $NAME:anchor -->" -v c="<!-- /$NAME:anchor -->" '$0 == c {exit} inside {print} $0 == o {inside=1}' \
+      "$REPO_ABS/README.md" >"$OUT/anchor.md"
+    if [[ -s "$OUT/anchor.md" ]]; then ANCHOR=found; break; else rm -f "$OUT/anchor.md"; fi
+  fi
+done
 
 BRANCH="$(git -C "$REPO_ABS" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
 HEAD_SHA="$(git -C "$REPO_ABS" rev-parse HEAD 2>/dev/null || echo unknown)"

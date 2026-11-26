@@ -30,7 +30,7 @@ assert_contains "$offer" "never runs an L1 setup step" "initiation should run no
 assert_contains "$offer" "merge-triggered pipeline" "a yes should add the pipeline part to l1.parts"
 
 mode="$(awk '/^## 9. Starter mode/{on=1; next} /^## /{on=0} on' "$STD")"
-assert_contains "$mode" "/compass-labs:deploy starter" "the starter mode should be invocable"
+assert_contains "$mode" "/trellis:deploy starter" "the starter mode should be invocable"
 assert_contains "$mode" "never runs a setup or release step" "the starter mode should run no deploy step"
 assert_contains "$(grep -m1 '^argument-hint:' "$STD")" "starter" "the standard should take 'starter' as an argument"
 
@@ -45,7 +45,7 @@ done
 
 # A deploy run with no declaration makes the same offer (ADR-012: the
 # session skill's one-time setup is gone).
-assert_contains "$(cat "$REPO_ROOT/skills/deploy/SKILL.md")" "a \`/compass-labs:deploy\` run that finds no declaration" \
+assert_contains "$(cat "$REPO_ROOT/skills/deploy/SKILL.md")" "a \`/trellis:deploy\` run that finds no declaration" \
   "the Deploy standard should name a deploy run as the offer's second caller"
 
 echo "ok: declaration offer checked"

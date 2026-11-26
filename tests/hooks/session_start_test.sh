@@ -28,7 +28,7 @@ assert_eq "" "$HOOK_STDOUT" "safe settings should print nothing"
 rm "$cfg/rules/pstack-models.md"
 run_hook "$HOOK" "$input"
 assert_eq "0" "$HOOK_EXIT" "missing settings should still exit 0"
-assert_contains "$HOOK_STDOUT" "/compass-labs:setup" "missing settings should point at setup"
+assert_contains "$HOOK_STDOUT" "/trellis:setup" "missing settings should point at setup"
 assert_contains "$HOOK_STDOUT" "missing:" "the warning should give the reason"
 
 sed 's/^swarm workers: .*/swarm workers: fable high/' "$TEMPLATE" > "$cfg/rules/pstack-models.md"

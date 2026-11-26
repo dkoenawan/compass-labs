@@ -22,7 +22,7 @@
 # paths are absolute but not symlink-resolved: a PATH symlink such as
 # ~/.local/bin/claude stays as written, so a later update that repoints it
 # doesn't break the schedule (#93). Each line ends with the marker
-# "# compass-labs:triage: <repo>", which uninstall-schedule.sh removes by.
+# "# trellis:triage: <repo>", which uninstall-schedule.sh removes by.
 # Every other crontab line is left as is.
 #
 # Before writing: validates the arguments, checks `gh auth status`, refuses a
@@ -100,7 +100,7 @@ done
 
 # --- Refuse a second schedule (REQ-021) -----------------------------------
 
-MARKER="# compass-labs:triage: $REPO_ABS"
+MARKER="# trellis:triage: $REPO_ABS"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 CURRENT="$WORK/current"
@@ -175,5 +175,5 @@ done
 if [[ -n "$NEXT" ]]; then
   echo "[$SCRIPT_NAME] Next run: $(TZ="$ZONE" date -d "@$NEXT" '+%a %F %H:%M %Z') ($ZONE)."
 fi
-echo "[$SCRIPT_NAME] Run log: \${XDG_STATE_HOME:-\$HOME/.local/state}/compass-labs/triage/$(sed -e 's|^/||' -e 's|/|-|g' <<<"$REPO_ABS")/"
+echo "[$SCRIPT_NAME] Run log: \${XDG_STATE_HOME:-\$HOME/.local/state}/trellis/triage/$(sed -e 's|^/||' -e 's|/|-|g' <<<"$REPO_ABS")/"
 echo "[$SCRIPT_NAME] Uninstall: bash $SCRIPTS_DIR/uninstall-schedule.sh $REPO_ABS"

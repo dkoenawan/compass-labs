@@ -17,7 +17,7 @@ This is a Claude Code plugin that follows the structure documented at https://co
 ### Directory Structure
 
 ```
-compass-labs/
+trellis/
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest (metadata only)
 ├── skills/                  # Agent-based skills
@@ -92,10 +92,10 @@ Provide concrete examples of how this skill should be used.
 
 ```bash
 # Test the plugin locally
-claude --plugin-dir /path/to/compass-labs
+claude --plugin-dir /path/to/trellis
 
 # Invoke your skill
-/compass:skill-name
+/trellis:skill-name
 ```
 
 ## Adding Commands

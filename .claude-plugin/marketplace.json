@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "compass-labs",
+  "name": "trellis",
   "description": "Keeps side projects moving on a Claude subscription, with pstack doing the work",
   "owner": {
     "name": "Daniel Koenawan",
@@ -11,8 +11,8 @@
   ],
   "plugins": [
     {
-      "name": "compass-labs",
-      "description": "Keeps side projects moving on a Claude subscription: pstack does the work, Compass schedules runs within your usage budget, keeps docs and findings indexed, guards the merge, and sends one visual weekly brief",
+      "name": "trellis",
+      "description": "Keeps side projects moving on a Claude subscription: pstack does the work, Trellis schedules runs within your usage budget, keeps docs and findings indexed, guards the merge, and sends one visual weekly brief",
       "source": "./",
       "strict": true,
       "skills": [

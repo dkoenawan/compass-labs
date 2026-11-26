@@ -32,7 +32,7 @@ set -uo pipefail
 # TAG_FORMAT:    the release tag, with {version} where the version goes.
 VERSION_FILE='.claude-plugin/plugin.json'
 VERSION_FIELD='.version'
-TAG_FORMAT='compass-labs--v{version}'
+TAG_FORMAT='trellis--v{version}'
 # --- end settings -----------------------------------------------------------
 
 die() {

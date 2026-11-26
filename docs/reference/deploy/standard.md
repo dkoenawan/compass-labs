@@ -1,9 +1,9 @@
 # Deploy: the declaration, the tiers, the release record and the release pipeline
 
 > → Concepts: [Deploy overview](../../explanation/deploy/overview.md) · → [Session workflow and artifacts](../session/workflow-and-artifacts.md#milestone-gate-checks) · → Decisions: [ADR-007](../../registry/decisions/007-deploy-declaration.md) · [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md) · [ADR-009](../../registry/decisions/009-merge-triggered-release-pipeline.md)
-> Origin: #30
+> Origin: #30, #34
 
-The standard itself is [`skills/deploy/SKILL.md`](../../../skills/deploy/SKILL.md), preloaded by the Deploy agent (`agents/deploy.md`) and also user-invocable as `/compass-labs:deploy` (`starter` argument). The full field list, `run` placeholders and an example per mode are in [`skills/deploy/reference/declaration.md`](../../../skills/deploy/reference/declaration.md); the framework verdicts are in [`skills/deploy/reference/frameworks.md`](../../../skills/deploy/reference/frameworks.md). This page lists the facts other docs, tools and sessions rely on.
+The standard itself is [`skills/deploy/SKILL.md`](../../../skills/deploy/SKILL.md), preloaded by the Deploy agent (`agents/deploy.md`) and also user-invocable as `/trellis:deploy` (`starter` argument). The full field list, `run` placeholders and an example per mode are in [`skills/deploy/reference/declaration.md`](../../../skills/deploy/reference/declaration.md); the framework verdicts are in [`skills/deploy/reference/frameworks.md`](../../../skills/deploy/reference/frameworks.md). This page lists the facts other docs, tools and sessions rely on.
 
 ## Lifecycles
 
@@ -130,7 +130,7 @@ The "Declaration offer" procedure (standard section 8) is called by `init` (gree
 | nothing to deploy | `{"deployment": "none"}` |
 | declare now | The seven items and `versioning` walked with the user, written, and checked until `check-declaration.sh` reports valid. Then, on a GitHub `origin` only, the starter offer: the two target paths and the values shown, installed only on a yes |
 
-It never runs an L1 setup step. `/compass-labs:deploy starter` (or a request in words) runs the starter offer at any time, walking "declare now" first if there's no declaration; it never commits.
+It never runs an L1 setup step. `/trellis:deploy starter` (or a request in words) runs the starter offer at any time, walking "declare now" first if there's no declaration; it never commits.
 
 ## Deploy agent permissions
 

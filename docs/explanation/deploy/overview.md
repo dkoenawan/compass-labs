@@ -7,7 +7,7 @@ source_path: skills/deploy
 # Deploy (L3)
 
 > → [System overview](../solution-design.md) | → Reference: [the Deploy standard](../../reference/deploy/standard.md) | → [Session overview](../session/overview.md) · [Init overview](../init/overview.md) | → Decisions: [ADR-007](../../registry/decisions/007-deploy-declaration.md) · [ADR-008](https://github.com/dkoenawan/compass-labs/blob/b1d47e1/docs/registry/decisions/008-deploy-runs-declared-steps.md) · [ADR-009](../../registry/decisions/009-merge-triggered-release-pipeline.md)
-> Origin: #30
+> Origin: #30, #34
 
 ## What Is Deploy?
 
@@ -139,7 +139,7 @@ flowchart TD
 ```mermaid
 flowchart LR
   subgraph GH["GitHub"]
-    REPO["dkoenawan/compass-labs: main, tags, releases"]
+    REPO["dkoenawan/trellis: main, tags, releases"]
     subgraph RUNNER["GitHub Actions runner"]
       WF[".github/workflows/release.yml"]
       SCRIPT[".github/scripts/release-tag.sh"]

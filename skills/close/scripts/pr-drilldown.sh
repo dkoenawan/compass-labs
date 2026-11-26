@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # pr-drilldown.sh <pr> <repo>
 # Puts a collapsed "Drill down" section in the PR body, between
-# <!-- compass:drilldown --> and <!-- /compass:drilldown -->: links to the
+# <!-- trellis:drilldown --> and <!-- /trellis:drilldown -->: links to the
 # brief, findings, decision trail and docs the branch changed. Replaces an
 # existing section, otherwise appends it. Touches nothing else in the body.
 
@@ -16,7 +16,7 @@ changed="$(git -C "$repo" diff --name-only "origin/$base...HEAD" 2>/dev/null || 
 
 link() { echo "- [\`$1\`]($1)"; }
 section() {
-  echo "<!-- compass:drilldown -->"
+  echo "<!-- trellis:drilldown -->"
   echo "<details><summary>Drill down</summary>"
   echo
   local kind pattern files
@@ -29,15 +29,15 @@ section() {
     echo
   done
   echo "</details>"
-  echo "<!-- /compass:drilldown -->"
+  echo "<!-- /trellis:drilldown -->"
 }
 
 body="$("$GH" pr view "$pr" --json body -q .body)"
 new_section="$(section)"
-if grep -q '<!-- compass:drilldown -->' <<<"$body"; then
+if grep -q '<!-- trellis:drilldown -->' <<<"$body"; then
   body="$(awk -v repl="$new_section" '
-    /<!-- compass:drilldown -->/ {print repl; skip=1; next}
-    /<!-- \/compass:drilldown -->/ {skip=0; next}
+    /<!-- trellis:drilldown -->/ {print repl; skip=1; next}
+    /<!-- \/trellis:drilldown -->/ {skip=0; next}
     !skip {print}' <<<"$body")"
 else
   body="$body"$'\n\n'"$new_section"

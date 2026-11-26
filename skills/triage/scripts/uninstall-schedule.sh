@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # uninstall-schedule.sh
 # Removes a repository's triage schedule from the user's crontab: every line
-# ending with the marker "# compass-labs:triage: <repo>". Every other line is
+# ending with the marker "# trellis:triage: <repo>". Every other line is
 # left byte for byte (REQ-020).
 #
 # Usage:
@@ -19,7 +19,7 @@ if [[ -d "$REPO" ]]; then
 else
   REPO_ABS="$(realpath -m "$REPO")"   # the repo may be gone; its schedule can still be removed
 fi
-MARKER="# compass-labs:triage: $REPO_ABS"
+MARKER="# trellis:triage: $REPO_ABS"
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT

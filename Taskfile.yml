@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  PLUGIN_NAME: compass-labs
+  PLUGIN_NAME: trellis
   PLUGIN_REF: "{{.PLUGIN_NAME}}@{{.PLUGIN_NAME}}"
   PLUGIN_JSON: .claude-plugin/plugin.json
   LOCK_FILE: .plugin-lock
@@ -17,7 +17,7 @@ tasks:
       - task: _install-hook
       - cmd: |
           echo ""
-          echo "✔  compass-labs installed"
+          echo "✔  trellis installed"
           echo ""
           claude plugin list | grep {{.PLUGIN_NAME}}
 
@@ -124,7 +124,7 @@ tasks:
             # Write lock file
             cat > {{.LOCK_FILE}} <<EOF
           {
-            "compass-labs": {
+            "trellis": {
               "ref": "$REF",
               "version": "$VERSION",
               "sha": "$(git rev-parse HEAD)"

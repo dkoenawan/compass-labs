@@ -15,7 +15,7 @@
 #   Guard     the local weekday and HH:MM (TRIAGE_NOW, any `date -d` string,
 #             stands in for the clock in tests). Not the installed day and
 #             time: exit 0 silently (REQ-019).
-#   Log/lock  ${XDG_STATE_HOME:-$HOME/.local/state}/compass-labs/triage/{repo-slug}/
+#   Log/lock  ${XDG_STATE_HOME:-$HOME/.local/state}/trellis/triage/{repo-slug}/
 #             {local-date}.log, with the lock directory .lock beside it. Lock
 #             held: log it, exit 0.
 #   Preflight claude and gh from TRIAGE_CLAUDE_BIN / TRIAGE_GH_BIN, then PATH;
@@ -91,7 +91,7 @@ fi
 
 REPO_ABS="$(realpath -m "$REPO")"
 SLUG="$(sed -e 's|^/||' -e 's|/|-|g' <<<"$REPO_ABS")"
-LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/compass-labs/triage/${SLUG:-root}"
+LOG_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/trellis/triage/${SLUG:-root}"
 mkdir -p "$LOG_DIR" || { echo "[$SCRIPT_NAME] Error: cannot create log directory $LOG_DIR" >&2; exit 1; }
 LOG="$LOG_DIR/$LOCAL_DATE.log"
 LOCK="$LOG_DIR/.lock"

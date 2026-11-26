@@ -1,4 +1,4 @@
-<!-- The release record, written by a /compass-labs:deploy run from the Deploy standard, saved as docs/releases/{YYYY-MM-DD}-{slug}.md (skills/deploy/SKILL.md). The Deploy tier line sets which sections are required (the standard's tier table); check-release.sh refuses a record missing one. Delete a section only if the confirmed tier doesn't require it. A record with no Deploy tier line is a past record and gets no check. -->
+<!-- The release record, written by a /trellis:deploy run from the Deploy standard, saved as docs/releases/{YYYY-MM-DD}-{slug}.md (skills/deploy/SKILL.md). The Deploy tier line sets which sections are required (the standard's tier table); check-release.sh refuses a record missing one. Delete a section only if the confirmed tier doesn't require it. A record with no Deploy tier line is a past record and gets no check. -->
 # Release: {Change title}
 
 > Phase: Deploy | Started: {date} | Status: Draft
