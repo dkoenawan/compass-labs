@@ -18,6 +18,7 @@
       "skills": [
         "./skills/adr",
         "./skills/close",
+        "./skills/controller",
         "./skills/deploy",
         "./skills/init",
         "./skills/problem-statement",
