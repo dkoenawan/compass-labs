@@ -1,7 +1,7 @@
 ---
 id: "003"
 date: 2026-09-27
-status: Accepted
+status: Accepted (superseded in part by ADR-012)
 deciders: [Daniel Koenawan]
 affects: [framing, problem-statement, requirements, session, verification, doc-maintainer]
 issue: https://github.com/dkoenawan/compass-labs/issues/23
